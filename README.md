@@ -66,6 +66,7 @@ Other targets:
 ```sh
 make update     # update every game version that already has the addon, no prompts
 make dry-run    # only show what would happen
+make package    # build dist/LevelTimer-<version>.zip
 make test       # run all tests (addon scenarios + installer)
 ```
 
@@ -73,7 +74,7 @@ Extra options go through `ARGS`, e.g. `make install ARGS="-flavors retail,classi
 
 After installing: restart the WoW client if the addon is new or its file list changed, otherwise `/reload` is enough.
 
-Manual install: copy the `.toc` and the `.lua` files it lists into `<WoW>/_<version>_/Interface/AddOns/LevelTimer/`. The folder must be named `LevelTimer`.
+Manual install: run `make package` (or download a release) and unzip it into `<WoW>/_<version>_/Interface/AddOns/`. The zip contains the `LevelTimer` folder; the folder must keep that name.
 
 ## Development
 
@@ -83,3 +84,21 @@ make test-addon   # only the addon scenarios
 ```
 
 The addon tests run without the game: `tests/wow_stub.lua` fakes the parts of the WoW API the addon uses, and each `tests/*_test.lua` plays through one scenario (login, kills, deaths, level-up, ...) in a fresh Lua 5.1 state. They check the logic, not the rendering, so a quick check in game is still worthwhile.
+
+## Releasing
+
+Push a version tag, everything else runs automatically:
+
+```sh
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+The GitHub Action `.github/workflows/release.yml` runs all tests, then the [BigWigs packager](https://github.com/BigWigsMods/packager) builds the zip (version from the tag, files per `.pkgmeta`), creates a GitHub release with a changelog and uploads the file to CurseForge.
+
+One-time setup for the CurseForge upload:
+
+1. Add the project ID from the CurseForge project page to `LevelTimer.toc`: `## X-Curse-Project-ID: 123456`
+2. Create an API token at <https://legacy.curseforge.com/account/api-tokens> and save it in the GitHub repository as secret `CF_API_KEY` (Settings → Secrets and variables → Actions).
+
+Without these, the action still creates the GitHub release with the zip.

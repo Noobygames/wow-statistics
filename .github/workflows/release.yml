@@ -1,0 +1,34 @@
+# Release bei jedem Tag "v*" (z.B. v1.0.0): erst alle Tests, dann packt der
+# BigWigs-Packager die ZIP, erstellt ein GitHub-Release und lädt zu CurseForge hoch.
+# CurseForge-Upload braucht "## X-Curse-Project-ID" in der .toc und das Secret CF_API_KEY;
+# fehlt eines davon, entsteht nur das GitHub-Release.
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+      - run: make test
+
+  release:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # GitHub-Release anlegen
+    env:
+      CF_API_KEY: ${{ secrets.CF_API_KEY }}
+      GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Packager braucht die Historie für Version und Changelog
+      - uses: BigWigsMods/packager@v2
