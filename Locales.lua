@@ -8,7 +8,8 @@ ns.languages = {
 ns.locales = {
   deDE = {
     -- Allgemein und Befehle
-    TIME_ON_LEVEL = "Zeit auf Level %d",
+    TAB_LEVEL = "Level %d",
+    TAB_SESSION = "Session",
     LOCKED = "fixiert",
     UNLOCKED = "verschiebbar",
     HELP = "/lt [config] | history | lock | unlock | sync | show | hide | minimap",
@@ -46,8 +47,14 @@ ns.locales = {
     QUESTS = "Quests: %d",
     MONEY = "Einnahmen: %s",
 
-    -- Level-Historie
-    HISTORY = "Level-Historie",
+    -- Historie
+    HISTORY = "Historie",
+    HISTORY_CHARACTER = "%s - %s (Level %d)",
+    HISTORY_TAB_LEVELS = "Level",
+    HISTORY_TAB_SESSIONS = "Sessions",
+    HISTORY_START = "Start",
+    HISTORY_TOTAL = "Gesamt",
+    DATE_FORMAT = "%d.%m. %H:%M",
     HISTORY_LEVEL = "Level",
     HISTORY_TIME = "Zeit",
     HISTORY_XP_RATE = "XP/h",
@@ -59,13 +66,14 @@ ns.locales = {
 
     -- Minimap-Tooltip
     TOOLTIP_LEFT = "Linksklick: Einstellungen",
-    TOOLTIP_SHIFT_LEFT = "Shift-Linksklick: Level-Historie",
+    TOOLTIP_SHIFT_LEFT = "Shift-Linksklick: Historie",
     TOOLTIP_RIGHT = "Rechtsklick: Fenster ein/aus",
     TOOLTIP_DRAG = "Ziehen: Button verschieben",
   },
   enUS = {
     -- General and commands
-    TIME_ON_LEVEL = "Time on level %d",
+    TAB_LEVEL = "Level %d",
+    TAB_SESSION = "Session",
     LOCKED = "locked",
     UNLOCKED = "unlocked",
     HELP = "/lt [config] | history | lock | unlock | sync | show | hide | minimap",
@@ -103,8 +111,14 @@ ns.locales = {
     QUESTS = "Quests: %d",
     MONEY = "Income: %s",
 
-    -- Level history
-    HISTORY = "Level history",
+    -- History
+    HISTORY = "History",
+    HISTORY_CHARACTER = "%s - %s (level %d)",
+    HISTORY_TAB_LEVELS = "Levels",
+    HISTORY_TAB_SESSIONS = "Sessions",
+    HISTORY_START = "Start",
+    HISTORY_TOTAL = "Total",
+    DATE_FORMAT = "%m/%d %H:%M",
     HISTORY_LEVEL = "Level",
     HISTORY_TIME = "Time",
     HISTORY_XP_RATE = "XP/h",
@@ -116,7 +130,7 @@ ns.locales = {
 
     -- Minimap tooltip
     TOOLTIP_LEFT = "Left-click: settings",
-    TOOLTIP_SHIFT_LEFT = "Shift-left-click: level history",
+    TOOLTIP_SHIFT_LEFT = "Shift-left-click: history",
     TOOLTIP_RIGHT = "Right-click: toggle window",
     TOOLTIP_DRAG = "Drag: move button",
   },

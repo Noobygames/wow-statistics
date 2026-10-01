@@ -24,6 +24,9 @@ local SLIDER_BACKDROP = {
   insets = { left = 3, right = 3, top = 6, bottom = 6 },
 }
 
+local INACTIVE_TAB_COLOR = { 0.55, 0.55, 0.55 }
+local TAB_PADDING = 8
+
 local CHECKBOX_SIZE = 26
 local SLIDER_HEIGHT = 17
 local SLIDER_LABEL_HEIGHT = 18
@@ -97,4 +100,33 @@ function Widgets.CreateSlider(parent, minValue, maxValue, step, onChange)
   end
 
   return container
+end
+
+-- Reiter als schlichter Text-Button; der aktive Reiter ist hervorgehoben
+function Widgets.CreateTab(parent, fontObject, onClick)
+  local tab = CreateFrame("Button", nil, parent)
+  tab.label = tab:CreateFontString(nil, "OVERLAY", fontObject)
+  tab.label:SetPoint("CENTER")
+  tab:SetScript("OnClick", onClick)
+
+  function tab:SetLabel(text)
+    self.label:SetText(text)
+    local _, fontHeight = self.label:GetFont()
+    self:SetSize(self.label:GetStringWidth() + TAB_PADDING, fontHeight + 4)
+  end
+
+  function tab:SetActive(active)
+    local color = active and Widgets.COLORS.highlight or INACTIVE_TAB_COLOR
+    self.label:SetTextColor(unpack(color))
+  end
+
+  return tab
+end
+
+-- Kleiner Button mit Text, z.B. Pfeile zum Blättern
+function Widgets.CreateButton(parent, width, height, onClick)
+  local button = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
+  button:SetSize(width, height)
+  button:SetScript("OnClick", onClick)
+  return button
 end

@@ -22,9 +22,10 @@ dry-run:
 
 test: test-addon test-installer
 
-# Lua-Szenarien aus tests/ gegen eine nachgebaute WoW-API
+# Lua-Szenarien aus tests/ gegen eine nachgebaute WoW-API.
+# -count=1: Go kennt die Lua-Dateien nicht und würde sonst veraltete Ergebnisse aus dem Cache zeigen.
 test-addon:
-	go -C $(ADDONTEST) test ./...
+	go -C $(ADDONTEST) test -count=1 ./...
 
 test-installer:
 	go -C $(INSTALLER) test ./...

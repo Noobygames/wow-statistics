@@ -3,13 +3,20 @@ wow.login({ playedSeconds = 600 })
 
 expect("unbekanntes Event -> false statt Fehler", addon.RegisterEvent(wow.UNKNOWN_EVENT, function() end), false)
 
--- Jede Stat-Zeile liefert Text
+-- Jede Stat-Zeile liefert Text, für Level und Session
 for _, line in ipairs(addon.STAT_LINES) do
-  local text = line.text()
-  expectTrue("Text für " .. line.setting, type(text) == "string" and text ~= "")
+  for _, scope in ipairs({ addon.Stats.LEVEL, addon.Stats.SESSION }) do
+    local text = line.text(scope)
+    expectTrue("Text für " .. line.setting .. " (" .. scope .. ")", type(text) == "string" and text ~= "")
+  end
   expectTrue("Default für " .. line.setting, LevelTimerDB[line.setting] ~= nil)
   expectTrue("Locale-Key " .. line.label, addon.L[line.label] ~= line.label)
 end
+
+-- Fenster zwischen Level und Session umschalten
+addon.Set("windowScope", addon.Stats.SESSION)
+expect("Bereich Session", LevelTimerDB.windowScope, "session")
+addon.Set("windowScope", addon.Stats.LEVEL)
 
 -- Sprachwechsel greift sofort
 expect("deutscher Text", string.format(addon.L.DEATHS, 1), "Tode: 1")
@@ -41,3 +48,11 @@ addon.Set("fontSize", 24)
 addon.Set("showMoney", false)
 wow.state.shiftDown = true
 LevelTimer_OnAddonCompartmentClick()
+
+-- Historie: Session-Ansicht und Charakter-Wechsel rendern ohne Fehler
+addon.Set("language", "deDE")
+expectTrue("Reiter Sessions klickbar", wow.click("Sessions"))
+expectTrue("Reiter Level klickbar", wow.click("Level"))
+expectTrue("nächster Charakter", wow.click(">"))
+expectTrue("Session-Reiter im Fenster", wow.click("Session"))
+expect("Fenster zeigt Session", LevelTimerDB.windowScope, "session")

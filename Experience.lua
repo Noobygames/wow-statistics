@@ -1,7 +1,7 @@
--- Erfahrung auf dem aktuellen Level: XP pro Stunde, Zeit bis Level-Up, XP-Quellen und Erholungs-XP.
--- UnitXP("player") ist die XP seit Levelbeginn, daher braucht die Rate keinen eigenen Zähler.
+-- Erfahrung je Bereich (Level/Session): XP pro Stunde, Zeit bis Level-Up, XP-Quellen.
+-- Zählt außerdem gewonnene XP (für Sessions) und verbrauchte Erholungs-XP.
 local _, ns = ...
-local LevelStats = ns.LevelStats
+local Stats = ns.Stats
 
 local Experience = {}
 ns.Experience = Experience
@@ -18,29 +18,48 @@ end
 
 -- XP pro Stunde aus XP und Spielzeit, nil wenn noch nicht aussagekräftig
 function Experience.CalculateRate(xp, seconds)
-  if not seconds or seconds < MIN_SECONDS_FOR_RATE or xp <= 0 then return nil end
+  if not seconds or seconds < MIN_SECONDS_FOR_RATE or not xp or xp <= 0 then return nil end
   return xp / seconds * SECONDS_PER_HOUR
 end
 
-function Experience.GetRatePerHour()
-  return Experience.CalculateRate(UnitXP("player"), ns.PlayedTime.GetLevelSeconds())
+function Experience.GetRatePerHour(scope)
+  return Experience.CalculateRate(Stats.GetXp(scope), Stats.GetSeconds(scope))
 end
 
--- Geschätzte Spielzeit bis zum Level-Up bei gleichbleibender Rate
-function Experience.GetSecondsToLevel()
-  local rate = Experience.GetRatePerHour()
+-- Geschätzte Spielzeit bis zum Level-Up bei der Rate des Bereichs
+function Experience.GetSecondsToLevel(scope)
+  local rate = Experience.GetRatePerHour(scope)
   if not rate then return nil end
   local remainingXp = UnitXPMax("player") - UnitXP("player")
   return remainingXp / rate * SECONDS_PER_HOUR
 end
 
--- XP-Quellen auf diesem Level. "Sonstige" ist der Rest (Entdecken, Berufe, ...).
-function Experience.GetSources()
-  local fromKills = LevelStats.Get(LevelStats.XP_KILLS)
-  local fromQuests = LevelStats.Get(LevelStats.XP_QUESTS)
-  local total = UnitXP("player")
-  local other = math.max(0, total - fromKills - fromQuests)
-  return fromKills, fromQuests, other, math.max(total, fromKills + fromQuests)
+-- XP-Quellen im Bereich. "Sonstige" ist der Rest (Entdecken, Berufe, ...).
+function Experience.GetSources(scope)
+  local fromKills = Stats.Get(scope, Stats.XP_KILLS)
+  local fromQuests = Stats.Get(scope, Stats.XP_QUESTS)
+  local total = math.max(Stats.GetXp(scope), fromKills + fromQuests)
+  return fromKills, fromQuests, total - fromKills - fromQuests, total
+end
+
+---------------------------------------------------------------------------
+-- Gewonnene XP: Differenz zum letzten Stand. Liegt ein Level-Up dazwischen,
+-- zählt der Rest des alten Levels plus die XP auf dem neuen.
+---------------------------------------------------------------------------
+local lastXp, lastXpMax
+
+local function trackXpGained()
+  local xp, xpMax = UnitXP("player"), UnitXPMax("player")
+  if lastXp then
+    local gained = xp - lastXp
+    if gained < 0 then
+      gained = (lastXpMax - lastXp) + xp
+    end
+    if gained > 0 then
+      Stats.Increment(Stats.XP_GAINED, gained)
+    end
+  end
+  lastXp, lastXpMax = xp, xpMax
 end
 
 ---------------------------------------------------------------------------
@@ -56,14 +75,18 @@ end
 local function trackRestedXp()
   local current = restedPool()
   if lastRestedPool and current < lastRestedPool then
-    LevelStats.Increment(LevelStats.XP_RESTED, lastRestedPool - current)
+    Stats.Increment(Stats.XP_RESTED, lastRestedPool - current)
   end
   lastRestedPool = current
 end
 
 ns.OnLogin(function()
+  lastXp, lastXpMax = UnitXP("player"), UnitXPMax("player")
   lastRestedPool = restedPool()
 end)
 
-ns.RegisterEvent("PLAYER_XP_UPDATE", trackRestedXp)
+ns.RegisterEvent("PLAYER_XP_UPDATE", function()
+  trackXpGained()
+  trackRestedXp()
+end)
 ns.RegisterEvent("UPDATE_EXHAUSTION", trackRestedXp)

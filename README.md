@@ -4,30 +4,37 @@ Useful WoW addon (compatible with WoW Forever) to show statistics.
 
 ## LevelTimer
 
-Shows statistics for your current level in a small, movable window:
+Shows statistics in a small, movable window, either for your **current level** or your **current session** (switch with the "Level | Session" tabs at the top):
 
-- **Play time on this level**, synced with the server (`/played`) and counted up live.
+- **Play time**: on this level synced with the server (`/played`), for the session since login; both counted up live.
 - **XP per hour** and the estimated play time until the next level.
 - **Kills**, split into:
   - **PvE**: every kill that granted experience, including group kills. Grey mobs and kills at max level don't count.
   - **PvP**: honorable kills.
 - **Deaths**, with time spent dead or as a ghost and kills per death.
 - **XP sources**: share of XP from kills, quests and other sources (exploration, professions, ...).
-- **Rested XP**: bonus XP gained from rest and its share of the level's XP.
+- **Rested XP**: bonus XP gained from rest and its share of the XP.
 - **Quests** turned in.
 - **Income**: money earned (loot, quests, sales, mail); spending is not subtracted.
 
-Every line can be switched on or off in the settings. All counters are tracked per character and reset on level-up.
+Every line can be switched on or off in the settings. Level statistics restart on level-up. A session runs from login to logout; a `/reload` or a short break (up to 5 minutes) continues it.
 
-### Level history
+Statistics are recorded separately for every character. They are stored account-wide, so you can look at all your characters from any of them.
 
-When you level up, play time, XP/h, kills, deaths, quests and income of the finished level are saved. The history window lists all finished levels, with the current level highlighted at the top. Open it with Shift-left-click on the minimap button, the button in the settings, or `/lt history`.
+### History and evaluation
+
+The history window shows, per character:
+
+- **Levels**: play time, XP/h, kills, deaths, quests and income of every finished level, saved on level-up.
+- **Sessions**: start, duration, level range, XP/h, kills, deaths, quests and income of every past session.
+
+The running level or session is highlighted at the top, a **Total** row at the bottom sums everything up. Switch characters with the arrows. Open it with Shift-left-click on the minimap button, the button in the settings, or `/lt history`.
 
 Works across several game versions (Retail, Classic Era, Anniversary, ...) from a single `.toc`. Features a client doesn't support stay off silently. German and English UI.
 
 ### Minimap button and settings
 
-- Left-click the minimap button (pocket watch) to open the settings, Shift-left-click for the level history, right-click to show or hide the window, drag to move it around the minimap.
+- Left-click the minimap button (pocket watch) to open the settings, Shift-left-click for the history, right-click to show or hide the window, drag to move it around the minimap.
 - On Retail, LevelTimer also shows up in the addon compartment menu.
 - Settings: language (Deutsch / English), font size, background opacity, lock window, show window, show minimap button, and a toggle per statistic.
 
@@ -36,7 +43,7 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 | Command | Effect |
 |---|---|
 | `/lt` or `/lt config` | Open settings |
-| `/lt history` | Open the level history |
+| `/lt history` | Open the history |
 | `/lt lock` / `/lt unlock` | Lock or unlock the window position |
 | `/lt show` / `/lt hide` | Show or hide the window |
 | `/lt sync` | Re-sync play time with the server |

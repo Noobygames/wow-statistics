@@ -5,8 +5,10 @@
 --   addon                  Namespace des Addons (ns)
 --   wow.state              Spielzustand, den die API-Funktionen zurückgeben
 --   wow.login(options)     Login simulieren (options überschreiben wow.state, playedSeconds = /played-Antwort)
+--   wow.logout()           Logout oder /reload simulieren (PLAYER_LOGOUT)
+--   wow.levelUp(level, xpMax)  Level-Up wie im Client
 --   wow.fire(event, ...)   Event an alle registrierten Frames senden
---   wow.advance(seconds)   GetTime() vorstellen
+--   wow.advance(seconds)   Spielzeit (GetTime) und Uhrzeit (time) vorstellen
 --   wow.printed            alle Chat-Ausgaben (print)
 --   expect, expectNear, expectTrue   Prüfungen; Fehlschläge landen in TEST_FAILURES
 
@@ -15,13 +17,17 @@ local UNKNOWN_EVENT = "EVENT_NOT_IN_THIS_CLIENT"
 
 wow = {
   state = {
+    name = "Testchar",
+    realm = "Testrealm",
+    class = "WARRIOR",
     level = 10,
     xp = 0,
     xpMax = 1000,
     maxLevel = 60,
     rested = 0,
     money = 0,
-    now = 1000,
+    now = 1000,             -- GetTime()
+    clock = 1700000000,     -- time()
     dead = false,
     honorableKills = 0,
     shiftDown = false,
@@ -108,6 +114,7 @@ end
 
 function wow.advance(seconds)
   wow.state.now = wow.state.now + seconds
+  wow.state.clock = wow.state.clock + seconds
 end
 
 function wow.login(options)
@@ -118,6 +125,23 @@ function wow.login(options)
   if wow.state.playedSeconds then
     wow.fire("TIME_PLAYED_MSG", wow.state.playedSeconds + 100000, wow.state.playedSeconds)
   end
+end
+
+-- Klickt den Button/Reiter mit dieser Beschriftung (Text-Buttons aus Widgets.CreateTab/CreateButton)
+function wow.click(text)
+  for _, frame in ipairs(frames) do
+    local label = rawget(frame, "label")
+    local caption = label and label._text or frame._text
+    if caption == text and frame._scripts.OnClick then
+      frame._scripts.OnClick(frame, "LeftButton")
+      return true
+    end
+  end
+  return false
+end
+
+function wow.logout()
+  wow.fire("PLAYER_LOGOUT")
 end
 
 -- Level-Up wie im Client: Event mit neuem Level, danach neue XP-Werte
@@ -139,7 +163,7 @@ UISpecialFrames, SlashCmdList = {}, {}
 COMBATLOG_XPGAIN_FIRSTPERSON = "%s stirbt, Ihr bekommt %d Erfahrung."
 C_Timer = { After = noop }
 ChatFrame_DisplayTimePlayed = noop
-time = os.time
+date = os.date
 
 function print(...)
   local parts = {}
@@ -157,6 +181,10 @@ function GetMaxPlayerLevel() return state.maxLevel end
 function GetXPExhaustion() return state.rested > 0 and state.rested or nil end
 function GetMoney() return state.money end
 function GetTime() return state.now end
+function time() return state.clock end
+function UnitName() return state.name end
+function GetRealmName() return state.realm end
+function UnitClass() return state.class, state.class end
 function UnitIsDeadOrGhost() return state.dead end
 function GetPVPSessionStats() return state.honorableKills end
 function IsShiftKeyDown() return state.shiftDown end

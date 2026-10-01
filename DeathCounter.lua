@@ -1,7 +1,7 @@
--- Zählt eigene Tode auf dem aktuellen Level und die Zeit, die man tot bzw. als Geist verbringt.
+-- Zählt eigene Tode und die Zeit, die man tot bzw. als Geist verbringt.
 -- Totstellen (Jäger) löst PLAYER_DEAD nicht aus.
 local _, ns = ...
-local LevelStats = ns.LevelStats
+local Stats = ns.Stats
 
 local DeathCounter = {}
 ns.DeathCounter = DeathCounter
@@ -9,27 +9,27 @@ ns.DeathCounter = DeathCounter
 local deadSince  -- GetTime() beim Tod, nil solange lebendig
 
 -- Inklusive der laufenden Zeit, falls man gerade tot ist
-function DeathCounter.GetDeadSeconds()
+function DeathCounter.GetDeadSeconds(scope)
   local running = deadSince and (GetTime() - deadSince) or 0
-  return LevelStats.Get(LevelStats.DEAD_SECONDS) + running
+  return Stats.Get(scope, Stats.DEAD_SECONDS) + running
 end
 
--- Kills pro Tod, nil solange man auf diesem Level nicht gestorben ist
-function DeathCounter.GetKillsPerDeath()
-  local deaths = LevelStats.Get(LevelStats.DEATHS)
+-- Kills pro Tod, nil solange man im Bereich nicht gestorben ist
+function DeathCounter.GetKillsPerDeath(scope)
+  local deaths = Stats.Get(scope, Stats.DEATHS)
   if deaths == 0 then return nil end
-  return LevelStats.GetTotalKills() / deaths
+  return Stats.GetTotalKills(scope) / deaths
 end
 
 local function finishDeadTime()
   if not deadSince then return end
-  LevelStats.Increment(LevelStats.DEAD_SECONDS, GetTime() - deadSince)
+  Stats.Increment(Stats.DEAD_SECONDS, GetTime() - deadSince)
   deadSince = nil
 end
 
 ns.RegisterEvent("PLAYER_DEAD", function()
   if deadSince then return end  -- schon tot (z.B. Login als Geist), nicht doppelt zählen
-  LevelStats.Increment(LevelStats.DEATHS)
+  Stats.Increment(Stats.DEATHS)
   deadSince = GetTime()
 end)
 
@@ -49,3 +49,6 @@ ns.OnLogin(function()
     deadSince = GetTime()
   end
 end)
+
+-- Laufende Zeit vor dem Speichern verbuchen; nach dem Login zählt sie neu weiter
+ns.OnLogout(finishDeadTime)

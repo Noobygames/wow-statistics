@@ -1,37 +1,38 @@
 -- Stat-Zeilen unter der Spielzeit. Einzige Stelle, an der festgelegt wird, welche Stats es gibt:
 -- TimerWindow zeigt sie an, Options baut daraus die Schalter.
--- setting = Schalter in ns.db (Default in Database.lua), label = Locale-Key für den Schalter.
+-- setting = Schalter in ns.db (Default in Database.lua), label = Locale-Key für den Schalter,
+-- text(scope) = Inhalt für den gewählten Bereich (Stats.LEVEL oder Stats.SESSION).
 local _, ns = ...
 local L = ns.L
 local Format = ns.Format
-local LevelStats = ns.LevelStats
+local Stats = ns.Stats
 local Experience = ns.Experience
 local DeathCounter = ns.DeathCounter
 
-local function xpRateText()
+local function xpRateText(scope)
   if not Experience.IsLeveling() then return L.XP_MAX_LEVEL end
-  local rate = Experience.GetRatePerHour()
+  local rate = Experience.GetRatePerHour(scope)
   if not rate then return L.XP_RATE_PENDING end
-  return string.format(L.XP_RATE, Format.Number(rate), Format.Duration(Experience.GetSecondsToLevel()))
+  return string.format(L.XP_RATE, Format.Number(rate), Format.Duration(Experience.GetSecondsToLevel(scope)))
 end
 
-local function killsText()
-  return string.format(L.KILLS, LevelStats.Get(LevelStats.PVE_KILLS), LevelStats.Get(LevelStats.PVP_KILLS))
+local function killsText(scope)
+  return string.format(L.KILLS, Stats.Get(scope, Stats.PVE_KILLS), Stats.Get(scope, Stats.PVP_KILLS))
 end
 
-local function deathsText()
-  local deaths = LevelStats.Get(LevelStats.DEATHS)
-  local killsPerDeath = DeathCounter.GetKillsPerDeath()
+local function deathsText(scope)
+  local deaths = Stats.Get(scope, Stats.DEATHS)
+  local killsPerDeath = DeathCounter.GetKillsPerDeath(scope)
   if not killsPerDeath then
     return string.format(L.DEATHS, deaths)
   end
   return string.format(L.DEATHS_DETAIL, deaths,
-    Format.Duration(DeathCounter.GetDeadSeconds()),
+    Format.Duration(DeathCounter.GetDeadSeconds(scope)),
     string.format("%.1f", killsPerDeath))
 end
 
-local function xpSourcesText()
-  local fromKills, fromQuests, other, total = Experience.GetSources()
+local function xpSourcesText(scope)
+  local fromKills, fromQuests, other, total = Experience.GetSources(scope)
   if total <= 0 then return L.XP_SOURCES_NONE end
   return string.format(L.XP_SOURCES,
     Format.Percent(fromKills, total),
@@ -39,17 +40,17 @@ local function xpSourcesText()
     Format.Percent(other, total))
 end
 
-local function restedText()
-  local restedXp = LevelStats.Get(LevelStats.XP_RESTED)
-  return string.format(L.RESTED_XP, Format.Number(restedXp), Format.Percent(restedXp, UnitXP("player")))
+local function restedText(scope)
+  local restedXp = Stats.Get(scope, Stats.XP_RESTED)
+  return string.format(L.RESTED_XP, Format.Number(restedXp), Format.Percent(restedXp, Stats.GetXp(scope)))
 end
 
-local function questsText()
-  return string.format(L.QUESTS, LevelStats.Get(LevelStats.QUESTS))
+local function questsText(scope)
+  return string.format(L.QUESTS, Stats.Get(scope, Stats.QUESTS))
 end
 
-local function moneyText()
-  return string.format(L.MONEY, Format.Money(LevelStats.Get(LevelStats.MONEY_EARNED)))
+local function moneyText(scope)
+  return string.format(L.MONEY, Format.Money(Stats.Get(scope, Stats.MONEY_EARNED)))
 end
 
 ns.STAT_LINES = {

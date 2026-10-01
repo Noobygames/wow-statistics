@@ -1,13 +1,15 @@
--- Anzeigefenster: Level, Spielzeit auf dem Level und darunter die abschaltbaren Stat-Zeilen.
+-- Anzeigefenster: Reiter "Level | Session", Spielzeit im gewählten Bereich und darunter die abschaltbaren Stat-Zeilen.
 local _, ns = ...
 local L = ns.L
 local Widgets = ns.Widgets
 local Format = ns.Format
+local Stats = ns.Stats
 
 local UPDATE_INTERVAL = 0.25          -- Sekunden zwischen zwei Anzeige-Updates
 local PADDING_X = 20
 local PADDING_Y = 8
 local LINE_GAP = 3
+local TAB_GAP = 10                    -- Abstand zwischen den Reitern
 local MIN_WIDTH = 160
 local WIDEST_TIME = "00d 00h 00m 00s" -- für die Fensterbreite
 local DEFAULT_POSITION = { "TOP", "TOP", 0, -120 }
@@ -15,11 +17,19 @@ local DEFAULT_POSITION = { "TOP", "TOP", 0, -120 }
 local window = Widgets.CreatePanel("LevelTimerFrame", 0.8)
 window:Hide()  -- erst nach Login anzeigen, wenn Daten und Einstellungen bereitstehen
 
-local title = window:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-title:SetPoint("TOP", 0, -PADDING_Y)
+-- Reiter wählen den Bereich (Einstellung windowScope)
+local levelTab = Widgets.CreateTab(window, "GameFontNormalSmall", function()
+  ns.Set("windowScope", Stats.LEVEL)
+end)
+levelTab:SetPoint("TOPRIGHT", window, "TOP", -TAB_GAP / 2, -PADDING_Y)
+
+local sessionTab = Widgets.CreateTab(window, "GameFontNormalSmall", function()
+  ns.Set("windowScope", Stats.SESSION)
+end)
+sessionTab:SetPoint("TOPLEFT", window, "TOP", TAB_GAP / 2, -PADDING_Y)
 
 local timeText = window:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-timeText:SetPoint("TOP", title, "BOTTOM", 0, -LINE_GAP)
+timeText:SetPoint("TOP", window, "TOP", 0, -PADDING_Y)  -- endgültige Position setzt updateLayout
 timeText:SetTextColor(unpack(Widgets.COLORS.highlight))
 
 -- Eine FontString pro Stat-Zeile, gleiche Reihenfolge wie ns.STAT_LINES
@@ -44,12 +54,17 @@ local function growToFitStatLines()
 end
 
 local function refreshTexts()
-  title:SetText(string.format(L.TIME_ON_LEVEL, ns.level))
-  local levelSeconds = ns.PlayedTime.GetLevelSeconds()
-  timeText:SetText(levelSeconds and Format.Clock(levelSeconds) or "...")
+  local scope = ns.db.windowScope
+  levelTab:SetLabel(string.format(L.TAB_LEVEL, ns.level))
+  levelTab:SetActive(scope == Stats.LEVEL)
+  sessionTab:SetLabel(L.TAB_SESSION)
+  sessionTab:SetActive(scope == Stats.SESSION)
+
+  local seconds = Stats.GetSeconds(scope)
+  timeText:SetText(seconds and Format.Clock(seconds) or "...")
   for i, line in ipairs(ns.STAT_LINES) do
     if statTexts[i]:IsShown() then
-      statTexts[i]:SetText(line.text())
+      statTexts[i]:SetText(line.text(scope))
     end
   end
   growToFitStatLines()
@@ -62,7 +77,10 @@ local function updateLayout(db)
 
   timeText:SetText(WIDEST_TIME)
   local width = math.max(MIN_WIDTH, timeText:GetStringWidth() + 2 * PADDING_X)
-  local height = 2 * PADDING_Y + fontSize(title) + LINE_GAP + db.fontSize
+  local tabHeight = fontSize(levelTab.label) + 4
+  timeText:ClearAllPoints()
+  timeText:SetPoint("TOP", window, "TOP", 0, -(PADDING_Y + tabHeight + LINE_GAP))
+  local height = 2 * PADDING_Y + tabHeight + LINE_GAP + db.fontSize
 
   local anchor = timeText
   for i, line in ipairs(ns.STAT_LINES) do
