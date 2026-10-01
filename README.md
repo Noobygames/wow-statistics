@@ -33,7 +33,7 @@ The history window shows, per character:
 - **Deaths**: every death with time, cause, level and zone (newest 1000). The cause is the last hit before dying: enemy and spell, or falling, drowning, lava and so on. Retail hides the combat log from addons, so there the cause stays "Unknown".
 - **Zones**: play time, XP, XP/h, kills and deaths per zone, best XP/h first, so you see where leveling pays off.
 - **Compare**: all characters side by side (level, levels gained, average time per level, XP/h, kills, deaths, gold), fastest leveler first.
-- **Charts**: time per level, XP/h per level, kills per day (last 14 days), top enemies, death causes, XP/h per zone and play time per day and week. Hover a column for the exact value.
+- **Charts**: time per level, XP/h per level, kills per day (last 14 days), top enemies, death causes, XP/h per zone, play time per day and week, and the XP timeline of the session (5-minute steps, breaks show as gaps). Hover a column for the exact value.
 
 The running level or session is highlighted at the top, a **Total** row at the bottom sums everything up. Long lists scroll smoothly with the mouse wheel, only the visible rows are drawn. Switch characters with the arrows. Open it with Shift-left-click on the minimap button, the button in the settings, or `/lt history`.
 

@@ -125,6 +125,44 @@ function Analysis.PlayTimePerWeek(characterKey)
   return items
 end
 
+---------------------------------------------------------------------------
+-- XP-Verlauf der laufenden (bei anderen Charakteren: letzten) Session in Abschnitten
+---------------------------------------------------------------------------
+local MAX_TIMELINE_STEPS = 36  -- 3 Stunden bei 5-Minuten-Abschnitten
+
+-- Beschriftung "h:mm" für den Beginn eines Abschnitts
+local function sessionClock(seconds)
+  return string.format("%d:%02d", math.floor(seconds / 3600), math.floor(seconds / 60) % 60)
+end
+
+function Analysis.SessionXpTimeline(characterKey)
+  local session = History.GetCharacter(characterKey).currentSession
+  local timeline = session.xpTimeline or {}
+  local step = ns.Session.TIMELINE_STEP
+
+  local lastStep = 0
+  if characterKey == ns.characterKey and session.startedAt then
+    lastStep = math.floor(ns.Session.GetSeconds() / step) + 1
+  else
+    for index in pairs(timeline) do
+      lastStep = math.max(lastStep, index)
+    end
+  end
+  if next(timeline) == nil then return {} end
+
+  local items = {}
+  for index = math.max(1, lastStep - MAX_TIMELINE_STEPS + 1), lastStep do
+    local xp = timeline[index] or 0
+    table.insert(items, {
+      label = sessionClock((index - 1) * step),
+      value = xp,
+      text = Format.Number(xp),
+      highlight = index == lastStep and characterKey == ns.characterKey,
+    })
+  end
+  return items
+end
+
 -- Häufigkeit je Name, die TOP_COUNT häufigsten absteigend (bei Gleichstand alphabetisch).
 -- text zeigt Anzahl und Anteil an allen Einträgen, z.B. "11 (13%)".
 local function topCounts(entries, nameOf)

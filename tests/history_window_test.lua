@@ -33,7 +33,7 @@ expect("Bildlauf zurückgesetzt", killTable.offset, 0)
 
 -- Graphen: alle Diagramme anklickbar
 expectTrue("Reiter Graphen", wow.click("Graphen"))
-for _, chart in ipairs({ "Zeit/Level", "XP/h/Level", "Kills/Tag", "Top-Gegner", "Todesursachen", "XP/h/Zone", "Zeit/Tag", "Zeit/Woche" }) do
+for _, chart in ipairs({ "Zeit/Level", "XP/h/Level", "Kills/Tag", "Top-Gegner", "Ursachen", "XP/h/Zone", "Zeit/Tag", "Zeit/Woche", "XP-Verlauf" }) do
   expectTrue("Diagramm " .. chart, wow.click(chart))
 end
 
@@ -42,7 +42,7 @@ wow.logout()
 wow.login({ name = "Neuling", level = 1 })
 SlashCmdList.LEVELTIMER("history")
 SlashCmdList.LEVELTIMER("history")
-expectTrue("leere Rangliste", wow.click("Todesursachen"))
+expectTrue("leere Rangliste", wow.click("Ursachen"))
 
 -- Reitergruppen: Unterreiter nur in der gewählten Gruppe sichtbar
 local function tabWithLabel(text)

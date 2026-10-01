@@ -71,6 +71,20 @@ ns.OnLevelStarted(function(newLevel)
   current().endLevel = newLevel
 end)
 
+---------------------------------------------------------------------------
+-- XP-Verlauf: gewonnene XP je Abschnitt der Session (currentSession.xpTimeline[abschnitt]).
+-- Nur für die laufende Session; archivierte Sessions behalten ihn nicht (spart Platz).
+---------------------------------------------------------------------------
+Session.TIMELINE_STEP = 300  -- Sekunden je Abschnitt
+
+ns.Stats.OnIncrement(function(counter, amount)
+  if counter ~= ns.Stats.XP_GAINED or not loginTime then return end
+  local session = current()
+  session.xpTimeline = session.xpTimeline or {}
+  local step = math.floor(Session.GetSeconds() / Session.TIMELINE_STEP) + 1
+  session.xpTimeline[step] = (session.xpTimeline[step] or 0) + amount
+end)
+
 ns.OnLogout(function()
   local session = current()
   session.seconds = Session.GetSeconds()
