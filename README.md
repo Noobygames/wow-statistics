@@ -50,6 +50,7 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 
 - Left-click the minimap button (pocket watch) to open the settings, Shift-left-click for the history, right-click to show or hide the window, drag to move it around the minimap.
 - On Retail, LevelTimer also shows up in the addon compartment menu.
+- **Data text** for Titan Panel, ElvUI, Bazooka and other LibDataBroker displays: play time and XP/h, tooltip with all enabled values, same clicks as the minimap button. Works when one of those addons is installed (LevelTimer does not bundle the library).
 - Resize the window by dragging its bottom right corner; text and everything else scale with it. Right-click the window to open the settings.
 - **Compact mode** (`/lt compact` or settings): only play time, XP bar and XP/h.
 - Settings, grouped into Window, Statistics and General: size, background opacity, show/lock window, reset position & size, one toggle per statistic, language (Deutsch / English) and the minimap button.

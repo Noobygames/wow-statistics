@@ -54,6 +54,7 @@ A session runs from login to logout. A `/reload` or a short break (up to 5 minut
 - **Window**: drag the bottom right corner to resize, right-click to open the settings
 - **Minimap button**: left-click opens the settings, Shift-left-click the history, right-click shows or hides the window, drag to move the button
 - On Retail, LevelTimer also appears in the addon compartment menu
+- **Data text** for Titan Panel, ElvUI and other LibDataBroker displays
 
 | Command | Effect |
 |---|---|
