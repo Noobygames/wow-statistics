@@ -1,8 +1,11 @@
 -- Gemeinsame UI-Bausteine, damit alle Fenster gleich aussehen und sich gleich verhalten.
-local _, ns = ...
+local addonName, ns = ...
 
 local Widgets = {}
 ns.Widgets = Widgets
+
+-- Eigenes Addon-Icon (Media/Icon.tga, erzeugt mit "make artwork"); auch als IconTexture in der .toc
+Widgets.ICON = "Interface\\AddOns\\" .. addonName .. "\\Media\\Icon"
 
 Widgets.COLORS = {
   background = { 0.04, 0.05, 0.1 },

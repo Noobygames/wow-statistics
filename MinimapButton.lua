@@ -1,7 +1,6 @@
 local _, ns = ...
 local L = ns.L
 
-local ICON = "Interface\\Icons\\INV_Misc_PocketWatch_01"
 local RADIUS_OFFSET = 10  -- Abstand des Buttons vom Minimap-Rand
 
 -- Aufbau wie LibDBIcon, damit der Button zu anderen Minimap-Buttons passt
@@ -24,11 +23,11 @@ background:SetSize(20, 20)
 background:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
 background:SetPoint("TOPLEFT", 7, -5)
 
+-- Eigenes Icon mit transparentem Rand, deckungsgleich mit dem runden Hintergrund
 local icon = button:CreateTexture(nil, "ARTWORK")
-icon:SetSize(17, 17)
-icon:SetTexture(ICON)
-icon:SetTexCoord(0.05, 0.95, 0.05, 0.95)
-icon:SetPoint("TOPLEFT", 7, -6)
+icon:SetSize(20, 20)
+icon:SetTexture(ns.Widgets.ICON)
+icon:SetPoint("TOPLEFT", 7, -5)
 
 local function updatePosition()
   local angle = math.rad(ns.db.minimap.angle)

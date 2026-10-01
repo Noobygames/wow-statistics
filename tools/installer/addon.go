@@ -3,7 +3,9 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path"
 	"path/filepath"
@@ -15,7 +17,7 @@ import (
 type Addon struct {
 	Name    string   // Name der .toc ohne Endung, gleichzeitig Ordnername in AddOns
 	Dir     string   // Quellverzeichnis
-	Files   []string // relative Pfade mit "/", inklusive der .toc selbst
+	Files   []string // relative Pfade mit "/": die .toc, ihre Dateien und alles aus assetDirs
 	Version string
 }
 
@@ -51,6 +53,12 @@ func LoadAddon(dir, version string) (*Addon, error) {
 	}
 	files = append([]string{tocName}, files...)
 
+	assets, err := assetFiles(dir)
+	if err != nil {
+		return nil, err
+	}
+	files = append(files, assets...)
+
 	for _, f := range files {
 		if _, err := os.Stat(filepath.Join(dir, filepath.FromSlash(f))); err != nil {
 			return nil, fmt.Errorf("in .toc gelistete Datei fehlt: %s", f)
@@ -63,6 +71,34 @@ func LoadAddon(dir, version string) (*Addon, error) {
 		Files:   files,
 		Version: version,
 	}, nil
+}
+
+// Ordner mit Grafiken o.Ä., die nicht in der .toc stehen, aber per Pfad geladen werden
+var assetDirs = []string{"Media"}
+
+func assetFiles(dir string) ([]string, error) {
+	var files []string
+	for _, assetDir := range assetDirs {
+		root := filepath.Join(dir, assetDir)
+		err := filepath.WalkDir(root, func(p string, d fs.DirEntry, err error) error {
+			if errors.Is(err, fs.ErrNotExist) && p == root {
+				return filepath.SkipDir
+			}
+			if err != nil || d.IsDir() {
+				return err
+			}
+			rel, err := filepath.Rel(dir, p)
+			if err != nil {
+				return err
+			}
+			files = append(files, filepath.ToSlash(rel))
+			return nil
+		})
+		if err != nil {
+			return nil, err
+		}
+	}
+	return files, nil
 }
 
 func parseTocFiles(tocPath string) ([]string, error) {

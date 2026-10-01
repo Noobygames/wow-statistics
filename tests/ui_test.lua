@@ -56,3 +56,9 @@ expectTrue("Reiter Level klickbar", wow.click("Level"))
 expectTrue("nächster Charakter", wow.click(">"))
 expectTrue("Session-Reiter im Fenster", wow.click("Session"))
 expect("Fenster zeigt Session", LevelTimerDB.windowScope, "session")
+
+-- Eigenes Icon: Pfad zeigt auf eine Datei im Addon (WoW ergänzt die Endung selbst)
+local iconFile = addon.Widgets.ICON:gsub("\\", "/"):gsub("^Interface/AddOns/LevelTimer/", "") .. ".tga"
+local handle = io.open(wow.ADDON_DIR .. "/" .. iconFile, "rb")
+expectTrue("Icon-Datei vorhanden: " .. iconFile, handle ~= nil)
+if handle then handle:close() end

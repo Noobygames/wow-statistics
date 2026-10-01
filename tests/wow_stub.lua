@@ -34,6 +34,7 @@ wow = {
   },
   printed = {},
   UNKNOWN_EVENT = UNKNOWN_EVENT,
+  ADDON_DIR = ADDON_DIR,
 }
 
 ---------------------------------------------------------------------------

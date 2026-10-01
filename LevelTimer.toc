@@ -4,7 +4,7 @@
 ## Author: Nerzal
 ## Notes: Statistics per level and per session (play time, XP rate, kills, deaths and more) with history for all characters
 ## Notes-deDE: Statistiken pro Level und pro Session (Spielzeit, XP-Rate, Kills, Tode und mehr) mit Historie für alle Charaktere
-## IconTexture: Interface\Icons\INV_Misc_PocketWatch_01
+## IconTexture: Interface\AddOns\LevelTimer\Media\Icon
 ## AddonCompartmentFunc: LevelTimer_OnAddonCompartmentClick
 ## SavedVariables: LevelTimerDB, LevelTimerStatsDB
 # LevelTimerCharDB: veraltet, nur noch geladen, um alte Daten in LevelTimerStatsDB zu übernehmen

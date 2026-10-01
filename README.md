@@ -81,6 +81,7 @@ Manual install: run `make package` (or download a release) and unzip it into `<W
 ```sh
 make test         # addon scenarios + installer tests
 make test-addon   # only the addon scenarios
+make artwork      # regenerate logo (curseforge/logo.png) and icon (Media/Icon.tga)
 ```
 
 The addon tests run without the game: `tests/wow_stub.lua` fakes the parts of the WoW API the addon uses, and each `tests/*_test.lua` plays through one scenario (login, kills, deaths, level-up, ...) in a fresh Lua 5.1 state. They check the logic, not the rendering, so a quick check in game is still worthwhile.
