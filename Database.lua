@@ -9,17 +9,20 @@ ns.Database = Database
 
 local SETTINGS_DEFAULTS = {
   language = ns.DefaultLanguage(),
-  fontSize = 16,
+  scale = 1,  -- Größe des Fensters samt Inhalt (siehe TimerWindow.lua)
   bgAlpha = 0.8,
   locked = false,
   showTimer = true,
   windowScope = "level",  -- "level" oder "session" (siehe Stats.lua)
   -- Stat-Zeilen im Fenster (siehe StatLines.lua)
   showXpRate = true,
-  showKills = true,
+  showLevelEta = true,
+  showPveKills = true,
+  showPvpKills = true,
   showDeaths = true,
-  showXpSources = true,
-  showRested = true,
+  showKillsPerDeath = false,
+  showXpSources = false,
+  showRested = false,
   showQuests = true,
   showMoney = true,
   minimap = { hide = false, angle = 225 },
@@ -52,6 +55,8 @@ local CHARACTER_DEFAULTS = {
   },
   levelHistory = {},    -- abgeschlossene Level, Schlüssel = Level
   sessionHistory = {},  -- beendete Sessions, älteste zuerst
+  killLog = {},         -- getötete Kreaturen und Spieler, älteste zuerst (siehe Journal.lua)
+  deathLog = {},        -- eigene Tode mit Ursache, älteste zuerst (siehe Journal.lua)
 }
 
 -- Migrationen für die Daten eines Charakters, Schlüssel = Zielversion.
@@ -67,6 +72,33 @@ local characterMigrations = {
     data.currentLevel = { level = data.level, counters = data.counters }
     data.levelHistory = data.history
     data.level, data.counters, data.history = nil, nil, nil
+  end,
+}
+
+-- Migrationen für die Einstellungen, Schlüssel = Zielversion
+local SETTINGS_SCHEMA_VERSION = 3
+local OLD_DEFAULT_FONT_SIZE = 16
+local settingsMigrations = {
+  [2] = function(settings)  -- feste Schriftgröße der Zeitanzeige -> Skalierung des ganzen Fensters
+    if settings.fontSize then
+      settings.scale = settings.fontSize / OLD_DEFAULT_FONT_SIZE
+    end
+    settings.fontSize = nil
+  end,
+  -- Zeilen mit mehreren Werten wurden aufgeteilt; neue Schalter übernehmen den alten Zustand:
+  -- Kills -> PvE + PvP, XP/h -> + Zeit bis Level-Up, Tode -> + Kills pro Tod
+  [3] = function(settings)
+    if settings.showKills ~= nil then
+      settings.showPveKills = settings.showKills
+      settings.showPvpKills = settings.showKills
+    end
+    if settings.showXpRate ~= nil then
+      settings.showLevelEta = settings.showXpRate
+    end
+    if settings.showDeaths ~= nil then
+      settings.showKillsPerDeath = settings.showDeaths
+    end
+    settings.showKills = nil
   end,
 }
 
@@ -125,7 +157,9 @@ end
 -- Erst ab PLAYER_LOGIN aufrufen, vorher hat der Client die SavedVariables nicht geladen.
 -- Rückgabe: Einstellungen, Schlüssel und Daten des eingeloggten Charakters.
 function Database.Load()
-  LevelTimerDB = applyDefaults(LevelTimerDB or {}, SETTINGS_DEFAULTS)
+  LevelTimerDB = LevelTimerDB or {}
+  migrate(LevelTimerDB, settingsMigrations, SETTINGS_SCHEMA_VERSION)
+  applyDefaults(LevelTimerDB, SETTINGS_DEFAULTS)
   LevelTimerStatsDB = applyDefaults(LevelTimerStatsDB or {}, { characters = {} })
   local characterKey, character = loadCharacter(LevelTimerStatsDB)
   return LevelTimerDB, characterKey, character

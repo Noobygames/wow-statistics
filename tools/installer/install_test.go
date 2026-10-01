@@ -238,3 +238,26 @@ func TestVersionTokenIsReplacedOnInstall(t *testing.T) {
 		t.Error("eingesetzte Version darf nicht als Änderung gelten")
 	}
 }
+
+func TestMediaFilesAreInstalledWithoutTocEntry(t *testing.T) {
+	a, f := setup(t)
+	writeFile(t, filepath.Join(a.Dir, "Media", "Icon.tga"), "icon")
+	a, err := LoadAddon(a.Dir, "v2")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if a.Files[len(a.Files)-1] != "Media/Icon.tga" {
+		t.Fatalf("Files = %v", a.Files)
+	}
+
+	p, err := BuildPlan(a, f)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := p.Apply(a); err != nil {
+		t.Fatal(err)
+	}
+	if got := readFile(t, filepath.Join(p.Target, "Media", "Icon.tga")); got != "icon" {
+		t.Errorf("Icon.tga = %q", got)
+	}
+}

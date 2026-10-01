@@ -17,12 +17,14 @@ A small, movable window shows either your current level or your current session.
 - **Quests** turned in
 - **Income**: money earned from loot, quests, sales and mail
 
-Every line can be switched on or off.
+Shown as a clear table, label left and value right. Every value can be switched on or off on its own, e.g. PvE and PvP kills separately.
 
 ### History and evaluation
 
 - **Levels**: play time, XP/h, kills, deaths, quests and gold of every finished level, saved automatically on level-up
 - **Sessions**: start, duration, level range, XP/h, kills, deaths, quests and gold of every past session
+- **Kills**: every killed creature and player with time, name, PvE/PvP, level and zone
+- **Deaths**: every death with time, cause (enemy and spell, or falling, drowning, ...), level and zone. Retail hides the combat log from addons, so the cause shows as "Unknown" there.
 - A **Total** row sums everything up
 - Browse **all your characters** from any character
 
@@ -31,12 +33,14 @@ A session runs from login to logout. A `/reload` or a short break (up to 5 minut
 ### Settings
 
 - Language: English or German
-- Font size and background opacity
-- Lock the window, show or hide the window and the minimap button
+- Window size (also by dragging the bottom right corner) and background opacity
+- Lock, show or hide the window, reset position and size
+- Show or hide the minimap button
 - One toggle per statistic
 
 ## Usage
 
+- **Window**: drag the bottom right corner to resize, right-click to open the settings
 - **Minimap button**: left-click opens the settings, Shift-left-click the history, right-click shows or hides the window, drag to move the button
 - On Retail, LevelTimer also appears in the addon compartment menu
 
@@ -44,10 +48,12 @@ A session runs from login to logout. A `/reload` or a short break (up to 5 minut
 |---|---|
 | `/lt` or `/lt config` | Open settings |
 | `/lt history` | Open the history |
-| `/lt lock` / `/lt unlock` | Lock or unlock the window position |
+| `/lt lock` / `/lt unlock` | Lock or unlock the window position and size |
+| `/lt reset` | Reset window position and size |
 | `/lt show` / `/lt hide` | Show or hide the window |
 | `/lt sync` | Re-sync play time with the server |
 | `/lt minimap` | Toggle the minimap button |
+| `/lt debug` | Show every XP message in chat and whether it counted as a kill (troubleshooting) |
 
 `/leveltimer` works as an alias for `/lt`.
 

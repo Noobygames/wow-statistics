@@ -1,5 +1,6 @@
--- Historie und Auswertung: Level- und Session-Einträge aller Charaktere.
+-- Historie und Auswertung: Level-, Session-, Kill- und Tod-Einträge aller Charaktere.
 --
+-- Kill- und Tod-Einträge: siehe Journal.lua
 -- Level-Eintrag:   { level, seconds, xp, counters, completedAt }
 -- Session-Eintrag: { startedAt, endedAt, seconds, startLevel, endLevel, xp, counters }
 -- isCurrent markiert das noch laufende Level bzw. die laufende Session.
@@ -12,6 +13,15 @@ ns.History = History
 
 local function isLoggedIn(characterKey)
   return characterKey == ns.characterKey
+end
+
+-- Einträge einer Liste (älteste zuerst gespeichert), neueste zuerst
+local function newestFirst(list)
+  local records = {}
+  for i = #list, 1, -1 do
+    table.insert(records, list[i])
+  end
+  return records
 end
 
 function History.GetCharacter(characterKey)
@@ -70,14 +80,19 @@ end
 
 -- Neueste zuerst, laufende (bzw. letzte) Session vorne
 function History.GetSessionRecords(characterKey)
-  local records = {}
-  local archived = History.GetCharacter(characterKey).sessionHistory
-  for i = #archived, 1, -1 do
-    table.insert(records, archived[i])
-  end
+  local records = newestFirst(History.GetCharacter(characterKey).sessionHistory)
   local current = currentSessionRecord(characterKey)
   if current then table.insert(records, 1, current) end
   return records
+end
+
+-- Kills und Tode einzeln (Form siehe Journal.lua), neueste zuerst
+function History.GetKillLog(characterKey)
+  return newestFirst(History.GetCharacter(characterKey).killLog)
+end
+
+function History.GetDeathLog(characterKey)
+  return newestFirst(History.GetCharacter(characterKey).deathLog)
 end
 
 -- Auswertung: Summe über Einträge (Zeit, XP und alle Zähler)

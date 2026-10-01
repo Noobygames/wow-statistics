@@ -1,21 +1,24 @@
--- Einstellungsfenster. Jede Änderung geht über ns.Set/ns.ApplySettings,
--- refresh() spiegelt danach den aktuellen Stand in die Widgets.
+-- Einstellungsfenster in drei Abschnitten: Fenster, Statistiken, Allgemein.
+-- Jedes Steuerelement registriert eine refresh(db)-Funktion; nach jeder Änderung
+-- (ns.Set/ns.ApplySettings) zeigen alle den aktuellen Stand und die gewählte Sprache.
 local _, ns = ...
 local L = ns.L
 local Widgets = ns.Widgets
+local TimerWindow = ns.TimerWindow
 
-local WIDTH = 300
+local WIDTH = 320
 local MARGIN = 16
-local CONTENT_TOP = -50
-local LANGUAGE_COLUMN_WIDTH = 130
-local ROW_LABEL = 18
-local ROW_CHECKBOX = 28
-local ROW_SLIDER = 50
-local ROW_SECTION_GAP = 10
+local CONTENT_TOP = -42
+local COLUMN_WIDTH = 144
+local ROW_SECTION = 24
+local ROW_CHECKBOX = 26
+local ROW_SLIDER = 44
 local ROW_BUTTON = 30
-local STAT_COLUMNS = 2
-local STAT_COLUMN_WIDTH = 134
-local HISTORY_BUTTON_WIDTH = 150
+local ROW_LANGUAGE = 26
+local ROW_HINT = 30
+local SECTION_GAP = 8
+local BUTTON_HEIGHT = 22
+local LANGUAGE_TAB_GAP = 10
 
 local panel = Widgets.CreatePanel("LevelTimerOptions", 0.95)
 panel:SetWidth(WIDTH)
@@ -29,11 +32,18 @@ table.insert(UISpecialFrames, "LevelTimerOptions")  -- mit ESC schließen
 local closeButton = CreateFrame("Button", nil, panel, "UIPanelCloseButton")
 closeButton:SetPoint("TOPRIGHT", -2, -2)
 
-local header = panel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-header:SetPoint("TOP", 0, -14)
+local title = panel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+title:SetPoint("TOP", 0, -14)
 
--- Einfaches Zeilenlayout von oben nach unten
+---------------------------------------------------------------------------
+-- Bausteine: legen Steuerelemente von oben nach unten an
+---------------------------------------------------------------------------
+local refreshers = {}
 local nextRowY = CONTENT_TOP
+
+local function onRefresh(refresh)
+  table.insert(refreshers, refresh)
+end
 
 local function addRow(widget, height, stretch)
   widget:SetPoint("TOPLEFT", MARGIN, nextRowY)
@@ -41,98 +51,142 @@ local function addRow(widget, height, stretch)
   nextRowY = nextRowY - height
 end
 
--- Sprache
-local languageLabel = panel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-addRow(languageLabel, ROW_LABEL)
+local function addSection(labelKey)
+  if nextRowY ~= CONTENT_TOP then nextRowY = nextRowY - SECTION_GAP end
+  local header = Widgets.CreateSectionHeader(panel)
+  addRow(header, ROW_SECTION, true)
+  onRefresh(function() header:SetText(L[labelKey]) end)
+end
 
-local languageButtons = {}
-for i, language in ipairs(ns.languages) do
-  local checkbox = Widgets.CreateCheckbox(panel, function()
-    ns.Set("language", language.code)
+-- slider = { label, min, max, step, get(db) -> Wert, set(Wert), format(Wert) -> Anzeigetext }
+local function addSlider(slider)
+  local control = Widgets.CreateSlider(panel, slider.min, slider.max, slider.step, slider.set)
+  addRow(control, ROW_SLIDER, true)
+  onRefresh(function(db)
+    local value = slider.get(db)
+    control.label:SetText(L[slider.label])
+    control:SetValueSilently(value, slider.format(value))
   end)
-  checkbox:SetPoint("TOPLEFT", MARGIN + (i - 1) * LANGUAGE_COLUMN_WIDTH, nextRowY)
-  checkbox.label:SetText(language.name)
-  checkbox.languageCode = language.code
-  languageButtons[i] = checkbox
-end
-nextRowY = nextRowY - ROW_CHECKBOX - ROW_SECTION_GAP
-
--- Darstellung
-local fontSizeSlider = Widgets.CreateSlider(panel, 10, 32, 1, function(size)
-  ns.Set("fontSize", size)
-end)
-addRow(fontSizeSlider, ROW_SLIDER, true)
-
-local opacitySlider = Widgets.CreateSlider(panel, 0, 100, 5, function(percent)
-  ns.Set("bgAlpha", percent / 100)
-end)
-addRow(opacitySlider, ROW_SLIDER, true)
-
--- Schalter
-local function addToggle(onToggle)
-  local checkbox = Widgets.CreateCheckbox(panel, onToggle)
-  addRow(checkbox, ROW_CHECKBOX)
-  return checkbox
 end
 
-local lockToggle = addToggle(function(checked) ns.Set("locked", checked) end)
-local timerToggle = addToggle(function(checked) ns.Set("showTimer", checked) end)
-local minimapToggle = addToggle(function(checked) ns.SetMinimapHidden(not checked) end)
-nextRowY = nextRowY - ROW_SECTION_GAP
+-- Checkboxen in zwei Spalten; toggle = { label, get(db) -> bool, set(checked) }
+local function addToggles(toggles)
+  for i, toggle in ipairs(toggles) do
+    local column = (i - 1) % 2
+    local row = math.floor((i - 1) / 2)
+    local checkbox = Widgets.CreateCheckbox(panel, toggle.set)
+    checkbox:SetPoint("TOPLEFT", MARGIN + column * COLUMN_WIDTH, nextRowY - row * ROW_CHECKBOX)
+    onRefresh(function(db)
+      checkbox.label:SetText(L[toggle.label])
+      checkbox:SetChecked(toggle.get(db))
+    end)
+  end
+  nextRowY = nextRowY - math.ceil(#toggles / 2) * ROW_CHECKBOX
+end
 
--- Stat-Zeilen: Schalter in zwei Spalten, direkt aus ns.STAT_LINES erzeugt
-local statsLabel = panel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-addRow(statsLabel, ROW_LABEL)
+local function addButton(labelKey, onClick)
+  local button = Widgets.CreateButton(panel, WIDTH - 2 * MARGIN, BUTTON_HEIGHT, onClick)
+  addRow(button, ROW_BUTTON)
+  onRefresh(function() button:SetText(L[labelKey]) end)
+end
 
+-- Sprache: Beschriftung und ein Reiter je Sprache
+local function addLanguageChooser()
+  local label = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+  addRow(label, 0)
+  local anchor = label
+  for _, language in ipairs(ns.languages) do
+    local tab = Widgets.CreateTab(panel, "GameFontHighlight", function()
+      ns.Set("language", language.code)
+    end)
+    tab:SetPoint("LEFT", anchor, "RIGHT", LANGUAGE_TAB_GAP, 0)
+    anchor = tab
+    onRefresh(function(db)
+      tab:SetLabel(language.name)
+      tab:SetActive(db.language == language.code)
+    end)
+  end
+  nextRowY = nextRowY - ROW_LANGUAGE
+  onRefresh(function() label:SetText(L.LANGUAGE) end)
+end
+
+local function addHint(labelKey)
+  local hint = panel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+  hint:SetJustifyH("LEFT")
+  addRow(hint, ROW_HINT, true)
+  onRefresh(function() hint:SetText(L[labelKey]) end)
+end
+
+local function percent(value)
+  return value .. "%"
+end
+
+local function toPercent(fraction)
+  return math.floor(fraction * 100 + 0.5)
+end
+
+---------------------------------------------------------------------------
+-- Inhalt
+---------------------------------------------------------------------------
+addSection("SECTION_WINDOW")
+addSlider({
+  label = "WINDOW_SIZE",
+  min = toPercent(TimerWindow.MIN_SCALE),
+  max = toPercent(TimerWindow.MAX_SCALE),
+  step = 5,
+  get = function(db) return toPercent(db.scale) end,
+  set = function(value) ns.Set("scale", value / 100) end,
+  format = percent,
+})
+addSlider({
+  label = "BG_OPACITY",
+  min = 0,
+  max = 100,
+  step = 5,
+  get = function(db) return toPercent(db.bgAlpha) end,
+  set = function(value) ns.Set("bgAlpha", value / 100) end,
+  format = percent,
+})
+addToggles({
+  { label = "SHOW_TIMER", get = function(db) return db.showTimer end,
+    set = function(checked) ns.Set("showTimer", checked) end },
+  { label = "LOCK_FRAME", get = function(db) return db.locked end,
+    set = function(checked) ns.Set("locked", checked) end },
+})
+addButton("RESET_WINDOW", function() TimerWindow.ResetLayout() end)
+addHint("OPTIONS_HINT")
+
+-- Ein Schalter je Stat-Zeile, direkt aus ns.STAT_LINES
+addSection("STATISTICS")
 local statToggles = {}
 for i, line in ipairs(ns.STAT_LINES) do
-  local column = (i - 1) % STAT_COLUMNS
-  local row = math.floor((i - 1) / STAT_COLUMNS)
-  local checkbox = Widgets.CreateCheckbox(panel, function(checked)
-    ns.Set(line.setting, checked)
-  end)
-  checkbox:SetPoint("TOPLEFT", MARGIN + column * STAT_COLUMN_WIDTH, nextRowY - row * ROW_CHECKBOX)
-  checkbox.line = line
-  statToggles[i] = checkbox
+  statToggles[i] = {
+    label = line.label,
+    get = function(db) return db[line.setting] end,
+    set = function(checked) ns.Set(line.setting, checked) end,
+  }
 end
-nextRowY = nextRowY - math.ceil(#ns.STAT_LINES / STAT_COLUMNS) * ROW_CHECKBOX - ROW_SECTION_GAP
+addToggles(statToggles)
 
-local historyButton = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
-historyButton:SetSize(HISTORY_BUTTON_WIDTH, ROW_BUTTON - 6)
-historyButton:SetScript("OnClick", function() ns.ToggleHistory() end)
-addRow(historyButton, ROW_BUTTON)
+addSection("SECTION_GENERAL")
+addLanguageChooser()
+addToggles({
+  { label = "SHOW_MINIMAP", get = function(db) return not db.minimap.hide end,
+    set = function(checked) ns.SetMinimapHidden(not checked) end },
+})
+nextRowY = nextRowY - SECTION_GAP
+addButton("HISTORY", function() ns.ToggleHistory() end)
 
 panel:SetHeight(-nextRowY + MARGIN)
 
+---------------------------------------------------------------------------
+-- Aktualisierung
+---------------------------------------------------------------------------
 local function refresh(db)
-  header:SetText("LevelTimer - " .. L.SETTINGS)
-
-  languageLabel:SetText(L.LANGUAGE)
-  for _, checkbox in ipairs(languageButtons) do
-    checkbox:SetChecked(db.language == checkbox.languageCode)
+  title:SetText("LevelTimer - " .. L.SETTINGS)
+  for _, refreshControl in ipairs(refreshers) do
+    refreshControl(db)
   end
-
-  fontSizeSlider.label:SetText(L.FONT_SIZE)
-  fontSizeSlider:SetValueSilently(db.fontSize)
-
-  local opacityPercent = math.floor(db.bgAlpha * 100 + 0.5)
-  opacitySlider.label:SetText(L.BG_OPACITY)
-  opacitySlider:SetValueSilently(opacityPercent, opacityPercent .. "%")
-
-  lockToggle.label:SetText(L.LOCK_FRAME)
-  lockToggle:SetChecked(db.locked)
-  timerToggle.label:SetText(L.SHOW_TIMER)
-  timerToggle:SetChecked(db.showTimer)
-  minimapToggle.label:SetText(L.SHOW_MINIMAP)
-  minimapToggle:SetChecked(not db.minimap.hide)
-
-  statsLabel:SetText(L.STATISTICS)
-  for _, checkbox in ipairs(statToggles) do
-    checkbox.label:SetText(L[checkbox.line.label])
-    checkbox:SetChecked(db[checkbox.line.setting])
-  end
-
-  historyButton:SetText(L.HISTORY)
 end
 
 ns.RegisterApply(refresh)

@@ -31,9 +31,15 @@ wow = {
     dead = false,
     honorableKills = 0,
     shiftDown = false,
+    cursorX = 0,
+    cursorY = 0,
+    guid = "Player-1-0001",
+    zone = "Wald von Elwynn",
+    combatLog = {},          -- Rückgabewerte von CombatLogGetCurrentEventInfo
   },
   printed = {},
   UNKNOWN_EVENT = UNKNOWN_EVENT,
+  ADDON_DIR = ADDON_DIR,
 }
 
 ---------------------------------------------------------------------------
@@ -73,7 +79,14 @@ local frameMethods = {
   GetStringWidth = function(self) return #self._text * 6 end,
   GetWidth = function(self) return self._width end,
   SetWidth = function(self, width) self._width = width end,
-  SetSize = function(self, width) self._width = width end,
+  SetSize = function(self, width, height) self._width, self._height = width, height or self._height end,
+  GetHeight = function(self) return self._height end,
+  SetHeight = function(self, height) self._height = height end,
+  GetScale = function(self) return self._scale end,
+  SetScale = function(self, scale) self._scale = scale end,
+  GetLeft = function() return 100 end,
+  GetTop = function() return 500 end,
+  SetNormalTexture = function(self, texture) self._normalTexture = texture end,
   GetPoint = function() return "CENTER", nil, "CENTER", 0, 0 end,
   GetCenter = function() return 0, 0 end,
   GetEffectiveScale = function() return 1 end,
@@ -95,7 +108,10 @@ local frameMethods = {
 local function noop() end
 
 local function newFrame()
-  local frame = { _shown = true, _scripts = {}, _events = {}, _text = "", _width = 200, _checked = false }
+  local frame = {
+    _shown = true, _scripts = {}, _events = {}, _text = "",
+    _width = 200, _height = 100, _scale = 1, _checked = false, _normalTexture = "",
+  }
   frame.CreateFontString = function() return newFrame() end
   frame.CreateTexture = function() return newFrame() end
   table.insert(frames, frame)
@@ -140,6 +156,20 @@ function wow.click(text)
   return false
 end
 
+-- Erster Frame, für den predicate(frame) true liefert (z.B. ein Ziehgriff ohne Namen)
+function wow.findFrame(predicate)
+  for _, frame in ipairs(frames) do
+    if predicate(frame) then return frame end
+  end
+end
+
+-- Kampflog-Event in der Feldreihenfolge von CombatLogGetCurrentEventInfo senden
+-- (Zeit, Event, hideCaster, Quelle GUID/Name/Flags/RaidFlags, Ziel GUID/Name/Flags/RaidFlags, Zusatzfelder)
+function wow.combatLog(subevent, sourceName, destGUID, ...)
+  wow.state.combatLog = { wow.state.now, subevent, false, "Creature-1", sourceName, 0, 0, destGUID, "Ziel", 0, 0, ... }
+  wow.fire("COMBAT_LOG_EVENT_UNFILTERED")
+end
+
 function wow.logout()
   wow.fire("PLAYER_LOGOUT")
 end
@@ -157,10 +187,16 @@ end
 ---------------------------------------------------------------------------
 local state = wow.state
 
-CreateFrame = function() return newFrame() end
+-- Benannte Frames landen wie im Client als Global (z.B. LevelTimerFrame)
+CreateFrame = function(_, name)
+  local frame = newFrame()
+  if name then _G[name] = frame end
+  return frame
+end
 UIParent, Minimap, GameTooltip, GameFontNormalLarge = newFrame(), newFrame(), newFrame(), newFrame()
 UISpecialFrames, SlashCmdList = {}, {}
 COMBATLOG_XPGAIN_FIRSTPERSON = "%s stirbt, Ihr bekommt %d Erfahrung."
+COMBATLOG_HONORGAIN = "%s stirbt, ehrenhafter Sieg Rang: %s (Geschätzte Ehrenpunkte: %d)"
 C_Timer = { After = noop }
 ChatFrame_DisplayTimePlayed = noop
 date = os.date
@@ -181,6 +217,10 @@ function GetMaxPlayerLevel() return state.maxLevel end
 function GetXPExhaustion() return state.rested > 0 and state.rested or nil end
 function GetMoney() return state.money end
 function GetTime() return state.now end
+function GetCursorPosition() return state.cursorX, state.cursorY end
+function UnitGUID() return state.guid end
+function GetZoneText() return state.zone end
+function CombatLogGetCurrentEventInfo() return unpack(state.combatLog) end
 function time() return state.clock end
 function UnitName() return state.name end
 function GetRealmName() return state.realm end

@@ -14,6 +14,11 @@ local commands = {
     ns.Set("locked", false)
     ns.Print(L.UNLOCKED)
   end,
+  reset = function() ns.TimerWindow.ResetLayout() end,
+  debug = function()
+    ns.debug = not ns.debug  -- bewusst nicht gespeichert, gilt bis /reload
+    ns.Print(ns.debug and L.DEBUG_ON or L.DEBUG_OFF)
+  end,
   sync = function() ns.PlayedTime.Sync() end,
   show = function() ns.Set("showTimer", true) end,
   hide = function() ns.Set("showTimer", false) end,
