@@ -20,26 +20,37 @@ local rates = Analysis.XpRatePerLevel(key)
 expectNear("XP/h Level 10", rates[1].value, 900)
 expectNear("XP/h laufendes Level", rates[3].value, 600)
 
--- Kills: zwei heute, einer vor drei Tagen, einer außerhalb der 14 Tage
+-- Kills über die Kill-Meldung (zählt Journal und Tageswerte): zwei heute, einer vor drei Tagen,
+-- einer vor 20 Tagen, einer vor 40 Tagen (außerhalb der 30 Tage)
 local now = wow.state.clock
 local function killAt(timestamp, name)
   wow.state.clock = timestamp
-  Journal.AddKill(Journal.PVE, name)
+  wow.fire("CHAT_MSG_COMBAT_XP_GAIN", name .. " stirbt, Ihr bekommt 10 Erfahrung.")
 end
 killAt(now, "Wolf")
 killAt(now - 60, "Wolf")
 killAt(now - 3 * DAY, "Kobold")
 killAt(now - 20 * DAY, "Murloc")
-killAt(now, nil)  -- Name verborgen
+killAt(now - 40 * DAY, "Murloc")
 wow.state.clock = now
+Journal.AddKill(Journal.PVE, nil)  -- Name verborgen (nur Journal)
 
 local perDay = Analysis.KillsPerDay(key)
-expect("14 Tage", #perDay, 14)
-expect("heute zuletzt und hervorgehoben", perDay[14].highlight, true)
-expect("Kills heute", perDay[14].value, 3)
-expect("Kills vor drei Tagen", perDay[11].value, 1)
+expect("30 Tage", #perDay, 30)
+expect("heute zuletzt und hervorgehoben", perDay[30].highlight, true)
+expect("Kills heute", perDay[30].value, 2)
+expect("Kills vor drei Tagen", perDay[27].value, 1)
+expect("Kills vor 20 Tagen", perDay[10].value, 1)
 expect("Tage ohne Kills", perDay[1].value, 0)
-expect("Datumsbeschriftung", perDay[14].label, "14.10.")
+expect("Datumsbeschriftung", perDay[30].label, "14.10.")
+
+-- Langzeit: Tageswerte bleiben, auch wenn das Journal geleert wird
+addon.character.killLog = {}
+expect("Tageswerte unabhängig vom Journal", Analysis.KillsPerDay(key)[30].value, 2)
+for _, name in ipairs({ "Wolf", "Wolf", "Kobold", "Murloc" }) do
+  Journal.AddKill(Journal.PVE, name)
+end
+Journal.AddKill(Journal.PVE, nil)
 
 local top = Analysis.TopKills(key)
 expect("häufigster Gegner", top[1].label, "Wolf")

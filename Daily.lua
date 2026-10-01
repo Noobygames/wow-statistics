@@ -1,4 +1,4 @@
--- Tageswerte pro Charakter: ns.character.dailyStats["JJJJ-MM-TT"] = { seconds, ... }.
+-- Tageswerte pro Charakter: ns.character.dailyStats["JJJJ-MM-TT"] = { seconds, kills, deaths, xp }.
 -- Spielzeit wird beim Lesen und beim Logout verbucht und dabei an Mitternacht aufgeteilt.
 local _, ns = ...
 
@@ -19,11 +19,19 @@ function Daily.DayKey(timestamp)
   return date("%Y-%m-%d", timestamp)
 end
 
--- Tageseintrag holen oder anlegen
+-- Felder eines Tageseintrags. Kills, Tode und XP zählen hier dauerhaft mit, auch wenn
+-- das Journal alte Einzeleinträge wegen seines Limits verwirft (Langzeit-Graphen).
+local DAILY_FIELDS = { seconds = 0, kills = 0, deaths = 0, xp = 0 }
+
+-- Tageseintrag holen oder anlegen (fehlende Felder werden ergänzt)
 function Daily.Entry(dailyStats, timestamp)
   local key = Daily.DayKey(timestamp)
-  dailyStats[key] = dailyStats[key] or { seconds = 0 }
-  return dailyStats[key]
+  local entry = dailyStats[key] or {}
+  for field, default in pairs(DAILY_FIELDS) do
+    entry[field] = entry[field] or default
+  end
+  dailyStats[key] = entry
+  return entry
 end
 
 -- Spielzeit seit der letzten Verbuchung den jeweiligen Tagen gutschreiben
@@ -47,6 +55,22 @@ function Daily.GetStats(characterKey)
   end
   return ns.History.GetCharacter(characterKey).dailyStats
 end
+
+-- Zähler, die in die Tageswerte fließen
+local DAILY_COUNTERS = {
+  [ns.Stats.PVE_KILLS] = "kills",
+  [ns.Stats.PVP_KILLS] = "kills",
+  [ns.Stats.DEATHS] = "deaths",
+  [ns.Stats.XP_GAINED] = "xp",
+}
+
+ns.Stats.OnIncrement(function(counter, amount)
+  local field = DAILY_COUNTERS[counter]
+  if field then
+    local entry = Daily.Entry(ns.character.dailyStats, time())
+    entry[field] = entry[field] + amount
+  end
+end)
 
 ns.OnLogin(function()
   bookedUntil = time()

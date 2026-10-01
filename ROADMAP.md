@@ -9,7 +9,7 @@ Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt.
 - [x] 3. **Zonen-Auswertung** (M): XP/h, Kills und Tode pro Zone. Zeigt, welche Zone sich lohnt.
 - [x] 4. **Spielzeit pro Tag/Woche** (S): Graph aus den Sessions.
 - [x] 5. **XP-Verlauf in der Session** (M): Linie XP über Zeit, zeigt Pausen und Leerlauf.
-- [ ] 6. **Langzeit-Graphen trotz Limit** (M): alte Journal-Einträge vor dem Löschen zu Tageswerten zusammenfassen.
+- [x] 6. **Langzeit-Graphen trotz Limit** (M): alte Journal-Einträge vor dem Löschen zu Tageswerten zusammenfassen.
 
 ## Neue Daten
 
@@ -42,4 +42,4 @@ Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt.
 
 Nach Erledigen oben abhaken und hier kurz vermerken (Version, Nummer).
 
-- Nächstes Release: 1, 8, 13, 17, 22, 2, 3, 4, 5
+- Nächstes Release: 1, 8, 13, 17, 22, 2, 3, 4, 5, 6

@@ -12,7 +12,6 @@ local Analysis = {}
 ns.Analysis = Analysis
 
 local MAX_LEVEL_BARS = 30  -- neueste Level; mehr Balken werden zu schmal
-local KILL_DAYS = 14
 local TOP_COUNT = 10
 local SECONDS_PER_DAY = 86400
 
@@ -53,61 +52,49 @@ function Analysis.XpRatePerLevel(characterKey)
   return items
 end
 
--- Kills der letzten KILL_DAYS Tage (heute zuletzt), auch Tage ohne Kills
-function Analysis.KillsPerDay(characterKey)
-  local today = ns.Daily.StartOfDay(time())
-  local firstDay = today - (KILL_DAYS - 1) * SECONDS_PER_DAY
-  local counts = {}
-  for _, kill in ipairs(History.GetCharacter(characterKey).killLog) do
-    if kill.time >= firstDay then
-      local index = math.floor((ns.Daily.StartOfDay(kill.time) - firstDay) / SECONDS_PER_DAY + 0.5) + 1
-      counts[index] = (counts[index] or 0) + 1
-    end
-  end
+---------------------------------------------------------------------------
+-- Tages- und Wochenreihen aus den Tageswerten (Daily.lua). Diese bleiben auch erhalten,
+-- wenn das Journal alte Einzeleinträge verwirft, und eignen sich daher für lange Zeiträume.
+---------------------------------------------------------------------------
+local KILL_DAYS = 30
+local PLAYTIME_DAYS = 14
+local PLAYTIME_WEEKS = 8
+local DAYS_PER_WEEK = 7
 
+-- Summe eines Feldes über dayCount Tage ab firstDay (Mitternacht)
+local function sumDays(dailyStats, field, firstDay, dayCount)
+  local sum = 0
+  for offset = 0, dayCount - 1 do
+    local entry = dailyStats[ns.Daily.DayKey(firstDay + offset * SECONDS_PER_DAY)]
+    sum = sum + (entry and entry[field] or 0)
+  end
+  return sum
+end
+
+-- Eine Säule je Tag der letzten dayCount Tage, heute zuletzt und hervorgehoben
+local function perDay(characterKey, field, dayCount, formatValue)
+  local dailyStats = ns.Daily.GetStats(characterKey)
+  local today = ns.Daily.StartOfDay(time())
   local items = {}
-  for index = 1, KILL_DAYS do
-    local count = counts[index] or 0
+  for index = 1, dayCount do
+    local day = today - (dayCount - index) * SECONDS_PER_DAY
+    local value = sumDays(dailyStats, field, day, 1)
     table.insert(items, {
-      label = date(L.DAY_FORMAT, firstDay + (index - 1) * SECONDS_PER_DAY),
-      value = count,
-      text = tostring(count),
-      highlight = index == KILL_DAYS,
+      label = date(L.DAY_FORMAT, day),
+      value = value,
+      text = formatValue(value),
+      highlight = index == dayCount,
     })
   end
   return items
 end
 
----------------------------------------------------------------------------
--- Spielzeit pro Tag und Woche aus den Tageswerten (Daily.lua)
----------------------------------------------------------------------------
-local PLAYTIME_DAYS = 14
-local PLAYTIME_WEEKS = 8
-local DAYS_PER_WEEK = 7
-
-local function playTimeItem(label, seconds, highlight)
-  return { label = label, value = seconds, text = Format.Duration(seconds), highlight = highlight }
-end
-
--- Spielzeit der Tage ab firstDay (Mitternacht), dayCount Tage
-local function sumPlayTime(dailyStats, firstDay, dayCount)
-  local seconds = 0
-  for offset = 0, dayCount - 1 do
-    local entry = dailyStats[ns.Daily.DayKey(firstDay + offset * SECONDS_PER_DAY)]
-    seconds = seconds + (entry and entry.seconds or 0)
-  end
-  return seconds
+function Analysis.KillsPerDay(characterKey)
+  return perDay(characterKey, "kills", KILL_DAYS, tostring)
 end
 
 function Analysis.PlayTimePerDay(characterKey)
-  local dailyStats = ns.Daily.GetStats(characterKey)
-  local today = ns.Daily.StartOfDay(time())
-  local items = {}
-  for index = 1, PLAYTIME_DAYS do
-    local day = today - (PLAYTIME_DAYS - index) * SECONDS_PER_DAY
-    table.insert(items, playTimeItem(date(L.DAY_FORMAT, day), sumPlayTime(dailyStats, day, 1), index == PLAYTIME_DAYS))
-  end
-  return items
+  return perDay(characterKey, "seconds", PLAYTIME_DAYS, Format.Duration)
 end
 
 -- Wochen beginnen am Montag; Beschriftung = Datum des Montags
@@ -119,8 +106,13 @@ function Analysis.PlayTimePerWeek(characterKey)
   local items = {}
   for index = 1, PLAYTIME_WEEKS do
     local week = thisWeek - (PLAYTIME_WEEKS - index) * DAYS_PER_WEEK * SECONDS_PER_DAY
-    local seconds = sumPlayTime(dailyStats, week, DAYS_PER_WEEK)
-    table.insert(items, playTimeItem(date(L.DAY_FORMAT, week), seconds, index == PLAYTIME_WEEKS))
+    local seconds = sumDays(dailyStats, "seconds", week, DAYS_PER_WEEK)
+    table.insert(items, {
+      label = date(L.DAY_FORMAT, week),
+      value = seconds,
+      text = Format.Duration(seconds),
+      highlight = index == PLAYTIME_WEEKS,
+    })
   end
   return items
 end

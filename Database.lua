@@ -65,7 +65,7 @@ local CHARACTER_DEFAULTS = {
 
 -- Migrationen für die Daten eines Charakters, Schlüssel = Zielversion.
 -- Laufen auch für frische (leere) Daten und müssen daher fehlende Felder vertragen.
-Database.CHARACTER_SCHEMA_VERSION = 4
+Database.CHARACTER_SCHEMA_VERSION = 5
 local characterMigrations = {
   [2] = function(data)  -- kills (nur PvE) -> counters.pveKills
     data.counters = data.counters or {}
@@ -84,6 +84,17 @@ local characterMigrations = {
         local entry = ns.Daily.Entry(data.dailyStats, session.startedAt)
         entry.seconds = entry.seconds + session.seconds
       end
+    end
+  end,
+  [5] = function(data)  -- Tageswerte zählen Kills und Tode: aus dem vorhandenen Journal übernehmen
+    data.dailyStats = data.dailyStats or {}
+    for _, kill in ipairs(data.killLog or {}) do
+      local entry = ns.Daily.Entry(data.dailyStats, kill.time)
+      entry.kills = entry.kills + 1
+    end
+    for _, death in ipairs(data.deathLog or {}) do
+      local entry = ns.Daily.Entry(data.dailyStats, death.time)
+      entry.deaths = entry.deaths + 1
     end
   end,
 }
