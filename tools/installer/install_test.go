@@ -215,3 +215,26 @@ func TestNormalizeRoot(t *testing.T) {
 		t.Errorf("got %q", got)
 	}
 }
+
+func TestVersionTokenIsReplacedOnInstall(t *testing.T) {
+	a, f := setup(t)
+	writeFile(t, filepath.Join(a.Dir, "LevelTimer.toc"), "## Version: "+VersionToken+"\nLocales.lua\nLevelTimer.lua\n")
+	p, err := BuildPlan(a, f)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := p.Apply(a); err != nil {
+		t.Fatal(err)
+	}
+	if got := readFile(t, filepath.Join(p.Target, "LevelTimer.toc")); !strings.Contains(got, "## Version: v2\n") {
+		t.Errorf("toc = %q", got)
+	}
+
+	again, err := BuildPlan(a, f)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if again.HasChanges() {
+		t.Error("eingesetzte Version darf nicht als Änderung gelten")
+	}
+}

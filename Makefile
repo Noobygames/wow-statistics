@@ -6,7 +6,7 @@ RUN       := go -C $(INSTALLER) run . -src "$(CURDIR)" -version "$(VERSION)"
 # Zusätzliche Flags, z.B. make install ARGS="-flavors retail -wow 'D:/Games/World of Warcraft'"
 ARGS ?=
 
-.PHONY: install update dry-run test test-addon test-installer vet
+.PHONY: install update dry-run package test test-addon test-installer vet
 
 # Interaktiver Wizard: Flavors wählen, Plan ansehen, bestätigen
 install:
@@ -19,6 +19,10 @@ update:
 # Nur anzeigen, was passieren würde
 dry-run:
 	$(RUN) -dry-run -yes $(ARGS)
+
+# ZIP für CurseForge oder manuelle Installation: dist/LevelTimer-<version>.zip
+package:
+	$(RUN) -package "$(CURDIR)/dist/LevelTimer-$(VERSION).zip"
 
 test: test-addon test-installer
 

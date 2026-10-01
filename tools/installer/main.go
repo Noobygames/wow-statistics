@@ -1,5 +1,5 @@
-// Installer kopiert das Addon in die lokale WoW-Installation (alle gewählten Flavors).
-// Configs (WTF/SavedVariables) werden nie angefasst.
+// Installer kopiert das Addon in die lokale WoW-Installation (alle gewählten Flavors)
+// oder schreibt mit -package eine ZIP. Configs (WTF/SavedVariables) werden nie angefasst.
 package main
 
 import (
@@ -20,6 +20,7 @@ type options struct {
 	version string
 	yes     bool
 	dryRun  bool
+	pkgPath string
 }
 
 func main() {
@@ -30,13 +31,32 @@ func main() {
 	flag.StringVar(&o.version, "version", "dev", "Versionskennung fürs Manifest")
 	flag.BoolVar(&o.yes, "yes", false, "Keine Rückfragen, Defaults übernehmen")
 	flag.BoolVar(&o.dryRun, "dry-run", false, "Nur anzeigen, nichts schreiben")
+	flag.StringVar(&o.pkgPath, "package", "", "Statt zu installieren eine ZIP für CurseForge/manuelle Installation schreiben")
 	flag.Parse()
 
-	w := &wizard{in: bufio.NewReader(os.Stdin), out: os.Stdout, opts: o}
-	if err := w.run(); err != nil {
+	var err error
+	if o.pkgPath != "" {
+		err = runPackage(o)
+	} else {
+		w := &wizard{in: bufio.NewReader(os.Stdin), out: os.Stdout, opts: o}
+		err = w.run()
+	}
+	if err != nil {
 		fmt.Fprintln(os.Stderr, "Fehler:", err)
 		os.Exit(1)
 	}
+}
+
+func runPackage(o options) error {
+	addon, err := LoadAddon(o.src, o.version)
+	if err != nil {
+		return err
+	}
+	if err := WritePackage(addon, o.pkgPath); err != nil {
+		return err
+	}
+	fmt.Printf("Paket erstellt: %s\n", o.pkgPath)
+	return nil
 }
 
 type wizard struct {

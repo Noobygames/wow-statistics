@@ -1,0 +1,12 @@
+# Konfiguration für den BigWigs-Packager (.github/workflows/release.yml).
+# Ins Paket kommt alles außer den hier ignorierten Dateien; "make package" packt
+# dagegen nur die Dateien aus der .toc plus LICENSE. Neue Nicht-Addon-Dateien hier eintragen.
+package-as: LevelTimer
+
+ignore:
+  - tests
+  - tools
+  - curseforge
+  - Makefile
+  - README.md
+  - image.png

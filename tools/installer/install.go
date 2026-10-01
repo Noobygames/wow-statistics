@@ -92,7 +92,11 @@ func BuildPlan(a *Addon, f Flavor) (*Plan, error) {
 	}
 
 	for _, rel := range a.Files {
-		status, err := compareFile(filepath.Join(a.Dir, filepath.FromSlash(rel)), filepath.Join(target, filepath.FromSlash(rel)))
+		want, err := a.ReadFile(rel)
+		if err != nil {
+			return nil, err
+		}
+		status, err := compareFile(want, filepath.Join(target, filepath.FromSlash(rel)))
 		if err != nil {
 			return nil, err
 		}
@@ -114,12 +118,15 @@ func (p *Plan) Apply(a *Addon) error {
 		if f.Status == StatusUnchanged {
 			continue
 		}
-		src := filepath.Join(a.Dir, filepath.FromSlash(f.Path))
+		data, err := a.ReadFile(f.Path)
+		if err != nil {
+			return err
+		}
 		dst, err := safeJoin(p.Target, f.Path)
 		if err != nil {
 			return err
 		}
-		if err := copyFile(src, dst); err != nil {
+		if err := writeFileAtomic(dst, data); err != nil {
 			return fmt.Errorf("%s kopieren: %w", f.Path, err)
 		}
 	}
@@ -173,11 +180,8 @@ func safeJoin(base, rel string) (string, error) {
 	return joined, nil
 }
 
-func compareFile(src, dst string) (FileStatus, error) {
-	want, err := os.ReadFile(src)
-	if err != nil {
-		return 0, err
-	}
+// compareFile vergleicht den gewünschten Inhalt mit der installierten Datei
+func compareFile(want []byte, dst string) (FileStatus, error) {
 	have, err := os.ReadFile(dst)
 	switch {
 	case errors.Is(err, fs.ErrNotExist):
@@ -191,13 +195,9 @@ func compareFile(src, dst string) (FileStatus, error) {
 	}
 }
 
-// copyFile schreibt erst in eine temporäre Datei und benennt dann um,
+// writeFileAtomic schreibt erst in eine temporäre Datei und benennt dann um,
 // damit WoW nie eine halb geschriebene Datei liest.
-func copyFile(src, dst string) error {
-	data, err := os.ReadFile(src)
-	if err != nil {
-		return err
-	}
+func writeFileAtomic(dst string, data []byte) error {
 	if err := os.MkdirAll(filepath.Dir(dst), 0o755); err != nil {
 		return err
 	}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
 	"os"
 	"path"
@@ -16,6 +17,22 @@ type Addon struct {
 	Dir     string   // Quellverzeichnis
 	Files   []string // relative Pfade mit "/", inklusive der .toc selbst
 	Version string
+}
+
+// VersionToken in der .toc wird beim Installieren und Packen durch die Version ersetzt.
+// Der CurseForge-Packager ersetzt denselben Platzhalter.
+const VersionToken = "@project-version@"
+
+// ReadFile liefert den Inhalt einer Addon-Datei so, wie er installiert bzw. verpackt wird
+func (a *Addon) ReadFile(rel string) ([]byte, error) {
+	data, err := os.ReadFile(filepath.Join(a.Dir, filepath.FromSlash(rel)))
+	if err != nil {
+		return nil, err
+	}
+	if strings.EqualFold(path.Ext(rel), ".toc") {
+		data = bytes.ReplaceAll(data, []byte(VersionToken), []byte(a.Version))
+	}
+	return data, nil
 }
 
 func LoadAddon(dir, version string) (*Addon, error) {
