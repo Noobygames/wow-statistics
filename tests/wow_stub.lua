@@ -36,6 +36,8 @@ wow = {
     guid = "Player-1-0001",
     zone = "Wald von Elwynn",
     combatLog = {},          -- Rückgabewerte von CombatLogGetCurrentEventInfo
+    questTitle = nil,        -- Titel im offenen Quest-Abgabe-Dialog (GetTitleText)
+    questTitles = {},        -- C_QuestLog.GetTitleForQuestID je Quest-ID
   },
   printed = {},
   UNKNOWN_EVENT = UNKNOWN_EVENT,
@@ -238,6 +240,8 @@ function GetPVPSessionStats() return state.honorableKills end
 function IsShiftKeyDown() return state.shiftDown end
 function RequestTimePlayed() end
 function GetCoinTextureString(copper) return copper .. "c" end
+function GetTitleText() return state.questTitle end
+C_QuestLog = { GetTitleForQuestID = function(questID) return state.questTitles[questID] end }
 function strtrim(text) return (text:gsub("^%s+", ""):gsub("%s+$", "")) end
 
 ---------------------------------------------------------------------------

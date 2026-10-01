@@ -112,6 +112,10 @@ function History.GetDeathLog(characterKey)
   return newestFirst(History.GetCharacter(characterKey).deathLog)
 end
 
+function History.GetQuestLog(characterKey)
+  return newestFirst(History.GetCharacter(characterKey).questLog)
+end
+
 -- Vergleich aller Charaktere: eine Zeile je Charakter aus Level-Historie und laufendem Level.
 -- Sortiert nach durchschnittlicher Zeit je abgeschlossenem Level (schnellster zuerst, ohne Daten zuletzt).
 -- Eintrag: { name, realm, class, level, levelsCompleted, averageLevelSeconds, xpRate, counters, isCurrent }
