@@ -28,11 +28,15 @@ DeathCounter.lua
 QuestCounter.lua
 MoneyCounter.lua
 History.lua
+Analysis.lua
 
 # Oberfläche
 StatLines.lua
 TimerWindow.lua
+Charts.lua
 HistoryWindow.lua
+HistoryTables.lua
+HistoryCharts.lua
 MinimapButton.lua
 Options.lua
 Commands.lua

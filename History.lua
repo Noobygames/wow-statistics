@@ -6,6 +6,7 @@
 -- isCurrent markiert das noch laufende Level bzw. die laufende Session.
 -- Für den eingeloggten Charakter sind das Live-Werte, für andere der Stand ihres letzten Logouts.
 local _, ns = ...
+local L = ns.L
 local Stats = ns.Stats
 
 local History = {}
@@ -93,6 +94,19 @@ end
 
 function History.GetDeathLog(characterKey)
   return newestFirst(History.GetCharacter(characterKey).deathLog)
+end
+
+-- Todesursache als Text: Umgebung (z.B. "Sturz"), "Verursacher (Zauber)" oder "Unbekannt"
+function History.DeathCauseText(entry)
+  if entry.environment then
+    local key = "CAUSE_" .. string.upper(entry.environment)
+    local text = L[key]
+    return text ~= key and text or entry.environment  -- L liefert bei fehlendem Text den Schlüssel
+  end
+  if entry.killer and entry.spell then
+    return string.format("%s (%s)", entry.killer, entry.spell)
+  end
+  return entry.killer or entry.spell or L.CAUSE_UNKNOWN
 end
 
 -- Auswertung: Summe über Einträge (Zeit, XP und alle Zähler)

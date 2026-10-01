@@ -27,10 +27,11 @@ The history window shows, per character:
 
 - **Levels**: play time, XP/h, kills, deaths, quests and income of every finished level, saved on level-up.
 - **Sessions**: start, duration, level range, XP/h, kills, deaths, quests and income of every past session.
-- **Kills**: every killed creature and player with time, name, PvE/PvP, level and zone (newest 300).
-- **Deaths**: every death with time, cause, level and zone (newest 100). The cause is the last hit before dying: enemy and spell, or falling, drowning, lava and so on. Retail hides the combat log from addons, so there the cause stays "Unknown".
+- **Kills**: every killed creature and player with time, name, PvE/PvP, level and zone (newest 5000).
+- **Deaths**: every death with time, cause, level and zone (newest 1000). The cause is the last hit before dying: enemy and spell, or falling, drowning, lava and so on. Retail hides the combat log from addons, so there the cause stays "Unknown".
+- **Charts**: time per level, XP/h per level, kills per day (last 14 days), top enemies and death causes. Hover a column for the exact value.
 
-The running level or session is highlighted at the top, a **Total** row at the bottom sums everything up. Switch characters with the arrows. Open it with Shift-left-click on the minimap button, the button in the settings, or `/lt history`.
+The running level or session is highlighted at the top, a **Total** row at the bottom sums everything up. Long lists scroll smoothly with the mouse wheel, only the visible rows are drawn. Switch characters with the arrows. Open it with Shift-left-click on the minimap button, the button in the settings, or `/lt history`.
 
 Works across several game versions (Retail, Classic Era, Anniversary, ...) from a single `.toc`. Features a client doesn't support stay off silently. German and English UI.
 

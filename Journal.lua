@@ -12,8 +12,8 @@ ns.Journal = Journal
 Journal.PVE = "pve"
 Journal.PVP = "pvp"
 
-local MAX_KILLS = 300
-local MAX_DEATHS = 100
+Journal.MAX_KILLS = 5000  -- Historie zeigt per Lazy Load alle, gerendert werden nur sichtbare Zeilen
+Journal.MAX_DEATHS = 1000
 
 -- Neuen Eintrag anhängen und die ältesten über dem Limit verwerfen
 local function append(log, entry, limit)
@@ -32,7 +32,7 @@ function Journal.AddKill(kind, name)
   local entry = baseEntry()
   entry.kind = kind
   entry.name = name
-  append(ns.character.killLog, entry, MAX_KILLS)
+  append(ns.character.killLog, entry, Journal.MAX_KILLS)
 end
 
 -- cause = { killer, spell, environment }, Felder dürfen fehlen
@@ -41,5 +41,5 @@ function Journal.AddDeath(cause)
   entry.killer = cause.killer
   entry.spell = cause.spell
   entry.environment = cause.environment
-  append(ns.character.deathLog, entry, MAX_DEATHS)
+  append(ns.character.deathLog, entry, Journal.MAX_DEATHS)
 end

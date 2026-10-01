@@ -25,7 +25,8 @@ Shown as a clear table, label left and value right. Every value can be switched 
 - **Sessions**: start, duration, level range, XP/h, kills, deaths, quests and gold of every past session
 - **Kills**: every killed creature and player with time, name, PvE/PvP, level and zone
 - **Deaths**: every death with time, cause (enemy and spell, or falling, drowning, ...), level and zone. Retail hides the combat log from addons, so the cause shows as "Unknown" there.
-- A **Total** row sums everything up
+- **Charts**: time per level, XP/h per level, kills per day, top enemies and death causes
+- A **Total** row sums everything up; long lists scroll smoothly
 - Browse **all your characters** from any character
 
 A session runs from login to logout. A `/reload` or a short break (up to 5 minutes) continues it.

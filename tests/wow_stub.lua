@@ -221,7 +221,10 @@ function GetCursorPosition() return state.cursorX, state.cursorY end
 function UnitGUID() return state.guid end
 function GetZoneText() return state.zone end
 function CombatLogGetCurrentEventInfo() return unpack(state.combatLog) end
-function time() return state.clock end
+function time(dateTable)
+  if dateTable then return os.time(dateTable) end
+  return state.clock
+end
 function UnitName() return state.name end
 function GetRealmName() return state.realm end
 function UnitClass() return state.class, state.class end

@@ -29,8 +29,7 @@ panel:SetScript("OnDragStop", panel.StopMovingOrSizing)
 panel:Hide()
 table.insert(UISpecialFrames, "LevelTimerOptions")  -- mit ESC schließen
 
-local closeButton = CreateFrame("Button", nil, panel, "UIPanelCloseButton")
-closeButton:SetPoint("TOPRIGHT", -2, -2)
+Widgets.CreateCloseButton(panel)
 
 local title = panel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 title:SetPoint("TOP", 0, -14)
