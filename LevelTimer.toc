@@ -29,6 +29,7 @@ QuestCounter.lua
 MoneyCounter.lua
 History.lua
 Zones.lua
+Daily.lua
 Analysis.lua
 Forecast.lua
 

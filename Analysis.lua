@@ -53,20 +53,14 @@ function Analysis.XpRatePerLevel(characterKey)
   return items
 end
 
--- Mitternacht des Tages, in dem timestamp liegt
-local function startOfDay(timestamp)
-  local day = date("*t", timestamp)
-  return time({ year = day.year, month = day.month, day = day.day, hour = 0 })
-end
-
 -- Kills der letzten KILL_DAYS Tage (heute zuletzt), auch Tage ohne Kills
 function Analysis.KillsPerDay(characterKey)
-  local today = startOfDay(time())
+  local today = ns.Daily.StartOfDay(time())
   local firstDay = today - (KILL_DAYS - 1) * SECONDS_PER_DAY
   local counts = {}
   for _, kill in ipairs(History.GetCharacter(characterKey).killLog) do
     if kill.time >= firstDay then
-      local index = math.floor((startOfDay(kill.time) - firstDay) / SECONDS_PER_DAY + 0.5) + 1
+      local index = math.floor((ns.Daily.StartOfDay(kill.time) - firstDay) / SECONDS_PER_DAY + 0.5) + 1
       counts[index] = (counts[index] or 0) + 1
     end
   end
@@ -80,6 +74,53 @@ function Analysis.KillsPerDay(characterKey)
       text = tostring(count),
       highlight = index == KILL_DAYS,
     })
+  end
+  return items
+end
+
+---------------------------------------------------------------------------
+-- Spielzeit pro Tag und Woche aus den Tageswerten (Daily.lua)
+---------------------------------------------------------------------------
+local PLAYTIME_DAYS = 14
+local PLAYTIME_WEEKS = 8
+local DAYS_PER_WEEK = 7
+
+local function playTimeItem(label, seconds, highlight)
+  return { label = label, value = seconds, text = Format.Duration(seconds), highlight = highlight }
+end
+
+-- Spielzeit der Tage ab firstDay (Mitternacht), dayCount Tage
+local function sumPlayTime(dailyStats, firstDay, dayCount)
+  local seconds = 0
+  for offset = 0, dayCount - 1 do
+    local entry = dailyStats[ns.Daily.DayKey(firstDay + offset * SECONDS_PER_DAY)]
+    seconds = seconds + (entry and entry.seconds or 0)
+  end
+  return seconds
+end
+
+function Analysis.PlayTimePerDay(characterKey)
+  local dailyStats = ns.Daily.GetStats(characterKey)
+  local today = ns.Daily.StartOfDay(time())
+  local items = {}
+  for index = 1, PLAYTIME_DAYS do
+    local day = today - (PLAYTIME_DAYS - index) * SECONDS_PER_DAY
+    table.insert(items, playTimeItem(date(L.DAY_FORMAT, day), sumPlayTime(dailyStats, day, 1), index == PLAYTIME_DAYS))
+  end
+  return items
+end
+
+-- Wochen beginnen am Montag; Beschriftung = Datum des Montags
+function Analysis.PlayTimePerWeek(characterKey)
+  local dailyStats = ns.Daily.GetStats(characterKey)
+  local today = ns.Daily.StartOfDay(time())
+  local daysSinceMonday = (date("*t", today).wday + 5) % DAYS_PER_WEEK  -- wday: 1 = Sonntag
+  local thisWeek = today - daysSinceMonday * SECONDS_PER_DAY
+  local items = {}
+  for index = 1, PLAYTIME_WEEKS do
+    local week = thisWeek - (PLAYTIME_WEEKS - index) * DAYS_PER_WEEK * SECONDS_PER_DAY
+    local seconds = sumPlayTime(dailyStats, week, DAYS_PER_WEEK)
+    table.insert(items, playTimeItem(date(L.DAY_FORMAT, week), seconds, index == PLAYTIME_WEEKS))
   end
   return items
 end

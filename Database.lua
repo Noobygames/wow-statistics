@@ -60,11 +60,12 @@ local CHARACTER_DEFAULTS = {
   killLog = {},         -- getötete Kreaturen und Spieler, älteste zuerst (siehe Journal.lua)
   deathLog = {},        -- eigene Tode mit Ursache, älteste zuerst (siehe Journal.lua)
   zoneStats = {},       -- Spielzeit, XP, Kills und Tode je Zone (siehe Zones.lua)
+  dailyStats = {},      -- Tageswerte, Schlüssel "JJJJ-MM-TT" (siehe Daily.lua)
 }
 
 -- Migrationen für die Daten eines Charakters, Schlüssel = Zielversion.
 -- Laufen auch für frische (leere) Daten und müssen daher fehlende Felder vertragen.
-local CHARACTER_SCHEMA_VERSION = 3
+Database.CHARACTER_SCHEMA_VERSION = 4
 local characterMigrations = {
   [2] = function(data)  -- kills (nur PvE) -> counters.pveKills
     data.counters = data.counters or {}
@@ -75,6 +76,15 @@ local characterMigrations = {
     data.currentLevel = { level = data.level, counters = data.counters }
     data.levelHistory = data.history
     data.level, data.counters, data.history = nil, nil, nil
+  end,
+  [4] = function(data)  -- Tageswerte neu: Spielzeit bisheriger Sessions ihrem Starttag zuordnen
+    data.dailyStats = data.dailyStats or {}
+    for _, session in ipairs(data.sessionHistory or {}) do
+      if session.startedAt and session.seconds then
+        local entry = ns.Daily.Entry(data.dailyStats, session.startedAt)
+        entry.seconds = entry.seconds + session.seconds
+      end
+    end
   end,
 }
 
@@ -149,7 +159,7 @@ local function loadCharacter(stats)
   end
   LevelTimerCharDB = nil
 
-  migrate(data, characterMigrations, CHARACTER_SCHEMA_VERSION)
+  migrate(data, characterMigrations, Database.CHARACTER_SCHEMA_VERSION)
   applyDefaults(data, CHARACTER_DEFAULTS)
 
   data.name, data.realm = name, realm

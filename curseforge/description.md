@@ -29,7 +29,7 @@ Shown as a clear table, label left and value right. Every value can be switched 
 - **Deaths**: every death with time, cause (enemy and spell, or falling, drowning, ...), level and zone. Retail hides the combat log from addons, so the cause shows as "Unknown" there.
 - **Zones**: XP/h, kills and deaths per zone, so you see where leveling pays off
 - **Compare**: all your characters side by side, fastest leveler first
-- **Charts**: time per level, XP/h per level, kills per day, top enemies and death causes
+- **Charts**: time per level, XP/h per level, kills per day, top enemies, death causes, XP/h per zone and play time per day and week
 - A **Total** row sums everything up; long lists scroll smoothly
 - Browse **all your characters** from any character
 

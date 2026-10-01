@@ -37,4 +37,4 @@ expectNear("Zeit gespeichert", addon.character.zoneStats["Westfall"].seconds, 30
 
 SlashCmdList.LEVELTIMER("history")
 expectTrue("Reiter Zonen", wow.click("Zonen"))
-expectTrue("Diagramm XP/h je Zone", wow.click("XP/h je Zone"))
+expectTrue("Diagramm XP/h/Zone", wow.click("XP/h/Zone"))

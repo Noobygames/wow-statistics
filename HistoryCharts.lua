@@ -49,3 +49,5 @@ AddView(createChartView("CHART_KILLS_PER_DAY", "column", Analysis.KillsPerDay, t
 AddView(createChartView("CHART_TOP_KILLS", "rank", Analysis.TopKills))
 AddView(createChartView("CHART_DEATH_CAUSES", "rank", Analysis.DeathCauses))
 AddView(createChartView("CHART_ZONE_XP_RATE", "rank", Analysis.XpRatePerZone))
+AddView(createChartView("CHART_PLAYTIME_PER_DAY", "column", Analysis.PlayTimePerDay, Format.Duration))
+AddView(createChartView("CHART_PLAYTIME_PER_WEEK", "column", Analysis.PlayTimePerWeek, Format.Duration))

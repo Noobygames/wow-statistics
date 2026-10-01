@@ -14,7 +14,7 @@ wow.login({ level = 10 })
 local character = LevelTimerStatsDB.characters["Testchar-Testrealm"]
 expectTrue("Charakter unter Name-Realm angelegt", character ~= nil)
 expect("alte Datei geleert", LevelTimerCharDB, nil)
-expect("Schema-Version aktuell", character.schemaVersion, 3)
+expect("Schema-Version aktuell", character.schemaVersion, addon.Database.CHARACTER_SCHEMA_VERSION)
 expect("Name gespeichert", character.name, "Testchar")
 expect("Klasse gespeichert", character.class, "WARRIOR")
 

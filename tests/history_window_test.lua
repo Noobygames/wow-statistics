@@ -33,7 +33,7 @@ expect("Bildlauf zurückgesetzt", killTable.offset, 0)
 
 -- Graphen: alle Diagramme anklickbar
 expectTrue("Reiter Graphen", wow.click("Graphen"))
-for _, chart in ipairs({ "Zeit je Level", "XP/h je Level", "Kills je Tag", "Top-Gegner", "Todesursachen" }) do
+for _, chart in ipairs({ "Zeit/Level", "XP/h/Level", "Kills/Tag", "Top-Gegner", "Todesursachen", "XP/h/Zone", "Zeit/Tag", "Zeit/Woche" }) do
   expectTrue("Diagramm " .. chart, wow.click(chart))
 end
 
