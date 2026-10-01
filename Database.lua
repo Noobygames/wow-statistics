@@ -10,14 +10,31 @@ local SETTINGS_DEFAULTS = {
   bgAlpha = 0.8,
   locked = false,
   showTimer = true,
+  -- Stat-Zeilen im Fenster (siehe StatLines.lua)
+  showXpRate = true,
   showKills = true,
   showDeaths = true,
+  showXpSources = true,
+  showRested = true,
+  showQuests = true,
+  showMoney = true,
   minimap = { hide = false, angle = 225 },
 }
 
 local CHARACTER_DEFAULTS = {
   level = 0,  -- Level, auf das sich die Zähler beziehen
-  counters = { pveKills = 0, pvpKills = 0, deaths = 0 },
+  counters = {  -- Schlüssel siehe LevelStats.lua
+    pveKills = 0,
+    pvpKills = 0,
+    deaths = 0,
+    deadSeconds = 0,
+    quests = 0,
+    xpKills = 0,
+    xpQuests = 0,
+    xpRested = 0,
+    moneyEarned = 0,
+  },
+  history = {},  -- abgeschlossene Level, Schlüssel = Level (siehe LevelHistory.lua)
 }
 
 -- Migrationen für LevelTimerCharDB, Schlüssel = Zielversion.

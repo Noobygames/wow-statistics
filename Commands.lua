@@ -5,6 +5,7 @@ local L = ns.L
 local commands = {
   [""] = function() ns.ToggleOptions() end,
   config = function() ns.ToggleOptions() end,
+  history = function() ns.ToggleHistory() end,
   lock = function()
     ns.Set("locked", true)
     ns.Print(L.LOCKED)
