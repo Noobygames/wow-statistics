@@ -81,6 +81,8 @@ ns.STAT_LINES = {
   { setting = "showDeaths", label = "STAT_DEATHS", rows = { { label = "ROW_DEATHS", value = deaths } } },
   { setting = "showKillsPerDeath", label = "STAT_KILLS_PER_DEATH",
     rows = { { label = "ROW_KILLS_PER_DEATH", value = killsPerDeath } } },
+  { setting = "showNearDeaths", label = "STAT_NEAR_DEATHS",
+    rows = { { label = "ROW_NEAR_DEATHS", value = counter(Stats.NEAR_DEATHS) } } },
   { setting = "showXpSources", label = "STAT_XP_SOURCES", rows = {
     { label = "ROW_XP_KILLS", value = xpShare(1) },
     { label = "ROW_XP_QUESTS", value = xpShare(2) },

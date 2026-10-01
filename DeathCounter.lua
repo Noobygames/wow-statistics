@@ -65,11 +65,16 @@ if CombatLogGetCurrentEventInfo then
   ns.RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED", onCombatLogEvent)
 end
 
-local function takeDeathCause()
-  local cause = {}
+-- Letzter Treffer, falls frisch genug: { killer, spell, environment } (Felder können fehlen)
+function DeathCounter.PeekLastHit()
   if lastHit and GetTime() - lastHit.at <= LAST_HIT_MAX_AGE then
-    cause = lastHit
+    return { killer = lastHit.killer, spell = lastHit.spell, environment = lastHit.environment }
   end
+  return {}
+end
+
+local function takeDeathCause()
+  local cause = DeathCounter.PeekLastHit()
   lastHit = nil
   return cause
 end

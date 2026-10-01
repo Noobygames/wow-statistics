@@ -1,4 +1,4 @@
--- Journal: einzelne Kills, Tode, Quests, Beute und Instanz-Läufe des eingeloggten Charakters mit Zeitpunkt und Umständen.
+-- Journal: einzelne Kills, Tode, Quests, Beute, Instanz-Läufe und Beinahe-Tode des eingeloggten Charakters mit Zeitpunkt und Umständen.
 --
 -- Kill-Eintrag: { time, kind = "pve"|"pvp", name, classification, level, zone }
 -- Tod-Eintrag:  { time, level, zone, killer, spell, environment }
@@ -7,6 +7,7 @@
 -- Quest-Eintrag: { time, level, zone, questID, name, xp, money }
 -- Instanz-Lauf: { time, name, instanceType, seconds, level, xp, counters = { kills, deaths } }
 -- Beute:        { time, level, zone, link, name, quality, quantity, source }
+-- Beinahe-Tod:  { time, level, zone, lowestPercent, killer, spell, environment }
 local _, ns = ...
 
 local Journal = {}
@@ -20,6 +21,7 @@ Journal.MAX_DEATHS = 1000
 Journal.MAX_QUESTS = 2000
 Journal.MAX_INSTANCE_RUNS = 500
 Journal.MAX_LOOT = 2000
+Journal.MAX_NEAR_DEATHS = 500
 
 -- Neuen Eintrag anhängen und die ältesten über dem Limit verwerfen
 local function append(log, entry, limit)
@@ -50,6 +52,16 @@ function Journal.AddQuest(questID, name, xp, money)
   entry.xp = xp
   entry.money = money
   append(ns.character.questLog, entry, Journal.MAX_QUESTS)
+end
+
+-- lowestPercent = tiefster Lebensstand in Prozent, cause wie bei AddDeath
+function Journal.AddNearDeath(lowestPercent, cause)
+  local entry = baseEntry()
+  entry.lowestPercent = lowestPercent
+  entry.killer = cause.killer
+  entry.spell = cause.spell
+  entry.environment = cause.environment
+  append(ns.character.nearDeathLog, entry, Journal.MAX_NEAR_DEATHS)
 end
 
 -- item = { link, name, quality, quantity, source }

@@ -27,6 +27,7 @@ Session.lua
 Experience.lua
 KillCounter.lua
 DeathCounter.lua
+NearDeath.lua
 QuestCounter.lua
 Loot.lua
 MoneyCounter.lua

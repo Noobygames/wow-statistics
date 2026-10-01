@@ -40,6 +40,8 @@ wow = {
     questTitles = {},        -- C_QuestLog.GetTitleForQuestID je Quest-ID
     instance = nil,          -- { name, type } wenn in einer Instanz (IsInInstance)
     units = {},              -- weitere Einheiten: units.target = { name, classification, isPlayer }
+    health = 1000,
+    healthMax = 1000,
   },
   printed = {},
   UNKNOWN_EVENT = UNKNOWN_EVENT,
@@ -247,6 +249,8 @@ function UnitClassification(unit) return state.units[unit] and state.units[unit]
 function GetRealmName() return state.realm end
 function UnitClass() return state.class, state.class end
 function UnitIsDeadOrGhost() return state.dead end
+function UnitHealth() return state.health end
+function UnitHealthMax() return state.healthMax end
 function GetPVPSessionStats() return state.honorableKills end
 function IsShiftKeyDown() return state.shiftDown end
 function RequestTimePlayed() end

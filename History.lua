@@ -120,6 +120,10 @@ function History.GetLootLog(characterKey)
   return newestFirst(History.GetCharacter(characterKey).lootLog)
 end
 
+function History.GetNearDeathLog(characterKey)
+  return newestFirst(History.GetCharacter(characterKey).nearDeathLog)
+end
+
 -- Instanz-Läufe, neueste zuerst; ein laufender (bzw. beim letzten Logout offener) Lauf steht vorne
 function History.GetInstanceLog(characterKey)
   local character = History.GetCharacter(characterKey)

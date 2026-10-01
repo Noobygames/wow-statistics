@@ -24,6 +24,7 @@ local SETTINGS_DEFAULTS = {
   showSpecialKills = false,
   showDeaths = true,
   showKillsPerDeath = false,
+  showNearDeaths = false,
   showXpSources = false,
   showRested = false,
   showQuests = true,
@@ -45,6 +46,7 @@ local COUNTER_DEFAULTS = {
   moneyEarned = 0,
   eliteKills = 0,
   rareKills = 0,
+  nearDeaths = 0,
 }
 
 local CHARACTER_DEFAULTS = {
@@ -65,6 +67,7 @@ local CHARACTER_DEFAULTS = {
   questLog = {},        -- abgegebene Quests, älteste zuerst (siehe Journal.lua)
   instanceLog = {},     -- beendete Instanz-Läufe, älteste zuerst (siehe Instances.lua)
   lootLog = {},         -- seltene und bessere Beute, älteste zuerst (siehe Loot.lua)
+  nearDeathLog = {},    -- Beinahe-Tode, älteste zuerst (siehe NearDeath.lua)
   zoneStats = {},       -- Spielzeit, XP, Kills und Tode je Zone (siehe Zones.lua)
   dailyStats = {},      -- Tageswerte, Schlüssel "JJJJ-MM-TT" (siehe Daily.lua)
 }

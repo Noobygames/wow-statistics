@@ -13,6 +13,7 @@ Shows statistics in a small, movable window, either for your **current level** o
   - **PvP**: honorable kills.
   - **Elite and rare** kills (optional rows): enemies are classified when you target, hover or see their nameplate.
 - **Deaths**, with time spent dead or as a ghost and kills per death.
+- **Near deaths** (optional row): health dropped below 10 % and you survived (counted once health is back above 30 %).
 - **XP sources**: share of XP from kills, quests and other sources (exploration, professions, ...).
 - **Rested XP**: bonus XP gained from rest and its share of the XP.
 - **Level-up summary** in chat: how long the level took, kills, deaths and XP/h (can be turned off).
@@ -33,6 +34,7 @@ The history window shows, per character:
 - **Kills**: every killed creature and player with time, name, PvE/PvP, level and zone (newest 5000).
 - **Deaths**: every death with time, cause, level and zone (newest 1000). The cause is the last hit before dying: enemy and spell, or falling, drowning, lava and so on. Retail hides the combat log from addons, so there the cause stays "Unknown".
 - **Quests**: every quest turned in with time, name, XP, gold, level and zone (newest 2000).
+- **Near deaths**: time, lowest health, cause, level and zone of every close call.
 - **Loot**: rare and better items you received, with time, quantity and likely source (the enemy you just killed or the quest you just turned in).
 - **Instances**: every dungeon, raid and scenario run with duration, XP, kills and deaths, plus totals; a `/reload` inside continues the run.
 - **Zones**: play time, XP, XP/h, kills and deaths per zone, best XP/h first, so you see where leveling pays off.

@@ -23,6 +23,7 @@ Stats.XP_RESTED = "xpRested"
 Stats.MONEY_EARNED = "moneyEarned"
 Stats.ELITE_KILLS = "eliteKills"
 Stats.RARE_KILLS = "rareKills"
+Stats.NEAR_DEATHS = "nearDeaths"
 
 local function countersOf(scope)
   if scope == Stats.SESSION then

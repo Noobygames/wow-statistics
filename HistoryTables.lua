@@ -1,4 +1,4 @@
--- Tabellen der Historie: Level, Timeline, Sessions, Kills, Tode, Quests, Beute, Instanzen, Zonen, Vergleich.
+-- Tabellen der Historie: Level, Timeline, Sessions, Kills, Tode, Quests, Beute, Instanzen, Beinahe-Tode, Zonen, Vergleich.
 -- Lazy Load: Es gibt nur so viele Zeilen-Widgets, wie sichtbar sind; beim Scrollen
 -- (Mausrad oder Leiste) werden sie mit den passenden Einträgen neu gefüllt.
 -- So bleiben auch tausende Journal-Einträge flüssig.
@@ -163,6 +163,14 @@ local LOOT_COLUMNS = {
   { header = "HISTORY_QUANTITY", width = 40, value = function(r) return r.quantity or 1 end },
   { header = "HISTORY_SOURCE", width = 130, align = LEFT, value = function(r) return r.source or "-" end },
   levelColumn(40),
+}
+
+local NEAR_DEATH_COLUMNS = {
+  whenColumn(100),
+  { header = "HISTORY_LOWEST_HEALTH", width = 70, value = function(r) return (r.lowestPercent or 0) .. "%" end },
+  { header = "HISTORY_CAUSE", width = 180, align = LEFT, value = History.DeathCauseText },
+  levelColumn(40),
+  zoneColumn(110),
 }
 
 local ZONE_COLUMNS = {
@@ -349,6 +357,7 @@ addTable("HISTORY_TAB_DEATHS", JOURNAL, DEATH_COLUMNS, History.GetDeathLog, coun
 addTable("HISTORY_TAB_QUESTS", JOURNAL, QUEST_COLUMNS, History.GetQuestLog, countCells)
 addTable("HISTORY_TAB_LOOT", JOURNAL, LOOT_COLUMNS, History.GetLootLog, countCells)
 addTable("HISTORY_TAB_INSTANCES", JOURNAL, INSTANCE_COLUMNS, History.GetInstanceLog, summaryCells)
+addTable("HISTORY_TAB_NEAR_DEATHS", JOURNAL, NEAR_DEATH_COLUMNS, History.GetNearDeathLog, countCells)
 addTable("HISTORY_TAB_ZONES", nil, ZONE_COLUMNS, ns.Zones.GetRecords, summaryCells)
 
 -- Vergleich gilt für alle Charaktere, die Charakter-Auswahl spielt hier keine Rolle
