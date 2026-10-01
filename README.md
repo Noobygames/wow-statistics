@@ -44,7 +44,7 @@ The history window shows, per character:
 
 The running level or session is highlighted at the top, a **Total** row at the bottom sums everything up. Click a column header to sort (again to reverse), type in the filter box to search all columns; the total row then covers the filtered rows only. "Export" shows the visible rows as CSV, already selected: press Ctrl+C and paste them into a spreadsheet. Long lists scroll smoothly with the mouse wheel, only the visible rows are drawn. Switch characters with the arrows. Open it with Shift-left-click on the minimap button, the button in the settings, or `/lt history`.
 
-Works across several game versions (Retail, Classic Era, Anniversary, ...) from a single `.toc`. Features a client doesn't support stay off silently. German and English UI.
+Works across several game versions (Retail, Classic Era, Anniversary, ...) from a single `.toc`. Features a client doesn't support stay off silently. Available in English, German, French and Spanish.
 
 ### Minimap button and settings
 
@@ -53,7 +53,7 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 - **Data text** for Titan Panel, ElvUI, Bazooka and other LibDataBroker displays: play time and XP/h, tooltip with all enabled values, same clicks as the minimap button. Works when one of those addons is installed (LevelTimer does not bundle the library).
 - Resize the window by dragging its bottom right corner; text and everything else scale with it. Right-click the window to open the settings.
 - **Compact mode** (`/lt compact` or settings): only play time, XP bar and XP/h.
-- Settings, grouped into Window, Statistics and General: size, background opacity, show/lock window, reset position & size, one toggle per statistic, language (Deutsch / English) and the minimap button.
+- Settings, grouped into Window, Statistics and General: size, background opacity, show/lock window, reset position & size, one toggle per statistic, language (English, Deutsch, Français, Español) and the minimap button.
 
 ### Chat commands
 

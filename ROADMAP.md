@@ -35,11 +35,11 @@ Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt.
 - [ ] 20. **CurseForge-Upload aktivieren** (S): Projekt-ID und API-Key eintragen.
 - [ ] 21. **Wago und WoWInterface** (S): derselbe Packager lädt mit, braucht je einen Token.
 - [x] 22. **Tests bei jedem PR** (S): GitHub Action prüft PRs vor dem Merge; Node-20-Warnungen beheben.
-- [ ] 23. **Weitere Sprachen** (S–M): Französisch, Spanisch usw.
+- [x] 23. **Weitere Sprachen** (S–M): Französisch, Spanisch usw.
 - [ ] 24. **Todesursache in Retail** (M): prüfen, ob Retails Death Recap eine Ursache liefert.
 
 ## Erledigt
 
 Nach Erledigen oben abhaken und hier kurz vermerken (Version, Nummer).
 
-- Nächstes Release: 1, 8, 13, 17, 22, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 14, 15, 16, 18, 19
+- Nächstes Release: 1, 8, 13, 17, 22, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 14, 15, 16, 18, 19, 23

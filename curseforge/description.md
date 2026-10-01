@@ -43,7 +43,7 @@ A session runs from login to logout. A `/reload` or a short break (up to 5 minut
 
 ### Settings
 
-- Language: English or German
+- Language: English, German, French or Spanish
 - Window size (also by dragging the bottom right corner) and background opacity
 - Lock, show or hide the window, reset position and size
 - Show or hide the minimap button
