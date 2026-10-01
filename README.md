@@ -17,7 +17,7 @@ Shows statistics in a small, movable window, either for your **current level** o
 - **Quests** turned in.
 - **Income**: money earned (loot, quests, sales, mail); spending is not subtracted.
 
-Every line can be switched on or off in the settings. Level statistics restart on level-up. A session runs from login to logout; a `/reload` or a short break (up to 5 minutes) continues it.
+The window shows them as a table, label on the left and value on the right. Every value can be switched on or off on its own (e.g. PvE and PvP kills separately). Level statistics restart on level-up. A session runs from login to logout; a `/reload` or a short break (up to 5 minutes) continues it.
 
 Statistics are recorded separately for every character. They are stored account-wide, so you can look at all your characters from any of them.
 
@@ -27,6 +27,8 @@ The history window shows, per character:
 
 - **Levels**: play time, XP/h, kills, deaths, quests and income of every finished level, saved on level-up.
 - **Sessions**: start, duration, level range, XP/h, kills, deaths, quests and income of every past session.
+- **Kills**: every killed creature and player with time, name, PvE/PvP, level and zone (newest 300).
+- **Deaths**: every death with time, cause, level and zone (newest 100). The cause is the last hit before dying: enemy and spell, or falling, drowning, lava and so on. Retail hides the combat log from addons, so there the cause stays "Unknown".
 
 The running level or session is highlighted at the top, a **Total** row at the bottom sums everything up. Switch characters with the arrows. Open it with Shift-left-click on the minimap button, the button in the settings, or `/lt history`.
 
@@ -36,7 +38,8 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 
 - Left-click the minimap button (pocket watch) to open the settings, Shift-left-click for the history, right-click to show or hide the window, drag to move it around the minimap.
 - On Retail, LevelTimer also shows up in the addon compartment menu.
-- Settings: language (Deutsch / English), font size, background opacity, lock window, show window, show minimap button, and a toggle per statistic.
+- Resize the window by dragging its bottom right corner; text and everything else scale with it. Right-click the window to open the settings.
+- Settings, grouped into Window, Statistics and General: size, background opacity, show/lock window, reset position & size, one toggle per statistic, language (Deutsch / English) and the minimap button.
 
 ### Chat commands
 
@@ -44,10 +47,12 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 |---|---|
 | `/lt` or `/lt config` | Open settings |
 | `/lt history` | Open the history |
-| `/lt lock` / `/lt unlock` | Lock or unlock the window position |
+| `/lt lock` / `/lt unlock` | Lock or unlock the window position and size |
+| `/lt reset` | Reset window position and size |
 | `/lt show` / `/lt hide` | Show or hide the window |
 | `/lt sync` | Re-sync play time with the server |
 | `/lt minimap` | Toggle the minimap button |
+| `/lt debug` | Show every XP message in chat and whether it counted as a kill (troubleshooting) |
 
 `/leveltimer` works as an alias for `/lt`.
 

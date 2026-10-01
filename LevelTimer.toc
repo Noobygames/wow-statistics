@@ -19,6 +19,7 @@ Widgets.lua
 
 # Daten (ohne UI)
 Stats.lua
+Journal.lua
 PlayedTime.lua
 Session.lua
 Experience.lua

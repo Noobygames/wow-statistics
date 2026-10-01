@@ -29,6 +29,7 @@ local SLIDER_BACKDROP = {
 
 local INACTIVE_TAB_COLOR = { 0.55, 0.55, 0.55 }
 local TAB_PADDING = 8
+local SECTION_HEADER_HEIGHT = 18
 
 local CHECKBOX_SIZE = 26
 local SLIDER_HEIGHT = 17
@@ -132,4 +133,26 @@ function Widgets.CreateButton(parent, width, height, onClick)
   button:SetSize(width, height)
   button:SetScript("OnClick", onClick)
   return button
+end
+
+-- Abschnitts-Überschrift: Text mit feiner Linie bis zum rechten Rand
+function Widgets.CreateSectionHeader(parent)
+  local header = CreateFrame("Frame", nil, parent)
+  header:SetHeight(SECTION_HEADER_HEIGHT)
+
+  header.label = header:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  header.label:SetPoint("LEFT")
+
+  local line = header:CreateTexture(nil, "ARTWORK")
+  line:SetHeight(1)
+  line:SetPoint("LEFT", header.label, "RIGHT", 6, 0)
+  line:SetPoint("RIGHT")
+  local r, g, b = unpack(Widgets.COLORS.border)
+  line:SetColorTexture(r, g, b, 0.6)
+
+  function header:SetText(text)
+    self.label:SetText(text)
+  end
+
+  return header
 end

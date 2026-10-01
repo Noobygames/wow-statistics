@@ -3,15 +3,44 @@ wow.login({ playedSeconds = 600 })
 
 expect("unbekanntes Event -> false statt Fehler", addon.RegisterEvent(wow.UNKNOWN_EVENT, function() end), false)
 
--- Jede Stat-Zeile liefert Text, für Level und Session
-for _, line in ipairs(addon.STAT_LINES) do
-  for _, scope in ipairs({ addon.Stats.LEVEL, addon.Stats.SESSION }) do
-    local text = line.text(scope)
-    expectTrue("Text für " .. line.setting .. " (" .. scope .. ")", type(text) == "string" and text ~= "")
+-- Jede Stat-Zeile liefert einen Wert (Level und Session) und hat Texte und einen Default
+for _, stat in ipairs(addon.STAT_LINES) do
+  expectTrue("Default für " .. stat.setting, LevelTimerDB[stat.setting] ~= nil)
+  expectTrue("Locale-Key " .. stat.label, addon.L[stat.label] ~= stat.label)
+  for _, row in ipairs(stat.rows) do
+    expectTrue("Locale-Key " .. row.label, addon.L[row.label] ~= row.label)
+    for _, scope in ipairs({ addon.Stats.LEVEL, addon.Stats.SESSION }) do
+      local value = row.value(scope)
+      expectTrue("Wert für " .. row.label .. " (" .. scope .. ")", type(value) == "string" and value ~= "")
+    end
   end
-  expectTrue("Default für " .. line.setting, LevelTimerDB[line.setting] ~= nil)
-  expectTrue("Locale-Key " .. line.label, addon.L[line.label] ~= line.label)
 end
+
+-- Werte als reine Zahlen/Angaben, Bezeichnung steht separat
+wow.fire("CHAT_MSG_COMBAT_XP_GAIN", "Wolf stirbt, Ihr bekommt 100 Erfahrung.")
+local function rowValue(label)
+  for _, stat in ipairs(addon.STAT_LINES) do
+    for _, row in ipairs(stat.rows) do
+      if row.label == label then return row.value(addon.Stats.LEVEL) end
+    end
+  end
+end
+expect("PvE-Kills als Zahl", rowValue("ROW_PVE_KILLS"), "1")
+expect("PvP-Kills als Zahl", rowValue("ROW_PVP_KILLS"), "0")
+expect("Kills pro Tod ohne Tod", rowValue("ROW_KILLS_PER_DEATH"), "-")
+
+-- PvE und PvP einzeln abschaltbar
+addon.Set("showPvpKills", false)
+expect("PvP aus", LevelTimerDB.showPvpKills, false)
+expect("PvE bleibt an", LevelTimerDB.showPveKills, true)
+addon.Set("showPvpKills", true)
+
+-- Fehlersuche schreibt XP-Meldungen in den Chat
+SlashCmdList.LEVELTIMER("debug")
+local debugPrintedBefore = #wow.printed
+wow.fire("CHAT_MSG_COMBAT_XP_GAIN", "Wolf stirbt, Ihr bekommt 100 Erfahrung.")
+expectTrue("Debug-Ausgabe für Kill", (wow.printed[debugPrintedBefore + 1] or ""):find("Wolf", 1, true) ~= nil)
+SlashCmdList.LEVELTIMER("debug")
 
 -- Fenster zwischen Level und Session umschalten
 addon.Set("windowScope", addon.Stats.SESSION)
@@ -19,9 +48,9 @@ expect("Bereich Session", LevelTimerDB.windowScope, "session")
 addon.Set("windowScope", addon.Stats.LEVEL)
 
 -- Sprachwechsel greift sofort
-expect("deutscher Text", string.format(addon.L.DEATHS, 1), "Tode: 1")
+expect("deutscher Text", addon.L.ROW_DEATHS, "Tode")
 addon.Set("language", "enUS")
-expect("englischer Text", string.format(addon.L.DEATHS, 1), "Deaths: 1")
+expect("englischer Text", addon.L.ROW_DEATHS, "Deaths")
 
 -- Befehle
 SlashCmdList.LEVELTIMER("lock")
@@ -44,7 +73,7 @@ expectTrue("unbekannter Befehl zeigt Hilfe", wow.printed[printedBefore + 1]:find
 -- Fenster öffnen/schließen und Einstellungen ändern ohne Fehler
 SlashCmdList.LEVELTIMER("")
 SlashCmdList.LEVELTIMER("history")
-addon.Set("fontSize", 24)
+addon.Set("scale", 1.2)
 addon.Set("showMoney", false)
 wow.state.shiftDown = true
 LevelTimer_OnAddonCompartmentClick()
@@ -62,3 +91,9 @@ local iconFile = addon.Widgets.ICON:gsub("\\", "/"):gsub("^Interface/AddOns/Leve
 local handle = io.open(wow.ADDON_DIR .. "/" .. iconFile, "rb")
 expectTrue("Icon-Datei vorhanden: " .. iconFile, handle ~= nil)
 if handle then handle:close() end
+
+-- Einstellungen: Sprache über die Reiter wählen
+expectTrue("Sprach-Reiter English", wow.click("English"))
+expect("Sprache Englisch", LevelTimerDB.language, "enUS")
+expectTrue("Sprach-Reiter Deutsch", wow.click("Deutsch"))
+expect("Sprache Deutsch", LevelTimerDB.language, "deDE")
