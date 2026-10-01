@@ -31,6 +31,7 @@ ns.locales = {
     BG_OPACITY = "Hintergrund-Deckkraft",
     LOCK_FRAME = "Fenster fixieren",
     SHOW_TIMER = "Fenster anzeigen",
+    SHOW_XP_BAR = "XP-Balken",
     SHOW_MINIMAP = "Minimap-Button anzeigen",
     STATISTICS = "Statistiken",
 
@@ -178,6 +179,7 @@ ns.locales = {
     BG_OPACITY = "Background opacity",
     LOCK_FRAME = "Lock window",
     SHOW_TIMER = "Show window",
+    SHOW_XP_BAR = "XP bar",
     SHOW_MINIMAP = "Show minimap button",
     STATISTICS = "Statistics",
 

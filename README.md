@@ -7,6 +7,7 @@ Useful WoW addon (compatible with WoW Forever) to show statistics.
 Shows statistics in a small, movable window, either for your **current level** or your **current session** (switch with the "Level | Session" tabs at the top):
 
 - **Play time**: on this level synced with the server (`/played`), for the session since login; both counted up live.
+- **XP bar** with the rested bonus shown as a lighter segment (can be turned off).
 - **XP per hour**, the estimated play time until the next level and an estimate until max level (based on your recent levels).
 - **Kills**, split into:
   - **PvE**: every kill that granted experience, including group kills. Grey mobs and kills at max level don't count.

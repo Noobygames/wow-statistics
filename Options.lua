@@ -151,6 +151,8 @@ addToggles({
     set = function(checked) ns.Set("showTimer", checked) end },
   { label = "LOCK_FRAME", get = function(db) return db.locked end,
     set = function(checked) ns.Set("locked", checked) end },
+  { label = "SHOW_XP_BAR", get = function(db) return db.showXpBar end,
+    set = function(checked) ns.Set("showXpBar", checked) end },
 })
 addButton("RESET_WINDOW", function() TimerWindow.ResetLayout() end)
 addHint("OPTIONS_HINT")

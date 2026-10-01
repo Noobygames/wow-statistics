@@ -9,6 +9,7 @@ See how your leveling is really going. LevelTimer tracks your play time, XP per 
 A small, movable window shows either your current level or your current session. Switch with the **Level | Session** tabs.
 
 - **Play time**: on this level (synced with the server's `/played`) or in this session, counted up live
+- **XP bar** with rested bonus
 - **XP per hour**, the estimated play time until the next level and until max level
 - **Kills**, split into **PvE** (every kill that granted experience, including group kills), **PvP** (honorable kills) and optionally **elite** and **rare** kills
 - **Deaths**, with time spent dead or as a ghost and kills per death

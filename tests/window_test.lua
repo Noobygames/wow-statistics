@@ -46,3 +46,15 @@ window._scripts.OnMouseUp(window, "RightButton")
 expect("Einstellungen offen", LevelTimerOptions:IsShown(), true)
 window._scripts.OnMouseUp(window, "LeftButton")
 expect("Linksklick öffnet nichts", LevelTimerOptions:IsShown(), true)
+
+-- XP-Balken: braucht Platz im Fenster, nur beim Leveln
+wow.state.xp, wow.state.xpMax, wow.state.rested = 250, 1000, 200
+addon.Set("showXpBar", true)
+local withBar = window:GetHeight()
+addon.Set("showXpBar", false)
+local withoutBar = window:GetHeight()
+expectTrue("Balken vergrößert das Fenster", withBar > withoutBar)
+addon.Set("showXpBar", true)
+wow.state.level, addon.level = 60, 60
+addon.ApplySettings()
+expect("auf Max-Level kein Balken", window:GetHeight(), withoutBar)

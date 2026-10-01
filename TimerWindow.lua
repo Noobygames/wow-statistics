@@ -1,4 +1,4 @@
--- Anzeigefenster: Reiter "Level | Session", Spielzeit im gewählten Bereich und darunter
+-- Anzeigefenster: Reiter "Level | Session", Spielzeit im gewählten Bereich, XP-Balken und darunter
 -- eine Tabelle der eingeschalteten Stats (Bezeichnung links, Wert rechts).
 -- Größe: Ziehgriff unten rechts (erscheint bei Mauskontakt) oder Einstellung "scale" skaliert das ganze Fenster.
 -- Rechtsklick öffnet die Einstellungen.
@@ -26,6 +26,9 @@ local TABLE_GAP = 4                   -- Abstand zwischen Zeitanzeige und Tabell
 local WIDEST_TIME = "00d 00h 00m 00s" -- für die Fensterbreite
 local DEFAULT_POSITION = { "TOP", "TOP", 0, -120 }
 local DEFAULT_SCALE = 1
+local XP_BAR_HEIGHT = 6
+local XP_BAR_BACKGROUND = { 1, 1, 1, 0.1 }
+local XP_BAR_RESTED = { 0.3, 0.55, 1, 0.6 }
 
 local window = Widgets.CreatePanel("LevelTimerFrame", 0.8)
 window:Hide()  -- erst nach Login anzeigen, wenn Daten und Einstellungen bereitstehen
@@ -43,6 +46,20 @@ sessionTab:SetPoint("TOPLEFT", window, "TOP", TAB_GAP / 2, -PADDING_Y)
 
 local timeText = window:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 timeText:SetTextColor(unpack(Widgets.COLORS.highlight))
+
+-- XP-Balken unter der Zeit: Fortschritt im Level, Erholungs-Bonus als helleres Stück dahinter
+local xpBarBackground = window:CreateTexture(nil, "ARTWORK")
+xpBarBackground:SetColorTexture(unpack(XP_BAR_BACKGROUND))
+xpBarBackground:SetHeight(XP_BAR_HEIGHT)
+local xpBarRested = window:CreateTexture(nil, "ARTWORK", nil, 1)
+xpBarRested:SetColorTexture(unpack(XP_BAR_RESTED))
+xpBarRested:SetPoint("TOPLEFT", xpBarBackground)
+xpBarRested:SetHeight(XP_BAR_HEIGHT)
+local xpBarFill = window:CreateTexture(nil, "ARTWORK", nil, 2)
+xpBarFill:SetColorTexture(unpack(Widgets.COLORS.highlight))
+xpBarFill:SetPoint("TOPLEFT", xpBarBackground)
+xpBarFill:SetHeight(XP_BAR_HEIGHT)
+local xpBarParts = { xpBarBackground, xpBarRested, xpBarFill }
 
 -- Tabellenzeilen: Bezeichnung links, Wert rechtsbündig. Je Stat aus ns.STAT_LINES
 -- so viele Zeilen wie sie rows hat; stat.setting entscheidet über die Sichtbarkeit.
@@ -77,6 +94,18 @@ local function growToFitRows()
   end
 end
 
+-- Breiten von Fortschritt und Erholungs-Bonus aus XP, Bedarf und Erholungs-Pool
+local function refreshXpBar()
+  if not xpBarBackground:IsShown() then return end
+  local xpMax = UnitXPMax("player")
+  if xpMax <= 0 then return end
+  local barWidth = window:GetWidth() - 2 * PADDING_X
+  local xp = UnitXP("player")
+  local withRested = math.min(xpMax, xp + (GetXPExhaustion() or 0))
+  xpBarFill:SetWidth(math.max(1, barWidth * xp / xpMax))
+  xpBarRested:SetWidth(math.max(1, barWidth * withRested / xpMax))
+end
+
 local function refreshTexts()
   local scope = ns.db.windowScope
   levelTab:SetLabel(string.format(L.TAB_LEVEL, ns.level))
@@ -93,6 +122,7 @@ local function refreshTexts()
     end
   end
   growToFitRows()
+  refreshXpBar()
 end
 
 -- Sichtbare Zeilen untereinander unter die Zeit setzen, Fenstergröße aus Schriftgrößen berechnen.
@@ -106,6 +136,18 @@ local function updateLayout(db)
   timeText:ClearAllPoints()
   timeText:SetPoint("TOP", window, "TOP", 0, -y)
   y = y + fontSize(timeText) + TABLE_GAP
+
+  -- XP-Balken nur beim Leveln
+  local showXpBar = db.showXpBar and ns.Experience.IsLeveling()
+  for _, part in ipairs(xpBarParts) do
+    part:SetShown(showXpBar)
+  end
+  if showXpBar then
+    xpBarBackground:ClearAllPoints()
+    xpBarBackground:SetPoint("TOPLEFT", window, "TOPLEFT", PADDING_X, -y)
+    xpBarBackground:SetPoint("TOPRIGHT", window, "TOPRIGHT", -PADDING_X, -y)
+    y = y + XP_BAR_HEIGHT + TABLE_GAP
+  end
 
   for _, row in ipairs(rows) do
     local visible = db[row.setting]

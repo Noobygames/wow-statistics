@@ -13,6 +13,7 @@ local SETTINGS_DEFAULTS = {
   bgAlpha = 0.8,
   locked = false,
   showTimer = true,
+  showXpBar = true,
   windowScope = "level",  -- "level" oder "session" (siehe Stats.lua)
   -- Stat-Zeilen im Fenster (siehe StatLines.lua)
   showXpRate = true,
