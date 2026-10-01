@@ -1,17 +1,20 @@
 ## Interface: 120100, 11509, 20506, 16001
 ## Title: LevelTimer
-## Notes: Shows play time and kills on the current level
-## Notes-deDE: Zeigt Spielzeit und Kills auf dem aktuellen Level an
+## Notes: Shows play time, kills and deaths on the current level
+## Notes-deDE: Zeigt Spielzeit, Kills und Tode auf dem aktuellen Level an
 ## IconTexture: Interface\Icons\INV_Misc_PocketWatch_01
 ## AddonCompartmentFunc: LevelTimer_OnAddonCompartmentClick
 ## SavedVariables: LevelTimerDB
 ## SavedVariablesPerCharacter: LevelTimerCharDB
 
 Locales.lua
+Database.lua
 LevelTimer.lua
 Widgets.lua
+LevelStats.lua
 PlayedTime.lua
 KillCounter.lua
+DeathCounter.lua
 TimerWindow.lua
 MinimapButton.lua
 Options.lua
