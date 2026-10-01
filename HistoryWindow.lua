@@ -18,6 +18,8 @@ local CHARACTER_ROW_TOP = -40
 local TABS_TOP = -66
 local CONTENT_TOP = -90
 local ARROW_SIZE = 22
+local DELETE_BUTTON_WIDTH = 110
+local DELETE_BUTTON_HEIGHT = 20
 local TAB_GAP = 12
 local UPDATE_INTERVAL = 1  -- Sekunden; hält laufende Einträge aktuell
 
@@ -94,6 +96,31 @@ local nextButton = Widgets.CreateButton(panel, ARROW_SIZE, ARROW_SIZE, function(
 nextButton:SetText(">")
 nextButton:SetPoint("TOPRIGHT", -MARGIN, CHARACTER_ROW_TOP + 4)
 
+---------------------------------------------------------------------------
+-- Daten des gewählten Charakters löschen (mit Rückfrage)
+---------------------------------------------------------------------------
+local DELETE_POPUP = "LEVELTIMER_DELETE_CHARACTER"
+
+StaticPopupDialogs[DELETE_POPUP] = {
+  button1 = YES or "Yes",
+  button2 = NO or "No",
+  OnAccept = function(_, characterKey)
+    ns.DeleteCharacter(characterKey)
+    refresh()
+  end,
+  timeout = 0,
+  whileDead = true,
+  hideOnEscape = true,
+  preferredIndex = 3,  -- eigener Platz, kollidiert nicht mit Blizzard-Dialogen
+}
+
+local deleteButton = Widgets.CreateButton(panel, DELETE_BUTTON_WIDTH, DELETE_BUTTON_HEIGHT, function()
+  local character = History.GetCharacter(selectedCharacter)
+  StaticPopupDialogs[DELETE_POPUP].text = L.DELETE_CHARACTER_CONFIRM  -- aktuelle Sprache
+  StaticPopup_Show(DELETE_POPUP, (character.name or "?") .. " - " .. (character.realm or "?"), nil, selectedCharacter)
+end)
+deleteButton:SetPoint("TOPLEFT", MARGIN, HEADER_TOP + 4)
+
 local function showCharacterName(character)
   characterName:SetText(string.format(L.HISTORY_CHARACTER, character.name or "?", character.realm or "?",
     character.currentLevel.level))
@@ -114,6 +141,7 @@ function refresh()
   end
 
   header:SetText(L.HISTORY)
+  deleteButton:SetText(L.DELETE_CHARACTER)
   showCharacterName(History.GetCharacter(selectedCharacter))
 
   local selectionChanged = rendered.view ~= selectedView or rendered.character ~= selectedCharacter

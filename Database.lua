@@ -17,6 +17,8 @@ local SETTINGS_DEFAULTS = {
   -- Stat-Zeilen im Fenster (siehe StatLines.lua)
   showXpRate = true,
   showLevelEta = true,
+  showMaxLevelEta = true,
+  levelUpSummary = true,  -- Chatzeile beim Level-Up (siehe LevelUpSummary.lua)
   showPveKills = true,
   showPvpKills = true,
   showDeaths = true,
@@ -167,4 +169,9 @@ end
 
 function Database.GetCharacters()
   return LevelTimerStatsDB.characters
+end
+
+-- Entfernt alle Statistiken eines Charakters (Einstellungen bleiben unberührt)
+function Database.DeleteCharacter(characterKey)
+  LevelTimerStatsDB.characters[characterKey] = nil
 end

@@ -1,4 +1,4 @@
--- Tabellen der Historie: Level, Sessions, Kills, Tode.
+-- Tabellen der Historie: Level, Timeline, Sessions, Kills, Tode.
 -- Lazy Load: Es gibt nur so viele Zeilen-Widgets, wie sichtbar sind; beim Scrollen
 -- (Mausrad oder Leiste) werden sie mit den passenden Einträgen neu gefüllt.
 -- So bleiben auch tausende Journal-Einträge flüssig.
@@ -96,6 +96,17 @@ local SESSION_COLUMNS = {
   counterColumn("HISTORY_DEATHS", Stats.DEATHS, 40),
   counterColumn("HISTORY_QUESTS", Stats.QUESTS, 44),
   goldColumn(52),
+}
+
+local MILESTONE_COLUMNS = {
+  { header = "HISTORY_REACHED_LEVEL", width = 60, value = function(r) return r.reachedLevel end },
+  { header = "HISTORY_REACHED", width = 100, value = function(r) return dateTime(L.DATE_FORMAT, r.reachedAt) end },
+  { header = "HISTORY_TOTAL_PLAYED", width = 90, value = function(r)
+      return r.totalPlayed and Format.Duration(r.totalPlayed) or "?"
+    end },
+  { header = "HISTORY_LEVEL_DURATION", width = 80, value = function(r)
+      return r.seconds and Format.Duration(r.seconds) or "?"
+    end },
 }
 
 local KILL_COLUMNS = {
@@ -244,6 +255,9 @@ end
 
 ns.HistoryWindow.AddView(createTableView({
   tab = "HISTORY_TAB_LEVELS", columns = LEVEL_COLUMNS, records = History.GetLevelRecords, footer = summaryCells,
+}))
+ns.HistoryWindow.AddView(createTableView({
+  tab = "HISTORY_TAB_TIMELINE", columns = MILESTONE_COLUMNS, records = History.GetMilestones, footer = countCells,
 }))
 ns.HistoryWindow.AddView(createTableView({
   tab = "HISTORY_TAB_SESSIONS", columns = SESSION_COLUMNS, records = History.GetSessionRecords, footer = summaryCells,

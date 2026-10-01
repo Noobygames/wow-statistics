@@ -1,0 +1,20 @@
+# Tests bei jedem Pull Request und jedem Push auf main, damit Fehler vor dem Merge auffallen.
+name: Test
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: "1.23"
+          cache-dependency-path: tools/*/go.sum
+      - run: make vet
+      - run: make test

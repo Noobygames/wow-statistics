@@ -195,6 +195,11 @@ CreateFrame = function(_, name)
 end
 UIParent, Minimap, GameTooltip, GameFontNormalLarge = newFrame(), newFrame(), newFrame(), newFrame()
 UISpecialFrames, SlashCmdList = {}, {}
+StaticPopupDialogs, YES, NO = {}, "Ja", "Nein"
+-- Dialog nicht anzeigen, sondern merken; Tests bestätigen mit StaticPopupDialogs[name].OnAccept
+function StaticPopup_Show(name, textArg1, textArg2, data)
+  wow.popup = { name = name, text = textArg1, data = data }
+end
 COMBATLOG_XPGAIN_FIRSTPERSON = "%s stirbt, Ihr bekommt %d Erfahrung."
 COMBATLOG_HONORGAIN = "%s stirbt, ehrenhafter Sieg Rang: %s (Geschätzte Ehrenpunkte: %d)"
 C_Timer = { After = noop }

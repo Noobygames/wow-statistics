@@ -80,12 +80,23 @@ function ns.OnLogout(callback)
   table.insert(logoutCallbacks, callback)
 end
 
-ns.RegisterEvent("PLAYER_LOGIN", function()
+local function startTracking()
   ns.db, ns.characterKey, ns.character = ns.Database.Load()
   ns.level = UnitLevel("player")
   runAll(loginCallbacks)
   ns.ApplySettings()
-end)
+end
+
+ns.RegisterEvent("PLAYER_LOGIN", startTracking)
+
+-- Statistiken eines Charakters löschen. Beim eingeloggten Charakter beginnt die Aufzeichnung
+-- sofort neu (wie bei einem frischen Login); alle Module initialisieren sich über OnLogin.
+function ns.DeleteCharacter(characterKey)
+  ns.Database.DeleteCharacter(characterKey)
+  if characterKey == ns.characterKey then
+    startTracking()
+  end
+end
 
 ns.RegisterEvent("PLAYER_LOGOUT", function()
   runAll(logoutCallbacks)

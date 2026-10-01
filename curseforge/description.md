@@ -9,19 +9,21 @@ See how your leveling is really going. LevelTimer tracks your play time, XP per 
 A small, movable window shows either your current level or your current session. Switch with the **Level | Session** tabs.
 
 - **Play time**: on this level (synced with the server's `/played`) or in this session, counted up live
-- **XP per hour** and the estimated play time until the next level
+- **XP per hour**, the estimated play time until the next level and until max level
 - **Kills**, split into **PvE** (every kill that granted experience, including group kills) and **PvP** (honorable kills)
 - **Deaths**, with time spent dead or as a ghost and kills per death
 - **XP sources**: share of XP from kills, quests and everything else (exploration, professions, ...)
 - **Rested XP**: bonus XP gained from rest and its share of your XP
 - **Quests** turned in
 - **Income**: money earned from loot, quests, sales and mail
+- **Level-up summary** in chat when you ding
 
 Shown as a clear table, label left and value right. Every value can be switched on or off on its own, e.g. PvE and PvP kills separately.
 
 ### History and evaluation
 
 - **Levels**: play time, XP/h, kills, deaths, quests and gold of every finished level, saved automatically on level-up
+- **Timeline**: when each level was reached, with total /played and how long it took
 - **Sessions**: start, duration, level range, XP/h, kills, deaths, quests and gold of every past session
 - **Kills**: every killed creature and player with time, name, PvE/PvP, level and zone
 - **Deaths**: every death with time, cause (enemy and spell, or falling, drowning, ...), level and zone. Retail hides the combat log from addons, so the cause shows as "Unknown" there.

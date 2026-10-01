@@ -29,9 +29,11 @@ QuestCounter.lua
 MoneyCounter.lua
 History.lua
 Analysis.lua
+Forecast.lua
 
 # Oberfläche
 StatLines.lua
+LevelUpSummary.lua
 TimerWindow.lua
 Charts.lua
 HistoryWindow.lua

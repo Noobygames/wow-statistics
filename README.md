@@ -7,25 +7,27 @@ Useful WoW addon (compatible with WoW Forever) to show statistics.
 Shows statistics in a small, movable window, either for your **current level** or your **current session** (switch with the "Level | Session" tabs at the top):
 
 - **Play time**: on this level synced with the server (`/played`), for the session since login; both counted up live.
-- **XP per hour** and the estimated play time until the next level.
+- **XP per hour**, the estimated play time until the next level and an estimate until max level (based on your recent levels).
 - **Kills**, split into:
   - **PvE**: every kill that granted experience, including group kills. Grey mobs and kills at max level don't count.
   - **PvP**: honorable kills.
 - **Deaths**, with time spent dead or as a ghost and kills per death.
 - **XP sources**: share of XP from kills, quests and other sources (exploration, professions, ...).
 - **Rested XP**: bonus XP gained from rest and its share of the XP.
+- **Level-up summary** in chat: how long the level took, kills, deaths and XP/h (can be turned off).
 - **Quests** turned in.
 - **Income**: money earned (loot, quests, sales, mail); spending is not subtracted.
 
 The window shows them as a table, label on the left and value on the right. Every value can be switched on or off on its own (e.g. PvE and PvP kills separately). Level statistics restart on level-up. A session runs from login to logout; a `/reload` or a short break (up to 5 minutes) continues it.
 
-Statistics are recorded separately for every character. They are stored account-wide, so you can look at all your characters from any of them.
+Statistics are recorded separately for every character. They are stored account-wide, so you can look at all your characters from any of them. Use "Delete data" in the history window to remove a character's statistics (e.g. after deleting the character).
 
 ### History and evaluation
 
 The history window shows, per character:
 
 - **Levels**: play time, XP/h, kills, deaths, quests and income of every finished level, saved on level-up.
+- **Timeline**: when each level was reached, with total /played at that moment and how long the level took.
 - **Sessions**: start, duration, level range, XP/h, kills, deaths, quests and income of every past session.
 - **Kills**: every killed creature and player with time, name, PvE/PvP, level and zone (newest 5000).
 - **Deaths**: every death with time, cause, level and zone (newest 1000). The cause is the last hit before dying: enemy and spell, or falling, drowning, lava and so on. Retail hides the combat log from addons, so there the cause stays "Unknown".

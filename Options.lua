@@ -172,6 +172,8 @@ addLanguageChooser()
 addToggles({
   { label = "SHOW_MINIMAP", get = function(db) return not db.minimap.hide end,
     set = function(checked) ns.SetMinimapHidden(not checked) end },
+  { label = "LEVEL_UP_SUMMARY_TOGGLE", get = function(db) return db.levelUpSummary end,
+    set = function(checked) ns.Set("levelUpSummary", checked) end },
 })
 nextRowY = nextRowY - SECTION_GAP
 addButton("HISTORY", function() ns.ToggleHistory() end)

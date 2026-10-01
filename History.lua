@@ -1,7 +1,7 @@
 -- Historie und Auswertung: Level-, Session-, Kill- und Tod-Einträge aller Charaktere.
 --
 -- Kill- und Tod-Einträge: siehe Journal.lua
--- Level-Eintrag:   { level, seconds, xp, counters, completedAt }
+-- Level-Eintrag:   { level, seconds, xp, counters, completedAt, totalPlayed }
 -- Session-Eintrag: { startedAt, endedAt, seconds, startLevel, endLevel, xp, counters }
 -- isCurrent markiert das noch laufende Level bzw. die laufende Session.
 -- Für den eingeloggten Charakter sind das Live-Werte, für andere der Stand ihres letzten Logouts.
@@ -87,6 +87,22 @@ function History.GetSessionRecords(characterKey)
   return records
 end
 
+-- Timeline: nur abgeschlossene Level, neueste zuerst. reachedLevel = das damit erreichte Level.
+function History.GetMilestones(characterKey)
+  local milestones = {}
+  for _, record in ipairs(History.GetLevelRecords(characterKey)) do
+    if not record.isCurrent then
+      table.insert(milestones, {
+        reachedLevel = record.level + 1,
+        reachedAt = record.completedAt,
+        totalPlayed = record.totalPlayed,
+        seconds = record.seconds,
+      })
+    end
+  end
+  return milestones
+end
+
 -- Kills und Tode einzeln (Form siehe Journal.lua), neueste zuerst
 function History.GetKillLog(characterKey)
   return newestFirst(History.GetCharacter(characterKey).killLog)
@@ -123,12 +139,14 @@ function History.Summarize(records)
 end
 
 -- Läuft vor dem Zurücksetzen der Zähler. UnitXPMax liefert hier noch den Bedarf des alten Levels.
+-- seconds/totalPlayed sind nil, falls /played noch nicht geantwortet hatte.
 ns.OnLevelCompleted(function(completedLevel)
   ns.character.levelHistory[completedLevel] = {
     level = completedLevel,
-    seconds = Stats.GetSeconds(Stats.LEVEL),  -- nil, falls /played noch nicht geantwortet hatte
+    seconds = Stats.GetSeconds(Stats.LEVEL),
     xp = UnitXPMax("player"),
     counters = Stats.Snapshot(Stats.LEVEL),
-    completedAt = time(),
+    completedAt = time(),                           -- Zeitpunkt, an dem das nächste Level erreicht wurde
+    totalPlayed = ns.PlayedTime.GetTotalSeconds(),  -- /played gesamt in diesem Moment
   }
 end)
