@@ -46,7 +46,7 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 
 ## Installation
 
-Requirements: [Go](https://go.dev/) 1.22+ and `make`.
+Requirements: [Go](https://go.dev/) 1.23+ and `make`.
 
 ```sh
 make install    # interactive wizard
@@ -59,7 +59,7 @@ Other targets:
 ```sh
 make update     # update every game version that already has the addon, no prompts
 make dry-run    # only show what would happen
-make test       # run the installer tests
+make test       # run all tests (addon scenarios + installer)
 ```
 
 Extra options go through `ARGS`, e.g. `make install ARGS="-flavors retail,classic_era"` or `ARGS="-wow 'D:/Games/World of Warcraft'"`. You can also set `WOW_DIR`.
@@ -67,3 +67,12 @@ Extra options go through `ARGS`, e.g. `make install ARGS="-flavors retail,classi
 After installing: restart the WoW client if the addon is new or its file list changed, otherwise `/reload` is enough.
 
 Manual install: copy the `.toc` and the `.lua` files it lists into `<WoW>/_<version>_/Interface/AddOns/LevelTimer/`. The folder must be named `LevelTimer`.
+
+## Development
+
+```sh
+make test         # addon scenarios + installer tests
+make test-addon   # only the addon scenarios
+```
+
+The addon tests run without the game: `tests/wow_stub.lua` fakes the parts of the WoW API the addon uses, and each `tests/*_test.lua` plays through one scenario (login, kills, deaths, level-up, ...) in a fresh Lua 5.1 state. They check the logic, not the rendering, so a quick check in game is still worthwhile.

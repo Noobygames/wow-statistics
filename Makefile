@@ -1,11 +1,12 @@
 INSTALLER := tools/installer
+ADDONTEST := tools/addontest
 VERSION   := $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 RUN       := go -C $(INSTALLER) run . -src "$(CURDIR)" -version "$(VERSION)"
 
 # Zusätzliche Flags, z.B. make install ARGS="-flavors retail -wow 'D:/Games/World of Warcraft'"
 ARGS ?=
 
-.PHONY: install update dry-run test vet
+.PHONY: install update dry-run test test-addon test-installer vet
 
 # Interaktiver Wizard: Flavors wählen, Plan ansehen, bestätigen
 install:
@@ -19,8 +20,15 @@ update:
 dry-run:
 	$(RUN) -dry-run -yes $(ARGS)
 
-test:
+test: test-addon test-installer
+
+# Lua-Szenarien aus tests/ gegen eine nachgebaute WoW-API
+test-addon:
+	go -C $(ADDONTEST) test ./...
+
+test-installer:
 	go -C $(INSTALLER) test ./...
 
 vet:
 	go -C $(INSTALLER) vet ./...
+	go -C $(ADDONTEST) vet ./...
