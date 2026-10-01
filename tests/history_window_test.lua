@@ -43,3 +43,16 @@ wow.login({ name = "Neuling", level = 1 })
 SlashCmdList.LEVELTIMER("history")
 SlashCmdList.LEVELTIMER("history")
 expectTrue("leere Rangliste", wow.click("Todesursachen"))
+
+-- Reitergruppen: Unterreiter nur in der gewählten Gruppe sichtbar
+local function tabWithLabel(text)
+  return wow.findFrame(function(frame)
+    local label = rawget(frame, "label")
+    return label and label._text == text
+  end)
+end
+expectTrue("Gruppe Level", wow.click("Level"))
+expect("Unterreiter Timeline sichtbar", tabWithLabel("Timeline"):IsShown(), true)
+expect("Journal-Unterreiter versteckt", tabWithLabel("Kills"):IsShown(), false)
+expectTrue("Sessions ohne Unterreiter", wow.click("Sessions"))
+expect("Timeline versteckt", tabWithLabel("Timeline"):IsShown(), false)

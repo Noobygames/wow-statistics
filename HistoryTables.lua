@@ -186,7 +186,7 @@ local function recordCells(columns, record)
   return cells
 end
 
--- definition = { tab, columns, records(characterKey), footer(columns, records) }
+-- definition = { tab, group (optional), columns, records(characterKey), footer(columns, records) }
 local function createTableView(definition)
   local columns = definition.columns
 
@@ -250,21 +250,19 @@ local function createTableView(definition)
     return frame
   end
 
-  return { tab = definition.tab, Create = create }
+  return { tab = definition.tab, group = definition.group, Create = create }
 end
 
-ns.HistoryWindow.AddView(createTableView({
-  tab = "HISTORY_TAB_LEVELS", columns = LEVEL_COLUMNS, records = History.GetLevelRecords, footer = summaryCells,
-}))
-ns.HistoryWindow.AddView(createTableView({
-  tab = "HISTORY_TAB_TIMELINE", columns = MILESTONE_COLUMNS, records = History.GetMilestones, footer = countCells,
-}))
-ns.HistoryWindow.AddView(createTableView({
-  tab = "HISTORY_TAB_SESSIONS", columns = SESSION_COLUMNS, records = History.GetSessionRecords, footer = summaryCells,
-}))
-ns.HistoryWindow.AddView(createTableView({
-  tab = "HISTORY_TAB_KILLS", columns = KILL_COLUMNS, records = History.GetKillLog, footer = countCells,
-}))
-ns.HistoryWindow.AddView(createTableView({
-  tab = "HISTORY_TAB_DEATHS", columns = DEATH_COLUMNS, records = History.GetDeathLog, footer = countCells,
-}))
+local function addTable(tab, group, columns, records, footer)
+  ns.HistoryWindow.AddView(createTableView({
+    tab = tab, group = group, columns = columns, records = records, footer = footer,
+  }))
+end
+
+local LEVELS, JOURNAL = "HISTORY_GROUP_LEVELS", "HISTORY_GROUP_JOURNAL"
+
+addTable("HISTORY_TAB_LEVELS", LEVELS, LEVEL_COLUMNS, History.GetLevelRecords, summaryCells)
+addTable("HISTORY_TAB_TIMELINE", LEVELS, MILESTONE_COLUMNS, History.GetMilestones, countCells)
+addTable("HISTORY_TAB_SESSIONS", nil, SESSION_COLUMNS, History.GetSessionRecords, summaryCells)
+addTable("HISTORY_TAB_KILLS", JOURNAL, KILL_COLUMNS, History.GetKillLog, countCells)
+addTable("HISTORY_TAB_DEATHS", JOURNAL, DEATH_COLUMNS, History.GetDeathLog, countCells)

@@ -1,13 +1,14 @@
--- Historie und Auswertung: Fenster mit Charakter-Auswahl und einem Reiter pro Ansicht.
--- Die Ansichten registrieren sich über HistoryWindow.AddView (HistoryTables.lua, HistoryCharts.lua);
--- die Ladereihenfolge bestimmt die Reihenfolge der Reiter.
+-- Historie und Auswertung: Fenster mit Charakter-Auswahl, Reitern und Unterreitern.
+-- Ansichten registrieren sich über HistoryWindow.AddView (HistoryTables.lua, HistoryCharts.lua, ...).
+-- Ansichten mit gleicher group teilen sich einen Reiter und erscheinen dort als Unterreiter;
+-- die Ladereihenfolge bestimmt die Reihenfolge.
 local _, ns = ...
 local L = ns.L
 local Widgets = ns.Widgets
 local History = ns.History
 
 local HistoryWindow = {
-  CONTENT_WIDTH = 470,   -- Platz, den jede Ansicht bekommt
+  CONTENT_WIDTH = 540,   -- Platz, den jede Ansicht bekommt
   CONTENT_HEIGHT = 290,
 }
 ns.HistoryWindow = HistoryWindow
@@ -16,11 +17,13 @@ local MARGIN = 16
 local HEADER_TOP = -14
 local CHARACTER_ROW_TOP = -40
 local TABS_TOP = -66
-local CONTENT_TOP = -90
+local SUBTABS_TOP = -88
+local CONTENT_TOP = -110
 local ARROW_SIZE = 22
 local DELETE_BUTTON_WIDTH = 110
 local DELETE_BUTTON_HEIGHT = 20
 local TAB_GAP = 12
+local SUBTAB_GAP = 10
 local UPDATE_INTERVAL = 1  -- Sekunden; hält laufende Einträge aktuell
 
 local panel = Widgets.CreatePanel("LevelTimerHistory", 0.95)
@@ -41,35 +44,64 @@ local content = CreateFrame("Frame", nil, panel)
 content:SetPoint("TOPLEFT", MARGIN, CONTENT_TOP)
 content:SetSize(HistoryWindow.CONTENT_WIDTH, HistoryWindow.CONTENT_HEIGHT)
 
-local views = {}
-local selectedView
+-- Reiter: entry = { tab = Locale-Key, members = { view, ... }, selected = view, tabButton }
+local entries = {}
+local entriesByGroup = {}
+local selectedEntry
 local selectedCharacter  -- Schlüssel "Name-Realm"; nil = eingeloggter Charakter
 local rendered = {}      -- zuletzt angezeigte Ansicht und Charakter (Wechsel setzt den Bildlauf zurück)
 local refresh            -- unten definiert
+
+local function selectView(entry, view)
+  selectedEntry = entry
+  entry.selected = view
+  refresh()
+end
+
+local function createEntry(tabKey)
+  local entry = { tab = tabKey, members = {} }
+  entry.tabButton = Widgets.CreateTab(panel, "GameFontNormal", function()
+    selectView(entry, entry.selected)
+  end)
+  local previous = entries[#entries]
+  if previous then
+    entry.tabButton:SetPoint("LEFT", previous.tabButton, "RIGHT", TAB_GAP, 0)
+  else
+    entry.tabButton:SetPoint("TOPLEFT", MARGIN, TABS_TOP)
+  end
+  table.insert(entries, entry)
+  selectedEntry = selectedEntry or entry
+  return entry
+end
 
 ---------------------------------------------------------------------------
 -- Ansichten
 ---------------------------------------------------------------------------
 
--- view = { tab = Locale-Key, Create = function(parent, width, height) -> frame }
--- Der Frame braucht frame:Render(characterKey, selectionChanged).
+-- view = { tab = Locale-Key, group = Locale-Key (optional),
+--          Create = function(parent, width, height) -> frame mit Render(characterKey, selectionChanged) }
 function HistoryWindow.AddView(view)
   view.frame = view.Create(content, HistoryWindow.CONTENT_WIDTH, HistoryWindow.CONTENT_HEIGHT)
   view.frame:Hide()
 
-  view.tabButton = Widgets.CreateTab(panel, "GameFontNormal", function()
-    selectedView = view
-    refresh()
-  end)
-  local previous = views[#views]
-  if previous then
-    view.tabButton:SetPoint("LEFT", previous.tabButton, "RIGHT", TAB_GAP, 0)
-  else
-    view.tabButton:SetPoint("TOPLEFT", MARGIN, TABS_TOP)
+  local entry = view.group and entriesByGroup[view.group]
+  if not entry then
+    entry = createEntry(view.group or view.tab)
+    if view.group then entriesByGroup[view.group] = entry end
   end
 
-  table.insert(views, view)
-  selectedView = selectedView or view
+  view.subtabButton = Widgets.CreateTab(panel, "GameFontHighlightSmall", function()
+    selectView(entry, view)
+  end)
+  local previous = entry.members[#entry.members]
+  if previous then
+    view.subtabButton:SetPoint("LEFT", previous.subtabButton, "RIGHT", SUBTAB_GAP, 0)
+  else
+    view.subtabButton:SetPoint("TOPLEFT", MARGIN, SUBTABS_TOP)
+  end
+
+  table.insert(entry.members, view)
+  entry.selected = entry.selected or view
 end
 
 ---------------------------------------------------------------------------
@@ -144,17 +176,27 @@ function refresh()
   deleteButton:SetText(L.DELETE_CHARACTER)
   showCharacterName(History.GetCharacter(selectedCharacter))
 
+  local selectedView = selectedEntry.selected
   local selectionChanged = rendered.view ~= selectedView or rendered.character ~= selectedCharacter
   rendered.view, rendered.character = selectedView, selectedCharacter
 
-  for _, view in ipairs(views) do
-    view.tabButton:SetLabel(L[view.tab])
-    view.tabButton:SetActive(view == selectedView)
-    if view == selectedView then
-      view.frame:Render(selectedCharacter, selectionChanged)
-      view.frame:Show()
-    else
-      view.frame:Hide()
+  for _, entry in ipairs(entries) do
+    local isSelectedEntry = entry == selectedEntry
+    entry.tabButton:SetLabel(L[entry.tab])
+    entry.tabButton:SetActive(isSelectedEntry)
+
+    -- Unterreiter nur bei Gruppen mit mehreren Ansichten
+    local showSubtabs = isSelectedEntry and #entry.members > 1
+    for _, view in ipairs(entry.members) do
+      view.subtabButton:SetLabel(L[view.tab])
+      view.subtabButton:SetActive(view == entry.selected)
+      view.subtabButton:SetShown(showSubtabs)
+      if view == selectedView then
+        view.frame:Render(selectedCharacter, selectionChanged)
+        view.frame:Show()
+      else
+        view.frame:Hide()
+      end
     end
   end
 end
