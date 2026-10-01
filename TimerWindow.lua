@@ -1,8 +1,8 @@
--- Anzeigefenster: Level, Spielzeit auf dem Level und darunter abschaltbare Stat-Zeilen.
+-- Anzeigefenster: Level, Spielzeit auf dem Level und darunter die abschaltbaren Stat-Zeilen.
 local _, ns = ...
 local L = ns.L
 local Widgets = ns.Widgets
-local LevelStats = ns.LevelStats
+local Format = ns.Format
 
 local UPDATE_INTERVAL = 0.25          -- Sekunden zwischen zwei Anzeige-Updates
 local PADDING_X = 20
@@ -11,23 +11,6 @@ local LINE_GAP = 3
 local MIN_WIDTH = 160
 local WIDEST_TIME = "00d 00h 00m 00s" -- für die Fensterbreite
 local DEFAULT_POSITION = { "TOP", "TOP", 0, -120 }
-
--- Zeilen unter der Spielzeit. setting = Schalter in ns.db, text = aktueller Inhalt.
--- Neue Stats brauchen nur einen Eintrag hier, einen Schalter in Options.lua und Texte in Locales.lua.
-local STAT_LINES = {
-  {
-    setting = "showKills",
-    text = function()
-      return string.format(L.KILLS, LevelStats.Get(LevelStats.PVE_KILLS), LevelStats.Get(LevelStats.PVP_KILLS))
-    end,
-  },
-  {
-    setting = "showDeaths",
-    text = function()
-      return string.format(L.DEATHS, LevelStats.Get(LevelStats.DEATHS))
-    end,
-  },
-}
 
 local window = Widgets.CreatePanel("LevelTimerFrame", 0.8)
 window:Hide()  -- erst nach Login anzeigen, wenn Daten und Einstellungen bereitstehen
@@ -39,20 +22,10 @@ local timeText = window:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 timeText:SetPoint("TOP", title, "BOTTOM", 0, -LINE_GAP)
 timeText:SetTextColor(unpack(Widgets.COLORS.highlight))
 
-for _, line in ipairs(STAT_LINES) do
-  line.fontString = window:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-end
-
-local function formatTime(totalSeconds)
-  totalSeconds = math.floor(totalSeconds)
-  local days = math.floor(totalSeconds / 86400)
-  local hours = math.floor(totalSeconds / 3600) % 24
-  local minutes = math.floor(totalSeconds / 60) % 60
-  local seconds = totalSeconds % 60
-  if days > 0 then
-    return string.format("%dd %02dh %02dm %02ds", days, hours, minutes, seconds)
-  end
-  return string.format("%02dh %02dm %02ds", hours, minutes, seconds)
+-- Eine FontString pro Stat-Zeile, gleiche Reihenfolge wie ns.STAT_LINES
+local statTexts = {}
+for i in ipairs(ns.STAT_LINES) do
+  statTexts[i] = window:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 end
 
 local function fontSize(fontString)
@@ -62,9 +35,9 @@ end
 
 -- Fenster verbreitern, falls eine Stat-Zeile durch wachsende Zahlen zu lang wird
 local function growToFitStatLines()
-  for _, line in ipairs(STAT_LINES) do
-    local needed = line.fontString:GetStringWidth() + 2 * PADDING_X
-    if line.fontString:IsShown() and needed > window:GetWidth() then
+  for _, statText in ipairs(statTexts) do
+    local needed = statText:GetStringWidth() + 2 * PADDING_X
+    if statText:IsShown() and needed > window:GetWidth() then
       window:SetWidth(needed)
     end
   end
@@ -73,9 +46,11 @@ end
 local function refreshTexts()
   title:SetText(string.format(L.TIME_ON_LEVEL, ns.level))
   local levelSeconds = ns.PlayedTime.GetLevelSeconds()
-  timeText:SetText(levelSeconds and formatTime(levelSeconds) or "...")
-  for _, line in ipairs(STAT_LINES) do
-    line.fontString:SetText(line.text())
+  timeText:SetText(levelSeconds and Format.Clock(levelSeconds) or "...")
+  for i, line in ipairs(ns.STAT_LINES) do
+    if statTexts[i]:IsShown() then
+      statTexts[i]:SetText(line.text())
+    end
   end
   growToFitStatLines()
 end
@@ -90,14 +65,15 @@ local function updateLayout(db)
   local height = 2 * PADDING_Y + fontSize(title) + LINE_GAP + db.fontSize
 
   local anchor = timeText
-  for _, line in ipairs(STAT_LINES) do
+  for i, line in ipairs(ns.STAT_LINES) do
+    local statText = statTexts[i]
     local visible = db[line.setting]
-    line.fontString:SetShown(visible)
+    statText:SetShown(visible)
     if visible then
-      line.fontString:ClearAllPoints()
-      line.fontString:SetPoint("TOP", anchor, "BOTTOM", 0, -LINE_GAP)
-      anchor = line.fontString
-      height = height + LINE_GAP + fontSize(line.fontString)
+      statText:ClearAllPoints()
+      statText:SetPoint("TOP", anchor, "BOTTOM", 0, -LINE_GAP)
+      anchor = statText
+      height = height + LINE_GAP + fontSize(statText)
     end
   end
 

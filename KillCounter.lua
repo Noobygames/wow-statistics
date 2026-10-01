@@ -5,14 +5,16 @@ local LevelStats = ns.LevelStats
 ---------------------------------------------------------------------------
 -- PvE: Kills, die Erfahrung gegeben haben (Chatmeldung "X stirbt, Ihr bekommt Y Erfahrung").
 -- Gruppen-Kills zählen mit; graue Gegner ohne XP und Kills auf Max-Level nicht.
+-- Die XP-Menge aus der Meldung fließt in die XP-Quellen ein.
 ---------------------------------------------------------------------------
 
--- Wandelt einen WoW-Formatstring ("%s dies, you gain %d experience.") in ein Lua-Pattern.
--- Nur am Anfang verankert, damit auch Varianten mit Bonus-Zusatz ("... (+10 exp bonus)") passen.
+-- Wandelt einen WoW-Formatstring ("%s dies, you gain %d experience.") in ein Lua-Pattern,
+-- das die Zahl (%d) als Capture liefert. Nur am Anfang verankert, damit auch Varianten
+-- mit Bonus-Zusatz ("... (+10 exp Rested bonus)") passen.
 local function formatToPattern(format)
   local pattern = format:gsub("[%(%)%.%+%-%*%?%[%]]", "%%%0")  -- Pattern-Sonderzeichen escapen
   pattern = pattern:gsub("%%%d?%$?s", ".-")                   -- %s und %1$s
-  pattern = pattern:gsub("%%%d?%$?d", "%%d+")                 -- %d und %2$d
+  pattern = pattern:gsub("%%%d?%$?d", "(%%d+)")               -- %d und %2$d
   return "^" .. pattern
 end
 
@@ -20,8 +22,11 @@ if COMBATLOG_XPGAIN_FIRSTPERSON then
   local killPattern = formatToPattern(COMBATLOG_XPGAIN_FIRSTPERSON)
 
   ns.RegisterEvent("CHAT_MSG_COMBAT_XP_GAIN", function(message)
-    if not ns.IsSecret(message) and message:match(killPattern) then
+    if ns.IsSecret(message) then return end
+    local xp = message:match(killPattern)
+    if xp then
       LevelStats.Increment(LevelStats.PVE_KILLS)
+      LevelStats.Increment(LevelStats.XP_KILLS, tonumber(xp))
     end
   end)
 end

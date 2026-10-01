@@ -44,7 +44,7 @@ ns.RegisterEvent("TIME_PLAYED_MSG", function(_, secondsThisLevel)
   setLevelSeconds(secondsThisLevel)
 end)
 
-ns.RegisterEvent("PLAYER_LEVEL_UP", function()
+ns.OnLevelStarted(function()
   setLevelSeconds(0)
   C_Timer.After(LEVEL_UP_SYNC_DELAY, PlayedTime.Sync)
 end)

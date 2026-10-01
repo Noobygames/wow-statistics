@@ -60,6 +60,8 @@ end)
 button:SetScript("OnClick", function(_, mouseButton)
   if mouseButton == "RightButton" then
     ns.Set("showTimer", not ns.db.showTimer)
+  elseif IsShiftKeyDown() then
+    ns.ToggleHistory()
   else
     ns.ToggleOptions()
   end
@@ -69,6 +71,7 @@ button:SetScript("OnEnter", function(self)
   GameTooltip:SetOwner(self, "ANCHOR_LEFT")
   GameTooltip:AddLine("LevelTimer")
   GameTooltip:AddLine(L.TOOLTIP_LEFT, 1, 1, 1)
+  GameTooltip:AddLine(L.TOOLTIP_SHIFT_LEFT, 1, 1, 1)
   GameTooltip:AddLine(L.TOOLTIP_RIGHT, 1, 1, 1)
   GameTooltip:AddLine(L.TOOLTIP_DRAG, 1, 1, 1)
   GameTooltip:Show()

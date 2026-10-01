@@ -12,6 +12,10 @@ local ROW_LABEL = 18
 local ROW_CHECKBOX = 28
 local ROW_SLIDER = 50
 local ROW_SECTION_GAP = 10
+local ROW_BUTTON = 30
+local STAT_COLUMNS = 2
+local STAT_COLUMN_WIDTH = 134
+local HISTORY_BUTTON_WIDTH = 150
 
 local panel = Widgets.CreatePanel("LevelTimerOptions", 0.95)
 panel:SetWidth(WIDTH)
@@ -73,9 +77,30 @@ end
 
 local lockToggle = addToggle(function(checked) ns.Set("locked", checked) end)
 local timerToggle = addToggle(function(checked) ns.Set("showTimer", checked) end)
-local killsToggle = addToggle(function(checked) ns.Set("showKills", checked) end)
-local deathsToggle = addToggle(function(checked) ns.Set("showDeaths", checked) end)
 local minimapToggle = addToggle(function(checked) ns.SetMinimapHidden(not checked) end)
+nextRowY = nextRowY - ROW_SECTION_GAP
+
+-- Stat-Zeilen: Schalter in zwei Spalten, direkt aus ns.STAT_LINES erzeugt
+local statsLabel = panel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+addRow(statsLabel, ROW_LABEL)
+
+local statToggles = {}
+for i, line in ipairs(ns.STAT_LINES) do
+  local column = (i - 1) % STAT_COLUMNS
+  local row = math.floor((i - 1) / STAT_COLUMNS)
+  local checkbox = Widgets.CreateCheckbox(panel, function(checked)
+    ns.Set(line.setting, checked)
+  end)
+  checkbox:SetPoint("TOPLEFT", MARGIN + column * STAT_COLUMN_WIDTH, nextRowY - row * ROW_CHECKBOX)
+  checkbox.line = line
+  statToggles[i] = checkbox
+end
+nextRowY = nextRowY - math.ceil(#ns.STAT_LINES / STAT_COLUMNS) * ROW_CHECKBOX - ROW_SECTION_GAP
+
+local historyButton = CreateFrame("Button", nil, panel, "UIPanelButtonTemplate")
+historyButton:SetSize(HISTORY_BUTTON_WIDTH, ROW_BUTTON - 6)
+historyButton:SetScript("OnClick", function() ns.ToggleHistory() end)
+addRow(historyButton, ROW_BUTTON)
 
 panel:SetHeight(-nextRowY + MARGIN)
 
@@ -98,12 +123,16 @@ local function refresh(db)
   lockToggle:SetChecked(db.locked)
   timerToggle.label:SetText(L.SHOW_TIMER)
   timerToggle:SetChecked(db.showTimer)
-  killsToggle.label:SetText(L.SHOW_KILLS)
-  killsToggle:SetChecked(db.showKills)
-  deathsToggle.label:SetText(L.SHOW_DEATHS)
-  deathsToggle:SetChecked(db.showDeaths)
   minimapToggle.label:SetText(L.SHOW_MINIMAP)
   minimapToggle:SetChecked(not db.minimap.hide)
+
+  statsLabel:SetText(L.STATISTICS)
+  for _, checkbox in ipairs(statToggles) do
+    checkbox.label:SetText(L[checkbox.line.label])
+    checkbox:SetChecked(db[checkbox.line.setting])
+  end
+
+  historyButton:SetText(L.HISTORY)
 end
 
 ns.RegisterApply(refresh)
