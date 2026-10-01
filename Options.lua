@@ -74,6 +74,7 @@ end
 local lockToggle = addToggle(function(checked) ns.Set("locked", checked) end)
 local timerToggle = addToggle(function(checked) ns.Set("showTimer", checked) end)
 local killsToggle = addToggle(function(checked) ns.Set("showKills", checked) end)
+local deathsToggle = addToggle(function(checked) ns.Set("showDeaths", checked) end)
 local minimapToggle = addToggle(function(checked) ns.SetMinimapHidden(not checked) end)
 
 panel:SetHeight(-nextRowY + MARGIN)
@@ -99,6 +100,8 @@ local function refresh(db)
   timerToggle:SetChecked(db.showTimer)
   killsToggle.label:SetText(L.SHOW_KILLS)
   killsToggle:SetChecked(db.showKills)
+  deathsToggle.label:SetText(L.SHOW_DEATHS)
+  deathsToggle:SetChecked(db.showDeaths)
   minimapToggle.label:SetText(L.SHOW_MINIMAP)
   minimapToggle:SetChecked(not db.minimap.hide)
 end

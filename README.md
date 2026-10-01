@@ -7,7 +7,12 @@ Useful WoW addon (compatible with WoW Forever) to show statistics.
 Shows statistics for your current level in a small, movable window:
 
 - **Play time on this level**, synced with the server (`/played`) and counted up live.
-- **Kills on this level**: every kill that granted experience, including group kills. Grey mobs and kills at max level don't count. Tracked per character and reset on level-up.
+- **Kills on this level**, split into:
+  - **PvE**: every kill that granted experience, including group kills. Grey mobs and kills at max level don't count.
+  - **PvP**: honorable kills.
+- **Deaths on this level.**
+
+All counters are tracked per character and reset on level-up.
 
 Works across several game versions (Retail, Classic Era, Anniversary, ...) from a single `.toc`. German and English UI.
 
@@ -15,7 +20,7 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 
 - Left-click the minimap button (pocket watch) to open the settings, right-click to show or hide the window, drag to move it around the minimap.
 - On Retail, LevelTimer also shows up in the addon compartment menu.
-- Settings: language (Deutsch / English), font size, background opacity, lock window, show timer, show kills, show minimap button.
+- Settings: language (Deutsch / English), font size, background opacity, lock window, show timer, show kills, show deaths, show minimap button.
 
 ### Chat commands
 
