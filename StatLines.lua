@@ -74,6 +74,10 @@ ns.STAT_LINES = {
     rows = { { label = "ROW_PVE_KILLS", value = counter(Stats.PVE_KILLS) } } },
   { setting = "showPvpKills", label = "STAT_PVP_KILLS",
     rows = { { label = "ROW_PVP_KILLS", value = counter(Stats.PVP_KILLS) } } },
+  { setting = "showSpecialKills", label = "STAT_SPECIAL_KILLS", rows = {
+    { label = "ROW_ELITE_KILLS", value = counter(Stats.ELITE_KILLS) },
+    { label = "ROW_RARE_KILLS", value = counter(Stats.RARE_KILLS) },
+  } },
   { setting = "showDeaths", label = "STAT_DEATHS", rows = { { label = "ROW_DEATHS", value = deaths } } },
   { setting = "showKillsPerDeath", label = "STAT_KILLS_PER_DEATH",
     rows = { { label = "ROW_KILLS_PER_DEATH", value = killsPerDeath } } },

@@ -21,6 +21,7 @@ local SETTINGS_DEFAULTS = {
   levelUpSummary = true,  -- Chatzeile beim Level-Up (siehe LevelUpSummary.lua)
   showPveKills = true,
   showPvpKills = true,
+  showSpecialKills = false,
   showDeaths = true,
   showKillsPerDeath = false,
   showXpSources = false,
@@ -42,6 +43,8 @@ local COUNTER_DEFAULTS = {
   xpQuests = 0,
   xpRested = 0,
   moneyEarned = 0,
+  eliteKills = 0,
+  rareKills = 0,
 }
 
 local CHARACTER_DEFAULTS = {

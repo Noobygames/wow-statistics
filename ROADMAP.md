@@ -17,7 +17,7 @@ Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt.
 - [x] 8. **Level-Timeline** (S): wann welches Level erreicht, mit /played. „Level 60 nach 3d 4h“.
 - [x] 9. **Instanzen** (M): Zeit, XP und Kills in Dungeons getrennt von der offenen Welt, Dungeon-Läufe zählen.
 - [x] 10. **Loot-Journal** (M): seltene und epische Beute mit Zeit und Quelle.
-- [ ] 11. **Elite- und Rare-Kills** (M): getrennt zählen, nur wo das Kampflog frei ist (Classic).
+- [x] 11. **Elite- und Rare-Kills** (M): getrennt zählen; Einstufung beim Anvisieren gemerkt, daher in allen Clients.
 - [ ] 12. **Beinahe-Tode** (M): Leben unter 10 % ohne zu sterben.
 
 ## Bedienung
@@ -42,4 +42,4 @@ Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt.
 
 Nach Erledigen oben abhaken und hier kurz vermerken (Version, Nummer).
 
-- Nächstes Release: 1, 8, 13, 17, 22, 2, 3, 4, 5, 6, 7, 9, 10
+- Nächstes Release: 1, 8, 13, 17, 22, 2, 3, 4, 5, 6, 7, 9, 10, 11

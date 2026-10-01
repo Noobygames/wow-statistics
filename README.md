@@ -11,6 +11,7 @@ Shows statistics in a small, movable window, either for your **current level** o
 - **Kills**, split into:
   - **PvE**: every kill that granted experience, including group kills. Grey mobs and kills at max level don't count.
   - **PvP**: honorable kills.
+  - **Elite and rare** kills (optional rows): enemies are classified when you target, hover or see their nameplate.
 - **Deaths**, with time spent dead or as a ghost and kills per death.
 - **XP sources**: share of XP from kills, quests and other sources (exploration, professions, ...).
 - **Rested XP**: bonus XP gained from rest and its share of the XP.

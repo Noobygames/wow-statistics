@@ -109,12 +109,24 @@ local MILESTONE_COLUMNS = {
     end },
 }
 
+-- Art eines Kills: PvP, sonst die Einstufung des Gegners (Elite, Rare, ...) oder PvE
+local KIND_BY_CLASSIFICATION = {
+  elite = "KIND_ELITE",
+  rare = "KIND_RARE",
+  rareelite = "KIND_RARE_ELITE",
+  worldboss = "KIND_BOSS",
+}
+
+local function killKind(r)
+  if r.kind == Journal.PVP then return L.KIND_PVP end
+  local key = KIND_BY_CLASSIFICATION[r.classification]
+  return key and L[key] or L.KIND_PVE
+end
+
 local KILL_COLUMNS = {
   whenColumn(100),
   { header = "HISTORY_NAME", width = 140, align = LEFT, value = function(r) return r.name or L.UNKNOWN_NAME end },
-  { header = "HISTORY_KIND", width = 40, value = function(r)
-      return r.kind == Journal.PVP and L.KIND_PVP or L.KIND_PVE
-    end },
+  { header = "HISTORY_KIND", width = 40, value = killKind },
   levelColumn(40),
   zoneColumn(126),
 }

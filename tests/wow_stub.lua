@@ -39,6 +39,7 @@ wow = {
     questTitle = nil,        -- Titel im offenen Quest-Abgabe-Dialog (GetTitleText)
     questTitles = {},        -- C_QuestLog.GetTitleForQuestID je Quest-ID
     instance = nil,          -- { name, type } wenn in einer Instanz (IsInInstance)
+    units = {},              -- weitere Einheiten: units.target = { name, classification, isPlayer }
   },
   printed = {},
   UNKNOWN_EVENT = UNKNOWN_EVENT,
@@ -236,7 +237,13 @@ function time(dateTable)
   if dateTable then return os.time(dateTable) end
   return state.clock
 end
-function UnitName() return state.name end
+function UnitName(unit)
+  if unit == nil or unit == "player" then return state.name end
+  return state.units[unit] and state.units[unit].name
+end
+function UnitExists(unit) return unit == "player" or state.units[unit] ~= nil end
+function UnitIsPlayer(unit) return unit == "player" or (state.units[unit] and state.units[unit].isPlayer) or false end
+function UnitClassification(unit) return state.units[unit] and state.units[unit].classification or "normal" end
 function GetRealmName() return state.realm end
 function UnitClass() return state.class, state.class end
 function UnitIsDeadOrGhost() return state.dead end

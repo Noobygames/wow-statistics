@@ -1,6 +1,6 @@
 -- Journal: einzelne Kills, Tode, Quests, Beute und Instanz-Läufe des eingeloggten Charakters mit Zeitpunkt und Umständen.
 --
--- Kill-Eintrag: { time, kind = "pve"|"pvp", name, level, zone }
+-- Kill-Eintrag: { time, kind = "pve"|"pvp", name, classification, level, zone }
 -- Tod-Eintrag:  { time, level, zone, killer, spell, environment }
 --   killer/spell: Verursacher und Zauber des letzten Treffers, environment: Umgebungsschaden
 --   (z.B. "FALLING"); alle drei nil, wenn die Ursache nicht bekannt ist.
@@ -33,11 +33,12 @@ local function baseEntry()
   return { time = time(), level = ns.level, zone = GetZoneText and GetZoneText() or nil }
 end
 
--- name darf nil sein (z.B. wenn das Spiel den Namen verbirgt)
-function Journal.AddKill(kind, name)
+-- name darf nil sein (z.B. wenn das Spiel den Namen verbirgt), classification ebenso
+function Journal.AddKill(kind, name, classification)
   local entry = baseEntry()
   entry.kind = kind
   entry.name = name
+  entry.classification = classification
   append(ns.character.killLog, entry, Journal.MAX_KILLS)
 end
 

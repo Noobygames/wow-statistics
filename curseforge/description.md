@@ -10,7 +10,7 @@ A small, movable window shows either your current level or your current session.
 
 - **Play time**: on this level (synced with the server's `/played`) or in this session, counted up live
 - **XP per hour**, the estimated play time until the next level and until max level
-- **Kills**, split into **PvE** (every kill that granted experience, including group kills) and **PvP** (honorable kills)
+- **Kills**, split into **PvE** (every kill that granted experience, including group kills), **PvP** (honorable kills) and optionally **elite** and **rare** kills
 - **Deaths**, with time spent dead or as a ghost and kills per death
 - **XP sources**: share of XP from kills, quests and everything else (exploration, professions, ...)
 - **Rested XP**: bonus XP gained from rest and its share of your XP

@@ -1,9 +1,10 @@
--- Zählt Kills, getrennt nach PvE und PvP, und schreibt jeden Kill mit Namen ins Journal.
+-- Zählt Kills (PvE, PvP, Elite, Rare) und schreibt jeden Kill mit Namen und Einstufung ins Journal.
 local _, ns = ...
 local L = ns.L
 local Stats = ns.Stats
 local Journal = ns.Journal
 local ChatPatterns = ns.ChatPatterns
+local Classification = ns.Classification
 
 -- Fehlersuche (/lt debug): jede XP-Meldung mit ihrer Wertung in den Chat schreiben
 local function debugXpMessage(verdictKey, message)
@@ -31,9 +32,12 @@ if COMBATLOG_XPGAIN_FIRSTPERSON then
     local args = ChatPatterns.Match(message, killFormat)
     if args then
       local name, xp = args[1], tonumber(args[2])
+      local classification = Classification.Of(name)
       Stats.Increment(Stats.PVE_KILLS)
       Stats.Increment(Stats.XP_KILLS, xp or 0)
-      Journal.AddKill(Journal.PVE, name)
+      if Classification.IsElite(classification) then Stats.Increment(Stats.ELITE_KILLS) end
+      if Classification.IsRare(classification) then Stats.Increment(Stats.RARE_KILLS) end
+      Journal.AddKill(Journal.PVE, name, classification)
       debugXpMessage("DEBUG_XP_KILL", message)
     else
       debugXpMessage("DEBUG_XP_OTHER", message)
