@@ -1,10 +1,11 @@
--- Journal: einzelne Kills, Tode und Quests des eingeloggten Charakters mit Zeitpunkt und Umständen.
+-- Journal: einzelne Kills, Tode, Quests und Instanz-Läufe des eingeloggten Charakters mit Zeitpunkt und Umständen.
 --
 -- Kill-Eintrag: { time, kind = "pve"|"pvp", name, level, zone }
 -- Tod-Eintrag:  { time, level, zone, killer, spell, environment }
 --   killer/spell: Verursacher und Zauber des letzten Treffers, environment: Umgebungsschaden
 --   (z.B. "FALLING"); alle drei nil, wenn die Ursache nicht bekannt ist.
 -- Quest-Eintrag: { time, level, zone, questID, name, xp, money }
+-- Instanz-Lauf: { time, name, instanceType, seconds, level, xp, counters = { kills, deaths } }
 local _, ns = ...
 
 local Journal = {}
@@ -16,6 +17,7 @@ Journal.PVP = "pvp"
 Journal.MAX_KILLS = 5000  -- Historie zeigt per Lazy Load alle, gerendert werden nur sichtbare Zeilen
 Journal.MAX_DEATHS = 1000
 Journal.MAX_QUESTS = 2000
+Journal.MAX_INSTANCE_RUNS = 500
 
 -- Neuen Eintrag anhängen und die ältesten über dem Limit verwerfen
 local function append(log, entry, limit)
@@ -45,6 +47,19 @@ function Journal.AddQuest(questID, name, xp, money)
   entry.xp = xp
   entry.money = money
   append(ns.character.questLog, entry, Journal.MAX_QUESTS)
+end
+
+-- Beendeter Instanz-Lauf (Form siehe Instances.lua); time = Betreten der Instanz
+function Journal.AddInstanceRun(run)
+  append(ns.character.instanceLog, {
+    time = run.startedAt,
+    name = run.name,
+    instanceType = run.instanceType,
+    seconds = run.seconds,
+    level = run.level,
+    xp = run.xp,
+    counters = run.counters,
+  }, Journal.MAX_INSTANCE_RUNS)
 end
 
 -- cause = { killer, spell, environment }, Felder dürfen fehlen

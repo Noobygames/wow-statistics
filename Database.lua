@@ -60,6 +60,7 @@ local CHARACTER_DEFAULTS = {
   killLog = {},         -- getötete Kreaturen und Spieler, älteste zuerst (siehe Journal.lua)
   deathLog = {},        -- eigene Tode mit Ursache, älteste zuerst (siehe Journal.lua)
   questLog = {},        -- abgegebene Quests, älteste zuerst (siehe Journal.lua)
+  instanceLog = {},     -- beendete Instanz-Läufe, älteste zuerst (siehe Instances.lua)
   zoneStats = {},       -- Spielzeit, XP, Kills und Tode je Zone (siehe Zones.lua)
   dailyStats = {},      -- Tageswerte, Schlüssel "JJJJ-MM-TT" (siehe Daily.lua)
 }

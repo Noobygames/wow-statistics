@@ -30,6 +30,7 @@ MoneyCounter.lua
 History.lua
 Zones.lua
 Daily.lua
+Instances.lua
 Analysis.lua
 Forecast.lua
 

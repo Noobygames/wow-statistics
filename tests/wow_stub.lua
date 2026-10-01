@@ -38,6 +38,7 @@ wow = {
     combatLog = {},          -- Rückgabewerte von CombatLogGetCurrentEventInfo
     questTitle = nil,        -- Titel im offenen Quest-Abgabe-Dialog (GetTitleText)
     questTitles = {},        -- C_QuestLog.GetTitleForQuestID je Quest-ID
+    instance = nil,          -- { name, type } wenn in einer Instanz (IsInInstance)
   },
   printed = {},
   UNKNOWN_EVENT = UNKNOWN_EVENT,
@@ -241,6 +242,11 @@ function IsShiftKeyDown() return state.shiftDown end
 function RequestTimePlayed() end
 function GetCoinTextureString(copper) return copper .. "c" end
 function GetTitleText() return state.questTitle end
+function IsInInstance()
+  if state.instance then return true, state.instance.type end
+  return false, "none"
+end
+function GetInstanceInfo() return state.instance and state.instance.name or GetZoneText() end
 C_QuestLog = { GetTitleForQuestID = function(questID) return state.questTitles[questID] end }
 function strtrim(text) return (text:gsub("^%s+", ""):gsub("%s+$", "")) end
 

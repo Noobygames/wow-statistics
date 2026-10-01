@@ -116,6 +116,25 @@ function History.GetQuestLog(characterKey)
   return newestFirst(History.GetCharacter(characterKey).questLog)
 end
 
+-- Instanz-Läufe, neueste zuerst; ein laufender (bzw. beim letzten Logout offener) Lauf steht vorne
+function History.GetInstanceLog(characterKey)
+  local character = History.GetCharacter(characterKey)
+  local records = newestFirst(character.instanceLog)
+  local run = character.currentRun
+  if run then
+    table.insert(records, 1, {
+      time = run.startedAt,
+      name = run.name,
+      seconds = ns.Instances.GetRunSeconds(run),
+      level = run.level,
+      xp = run.xp,
+      counters = run.counters,
+      isCurrent = true,
+    })
+  end
+  return records
+end
+
 -- Vergleich aller Charaktere: eine Zeile je Charakter aus Level-Historie und laufendem Level.
 -- Sortiert nach durchschnittlicher Zeit je abgeschlossenem Level (schnellster zuerst, ohne Daten zuletzt).
 -- Eintrag: { name, realm, class, level, levelsCompleted, averageLevelSeconds, xpRate, counters, isCurrent }
