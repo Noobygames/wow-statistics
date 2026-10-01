@@ -42,7 +42,7 @@ The history window shows, per character:
 - **Compare**: all characters side by side (level, levels gained, average time per level, XP/h, kills, deaths, gold), fastest leveler first.
 - **Charts**: time per level, XP/h per level, kills per day (last 30 days, kept as daily totals even when old journal entries are dropped), top enemies, death causes, XP/h per zone, play time per day and week, and the XP timeline of the session (5-minute steps, breaks show as gaps). Hover a column for the exact value.
 
-The running level or session is highlighted at the top, a **Total** row at the bottom sums everything up. Long lists scroll smoothly with the mouse wheel, only the visible rows are drawn. Switch characters with the arrows. Open it with Shift-left-click on the minimap button, the button in the settings, or `/lt history`.
+The running level or session is highlighted at the top, a **Total** row at the bottom sums everything up. Click a column header to sort (again to reverse), type in the filter box to search all columns; the total row then covers the filtered rows only. Long lists scroll smoothly with the mouse wheel, only the visible rows are drawn. Switch characters with the arrows. Open it with Shift-left-click on the minimap button, the button in the settings, or `/lt history`.
 
 Works across several game versions (Retail, Classic Era, Anniversary, ...) from a single `.toc`. Features a client doesn't support stay off silently. German and English UI.
 

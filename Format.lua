@@ -72,3 +72,11 @@ end
 function Format.Gold(copper)
   return string.format("%dg", math.floor(copper / COPPER_PER_GOLD))
 end
+
+-- Text ohne Farbcodes und Link-Markup (z.B. Item-Links), für Suche und Export
+function Format.PlainText(value)
+  local text = tostring(value or "")
+  text = text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|cnIQ%d+:", ""):gsub("|r", "")
+  text = text:gsub("|H.-|h", ""):gsub("|h", "")
+  return text
+end
