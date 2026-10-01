@@ -153,6 +153,8 @@ addToggles({
     set = function(checked) ns.Set("locked", checked) end },
   { label = "SHOW_XP_BAR", get = function(db) return db.showXpBar end,
     set = function(checked) ns.Set("showXpBar", checked) end },
+  { label = "COMPACT_MODE", get = function(db) return db.compactMode end,
+    set = function(checked) ns.Set("compactMode", checked) end },
 })
 addButton("RESET_WINDOW", function() TimerWindow.ResetLayout() end)
 addHint("OPTIONS_HINT")

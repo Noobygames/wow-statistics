@@ -51,6 +51,7 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 - Left-click the minimap button (pocket watch) to open the settings, Shift-left-click for the history, right-click to show or hide the window, drag to move it around the minimap.
 - On Retail, LevelTimer also shows up in the addon compartment menu.
 - Resize the window by dragging its bottom right corner; text and everything else scale with it. Right-click the window to open the settings.
+- **Compact mode** (`/lt compact` or settings): only play time, XP bar and XP/h.
 - Settings, grouped into Window, Statistics and General: size, background opacity, show/lock window, reset position & size, one toggle per statistic, language (Deutsch / English) and the minimap button.
 
 ### Chat commands
@@ -61,6 +62,7 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 | `/lt history` | Open the history |
 | `/lt lock` / `/lt unlock` | Lock or unlock the window position and size |
 | `/lt reset` | Reset window position and size |
+| `/lt compact` | Toggle compact mode (play time, XP bar and XP/h only) |
 | `/lt show` / `/lt hide` | Show or hide the window |
 | `/lt sync` | Re-sync play time with the server |
 | `/lt minimap` | Toggle the minimap button |

@@ -58,3 +58,19 @@ addon.Set("showXpBar", true)
 wow.state.level, addon.level = 60, 60
 addon.ApplySettings()
 expect("auf Max-Level kein Balken", window:GetHeight(), withoutBar)
+
+-- Kompaktmodus: ohne Reiter und ohne weitere Zeilen deutlich kleiner
+wow.state.level, addon.level = 30, 30
+addon.Set("compactMode", false)
+local fullHeight = window:GetHeight()
+local sessionTab = wow.findFrame(function(frame)
+  local label = rawget(frame, "label")
+  return label and label._text == "Session"
+end)
+SlashCmdList.LEVELTIMER("compact")
+expect("Kompaktmodus an", LevelTimerDB.compactMode, true)
+expectTrue("kompakt ist kleiner", window:GetHeight() < fullHeight)
+expect("Reiter versteckt", sessionTab:IsShown(), false)
+SlashCmdList.LEVELTIMER("compact")
+expect("Kompaktmodus aus", LevelTimerDB.compactMode, false)
+expect("Reiter wieder da", sessionTab:IsShown(), true)

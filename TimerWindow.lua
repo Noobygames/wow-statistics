@@ -26,6 +26,7 @@ local TABLE_GAP = 4                   -- Abstand zwischen Zeitanzeige und Tabell
 local WIDEST_TIME = "00d 00h 00m 00s" -- für die Fensterbreite
 local DEFAULT_POSITION = { "TOP", "TOP", 0, -120 }
 local DEFAULT_SCALE = 1
+local COMPACT_ROW_SETTING = "showXpRate"  -- einzige Zeile im Kompaktmodus
 local XP_BAR_HEIGHT = 6
 local XP_BAR_BACKGROUND = { 1, 1, 1, 0.1 }
 local XP_BAR_RESTED = { 0.3, 0.55, 1, 0.6 }
@@ -131,8 +132,14 @@ local function updateLayout(db)
   timeText:SetText(WIDEST_TIME)
   local width = math.max(MIN_WIDTH, timeText:GetStringWidth() + 2 * PADDING_X)
 
-  local tabHeight = fontSize(levelTab.label) + 4
-  local y = PADDING_Y + tabHeight + LINE_GAP
+  -- Kompaktmodus: keine Reiter, nur Zeit, XP-Balken und XP/h
+  local compact = db.compactMode
+  levelTab:SetShown(not compact)
+  sessionTab:SetShown(not compact)
+  local y = PADDING_Y
+  if not compact then
+    y = y + fontSize(levelTab.label) + 4 + LINE_GAP
+  end
   timeText:ClearAllPoints()
   timeText:SetPoint("TOP", window, "TOP", 0, -y)
   y = y + fontSize(timeText) + TABLE_GAP
@@ -151,6 +158,9 @@ local function updateLayout(db)
 
   for _, row in ipairs(rows) do
     local visible = db[row.setting]
+    if compact then
+      visible = row.setting == COMPACT_ROW_SETTING
+    end
     row.label:SetShown(visible)
     row.value:SetShown(visible)
     if visible then

@@ -15,6 +15,7 @@ local commands = {
     ns.Print(L.UNLOCKED)
   end,
   reset = function() ns.TimerWindow.ResetLayout() end,
+  compact = function() ns.Set("compactMode", not ns.db.compactMode) end,
   debug = function()
     ns.debug = not ns.debug  -- bewusst nicht gespeichert, gilt bis /reload
     ns.Print(ns.debug and L.DEBUG_ON or L.DEBUG_OFF)

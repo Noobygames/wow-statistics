@@ -27,7 +27,7 @@ Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt.
 - [x] 15. **Tabellen sortieren und filtern** (M): Klick auf Spaltenkopf sortiert, Suchfeld für Name, Zone, Zeitraum.
 - [x] 16. **Export** (S): Tabelle als CSV in ein Textfeld zum Kopieren.
 - [x] 17. **Daten löschen pro Charakter** (S): z.B. nach Löschen eines Charakters.
-- [ ] 18. **Kompaktmodus** (S): Fenster nur mit Zeit und XP/h.
+- [x] 18. **Kompaktmodus** (S): Fenster nur mit Zeit und XP/h.
 - [ ] 19. **Datentext für Titan Panel und ElvUI** (M): Werte in fremden Leisten anzeigen (LibDataBroker).
 
 ## Projekt und Verbreitung
@@ -42,4 +42,4 @@ Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt.
 
 Nach Erledigen oben abhaken und hier kurz vermerken (Version, Nummer).
 
-- Nächstes Release: 1, 8, 13, 17, 22, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 14, 15, 16
+- Nächstes Release: 1, 8, 13, 17, 22, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 14, 15, 16, 18

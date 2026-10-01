@@ -14,6 +14,7 @@ local SETTINGS_DEFAULTS = {
   locked = false,
   showTimer = true,
   showXpBar = true,
+  compactMode = false,  -- nur Zeit, XP-Balken und XP/h (siehe TimerWindow.lua)
   windowScope = "level",  -- "level" oder "session" (siehe Stats.lua)
   -- Stat-Zeilen im Fenster (siehe StatLines.lua)
   showXpRate = true,
