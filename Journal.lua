@@ -1,4 +1,4 @@
--- Journal: einzelne Kills, Tode, Quests und Instanz-Läufe des eingeloggten Charakters mit Zeitpunkt und Umständen.
+-- Journal: einzelne Kills, Tode, Quests, Beute und Instanz-Läufe des eingeloggten Charakters mit Zeitpunkt und Umständen.
 --
 -- Kill-Eintrag: { time, kind = "pve"|"pvp", name, level, zone }
 -- Tod-Eintrag:  { time, level, zone, killer, spell, environment }
@@ -6,6 +6,7 @@
 --   (z.B. "FALLING"); alle drei nil, wenn die Ursache nicht bekannt ist.
 -- Quest-Eintrag: { time, level, zone, questID, name, xp, money }
 -- Instanz-Lauf: { time, name, instanceType, seconds, level, xp, counters = { kills, deaths } }
+-- Beute:        { time, level, zone, link, name, quality, quantity, source }
 local _, ns = ...
 
 local Journal = {}
@@ -18,6 +19,7 @@ Journal.MAX_KILLS = 5000  -- Historie zeigt per Lazy Load alle, gerendert werden
 Journal.MAX_DEATHS = 1000
 Journal.MAX_QUESTS = 2000
 Journal.MAX_INSTANCE_RUNS = 500
+Journal.MAX_LOOT = 2000
 
 -- Neuen Eintrag anhängen und die ältesten über dem Limit verwerfen
 local function append(log, entry, limit)
@@ -47,6 +49,17 @@ function Journal.AddQuest(questID, name, xp, money)
   entry.xp = xp
   entry.money = money
   append(ns.character.questLog, entry, Journal.MAX_QUESTS)
+end
+
+-- item = { link, name, quality, quantity, source }
+function Journal.AddLoot(item)
+  local entry = baseEntry()
+  entry.link = item.link
+  entry.name = item.name
+  entry.quality = item.quality
+  entry.quantity = item.quantity
+  entry.source = item.source
+  append(ns.character.lootLog, entry, Journal.MAX_LOOT)
 end
 
 -- Beendeter Instanz-Lauf (Form siehe Instances.lua); time = Betreten der Instanz

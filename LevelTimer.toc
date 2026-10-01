@@ -15,6 +15,7 @@ Locales.lua
 Database.lua
 LevelTimer.lua
 Format.lua
+ChatPatterns.lua
 Widgets.lua
 
 # Daten (ohne UI)
@@ -26,6 +27,7 @@ Experience.lua
 KillCounter.lua
 DeathCounter.lua
 QuestCounter.lua
+Loot.lua
 MoneyCounter.lua
 History.lua
 Zones.lua

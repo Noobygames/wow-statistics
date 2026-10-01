@@ -28,6 +28,7 @@ Shown as a clear table, label left and value right. Every value can be switched 
 - **Kills**: every killed creature and player with time, name, PvE/PvP, level and zone
 - **Deaths**: every death with time, cause (enemy and spell, or falling, drowning, ...), level and zone. Retail hides the combat log from addons, so the cause shows as "Unknown" there.
 - **Quests**: every quest turned in with time, name, XP and gold
+- **Loot**: rare and better items with time, quantity and likely source
 - **Instances**: every dungeon, raid and scenario run with duration, XP, kills and deaths
 - **Zones**: XP/h, kills and deaths per zone, so you see where leveling pays off
 - **Compare**: all your characters side by side, fastest leveler first

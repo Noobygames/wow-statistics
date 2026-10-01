@@ -116,6 +116,10 @@ function History.GetQuestLog(characterKey)
   return newestFirst(History.GetCharacter(characterKey).questLog)
 end
 
+function History.GetLootLog(characterKey)
+  return newestFirst(History.GetCharacter(characterKey).lootLog)
+end
+
 -- Instanz-Läufe, neueste zuerst; ein laufender (bzw. beim letzten Logout offener) Lauf steht vorne
 function History.GetInstanceLog(characterKey)
   local character = History.GetCharacter(characterKey)

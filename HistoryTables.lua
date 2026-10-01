@@ -1,4 +1,4 @@
--- Tabellen der Historie: Level, Timeline, Sessions, Kills, Tode, Quests, Instanzen, Zonen, Vergleich.
+-- Tabellen der Historie: Level, Timeline, Sessions, Kills, Tode, Quests, Beute, Instanzen, Zonen, Vergleich.
 -- Lazy Load: Es gibt nur so viele Zeilen-Widgets, wie sichtbar sind; beim Scrollen
 -- (Mausrad oder Leiste) werden sie mit den passenden Einträgen neu gefüllt.
 -- So bleiben auch tausende Journal-Einträge flüssig.
@@ -142,6 +142,14 @@ local INSTANCE_COLUMNS = {
   { header = "HISTORY_XP", width = 60, value = function(r) return Format.Number(r.xp or 0) end },
   counterColumn("HISTORY_KILLS", "kills", 50),
   counterColumn("HISTORY_DEATHS", "deaths", 40),
+  levelColumn(40),
+}
+
+local LOOT_COLUMNS = {
+  whenColumn(100),
+  { header = "HISTORY_ITEM", width = 180, align = LEFT, value = function(r) return r.link or r.name or "" end },
+  { header = "HISTORY_QUANTITY", width = 40, value = function(r) return r.quantity or 1 end },
+  { header = "HISTORY_SOURCE", width = 130, align = LEFT, value = function(r) return r.source or "-" end },
   levelColumn(40),
 }
 
@@ -327,6 +335,7 @@ addTable("HISTORY_TAB_SESSIONS", nil, SESSION_COLUMNS, History.GetSessionRecords
 addTable("HISTORY_TAB_KILLS", JOURNAL, KILL_COLUMNS, History.GetKillLog, countCells)
 addTable("HISTORY_TAB_DEATHS", JOURNAL, DEATH_COLUMNS, History.GetDeathLog, countCells)
 addTable("HISTORY_TAB_QUESTS", JOURNAL, QUEST_COLUMNS, History.GetQuestLog, countCells)
+addTable("HISTORY_TAB_LOOT", JOURNAL, LOOT_COLUMNS, History.GetLootLog, countCells)
 addTable("HISTORY_TAB_INSTANCES", JOURNAL, INSTANCE_COLUMNS, History.GetInstanceLog, summaryCells)
 addTable("HISTORY_TAB_ZONES", nil, ZONE_COLUMNS, ns.Zones.GetRecords, summaryCells)
 
