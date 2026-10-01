@@ -1,4 +1,4 @@
--- Tabellen der Historie: Level, Timeline, Sessions, Kills, Tode.
+-- Tabellen der Historie: Level, Timeline, Sessions, Kills, Tode, Zonen, Vergleich.
 -- Lazy Load: Es gibt nur so viele Zeilen-Widgets, wie sichtbar sind; beim Scrollen
 -- (Mausrad oder Leiste) werden sie mit den passenden Einträgen neu gefüllt.
 -- So bleiben auch tausende Journal-Einträge flüssig.
@@ -124,6 +124,15 @@ local DEATH_COLUMNS = {
   { header = "HISTORY_CAUSE", width = 180, align = LEFT, value = History.DeathCauseText },
   levelColumn(40),
   zoneColumn(126),
+}
+
+local ZONE_COLUMNS = {
+  { header = "HISTORY_ZONE", width = 160, value = function(r) return r.zone or "" end },
+  durationColumn(70),
+  { header = "HISTORY_XP", width = 70, value = function(r) return Format.Number(r.xp or 0) end },
+  xpRateColumn(60),
+  counterColumn("HISTORY_KILLS", "kills", 50),
+  counterColumn("HISTORY_DEATHS", "deaths", 40),
 }
 
 local COMPARE_COLUMNS = {
@@ -298,6 +307,7 @@ addTable("HISTORY_TAB_TIMELINE", LEVELS, MILESTONE_COLUMNS, History.GetMilestone
 addTable("HISTORY_TAB_SESSIONS", nil, SESSION_COLUMNS, History.GetSessionRecords, summaryCells)
 addTable("HISTORY_TAB_KILLS", JOURNAL, KILL_COLUMNS, History.GetKillLog, countCells)
 addTable("HISTORY_TAB_DEATHS", JOURNAL, DEATH_COLUMNS, History.GetDeathLog, countCells)
+addTable("HISTORY_TAB_ZONES", nil, ZONE_COLUMNS, ns.Zones.GetRecords, summaryCells)
 
 -- Vergleich gilt für alle Charaktere, die Charakter-Auswahl spielt hier keine Rolle
 ns.HistoryWindow.AddView(createTableView({

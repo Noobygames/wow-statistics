@@ -111,6 +111,23 @@ local function topCounts(entries, nameOf)
   return items
 end
 
+-- Zonen mit der besten XP pro Stunde; kurze Aufenthalte sind zu ungenau und fallen weg
+local MIN_ZONE_SECONDS = 300
+
+function Analysis.XpRatePerZone(characterKey)
+  local items = {}
+  for _, record in ipairs(ns.Zones.GetRecords(characterKey)) do
+    local rate = record.seconds >= MIN_ZONE_SECONDS and Experience.CalculateRate(record.xp, record.seconds)
+    if rate then
+      table.insert(items, { label = record.zone, value = rate, text = Format.Number(rate), highlight = record.isCurrent })
+    end
+  end
+  while #items > TOP_COUNT do
+    table.remove(items)
+  end
+  return items
+end
+
 function Analysis.TopKills(characterKey)
   return topCounts(History.GetCharacter(characterKey).killLog, function(kill)
     return kill.name or L.UNKNOWN_NAME

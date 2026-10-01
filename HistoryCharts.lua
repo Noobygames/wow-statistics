@@ -48,3 +48,4 @@ AddView(createChartView("CHART_LEVEL_XP_RATE", "column", Analysis.XpRatePerLevel
 AddView(createChartView("CHART_KILLS_PER_DAY", "column", Analysis.KillsPerDay, tostring))
 AddView(createChartView("CHART_TOP_KILLS", "rank", Analysis.TopKills))
 AddView(createChartView("CHART_DEATH_CAUSES", "rank", Analysis.DeathCauses))
+AddView(createChartView("CHART_ZONE_XP_RATE", "rank", Analysis.XpRatePerZone))

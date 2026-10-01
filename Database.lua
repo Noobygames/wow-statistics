@@ -59,6 +59,7 @@ local CHARACTER_DEFAULTS = {
   sessionHistory = {},  -- beendete Sessions, älteste zuerst
   killLog = {},         -- getötete Kreaturen und Spieler, älteste zuerst (siehe Journal.lua)
   deathLog = {},        -- eigene Tode mit Ursache, älteste zuerst (siehe Journal.lua)
+  zoneStats = {},       -- Spielzeit, XP, Kills und Tode je Zone (siehe Zones.lua)
 }
 
 -- Migrationen für die Daten eines Charakters, Schlüssel = Zielversion.

@@ -28,6 +28,7 @@ DeathCounter.lua
 QuestCounter.lua
 MoneyCounter.lua
 History.lua
+Zones.lua
 Analysis.lua
 Forecast.lua
 
