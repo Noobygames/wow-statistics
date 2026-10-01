@@ -1,6 +1,6 @@
--- Zählt Kills auf dem aktuellen Level, getrennt nach PvE und PvP.
+-- Zählt Kills, getrennt nach PvE und PvP.
 local _, ns = ...
-local LevelStats = ns.LevelStats
+local Stats = ns.Stats
 
 ---------------------------------------------------------------------------
 -- PvE: Kills, die Erfahrung gegeben haben (Chatmeldung "X stirbt, Ihr bekommt Y Erfahrung").
@@ -25,8 +25,8 @@ if COMBATLOG_XPGAIN_FIRSTPERSON then
     if ns.IsSecret(message) then return end
     local xp = message:match(killPattern)
     if xp then
-      LevelStats.Increment(LevelStats.PVE_KILLS)
-      LevelStats.Increment(LevelStats.XP_KILLS, tonumber(xp))
+      Stats.Increment(Stats.PVE_KILLS)
+      Stats.Increment(Stats.XP_KILLS, tonumber(xp))
     end
   end)
 end
@@ -54,7 +54,7 @@ if GetPVPSessionStats then
     if current < lastHonorableKills then
       lastHonorableKills = 0  -- Tageswechsel hat die Summe zurückgesetzt
     end
-    LevelStats.Increment(LevelStats.PVP_KILLS, current - lastHonorableKills)
+    Stats.Increment(Stats.PVP_KILLS, current - lastHonorableKills)
     lastHonorableKills = current
   end)
 end

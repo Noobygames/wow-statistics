@@ -1,4 +1,4 @@
--- Kern: Einstellungs- und Event-Verteilung, Login- und Level-Up-Ablauf. Wird vor allen Modulen geladen.
+-- Kern: Einstellungs- und Event-Verteilung, Login-, Logout- und Level-Up-Ablauf. Wird vor allen Modulen geladen.
 local _, ns = ...
 
 local PREFIX = "|cfff4c95dLevelTimer:|r "
@@ -62,19 +62,33 @@ eventFrame:SetScript("OnEvent", function(_, event, ...)
 end)
 
 ---------------------------------------------------------------------------
--- Login: Callbacks laufen, sobald ns.db, ns.charDB und ns.level bereitstehen.
+-- Login/Logout. Nach dem Login stehen bereit:
+--   ns.db            Einstellungen (Account)
+--   ns.characterKey  "Name-Realm" des eingeloggten Charakters
+--   ns.character     Statistiken des eingeloggten Charakters
+--   ns.level         aktuelles Level
+-- Logout kommt auch bei /reload; danach schreibt der Client die SavedVariables.
 ---------------------------------------------------------------------------
 local loginCallbacks = {}
+local logoutCallbacks = {}
 
 function ns.OnLogin(callback)
   table.insert(loginCallbacks, callback)
 end
 
+function ns.OnLogout(callback)
+  table.insert(logoutCallbacks, callback)
+end
+
 ns.RegisterEvent("PLAYER_LOGIN", function()
-  ns.db, ns.charDB = ns.Database.Load()
+  ns.db, ns.characterKey, ns.character = ns.Database.Load()
   ns.level = UnitLevel("player")
   runAll(loginCallbacks)
   ns.ApplySettings()
+end)
+
+ns.RegisterEvent("PLAYER_LOGOUT", function()
+  runAll(logoutCallbacks)
 end)
 
 ---------------------------------------------------------------------------

@@ -1,7 +1,7 @@
--- Summiert Einnahmen auf dem aktuellen Level (Beute, Quests, Verkäufe, Post).
+-- Summiert Einnahmen (Beute, Quests, Verkäufe, Post).
 -- Ausgaben werden nicht abgezogen.
 local _, ns = ...
-local LevelStats = ns.LevelStats
+local Stats = ns.Stats
 
 local lastMoney
 
@@ -12,7 +12,7 @@ end)
 ns.RegisterEvent("PLAYER_MONEY", function()
   local current = GetMoney()
   if lastMoney and current > lastMoney then
-    LevelStats.Increment(LevelStats.MONEY_EARNED, current - lastMoney)
+    Stats.Increment(Stats.MONEY_EARNED, current - lastMoney)
   end
   lastMoney = current
 end)

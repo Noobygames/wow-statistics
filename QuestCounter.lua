@@ -1,10 +1,10 @@
--- Zählt abgegebene Quests auf dem aktuellen Level und die XP daraus.
+-- Zählt abgegebene Quests und die XP daraus.
 local _, ns = ...
-local LevelStats = ns.LevelStats
+local Stats = ns.Stats
 
 ns.RegisterEvent("QUEST_TURNED_IN", function(_, xpReward)
-  LevelStats.Increment(LevelStats.QUESTS)
+  Stats.Increment(Stats.QUESTS)
   if xpReward and not ns.IsSecret(xpReward) then
-    LevelStats.Increment(LevelStats.XP_QUESTS, xpReward)
+    Stats.Increment(Stats.XP_QUESTS, xpReward)
   end
 end)
