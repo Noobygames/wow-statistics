@@ -5,7 +5,7 @@ Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt.
 ## Auswertung und Graphen
 
 - [x] 1. **Prognose bis Max-Level** (M): aus bisherigen Level-Zeiten hochrechnen, z.B. „Level 90 in ca. 14 h /played“.
-- [ ] 2. **Alle Charaktere vergleichen** (M): Ansicht „Alle“ mit Summen und einer Rangliste, wer am schnellsten levelt.
+- [x] 2. **Alle Charaktere vergleichen** (M): Ansicht „Alle“ mit Summen und einer Rangliste, wer am schnellsten levelt.
 - [ ] 3. **Zonen-Auswertung** (M): XP/h, Kills und Tode pro Zone. Zeigt, welche Zone sich lohnt.
 - [ ] 4. **Spielzeit pro Tag/Woche** (S): Graph aus den Sessions.
 - [ ] 5. **XP-Verlauf in der Session** (M): Linie XP über Zeit, zeigt Pausen und Leerlauf.
@@ -42,4 +42,4 @@ Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt.
 
 Nach Erledigen oben abhaken und hier kurz vermerken (Version, Nummer).
 
-- Nächstes Release: 1, 8, 13, 17, 22
+- Nächstes Release: 1, 8, 13, 17, 22, 2

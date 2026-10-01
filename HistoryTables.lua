@@ -126,6 +126,32 @@ local DEATH_COLUMNS = {
   zoneColumn(126),
 }
 
+local COMPARE_COLUMNS = {
+  { header = "HISTORY_CHARACTER_NAME", width = 140, value = function(r)
+      return (r.name or "?") .. " - " .. (r.realm or "?")
+    end },
+  levelColumn(40),
+  { header = "HISTORY_LEVELS_DONE", width = 56, value = function(r) return r.levelsCompleted end },
+  { header = "HISTORY_AVERAGE_LEVEL_TIME", width = 84, value = function(r)
+      return r.averageLevelSeconds and Format.Duration(r.averageLevelSeconds) or "-"
+    end },
+  { header = "HISTORY_XP_RATE", width = 56, value = function(r)
+      return r.xpRate and Format.Number(r.xpRate) or "-"
+    end },
+  { header = "HISTORY_KILLS", width = 50, value = function(r)
+      return counter(r, Stats.PVE_KILLS) + counter(r, Stats.PVP_KILLS)
+    end },
+  counterColumn("HISTORY_DEATHS", Stats.DEATHS, 40),
+  goldColumn(56),
+}
+
+-- Vergleich: Zeilen in Klassenfarbe
+local function classColor(record)
+  local color = RAID_CLASS_COLORS and record.class and RAID_CLASS_COLORS[record.class]
+  if color then return { color.r, color.g, color.b } end
+  return WHITE
+end
+
 -- Summenzeile für Level und Sessions: Spaltenwerte der Summe, vorne "Gesamt"
 local function summaryCells(columns, records)
   local summary = History.Summarize(records)
@@ -186,9 +212,15 @@ local function recordCells(columns, record)
   return cells
 end
 
--- definition = { tab, group (optional), columns, records(characterKey), footer(columns, records) }
+local function defaultRowColor(record)
+  return record.isCurrent and Widgets.COLORS.highlight or WHITE
+end
+
+-- definition = { tab, group (optional), columns, records(characterKey), footer(columns, records),
+--                rowColor(record) (optional, Standard: laufender Eintrag hervorgehoben, sonst weiß) }
 local function createTableView(definition)
   local columns = definition.columns
+  local rowColor = definition.rowColor or defaultRowColor
 
   local function create(parent, _, height)
     local frame = CreateFrame("Frame", nil, parent)
@@ -213,7 +245,7 @@ local function createTableView(definition)
       for i, row in ipairs(rows) do
         local record = records[frame.offset + i]
         if record then
-          fillRow(row, recordCells(columns, record), record.isCurrent and Widgets.COLORS.highlight or WHITE)
+          fillRow(row, recordCells(columns, record), rowColor(record))
         else
           row:Hide()
         end
@@ -266,3 +298,12 @@ addTable("HISTORY_TAB_TIMELINE", LEVELS, MILESTONE_COLUMNS, History.GetMilestone
 addTable("HISTORY_TAB_SESSIONS", nil, SESSION_COLUMNS, History.GetSessionRecords, summaryCells)
 addTable("HISTORY_TAB_KILLS", JOURNAL, KILL_COLUMNS, History.GetKillLog, countCells)
 addTable("HISTORY_TAB_DEATHS", JOURNAL, DEATH_COLUMNS, History.GetDeathLog, countCells)
+
+-- Vergleich gilt für alle Charaktere, die Charakter-Auswahl spielt hier keine Rolle
+ns.HistoryWindow.AddView(createTableView({
+  tab = "HISTORY_TAB_COMPARE",
+  columns = COMPARE_COLUMNS,
+  records = function() return History.GetCharacterComparison() end,
+  footer = countCells,
+  rowColor = classColor,
+}))

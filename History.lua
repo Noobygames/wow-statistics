@@ -112,6 +112,52 @@ function History.GetDeathLog(characterKey)
   return newestFirst(History.GetCharacter(characterKey).deathLog)
 end
 
+-- Vergleich aller Charaktere: eine Zeile je Charakter aus Level-Historie und laufendem Level.
+-- Sortiert nach durchschnittlicher Zeit je abgeschlossenem Level (schnellster zuerst, ohne Daten zuletzt).
+-- Eintrag: { name, realm, class, level, levelsCompleted, averageLevelSeconds, xpRate, counters, isCurrent }
+local function compareRecord(characterKey)
+  local character = History.GetCharacter(characterKey)
+  local levelRecords = History.GetLevelRecords(characterKey)
+  local summary = History.Summarize(levelRecords)
+
+  local completedSeconds, completedCount = 0, 0
+  for _, record in ipairs(levelRecords) do
+    if not record.isCurrent and record.seconds then
+      completedSeconds = completedSeconds + record.seconds
+      completedCount = completedCount + 1
+    end
+  end
+
+  return {
+    name = character.name,
+    realm = character.realm,
+    class = character.class,
+    level = character.currentLevel.level,
+    levelsCompleted = completedCount,
+    averageLevelSeconds = completedCount > 0 and completedSeconds / completedCount or nil,
+    xpRate = ns.Experience.CalculateRate(summary.xp, summary.seconds),
+    counters = summary.counters,
+    isCurrent = isLoggedIn(characterKey),
+  }
+end
+
+function History.GetCharacterComparison()
+  local records = {}
+  for _, key in ipairs(History.GetCharacterKeys()) do
+    table.insert(records, compareRecord(key))
+  end
+  table.sort(records, function(a, b)
+    if a.averageLevelSeconds and b.averageLevelSeconds then
+      return a.averageLevelSeconds < b.averageLevelSeconds
+    end
+    if a.averageLevelSeconds or b.averageLevelSeconds then
+      return a.averageLevelSeconds ~= nil
+    end
+    return (a.name or "") < (b.name or "")
+  end)
+  return records
+end
+
 -- Todesursache als Text: Umgebung (z.B. "Sturz"), "Verursacher (Zauber)" oder "Unbekannt"
 function History.DeathCauseText(entry)
   if entry.environment then
