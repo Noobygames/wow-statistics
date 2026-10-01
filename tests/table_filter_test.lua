@@ -13,9 +13,7 @@ end
 SlashCmdList.LEVELTIMER("history")
 wow.click("Kills")
 
-local killTable = wow.findFrame(function(frame)
-  return frame._scripts.OnMouseWheel ~= nil and frame:IsShown()
-end)
+local killTable = wow.shownTable()
 
 local function shownNames()
   local result = {}

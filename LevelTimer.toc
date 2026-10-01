@@ -43,6 +43,7 @@ StatLines.lua
 LevelUpSummary.lua
 TimerWindow.lua
 Charts.lua
+Export.lua
 HistoryWindow.lua
 HistoryTables.lua
 HistoryCharts.lua

@@ -11,9 +11,7 @@ SlashCmdList.LEVELTIMER("history")
 expectTrue("Reiter Kills", wow.click("Kills"))
 
 -- Tabelle mit Mausrad: nur die Kill-Tabelle ist sichtbar und scrollbar
-local killTable = wow.findFrame(function(frame)
-  return frame._scripts.OnMouseWheel ~= nil and frame:IsShown()
-end)
+local killTable = wow.shownTable()
 expectTrue("Kill-Tabelle gefunden", killTable ~= nil)
 expect("startet oben", killTable.offset, 0)
 

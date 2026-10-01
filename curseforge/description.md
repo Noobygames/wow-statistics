@@ -36,6 +36,7 @@ Shown as a clear table, label left and value right. Every value can be switched 
 - **Compare**: all your characters side by side, fastest leveler first
 - **Charts**: time per level, XP/h per level, kills per day, top enemies, death causes, XP/h per zone, play time per day and week and the XP timeline of your session
 - Sort by any column, filter by any text; a **Total** row sums up the shown rows; long lists scroll smoothly
+- **Export** any table as CSV to copy into a spreadsheet
 - Browse **all your characters** from any character
 
 A session runs from login to logout. A `/reload` or a short break (up to 5 minutes) continues it.

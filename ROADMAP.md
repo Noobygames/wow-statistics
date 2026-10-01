@@ -25,7 +25,7 @@ Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt.
 - [x] 13. **Level-Up-Zusammenfassung** (S): Chatzeile beim Level-Up, z.B. „Level 84 in 2h 10m, 312 Kills, 1 Tod“.
 - [x] 14. **XP-Balken im Fenster** (S): Fortschritt mit Rested-Anteil.
 - [x] 15. **Tabellen sortieren und filtern** (M): Klick auf Spaltenkopf sortiert, Suchfeld für Name, Zone, Zeitraum.
-- [ ] 16. **Export** (S): Tabelle als CSV in ein Textfeld zum Kopieren.
+- [x] 16. **Export** (S): Tabelle als CSV in ein Textfeld zum Kopieren.
 - [x] 17. **Daten löschen pro Charakter** (S): z.B. nach Löschen eines Charakters.
 - [ ] 18. **Kompaktmodus** (S): Fenster nur mit Zeit und XP/h.
 - [ ] 19. **Datentext für Titan Panel und ElvUI** (M): Werte in fremden Leisten anzeigen (LibDataBroker).
@@ -42,4 +42,4 @@ Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt.
 
 Nach Erledigen oben abhaken und hier kurz vermerken (Version, Nummer).
 
-- Nächstes Release: 1, 8, 13, 17, 22, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 14, 15
+- Nächstes Release: 1, 8, 13, 17, 22, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 14, 15, 16

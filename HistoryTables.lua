@@ -21,6 +21,7 @@ local LEFT, RIGHT = "LEFT", "RIGHT"
 local TOOLBAR_HEIGHT = 22     -- Zeile mit dem Suchfeld über der Tabelle
 local FILTER_WIDTH = 150
 local FILTER_HEIGHT = 18
+local EXPORT_BUTTON_WIDTH = 70
 local SORT_DESCENDING = " v"
 local SORT_ASCENDING = " ^"
 
@@ -463,8 +464,30 @@ local function createTableView(definition)
       return records
     end
 
+    -- Angezeigte Zeilen als CSV (Spaltenköpfe in der aktuellen Sprache, Zellen ohne Farbcodes)
+    function frame:BuildCsv()
+      local headers, rowsText = {}, {}
+      for i, column in ipairs(columns) do
+        headers[i] = L[column.header]
+      end
+      for _, record in ipairs(records) do
+        local cells = recordCells(columns, record)
+        for i, cell in ipairs(cells) do
+          cells[i] = plainText(cell)
+        end
+        table.insert(rowsText, cells)
+      end
+      return ns.Export.ToCsv(headers, rowsText, L.CSV_SEPARATOR)
+    end
+
+    local exportButton = Widgets.CreateButton(frame, EXPORT_BUTTON_WIDTH, FILTER_HEIGHT + 2, function()
+      ns.Export.Show(L[definition.tab], frame:BuildCsv())
+    end)
+    exportButton:SetPoint("TOPLEFT", 0, -1)
+
     function frame:Render(characterKey, selectionChanged)
       filterLabel:SetText(L.FILTER)
+      exportButton:SetText(L.EXPORT)
       allRecords = definition.records(characterKey)
       if selectionChanged then frame.offset = 0 end
       apply()
