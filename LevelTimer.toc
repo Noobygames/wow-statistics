@@ -48,6 +48,7 @@ Splits.lua
 StatLines.lua
 LevelUpSummary.lua
 Alerts.lua
+BuffReminder.lua
 TimerWindow.lua
 SplitList.lua
 Charts.lua

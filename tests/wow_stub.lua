@@ -44,6 +44,10 @@ wow = {
     inGuild = false,
     inGroup = false,         -- Gruppe (IsInGroup)
     chatLockdown = false,    -- C_ChatInfo.InChatMessagingLockdown
+    inCombat = false,
+    resting = false,
+    buffs = {},              -- Namen aktiver Buffs (C_UnitAuras.GetAuraDataByIndex)
+    spellNames = { [19705] = "Satt" },  -- C_Spell.GetSpellName
     health = 1000,
     healthMax = 1000,
   },
@@ -276,6 +280,15 @@ function UnitClass() return state.class, state.class end
 function UnitIsDeadOrGhost() return state.dead end
 function UnitHealth() return state.health end
 function IsInGuild() return state.inGuild end
+function UnitAffectingCombat() return state.inCombat end
+function IsResting() return state.resting end
+C_Spell = { GetSpellName = function(spellID) return state.spellNames[spellID] end }
+C_UnitAuras = {
+  GetAuraDataByIndex = function(_, index)
+    local name = state.buffs[index]
+    return name and { name = name } or nil
+  end,
+}
 function IsInGroup() return state.inGroup end
 -- Gesendete Chat-Nachrichten landen in wow.sentChat als { message, chatType }
 wow.sentChat = {}

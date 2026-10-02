@@ -251,6 +251,8 @@ addToggles({
     set = function(checked) ns.Set("alertEpicLoot", checked) end },
   { label = "ALERT_TOGGLE_NEAR_DEATH", get = function(db) return db.alertNearDeath end,
     set = function(checked) ns.Set("alertNearDeath", checked) end },
+  { label = "REMIND_FOOD_TOGGLE", get = function(db) return db.remindFood end,
+    set = function(checked) ns.Set("remindFood", checked) end },
 })
 
 addSection("SECTION_GENERAL")

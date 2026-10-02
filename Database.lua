@@ -34,6 +34,7 @@ local SETTINGS_DEFAULTS = {
   alertEliteKill = false,
   alertEpicLoot = false,
   alertNearDeath = false,
+  remindFood = false,  -- Hinweis, wenn beim Leveln "Satt" fehlt (siehe BuffReminder.lua)
   levelUpSummary = true,
   levelUpAnnounce = "off",  -- Level-Up-Zusammenfassung an "party" oder "guild" (siehe LevelUpSummary.lua)  -- Chatzeile beim Level-Up (siehe LevelUpSummary.lua)
   showPveKills = true,
