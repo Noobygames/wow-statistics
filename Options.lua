@@ -383,6 +383,15 @@ addToggles({
   toggle("REMIND_FOOD_TOGGLE", "remindFood"),
   toggle("REMIND_CAMP_TOGGLE", "remindCamp", ns.BuffReminder.HasCampSystem),
 })
+addSlider({
+  label = "REMINDER_INTERVAL",
+  min = ns.BuffReminder.MIN_INTERVAL,
+  max = ns.BuffReminder.MAX_INTERVAL,
+  step = 1,
+  get = function(db) return db.reminderInterval end,
+  set = function(value) ns.Set("reminderInterval", value) end,
+  format = function(value) return string.format(L.MINUTES, value) end,
+})
 finishPage()
 
 -- Stream: alles, was nur für Streams und Speedruns gedacht ist

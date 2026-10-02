@@ -45,6 +45,8 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 
 - [x] 51. **Speedrun-Rekorde** (M): Rekorde von speedrun.com (WoW Classic: Leveling, SSF Softcore) für 1-10, 1-20 und 1-60, gesamt und je Klasse. Vergleich mit der /played-Zeit beim Erreichen des Levels in der Split-Liste und in Historie → Speedrun → „Speedrun-Rekorde“. Daten offline in `SpeedrunRecords.lua`, aktualisiert mit `make records`.
 
+- [x] 52. **Erinnerungs-Abstand einstellbar** (S): Food- und Camp-Hinweis wiederholen sich, solange der Buff fehlt; Abstand 1–30 min im Reiter Hinweise (Standard 5).
+
 ### Einstellungen
 
 - [x] 41. **Einstellungen mit Reitern** (M): Allgemein (Fenster, Kompakt/Horizontal, Sprache, Minimap), Statistiken, Hinweise (Level-Up, Erinnerungen), Stream (Stream-Modus, Hintergrund, Namen, Einblendungen, Splits). Neue Session, Zusammenfassung und Historie unten auf allen Reitern.
@@ -58,6 +60,7 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 
 ## Erledigt
 
+- Nächstes Release: 52. Erinnerungs-Abstand einstellbar
 - v2.5.0: 32. Neue Session starten, 31. Hardcore-Anzeige, 27. Stream-Ansicht, 33. Streamer-Datenschutz, 28. Session-Ziel, 29. Große Einblendungen, 30. Session-Abschlusskarte, 26. Splits, 34. Ansage in Gilde/Gruppe, 38. Rote Tode abschaltbar, 37. Stream-Modus, 35. Fester Vergleichslauf, 36. Split-Liste, 39. Hinweis bei fehlendem Food-Buff, 40. Hinweis bei fehlendem Camp-Buff, 41. Einstellungen mit Reitern, 42. Client-spezifische Optionen, 43. Level-Up-Ansage in /sagen, 44. Debug-Modus, 45. Split-Liste mit /played, 46. Fester Vergleich bleibt fest, 47. Läufe, 48. Rekorde, 49. Läufe teilen und sichern, 50. Einstellungs-Profile, 51. Speedrun-Rekorde
 - v2.0.0:
   - Auswertung: 1. Prognose bis Max-Level, 2. alle Charaktere vergleichen, 3. Zonen-Auswertung, 4. Spielzeit pro Tag/Woche, 5. XP-Verlauf der Session, 6. Langzeit-Graphen als Tageswerte
