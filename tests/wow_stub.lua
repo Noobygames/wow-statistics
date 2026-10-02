@@ -273,6 +273,8 @@ end
 COMBATLOG_XPGAIN_FIRSTPERSON = "%s stirbt, Ihr bekommt %d Erfahrung."
 COMBATLOG_HONORGAIN = "%s stirbt, ehrenhafter Sieg Rang: %s (Geschätzte Ehrenpunkte: %d)"
 INSTANCE_RESET_SUCCESS = "%s wurde zurückgesetzt."
+INSTANCE_RESET_FAILED = "%s kann nicht zurückgesetzt werden. Es befinden sich noch Spieler in der Instanz."
+TRANSFER_ABORT_TOO_MANY_INSTANCES = "Ihr habt zu viele Instanzen betreten."
 LOOT_ITEM_SELF = "Ihr erhaltet Beute: %s."
 LOOT_ITEM_SELF_MULTIPLE = "Ihr erhaltet Beute: %sx%d."
 LOOT_ITEM_PUSHED_SELF = "Ihr erhaltet einen Gegenstand: %s."
@@ -302,7 +304,10 @@ function GetTime() return state.now end
 wow.errors = {}
 function geterrorhandler() return function(message) table.insert(wow.errors, message) end end
 function GetCursorPosition() return state.cursorX, state.cursorY end
-function UnitGUID() return state.guid end
+function UnitGUID(unit)
+  if state.units[unit] and state.units[unit].guid then return state.units[unit].guid end
+  return state.guid
+end
 function GetZoneText() return state.zone end
 function CombatLogGetCurrentEventInfo() return unpack(state.combatLog) end
 function time(dateTable)

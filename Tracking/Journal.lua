@@ -5,7 +5,7 @@
 --   killer/spell: Verursacher und Zauber des letzten Treffers, environment: Umgebungsschaden
 --   (z.B. "FALLING"); alle drei nil, wenn die Ursache nicht bekannt ist.
 -- Quest-Eintrag: { time, level, zone, questID, name, xp, money }
--- Instanz-Lauf: { time, name, instanceType, seconds, level, xp, counters = { kills, deaths } }
+-- Instanz-Lauf: { time, name, instanceType, seconds, level, xp, counters = { kills, deaths }, zoneUID }
 -- Beute:        { time, level, zone, link, name, quality, quantity, source }
 -- Beinahe-Tod:  { time, level, zone, lowestPercent, killer, spell, environment }
 local _, ns = ...
@@ -97,7 +97,17 @@ function Journal.AddInstanceRun(run)
     level = run.level,
     xp = run.xp,
     counters = run.counters,
+    zoneUID = run.zoneUID,
   }, Journal.MAX_INSTANCE_RUNS)
+end
+
+-- Letzten beendeten Instanz-Lauf wieder herausnehmen, wenn er zu dieser Instanz gehört
+-- (Instances.lua führt ihn mit dem offenen Lauf zusammen); sonst nil
+function Journal.TakeLastInstanceRun(name)
+  local log = ns.character.instanceLog
+  local last = log[#log]
+  if not last or last.name ~= name then return nil end
+  return table.remove(log)
 end
 
 -- cause = { killer, spell, environment }, Felder dürfen fehlen.

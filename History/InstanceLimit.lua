@@ -6,14 +6,13 @@
 -- älteste zuerst, nur die letzten 24 Stunden. Accountweit, damit alle Charaktere zählen, die das Addon
 -- in diesem Client schon gesehen hat.
 --
--- Ob es eine neue Instanz ist, liefert die API für 5er-Dungeons nicht (keine Instanz-ID). Geschätzt wird
--- je Charakter (character.instanceVisits[Name] = { leftAt }):
---   gleiche Instanz  derselbe Dungeon, noch drin (/reload) oder vor höchstens REUSE_SECONDS verlassen
---   neue Instanz     sonst, oder nach der Reset-Meldung (INSTANCE_RESET_SUCCESS im Systemchat)
--- Wechsel der Gruppe (andere Instanz des Gruppenleiters) erkennt die Schätzung nicht.
+-- Ob eine Kopie neu ist, entscheidet InstanceCopy.lua: zuerst geschätzt, später an der zoneUID der
+-- Gegner bestätigt. Widerspricht die Bestätigung der Schätzung, wird der Eintrag nachgetragen bzw.
+-- wieder entfernt.
 local _, ns = ...
 local L = ns.L
 local Format = ns.Format
+local InstanceCopy = ns.InstanceCopy
 
 local InstanceLimit = {}
 ns.InstanceLimit = InstanceLimit
@@ -22,11 +21,7 @@ InstanceLimit.WINDOW = 3600               -- Sekunden, für die eine Instanz zä
 local LIMIT_CLASSIC = 5
 local LIMIT_RETAIL = 10
 local KEEP_SECONDS = 24 * 3600            -- so lange bleiben Einträge gespeichert (Info "heute")
-local REUSE_SECONDS = 30 * 60             -- so lange nach dem Verlassen gilt derselbe Dungeon als gleiche Instanz
 local COUNTED_TYPES = { party = true, raid = true }  -- Schlachtfelder und Szenarien zählen nicht
-
-local resetPattern = INSTANCE_RESET_SUCCESS and ns.ChatPatterns.Compile(INSTANCE_RESET_SUCCESS)
-local insideName  -- Instanz, in der der Charakter gerade ist (nil = draußen)
 
 function InstanceLimit.GetLimit()
   return ns.Client.IsRetail() and LIMIT_RETAIL or LIMIT_CLASSIC
@@ -71,79 +66,59 @@ function InstanceLimit.GetTodayCount()
   return #entriesSince(ns.Daily.StartOfDay(time()) - 1)
 end
 
-local function visits()
-  return ns.character.instanceVisits
-end
-
-local function isSameInstance(name, now)
-  local visit = visits()[name]
-  if not visit then return false end
-  return not visit.leftAt or now - visit.leftAt <= REUSE_SECONDS
+local function notifyCount(format)
+  local count, limit = InstanceLimit.GetHourCount(), InstanceLimit.GetLimit()
+  local wait = InstanceLimit.GetSecondsUntilNextFree() or 0
+  ns.Alerts.Notify(string.format(format, count, limit, Format.Duration(wait)), ns.Alerts.WARNING_COLOR)
 end
 
 local function warn()
   if not ns.db.warnInstanceLimit then return end
-  local count, limit = InstanceLimit.GetHourCount(), InstanceLimit.GetLimit()
-  if count < limit - 1 then return end
-  local wait = InstanceLimit.GetSecondsUntilNextFree() or 0
-  ns.Alerts.Notify(string.format(L.INSTANCE_LIMIT_WARNING, count, limit, Format.Duration(wait)),
-    ns.Alerts.WARNING_COLOR)
+  if InstanceLimit.GetHourCount() < InstanceLimit.GetLimit() - 1 then return end
+  notifyCount(L.INSTANCE_LIMIT_WARNING)
 end
 
-local function enter(name)
-  local now = time()
-  if isSameInstance(name, now) then
-    ns.Debug("instances", "back in %s, same instance", name)
-  else
-    local entries = realmEntries()
-    prune(entries, now)
-    table.insert(entries, { time = now, name = name, character = ns.characterKey })
-    ns.Debug("instances", "new instance %s, %s in the last hour", name, InstanceLimit.GetHourCount())
-    warn()
+-- Neue Kopie betreten (enteredAt = Zeitpunkt des Betretens, auch wenn sie erst später erkannt wurde)
+local function add(name, enteredAt)
+  local entries = realmEntries()
+  prune(entries, time())
+  table.insert(entries, { time = enteredAt, name = name, character = ns.characterKey })
+  ns.Debug("instances", "new instance %s, %s in the last hour", name, InstanceLimit.GetHourCount())
+  warn()
+end
+
+-- Vermeintlich neue Kopie war doch die alte: jüngsten Eintrag dieses Charakters für sie entfernen
+local function remove(name)
+  local entries = realmEntries()
+  for index = #entries, 1, -1 do
+    local entry = entries[index]
+    if entry.name == name and entry.character == ns.characterKey then
+      table.remove(entries, index)
+      ns.Debug("instances", "same instance %s after all, %s in the last hour", name, InstanceLimit.GetHourCount())
+      return
+    end
   end
-  visits()[name] = { leftAt = nil }
-  insideName = name
 end
 
-local function leave()
-  visits()[insideName] = { leftAt = time() }
-  insideName = nil
-end
+InstanceCopy.OnEnter(function(name, instanceType, isNew)
+  if isNew and COUNTED_TYPES[instanceType] then add(name, time()) end
+end)
 
--- Name der gezählten Instanz, in der man gerade ist; nil draußen
-local function countedInstance()
-  local inInstance, instanceType = IsInInstance()
-  if not inInstance or not COUNTED_TYPES[instanceType] then return nil end
-  local name = GetInstanceInfo()
-  if ns.IsSecret(name) then return nil end
-  return name
-end
+InstanceCopy.OnCorrected(function(name, instanceType, isNew, enteredAt)
+  if not COUNTED_TYPES[instanceType] then return end
+  if isNew then
+    add(name, enteredAt)
+  else
+    remove(name)
+  end
+end)
 
-local function onWorldChanged()
-  local name = countedInstance()
-  if name == insideName then return end
-  if insideName then leave() end
-  if name then enter(name) end
-end
-
--- "Die Todesminen wurde zurückgesetzt.": nächstes Betreten ist eine neue Instanz
+-- Der Server weist ab ("zu viele Instanzen"): Stand und Wartezeit laut Addon dazu
 local function onSystemMessage(message)
-  if not resetPattern or ns.IsSecret(message) then return end
-  local args = ns.ChatPatterns.Match(message, resetPattern)
-  if not args then return end
-  ns.Debug("instances", "reset %s", args[1])
-  visits()[args[1]] = nil
+  if not ns.db.warnInstanceLimit or not TRANSFER_ABORT_TOO_MANY_INSTANCES or ns.IsSecret(message) then return end
+  if message:find(TRANSFER_ABORT_TOO_MANY_INSTANCES, 1, true) then
+    notifyCount(L.INSTANCE_LIMIT_BLOCKED)
+  end
 end
 
-ns.OnLogin(function()
-  insideName = nil
-end)
-
--- Logout in der Instanz: gilt ab jetzt als verlassen, damit ein späterer Login die Pause sieht
-ns.OnLogout(function()
-  if insideName then leave() end
-end)
-
-ns.RegisterEvent("PLAYER_ENTERING_WORLD", onWorldChanged)
-ns.RegisterEvent("ZONE_CHANGED_NEW_AREA", onWorldChanged)
 ns.RegisterEvent("CHAT_MSG_SYSTEM", onSystemMessage)

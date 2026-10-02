@@ -9,6 +9,7 @@ Schwerpunkt: Leveln in Dungeons auswerten und das Instanzlimit im Blick behalten
 - [x] 90. **XP/h überall gleich** (S): Vergleich der Charaktere, XP/h-Graph und Level-Up-Zusammenfassung ziehen AFK-Zeit ab wie Fenster und Historie, wenn „XP/h ohne AFK“ an ist (`Experience.RecordRate`).
 - [x] 91. **Dungeon-Läufe** (M): Lauf endet erst beim lebendigen Verlassen (Geisterlauf zum Friedhof setzt ihn fort); XP/h je Lauf in der Historie; Zeile „Instanz“ im Fenster mit Zeit und XP des laufenden Laufs.
 - [x] 92. **Instanzlimit** (M): Classic Era, Anniversary und WoW Forever erlauben 5 neue Instanzen pro Stunde für alle Charaktere eines Realms (Retail 10). Zeile „Instanzen/h“ mit „3/5, nächste frei in 14m“, Hinweis beim Betreten der vorletzten und letzten; Instanzen heute als Info.
+- [x] 93. **Instanz-Kopien erkennen** (M): Kopie an der zoneUID der Gegner-GUIDs (Ziel, Maus, Namensplaketten) wie Nova Instance Tracker; Reset aus `INSTANCE_RESET_SUCCESS`/`_FAILED`. Ein Lauf ist eine Kopie: raus und wieder rein setzt ihn fort, Reset oder andere Kopie beenden ihn; falsche Schätzungen werden geteilt bzw. zusammengeführt, auch im Instanzlimit. Abweisung des Servers zeigt den Stand laut Addon.
 
 ## v2.7: Aufräumen
 

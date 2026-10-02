@@ -1,5 +1,7 @@
--- Instanz-Läufe: Dauer, XP, Kills und Tode je Lauf; /reload setzt den Lauf fort.
+-- Instanz-Läufe: ein Lauf je Instanz-Kopie. Raus und wieder rein setzt ihn fort, Reset oder eine andere
+-- Kopie (erkannt an der zoneUID der Gegner-GUIDs) beendet ihn.
 local History = addon.History
+local Instances = addon.Instances
 
 local function enter(name, instanceType)
   wow.state.instance = name and { name = name, type = instanceType or "party" } or nil
@@ -11,12 +13,41 @@ local function gainXp(amount)
   wow.fire("PLAYER_XP_UPDATE", "player")
 end
 
-wow.login({ level = 20, xp = 0, xpMax = 100000 })
-enter(nil)
-expect("offene Welt: kein Lauf", addon.character.currentRun, nil)
+-- Zwei verschiedene Gegner der Kopie anvisieren: bestätigt deren zoneUID
+local npcCounter = 0
+local function seeCopy(zoneUID)
+  for _ = 1, 2 do
+    npcCounter = npcCounter + 1
+    wow.state.units.target = { name = "Defias-Schurke",
+      guid = string.format("Creature-0-4170-36-%d-%d-0000ABCD%02d", zoneUID, 600 + npcCounter, npcCounter) }
+    wow.fire("PLAYER_TARGET_CHANGED")
+  end
+end
 
--- Die Todesminen: 30 min, 2 Kills, 1 Tod, 5000 XP; mittendrin /reload
+local function log() return addon.character.instanceLog end
+local function run() return Instances.GetCurrentRun() end
+
+local function instanceRow()
+  for _, line in ipairs(addon.STAT_LINES) do
+    if line.setting == "showInstanceRun" then return line.rows[1].value() end
+  end
+end
+
+expect("zoneUID aus Gegner-GUID", addon.InstanceCopy.ZoneUIDOf("Creature-0-4170-36-1234-1732-00002A3F9B"), 1234)
+expect("Spieler-GUID ohne zoneUID", addon.InstanceCopy.ZoneUIDOf("Player-1-0001"), nil)
+
+wow.login({ level = 20, xp = 0, xpMax = 100000 })
+addon.Set("showInstanceRun", true)
+enter(nil)
+expect("offene Welt: kein Lauf", run(), nil)
+expect("Zeile ohne Lauf", instanceRow(), "-")
+
+---------------------------------------------------------------------------
+-- Todesminen: /reload, Tod mit Geisterlauf, Händlergang: alles ein Lauf
+---------------------------------------------------------------------------
 enter("Die Todesminen")
+seeCopy(111)
+expect("Kopie bestätigt", run().zoneUID, 111)
 wow.fire("CHAT_MSG_COMBAT_XP_GAIN", "Defias-Schurke stirbt, Ihr bekommt 100 Erfahrung.")
 gainXp(3000)
 wow.advance(900)
@@ -24,78 +55,100 @@ wow.logout()
 wow.advance(20)
 wow.login()
 enter("Die Todesminen")
-expect("Reload setzt Lauf fort", #addon.character.instanceLog, 0)
-wow.fire("CHAT_MSG_COMBAT_XP_GAIN", "Edwin VanCleef stirbt, Ihr bekommt 500 Erfahrung.")
-gainXp(2000)
+seeCopy(111)
+expect("Reload: derselbe Lauf", #log(), 0)
+expectNear("Reload-Pause zählt nicht", Instances.GetRunSeconds(run()), 900)
+
 wow.state.dead = true
 wow.fire("PLAYER_DEAD")
-wow.state.dead = false
-wow.advance(900)
-
-local current = History.GetInstanceLog(addon.characterKey)[1]
-expect("laufender Lauf vorne", current.isCurrent, true)
-expectNear("laufende Dauer ohne Reload-Pause", current.seconds, 1800)
-
--- Verlassen beendet den Lauf
+wow.fire("PLAYER_ALIVE")  -- Geist freigelassen
 enter(nil)
-local run = addon.character.instanceLog[1]
-expect("Lauf beendet", addon.character.currentRun, nil)
-expect("Name", run.name, "Die Todesminen")
-expectNear("Dauer", run.seconds, 1800)
-expect("XP", run.xp, 5000)
-expect("Kills", run.counters.kills, 2)
-expect("Tode", run.counters.deaths, 1)
-expect("Level beim Betreten", run.level, 20)
-
--- Tod im Dungeon: als Geist zum Friedhof draußen und zurück bleibt derselbe Lauf
-local runs = #addon.character.instanceLog
-enter("Burg Schattenfang")
-addon.Set("showInstanceRun", true)
-gainXp(1000)
-wow.state.dead = true
-wow.fire("PLAYER_DEAD")
-wow.fire("PLAYER_ALIVE")
-enter(nil)
-expect("Geist draußen: Lauf läuft weiter", addon.character.currentRun.name, "Burg Schattenfang")
-wow.advance(120)
-enter("Burg Schattenfang")
+wow.advance(60)
+expectNear("Geisterlauf draußen zählt", Instances.GetRunSeconds(run()), 960)
+enter("Die Todesminen")
 wow.state.dead = false
 wow.fire("PLAYER_UNGHOST")
-expect("zurück in der Instanz: kein neuer Lauf", #addon.character.instanceLog, runs)
-local function instanceRow()
-  for _, line in ipairs(addon.STAT_LINES) do
-    if line.setting == "showInstanceRun" then return line.rows[1].value() end
-  end
-end
-local runningRun = addon.Instances.GetCurrentRun()
-expect("Zeile Instanz: Zeit und XP", instanceRow(), string.format(addon.L.INSTANCE_RUN_VALUE,
-  addon.Format.Duration(addon.Instances.GetRunSeconds(runningRun)), addon.Format.Number(1000)))
+expect("Tod gezählt", run().counters.deaths, 1)
 
--- Tod und Wiederbelebung beim Geistheiler draußen beendet den Lauf
-wow.state.dead = true
-wow.fire("PLAYER_DEAD")
-enter(nil)
-expect("Geist: noch kein Ende", #addon.character.instanceLog, runs)
-wow.state.dead = false
-wow.fire("PLAYER_ALIVE")
-expect("lebend draußen: Lauf beendet", #addon.character.instanceLog, runs + 1)
-expect("Lauf-XP", addon.character.instanceLog[runs + 1].xp, 1000)
-expect("kein laufender Lauf", addon.Instances.GetCurrentRun(), nil)
-expect("Zeile Instanz ohne Lauf", instanceRow(), "-")
-
--- Kills in der offenen Welt zählen nicht zum Lauf; Raid wird ebenfalls erfasst
-wow.fire("CHAT_MSG_COMBAT_XP_GAIN", "Wolf stirbt, Ihr bekommt 10 Erfahrung.")
-expect("Welt-Kill nicht im Lauf", run.counters.kills, 2)
-enter("Geschmolzener Kern", "raid")
-expect("Raid erfasst", addon.character.currentRun.instanceType, "raid")
-
--- Logout im Raid und langer Abstand: alter Lauf wird beim nächsten Login abgeschlossen
+enter(nil)  -- lebend raus zum Händler
 wow.advance(600)
-wow.logout()
-wow.advance(3600)
-wow.login()
-expect("alter Raid-Lauf abgeschlossen", #addon.character.instanceLog, 3)
-expectNear("Dauer bis Logout", addon.character.instanceLog[3].seconds, 600)
+gainXp(50)
+expectNear("draußen steht die Uhr", Instances.GetRunSeconds(run()), 960)
+expect("XP draußen zählt nicht", run().xp, 3000)
+expect("Zeile zeigt offenen Lauf", instanceRow(), string.format(addon.L.INSTANCE_RUN_VALUE,
+  addon.Format.Duration(Instances.GetRunSeconds(run())), addon.Format.Number(3000)))
+enter("Die Todesminen")
+seeCopy(111)
+wow.fire("CHAT_MSG_COMBAT_XP_GAIN", "Edwin VanCleef stirbt, Ihr bekommt 500 Erfahrung.")
+gainXp(2000)
+wow.advance(240)
+
+local current = History.GetInstanceLog(addon.characterKey)[1]
+expect("offener Lauf vorne", current.isCurrent, true)
+expectNear("Dauer ohne Händlergang", current.seconds, 1200)
+
+---------------------------------------------------------------------------
+-- Reset beendet den Lauf endgültig
+---------------------------------------------------------------------------
+enter(nil)
+wow.fire("CHAT_MSG_SYSTEM", "Die Todesminen wurde zurückgesetzt.")
+expect("Reset: Lauf beendet", run(), nil)
+local finished = log()[1]
+expect("Name", finished.name, "Die Todesminen")
+expectNear("Dauer", finished.seconds, 1200)
+expect("XP", finished.xp, 5000)
+expect("Kills", finished.counters.kills, 2)
+expect("Tode", finished.counters.deaths, 1)
+expect("Level beim Betreten", finished.level, 20)
+expect("zoneUID gespeichert", finished.zoneUID, 111)
+
+-- "Noch Spieler drin" setzt für alle draußen trotzdem zurück
+enter("Die Todesminen")
+seeCopy(222)
+enter(nil)
+wow.fire("CHAT_MSG_SYSTEM", "Die Todesminen kann nicht zurückgesetzt werden. Es befinden sich noch Spieler in der Instanz.")
+expect("gescheiterter Reset beendet auch", #log(), 2)
+
+---------------------------------------------------------------------------
+-- Andere Kopie trotz kurzer Pause (Reset nicht gesehen, anderer Gruppenleiter): Lauf wird geteilt
+---------------------------------------------------------------------------
+enter("Die Todesminen")
+seeCopy(333)
+gainXp(1000)
+wow.advance(300)
+enter(nil)
+wow.advance(120)
+enter("Die Todesminen")
+gainXp(500)
+wow.advance(60)
+expect("vor der Bestätigung: geschätzt derselbe", #log(), 2)
+seeCopy(444)
+expect("andere Kopie: alter Lauf beendet", #log(), 3)
+expect("alter Lauf ohne neue XP", log()[3].xp, 1000)
+expectNear("alter Lauf ohne neue Zeit", log()[3].seconds, 300)
+expect("neuer Lauf mit seiner XP", run().xp, 500)
+expectNear("neuer Lauf mit seiner Zeit", Instances.GetRunSeconds(run()), 60)
+expect("neue Kopie gemerkt", run().zoneUID, 444)
+
+---------------------------------------------------------------------------
+-- Lange Pause schätzt eine neue Kopie; zeigen die Gegner die alte, wird zusammengeführt
+---------------------------------------------------------------------------
+enter(nil)
+wow.advance(31 * 60)
+enter("Die Todesminen")
+expect("geschätzt neu: alter Lauf beendet", #log(), 4)
+gainXp(200)
+seeCopy(444)
+expect("doch dieselbe Kopie: zusammengeführt", #log(), 3)
+expect("XP zusammen", run().xp, 700)
+
+-- Ein anderer Dungeon beendet den Lauf; Kills draußen zählen nicht
+enter(nil)
+wow.fire("CHAT_MSG_COMBAT_XP_GAIN", "Wolf stirbt, Ihr bekommt 10 Erfahrung.")
+expect("Welt-Kill nicht im Lauf", run().counters.kills, 0)
+enter("Geschmolzener Kern", "raid")
+expect("anderer Dungeon: alter Lauf beendet", #log(), 4)
+expect("Raid erfasst", run().instanceType, "raid")
 
 SlashCmdList.LEVELTIMER("history")
 expectTrue("Reiter Instanzen", wow.click("Instanzen"))

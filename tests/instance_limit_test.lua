@@ -85,6 +85,36 @@ wow.logout()
 wow.login({ name = "Testchar", realm = "Andererrealm" })
 expect("anderer Realm", InstanceLimit.GetHourCount(), 0)
 
+-- Gegner zeigen die Kopie: korrigiert die Schätzung in beide Richtungen
+local npcCounter = 0
+local function seeCopy(zoneUID)
+  for _ = 1, 2 do
+    npcCounter = npcCounter + 1
+    wow.state.units.target = { name = "Gegner",
+      guid = string.format("Creature-0-1-33-%d-%d-00000000%02d", zoneUID, 500 + npcCounter, npcCounter) }
+    wow.fire("PLAYER_TARGET_CHANGED")
+  end
+end
+enter("Burg Schattenfang")
+seeCopy(10)
+enter(nil)
+wow.advance(60)
+enter("Burg Schattenfang")
+expect("geschätzt dieselbe", InstanceLimit.GetHourCount(), 1)
+seeCopy(11)
+expect("andere Kopie: nachgezählt", InstanceLimit.GetHourCount(), 2)
+enter(nil)
+wow.advance(31 * 60)
+enter("Burg Schattenfang")
+expect("lange Pause: geschätzt neu", InstanceLimit.GetHourCount(), 3)
+seeCopy(11)
+expect("doch dieselbe Kopie: wieder entfernt", InstanceLimit.GetHourCount(), 2)
+
+-- Server weist ab: Stand laut Addon dazu
+local printed = #wow.printed
+wow.fire("CHAT_MSG_SYSTEM", TRANSFER_ABORT_TOO_MANY_INSTANCES)
+expectTrue("Abweisung mit Stand", wow.printed[printed + 1]:find("2/5", 1, true) ~= nil)
+
 -- Retail erlaubt 10
 wow.state.interface = 120100
 expect("Retail: 10 pro Stunde", InstanceLimit.GetLimit(), 10)

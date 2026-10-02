@@ -31,6 +31,7 @@ Lib\Widgets.lua
 Tracking\Stats.lua
 Tracking\Journal.lua
 Tracking\Classification.lua
+Tracking\InstanceCopy.lua
 Tracking\PlayedTime.lua
 Tracking\Session.lua
 Tracking\Experience.lua
