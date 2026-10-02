@@ -1,8 +1,9 @@
--- Einstellungsfenster mit Reitern: Allgemein (Fenster, Sprache), Statistiken, Hinweise, Stream, Profile.
+-- Einstellungsfenster mit Reitern: Allgemein (Fenster, Sprache), Statistiken, Hinweise, Stream, Speedrun, Profile.
 -- Darunter auf allen Reitern: Neue Session, Zusammenfassung, Historie.
 -- Jedes Steuerelement registriert eine refresh(db)-Funktion; nach jeder Änderung
 -- (ns.Set/ns.ApplySettings) zeigen alle den aktuellen Stand und die gewählte Sprache.
 -- Schalter mit available() == false (z.B. nur in WoW Forever) werden gar nicht angelegt.
+-- Tooltips: Text aus L["<LABEL>_TIP"] (fehlt er, gibt es keinen Tooltip), Titel = Beschriftung.
 local _, ns = ...
 local L = ns.L
 local Widgets = ns.Widgets
@@ -92,6 +93,20 @@ end
 ---------------------------------------------------------------------------
 -- Bausteine: legen Steuerelemente auf der aktuellen Seite von oben nach unten an
 ---------------------------------------------------------------------------
+
+-- Tooltip aus L[tipKey]; L liefert bei fehlendem Text den Schlüssel, dann kein Tooltip
+local function addTooltip(frame, tipKey, title)
+  Widgets.AttachTooltip(frame, title, function()
+    local text = L[tipKey]
+    if text == tipKey then return nil end
+    return text
+  end)
+end
+
+local function labelText(labelKey)
+  return function() return L[labelKey] end
+end
+
 local function addRow(widget, height, stretch)
   widget:SetPoint("TOPLEFT", MARGIN, nextRowY)
   if stretch then widget:SetPoint("TOPRIGHT", -MARGIN, nextRowY) end
@@ -109,6 +124,7 @@ end
 local function addSlider(slider)
   local control = Widgets.CreateSlider(page, slider.min, slider.max, slider.step, slider.set)
   addRow(control, ROW_SLIDER, true)
+  addTooltip(control.slider, slider.label .. "_TIP", labelText(slider.label))
   onRefresh(function(db)
     local value = slider.get(db)
     control.label:SetText(L[slider.label])
@@ -116,7 +132,8 @@ local function addSlider(slider)
   end)
 end
 
--- Checkboxen in zwei Spalten; toggle = { label, get(db) -> bool, set(checked), available() optional }
+-- Checkboxen in zwei Spalten; toggle = { label, get(db) -> bool, set(checked), available() optional,
+--   text() optional statt L[label], z.B. für Beschriftungen mit Werten, tip = Locale-Key optional }
 local function addToggles(allToggles)
   local toggles = {}
   for _, toggle in ipairs(allToggles) do
@@ -127,9 +144,12 @@ local function addToggles(allToggles)
     local row = math.floor((i - 1) / 2)
     local checkbox = Widgets.CreateCheckbox(page, toggle.set)
     table.insert(toggleCells, { checkbox = checkbox, column = column, y = nextRowY - row * ROW_CHECKBOX })
+    addTooltip(checkbox, toggle.tip or (toggle.label .. "_TIP"), function() return checkbox.label:GetText() end)
     onRefresh(function(db)
-      checkbox.label:SetText(L[toggle.label])
+      checkbox.label:SetText(toggle.text and toggle.text() or L[toggle.label])
       checkbox:SetChecked(toggle.get(db))
+      -- Beschriftung gehört zur Klick- und Tooltip-Fläche
+      checkbox:SetHitRectInsets(0, -(Widgets.CHECKBOX_LABEL_GAP + checkbox.label:GetStringWidth()), 0, 0)
     end)
   end
   nextRowY = nextRowY - math.ceil(#toggles / 2) * ROW_CHECKBOX
@@ -138,6 +158,7 @@ end
 local function addButton(labelKey, onClick)
   local button = Widgets.CreateButton(page, MIN_WIDTH - 2 * MARGIN, BUTTON_HEIGHT, onClick)
   addRow(button, ROW_BUTTON, true)
+  addTooltip(button, labelKey .. "_TIP", labelText(labelKey))
   onRefresh(function() button:SetText(L[labelKey]) end)
 end
 
@@ -149,6 +170,7 @@ local function addFooterButton(labelKey, onClick)
   button:SetPoint("BOTTOMLEFT", MARGIN, y)
   button:SetPoint("BOTTOMRIGHT", -MARGIN, y)
   footerButtons = footerButtons + 1
+  addTooltip(button, labelKey .. "_TIP", labelText(labelKey))
   onRefresh(function() button:SetText(L[labelKey]) end)
 end
 
@@ -166,6 +188,7 @@ local function addChooser(chooser)
     tab:SetPoint("LEFT", anchor, "RIGHT", CHOOSER_TAB_GAP, 0)
     anchor = tab
     table.insert(row.tabs, tab)
+    addTooltip(tab, chooser.label .. "_TIP", labelText(chooser.label))
     onRefresh(function(db)
       tab:SetLabel(choice.name())
       tab:SetActive(db[chooser.setting] == choice.value)
@@ -262,6 +285,7 @@ local function addProfileList()
     end)
     tab:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     addRow(tab, ROW_PROFILE)
+    addTooltip(tab, "PROFILE_LIST_TIP", function() return Profiles.DisplayName(tab.profileName) end)
     onRefresh(function()
       local name = Profiles.GetNames()[index]
       tab.profileName = name
@@ -297,6 +321,7 @@ local function addProfileSaver()
     end
   end)
   saveButton:SetPoint("LEFT", nameBox, "RIGHT", CHOOSER_TAB_GAP, 0)
+  addTooltip(saveButton, "PROFILE_SAVE_TIP", labelText("PROFILE_SAVE"))
   nameBox:SetScript("OnEnterPressed", function() saveButton:Click() end)
   nameBox:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
   nextRowY = nextRowY - ROW_BUTTON
@@ -383,9 +408,18 @@ addToggles({
   toggle("REMIND_FOOD_TOGGLE", "remindFood"),
   toggle("REMIND_CAMP_TOGGLE", "remindCamp", ns.BuffReminder.HasCampSystem),
 })
+addSlider({
+  label = "REMINDER_INTERVAL",
+  min = ns.BuffReminder.MIN_INTERVAL,
+  max = ns.BuffReminder.MAX_INTERVAL,
+  step = 1,
+  get = function(db) return db.reminderInterval end,
+  set = function(value) ns.Set("reminderInterval", value) end,
+  format = function(value) return string.format(L.MINUTES, value) end,
+})
 finishPage()
 
--- Stream: alles, was nur für Streams und Speedruns gedacht ist
+-- Stream: alles, was nur für Streams gedacht ist (Speedrun hat einen eigenen Reiter)
 addPage("OPTIONS_TAB_STREAM")
 addSection("SECTION_STREAM")
 addToggles({
@@ -403,13 +437,26 @@ addToggles({
   toggle("ALERT_TOGGLE_LOOT", "alertEpicLoot"),
   toggle("ALERT_TOGGLE_NEAR_DEATH", "alertNearDeath"),
 })
-addSection("SECTION_SPLITS")
-addSplitComparisonChooser()
+finishPage()
+
+-- Speedrun: Splits, Split-Liste und Speedrun-Rekorde
+addPage("OPTIONS_TAB_SPEEDRUN")
+addSection("SECTION_SPLIT_LIST")
 addToggles({
   toggle("SHOW_SPLIT_LIST", "showSplitList"),
-  toggle("SHOW_WORLD_RECORDS", "showWorldRecords"),
+  toggle("SHOW_SPLIT_TOTAL", "splitListShowTotal"),
+  toggle("SHOW_SPLIT_PLAYED", "splitListShowPlayed"),
 })
-addWorldRecordScopeChooser()
+addSplitComparisonChooser()
+addSlider({
+  label = "SPLIT_LIST_SIZE",
+  min = toPercent(TimerWindow.MIN_SCALE),
+  max = toPercent(TimerWindow.MAX_SCALE),
+  step = 5,
+  get = function(db) return toPercent(ns.SplitList.GetScale(db)) end,
+  set = function(value) ns.Set("splitListScale", value / 100) end,
+  format = percent,
+})
 addSlider({
   label = "SPLIT_LIST_ROWS",
   min = ns.SplitList.MIN_ROWS,
@@ -419,6 +466,25 @@ addSlider({
   set = function(value) ns.Set("splitListRows", value) end,
   format = tostring,
 })
+addSection("SECTION_WORLD_RECORDS")
+local recordToggles = {
+  toggle("SHOW_WORLD_RECORDS", "showWorldRecords"),
+  toggle("SHOW_RECORDS_AGE", "showRecordsAge"),
+}
+-- Ein Schalter je Abschnitt der Rekord-Daten (1-10, 1-20, ...)
+for _, label in ipairs(ns.WorldRecords.GetBracketLabels()) do
+  table.insert(recordToggles, {
+    text = function() return string.format(L.WORLD_RECORD_ROW, label) end,
+    tip = "RECORD_BRACKET_TIP",
+    get = function(db) return db.recordBrackets[label] ~= false end,
+    set = function(checked)
+      ns.db.recordBrackets[label] = checked
+      ns.ApplySettings()
+    end,
+  })
+end
+addToggles(recordToggles)
+addWorldRecordScopeChooser()
 finishPage()
 
 -- Profile: Einstellungen benannt speichern, je Charakter wählen, als Text teilen

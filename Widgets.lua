@@ -70,6 +70,20 @@ function Widgets.SetDefaultBackground(panel, alpha)
   panel:SetBackdropBorderColor(unpack(Widgets.COLORS.border))
 end
 
+-- Tooltip bei Mauskontakt. title() und text() liefern die Texte in der aktuellen Sprache;
+-- liefert text() nil, erscheint kein Tooltip. HookScript, damit vorhandene Handler bleiben.
+function Widgets.AttachTooltip(frame, title, text)
+  frame:HookScript("OnEnter", function(self)
+    local body = text()
+    if not body then return end
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetText(title(), unpack(Widgets.COLORS.highlight))
+    GameTooltip:AddLine(body, 1, 1, 1, true)  -- true = umbrechen
+    GameTooltip:Show()
+  end)
+  frame:HookScript("OnLeave", function() GameTooltip:Hide() end)
+end
+
 -- Checkbox mit eigenem Label, da die Template-Textfelder je nach Client anders heißen
 function Widgets.CreateCheckbox(parent, onToggle)
   local checkbox = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
@@ -105,6 +119,7 @@ function Widgets.CreateSlider(parent, minValue, maxValue, step, onChange)
   slider:SetMinMaxValues(minValue, maxValue)
   slider:SetValueStep(step)
   if slider.SetObeyStepOnDrag then slider:SetObeyStepOnDrag(true) end
+  container.slider = slider  -- z.B. für einen Tooltip
 
   local silent = false
   slider:SetScript("OnValueChanged", function(_, value)

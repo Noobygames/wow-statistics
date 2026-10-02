@@ -23,8 +23,10 @@ for _, language in ipairs(addon.languages) do
         expect(language.code .. " Platzhalter " .. key, placeholders(translated), placeholders(text))
       end
     end
-    for key in pairs(strings) do
+    for key, text in pairs(strings) do
       expectTrue(language.code .. " hat überzähligen Text " .. key, english[key] ~= nil)
+      -- Schutz vor Werkzeug-Fehlern: Git Bash macht aus "/played" sonst "C:/Program Files/Git/played"
+      expect(language.code .. " Dateipfad in " .. key, text:find("^%a:/"), nil)
     end
   end
 end

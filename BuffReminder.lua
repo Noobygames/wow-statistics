@@ -2,7 +2,7 @@
 --   remindFood  "Satt" (Well Fed); in WoW Forever 5 % mehr XP aus Kills
 --   remindCamp  "Lagervorteile" (Camp-Buff, nur WoW Forever, Spell 1229741)
 -- Erinnert wird nur, wenn es sich lohnt: beim Leveln, außerhalb von Kampf und Ruhegebiet, lebendig,
--- und je Buff höchstens alle REPEAT_SECONDS.
+-- und je Buff wiederholt im Abstand von reminderInterval Minuten (Einstellung), solange er fehlt.
 -- "Satt" wird über den Namen erkannt, den der Client für Zauber WELL_FED_SPELL_ID in seiner Sprache
 -- liefert: Die vielen Essens-Buffs heißen alle so, haben aber verschiedene Spell-IDs.
 -- Der Camp-Buff hat eine feste Spell-ID und gibt es nur in WoW Forever (BuffReminder.HasCampSystem);
@@ -16,7 +16,9 @@ ns.BuffReminder = BuffReminder
 local WELL_FED_SPELL_ID = 19705    -- "Well Fed" (Classic), liefert den übersetzten Buff-Namen
 local CAMP_SPELL_ID = 1229741      -- "Lagervorteile" (WoW Forever), im Spiel per /dump ermittelt
 local CHECK_INTERVAL = 5           -- Sekunden zwischen zwei Prüfungen
-local REPEAT_SECONDS = 300         -- Abstand zwischen zwei Hinweisen je Buff
+local SECONDS_PER_MINUTE = 60
+BuffReminder.MIN_INTERVAL = 1      -- Minuten; Grenzen des Reglers in den Einstellungen
+BuffReminder.MAX_INTERVAL = 30
 local MAX_AURAS = 40
 local REMINDER_COLOR = { 1, 0.6, 0.2 }
 
@@ -73,7 +75,7 @@ end
 
 local function isDue(reminder)
   return ns.db[reminder.setting]
-    and (not reminder.lastShown or GetTime() - reminder.lastShown >= REPEAT_SECONDS)
+    and (not reminder.lastShown or GetTime() - reminder.lastShown >= ns.db.reminderInterval * SECONDS_PER_MINUTE)
     and reminder.isMissing()
 end
 

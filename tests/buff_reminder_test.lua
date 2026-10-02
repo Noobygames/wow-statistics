@@ -84,3 +84,25 @@ expect("beide zusammen", LevelTimerAlert.text:GetText(), L.REMIND_FOOD .. "\n" .
 -- Forever ohne den Zauber (älterer Build): nichts behaupten
 wow.state.spellNames = { [19705] = "Satt" }
 expect("ohne Camp-Zauber unbekannt", BuffReminder.IsCampMissing(), nil)
+
+---------------------------------------------------------------------------
+-- Abstand einstellbar: wiederholt, solange der Buff fehlt
+---------------------------------------------------------------------------
+wow.state.interface = 120100
+wow.state.spellNames = { [19705] = "Satt" }
+wow.state.buffs = {}
+addon.Set("remindCamp", false)
+addon.Set("reminderInterval", 2)
+wow.advance(1000)
+local count = reminders()
+BuffReminder.Check()
+expect("sofort nach langer Pause", reminders(), count + 1)
+wow.advance(100)
+BuffReminder.Check()
+expect("vor Ablauf von 2 min still", reminders(), count + 1)
+wow.advance(20)
+BuffReminder.Check()
+expect("nach 2 min wieder", reminders(), count + 2)
+wow.advance(120)
+BuffReminder.Check()
+expect("und wieder", reminders(), count + 3)

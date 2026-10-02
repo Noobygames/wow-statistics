@@ -1,8 +1,10 @@
 -- Split-Liste wie bei LiveSplit: eigene kleine Anzeige mit dem laufenden Level und den zuletzt
 -- abgeschlossenen Leveln (Level, Zeit, Abweichung zum Vergleich aus Splits.lua), darunter die Summe
 -- und die gesamte Spielzeit (/played); optional die Speedrun-Rekorde je Abschnitt (WorldRecords.lua).
--- Einstellungen: showSplitList (an/aus, /lt splits), splitListRows (Zahl der Level), Position splitListPos.
--- Größe, Hintergrund und Fixieren folgen dem Hauptfenster.
+-- Einstellungen (Reiter Speedrun): showSplitList (an/aus, /lt splits), splitListRows (Zahl der Level),
+-- splitListScale (eigene Größe, sonst die des Hauptfensters), splitListShowTotal, splitListShowPlayed,
+-- showWorldRecords mit WorldRecords.IsBracketShown je Abschnitt, showRecordsAge (Stand der Rekorde).
+-- Position splitListPos; Hintergrund und Fixieren folgen dem Hauptfenster.
 local _, ns = ...
 local L = ns.L
 local Widgets = ns.Widgets
@@ -65,6 +67,34 @@ function SplitList.BuildLines()
   return lines
 end
 
+-- Zeilen unter den Leveln: { Bezeichnung, Wert, Abweichung }, je nach Einstellungen
+function SplitList.BuildFooterLines()
+  local db = ns.db
+  local lines = {}
+  if db.splitListShowTotal then
+    table.insert(lines, { L.SPLIT_LIST_TOTAL, "", Format.SplitDelta(Splits.GetTotalDelta()) })
+  end
+  if db.splitListShowPlayed then
+    local played = ns.PlayedTime.GetTotalSeconds()
+    table.insert(lines, { L.SPLIT_LIST_PLAYED, played and Format.Duration(played) or "...", "" })
+  end
+  if not db.showWorldRecords then return lines end
+
+  local WorldRecords = ns.WorldRecords
+  for _, comparison in ipairs(WorldRecords.GetComparisons()) do
+    if WorldRecords.IsBracketShown(comparison.label) then
+      table.insert(lines, { string.format(L.WORLD_RECORD_ROW, comparison.label),
+        Format.Duration(comparison.record.seconds), Format.SplitDelta(comparison.delta) })
+    end
+  end
+  if db.showRecordsAge then
+    local _, fetched = WorldRecords.GetSource()
+    local days = WorldRecords.GetAgeDays()
+    table.insert(lines, { L.RECORDS_AGE, fetched or "?", days and string.format(L.DAYS_AGO, days) or "" })
+  end
+  return lines
+end
+
 local function setCells(row, levelText, timeText, deltaText)
   row.level:SetText(levelText)
   row.time:SetText(timeText)
@@ -103,16 +133,10 @@ local function render()
     setCells(getRow(i), tostring(line.level),
       line.seconds and Format.Duration(line.seconds) or "...", Format.SplitDelta(line.delta))
   end
-  setCells(getRow(#lines + 1), L.SPLIT_LIST_TOTAL, "", Format.SplitDelta(Splits.GetTotalDelta()))
-  local played = ns.PlayedTime.GetTotalSeconds()
-  setCells(getRow(#lines + 2), L.SPLIT_LIST_PLAYED, played and Format.Duration(played) or "...", "")
-  local used = #lines + 2
-  if ns.db.showWorldRecords then
-    for _, comparison in ipairs(ns.WorldRecords.GetComparisons()) do
-      used = used + 1
-      setCells(getRow(used), string.format(L.WORLD_RECORD_ROW, comparison.label),
-        Format.Duration(comparison.record.seconds), Format.SplitDelta(comparison.delta))
-    end
+  local used = #lines
+  for _, line in ipairs(SplitList.BuildFooterLines()) do
+    used = used + 1
+    setCells(getRow(used), line[1], line[2], line[3])
   end
   for i = used + 1, #rows do
     for _, fontString in pairs(rows[i]) do fontString:Hide() end
@@ -144,9 +168,14 @@ panel:SetScript("OnUpdate", function(_, elapsed)
 end)
 
 -- Abstände gelten in der Skalierung der Anzeige, daher vor dem Positionieren skalieren
+-- Eigene Größe der Split-Liste; ohne eigene Einstellung die des Hauptfensters
+function SplitList.GetScale(db)
+  return db.splitListScale or db.scale
+end
+
 local function restorePosition(db)
   local pos = db.splitListPos or DEFAULT_POSITION
-  panel:SetScale(db.scale)
+  panel:SetScale(SplitList.GetScale(db))
   panel:ClearAllPoints()
   panel:SetPoint(pos[1], UIParent, pos[2], pos[3], pos[4])
 end
