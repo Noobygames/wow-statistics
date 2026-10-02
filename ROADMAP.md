@@ -35,10 +35,20 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 
 - [x] 44. **Debug-Modus** (M): `/lt debug` schaltet erweitertes Logging (Zähler, Journal, Session, /played, Tod, Ansage, Hinweise, Splits, Einblendungen); `/lt debug state | levelup | alert <art> | remind | death | splits` löst Funktionen von Hand aus, ohne Statistiken zu verändern.
 
+### Speedrun (wie ForeverSplits)
+
+- [ ] 45. **Split-Liste mit /played** (S): Gesamtspielzeit und Zeit auf dem aktuellen Level in der Split-Liste.
+- [ ] 46. **Fester Vergleich bleibt fest** (S): Beim Wählen eines Laufs werden seine Level-Zeiten kopiert; levelt der Charakter weiter, ändert sich der Vergleich nicht, bis ein anderer Lauf gewählt wird.
+- [ ] 47. **Läufe** (M): neue Ansicht in der Historie: alle Läufe (eigene Charaktere und importierte) mit Klasse, erreichtem Level und Zeit bis zum aktuellen Level; Suche nach Name und Klasse, Favoriten, Klick wählt den Lauf als Vergleich.
+- [ ] 48. **Rekorde** (S–M): Ansicht mit der Bestzeit je Level und dem Lauf, der sie hält.
+- [ ] 49. **Läufe teilen und sichern** (M): einen Lauf oder alle als Text exportieren (Kopierfenster) und wieder importieren, z.B. von anderen Spielern oder aus einem anderen Client.
+
 ### Einstellungen
 
 - [x] 41. **Einstellungen mit Reitern** (M): Allgemein (Fenster, Kompakt/Horizontal, Sprache, Minimap), Statistiken, Hinweise (Level-Up, Erinnerungen), Stream (Stream-Modus, Hintergrund, Namen, Einblendungen, Splits). Neue Session, Zusammenfassung und Historie unten auf allen Reitern.
 - [x] 42. **Client-spezifische Optionen** (S): `Client.lua` erkennt WoW Forever an der Interface-Version (16xxx); Optionen nur für Forever (Camp-Buff) erscheinen in anderen Clients nicht.
+
+- [ ] 50. **Einstellungs-Profile** (M–L): Einstellungen als benanntes Profil speichern, je Charakter ein Profil wählen und Profile als Text exportieren/importieren (für andere Clients oder Accounts; innerhalb eines Accounts und Clients sind Einstellungen schon für alle Charaktere gleich).
 
 ### Projekt und Verbreitung
 
