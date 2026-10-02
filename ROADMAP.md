@@ -31,6 +31,8 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 - [x] 39. **Hinweis bei fehlendem Food-Buff** (S–M): an/aus schaltbar (Standard aus). Fehlt „Satt“ beim Leveln außerhalb von Kampf und Ruhegebiet, erscheint eine Einblendung plus Chatzeile, höchstens alle 5 min. In WoW Forever gibt Satt 5 % mehr Kill-XP. Erkennung über den übersetzten Namen von Zauber 19705 (`C_Spell.GetSpellName`) und `C_UnitAuras.GetAuraDataByIndex`, beide laut Doku in allen Clients.
 - [x] 40. **Hinweis bei fehlendem Camp-Buff** (S–M): an/aus schaltbar (Standard aus), wie 39. WoW Forever: Buff „Lagervorteile“ (Spell 1229741, im Spiel ermittelt) nach einer Minute Sitzen oder Herstellen am Lagerfeuer. Clients ohne diesen Zauber bekommen keinen Hinweis.
 
+- [x] 43. **Level-Up-Ansage in /sagen** (S): Auswahl „Sagen (Klick)“. /sagen braucht im Freien eine Hardware-Eingabe, daher erscheint beim Level-Up 60 s lang ein Button; erst der Klick sendet.
+
 ### Einstellungen
 
 - [x] 41. **Einstellungen mit Reitern** (M): Allgemein (Fenster, Kompakt/Horizontal, Sprache, Minimap), Statistiken, Hinweise (Level-Up, Erinnerungen), Stream (Stream-Modus, Hintergrund, Namen, Einblendungen, Splits). Neue Session, Zusammenfassung und Historie unten auf allen Reitern.
@@ -42,7 +44,7 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 
 ## Erledigt
 
-- Nächstes Release (v2.5): 32. Neue Session starten, 31. Hardcore-Anzeige, 27. Stream-Ansicht, 33. Streamer-Datenschutz, 28. Session-Ziel, 29. Große Einblendungen, 30. Session-Abschlusskarte, 26. Splits, 34. Ansage in Gilde/Gruppe, 38. Rote Tode abschaltbar, 37. Stream-Modus, 35. Fester Vergleichslauf, 36. Split-Liste, 39. Hinweis bei fehlendem Food-Buff, 40. Hinweis bei fehlendem Camp-Buff, 41. Einstellungen mit Reitern, 42. Client-spezifische Optionen
+- Nächstes Release (v2.5): 32. Neue Session starten, 31. Hardcore-Anzeige, 27. Stream-Ansicht, 33. Streamer-Datenschutz, 28. Session-Ziel, 29. Große Einblendungen, 30. Session-Abschlusskarte, 26. Splits, 34. Ansage in Gilde/Gruppe, 38. Rote Tode abschaltbar, 37. Stream-Modus, 35. Fester Vergleichslauf, 36. Split-Liste, 39. Hinweis bei fehlendem Food-Buff, 40. Hinweis bei fehlendem Camp-Buff, 41. Einstellungen mit Reitern, 42. Client-spezifische Optionen, 43. Level-Up-Ansage in /sagen
 - v2.0.0:
   - Auswertung: 1. Prognose bis Max-Level, 2. alle Charaktere vergleichen, 3. Zonen-Auswertung, 4. Spielzeit pro Tag/Woche, 5. XP-Verlauf der Session, 6. Langzeit-Graphen als Tageswerte
   - Daten: 7. Quest-Journal, 8. Level-Timeline, 9. Instanzen, 10. Loot-Journal, 11. Elite- und Rare-Kills, 12. Beinahe-Tode, 24. Todesursache aus dem Death Recap (Retail, WoW Forever)

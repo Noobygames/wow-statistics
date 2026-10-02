@@ -200,6 +200,7 @@ local function addAnnounceChooser()
     { value = Summary.ANNOUNCE_OFF, name = localized("ANNOUNCE_OFF") },
     { value = Summary.ANNOUNCE_PARTY, name = localized("ANNOUNCE_PARTY") },
     { value = Summary.ANNOUNCE_GUILD, name = localized("ANNOUNCE_GUILD") },
+    { value = Summary.ANNOUNCE_SAY, name = localized("ANNOUNCE_SAY") },
   } })
 end
 

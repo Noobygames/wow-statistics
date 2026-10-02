@@ -1,6 +1,8 @@
 -- Zusammenfassung beim Level-Up mit den Werten des abgeschlossenen Levels:
 -- Chatzeile für sich selbst (Einstellung levelUpSummary) und optional als Ansage an
--- Gruppe oder Gilde (Einstellung levelUpAnnounce = "off" | "party" | "guild").
+-- Gruppe, Gilde oder /sagen (Einstellung levelUpAnnounce = "off" | "party" | "guild" | "say").
+-- /sagen braucht im Freien eine Hardware-Eingabe (API-Doku SendChatMessage): Dafür erscheint
+-- beim Level-Up ein Button, erst der Klick sendet.
 -- Läuft in OnLevelCompleted, also bevor die Zähler für das neue Level zurückgesetzt werden.
 local _, ns = ...
 local L = ns.L
@@ -12,10 +14,15 @@ local LevelUpSummary = {
   ANNOUNCE_OFF = "off",
   ANNOUNCE_PARTY = "party",
   ANNOUNCE_GUILD = "guild",
+  ANNOUNCE_SAY = "say",
 }
 ns.LevelUpSummary = LevelUpSummary
 
 local ANNOUNCE_PREFIX = "LevelTimer: "
+local SAY_BUTTON_SECONDS = 60   -- so lange bleibt der Button zum Ansagen sichtbar
+local SAY_BUTTON_WIDTH = 240
+local SAY_BUTTON_HEIGHT = 24
+local SAY_BUTTON_OFFSET_Y = -220  -- unter den Einblendungen (Alerts.lua)
 
 local function summaryText(completedLevel)
   local seconds = Stats.GetSeconds(Stats.LEVEL)
@@ -56,10 +63,41 @@ local function sendChat(message, chatType)
   send(message, chatType)
 end
 
+local function announcement(text)
+  return ANNOUNCE_PREFIX .. Format.PlainText(text)
+end
+
+---------------------------------------------------------------------------
+-- /sagen per Klick: der Button merkt sich den Text bis zum Klick oder Ablauf
+---------------------------------------------------------------------------
+local sayButton = ns.Widgets.CreateButton(UIParent, SAY_BUTTON_WIDTH, SAY_BUTTON_HEIGHT, function(self)
+  self:Hide()
+  if not chatLocked() then sendChat(self.message, "SAY") end
+end)
+sayButton:SetPoint("TOP", UIParent, "TOP", 0, SAY_BUTTON_OFFSET_Y)
+sayButton:SetFrameStrata("HIGH")
+sayButton:Hide()
+
+local function offerSay(text)
+  sayButton.message = announcement(text)
+  sayButton:SetText(L.ANNOUNCE_SAY_BUTTON)
+  local shownAt = GetTime()
+  sayButton.shownAt = shownAt
+  sayButton:Show()
+  C_Timer.After(SAY_BUTTON_SECONDS, function()
+    if sayButton.shownAt == shownAt then sayButton:Hide() end  -- ein neuerer Level-Up hat ihn ersetzt
+  end)
+end
+
 local function announce(text)
-  local chatType = announceChannel(ns.db.levelUpAnnounce)
+  local target = ns.db.levelUpAnnounce
+  if target == LevelUpSummary.ANNOUNCE_SAY then
+    offerSay(text)
+    return
+  end
+  local chatType = announceChannel(target)
   if not chatType or chatLocked() then return end
-  sendChat(ANNOUNCE_PREFIX .. Format.PlainText(text), chatType)
+  sendChat(announcement(text), chatType)
 end
 
 ns.OnLevelCompleted(function(completedLevel)
