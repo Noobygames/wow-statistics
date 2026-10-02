@@ -17,6 +17,7 @@
 Locales.lua
 Database.lua
 LevelTimer.lua
+Client.lua
 Format.lua
 ChatPatterns.lua
 Widgets.lua

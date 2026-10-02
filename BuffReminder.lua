@@ -1,12 +1,12 @@
 -- Hinweise auf fehlende Buffs beim Leveln, jeder einzeln schaltbar:
 --   remindFood  "Satt" (Well Fed); in WoW Forever 5 % mehr XP aus Kills
---   remindCamp  "Lagervorteile" (Camp-Buff in WoW Forever, Spell 1229741)
+--   remindCamp  "Lagervorteile" (Camp-Buff, nur WoW Forever, Spell 1229741)
 -- Erinnert wird nur, wenn es sich lohnt: beim Leveln, außerhalb von Kampf und Ruhegebiet, lebendig,
 -- und je Buff höchstens alle REPEAT_SECONDS.
 -- "Satt" wird über den Namen erkannt, den der Client für Zauber WELL_FED_SPELL_ID in seiner Sprache
 -- liefert: Die vielen Essens-Buffs heißen alle so, haben aber verschiedene Spell-IDs.
--- Der Camp-Buff hat eine feste Spell-ID. Kennt der Client einen Zauber nicht (kein Camp-System),
--- gibt es keinen Hinweis.
+-- Der Camp-Buff hat eine feste Spell-ID und gibt es nur in WoW Forever (BuffReminder.HasCampSystem);
+-- in anderen Clients gibt es weder Hinweis noch Einstellung.
 local _, ns = ...
 local L = ns.L
 
@@ -49,8 +49,12 @@ function BuffReminder.IsFoodMissing()
   return missing(function(aura) return aura.name == name end)
 end
 
+function BuffReminder.HasCampSystem()
+  return ns.Client.IsForever()
+end
+
 function BuffReminder.IsCampMissing()
-  if not spellName(CAMP_SPELL_ID) then return nil end  -- Client ohne Camp-System
+  if not BuffReminder.HasCampSystem() or not spellName(CAMP_SPELL_ID) then return nil end
   return missing(function(aura) return aura.spellId == CAMP_SPELL_ID end)
 end
 

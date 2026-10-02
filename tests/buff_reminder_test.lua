@@ -59,6 +59,9 @@ expect("ohne Namen unbekannt", BuffReminder.IsFoodMissing(), nil)
 ---------------------------------------------------------------------------
 -- Camp-Buff "Lagervorteile" (Spell 1229741): Erkennung über die Spell-ID
 ---------------------------------------------------------------------------
+-- Retail kennt kein Camp-System
+expect("Retail: kein Camp", BuffReminder.IsCampMissing(), nil)
+wow.state.interface = 16001  -- WoW Forever
 wow.state.spellNames = { [19705] = "Satt", [1229741] = "Lagervorteile" }
 wow.state.level, addon.level = 20, 20
 wow.advance(301)
@@ -78,6 +81,6 @@ wow.state.buffs = {}
 BuffReminder.Check()
 expect("beide zusammen", LevelTimerAlert.text:GetText(), L.REMIND_FOOD .. "\n" .. L.REMIND_CAMP)
 
--- Client ohne Camp-System: kein Hinweis
+-- Forever ohne den Zauber (älterer Build): nichts behaupten
 wow.state.spellNames = { [19705] = "Satt" }
-expect("ohne Camp-System unbekannt", BuffReminder.IsCampMissing(), nil)
+expect("ohne Camp-Zauber unbekannt", BuffReminder.IsCampMissing(), nil)

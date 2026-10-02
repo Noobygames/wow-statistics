@@ -48,6 +48,7 @@ wow = {
     resting = false,
     buffs = {},              -- aktive Buffs: Name oder { name, spellId } (C_UnitAuras.GetAuraDataByIndex)
     spellNames = { [19705] = "Satt", [1229741] = "Lagervorteile" },  -- C_Spell.GetSpellName
+    interface = 120100,      -- Interface-Version (GetBuildInfo); 16001 = WoW Forever
     health = 1000,
     healthMax = 1000,
   },
@@ -280,6 +281,7 @@ function UnitClass() return state.class, state.class end
 function UnitIsDeadOrGhost() return state.dead end
 function UnitHealth() return state.health end
 function IsInGuild() return state.inGuild end
+function GetBuildInfo() return "12.1.0", "1", "2026-01-01", state.interface end
 function UnitAffectingCombat() return state.inCombat end
 function IsResting() return state.resting end
 C_Spell = { GetSpellName = function(spellID) return state.spellNames[spellID] end }

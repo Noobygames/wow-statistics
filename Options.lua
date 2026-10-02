@@ -1,6 +1,8 @@
--- Einstellungsfenster in drei Abschnitten: Fenster, Statistiken, Allgemein.
+-- Einstellungsfenster mit Reitern: Allgemein (Fenster, Sprache), Statistiken, Hinweise, Stream.
+-- Darunter auf allen Reitern: Neue Session, Zusammenfassung, Historie.
 -- Jedes Steuerelement registriert eine refresh(db)-Funktion; nach jeder Änderung
 -- (ns.Set/ns.ApplySettings) zeigen alle den aktuellen Stand und die gewählte Sprache.
+-- Schalter mit available() == false (z.B. nur in WoW Forever) werden gar nicht angelegt.
 local _, ns = ...
 local L = ns.L
 local Widgets = ns.Widgets
@@ -8,7 +10,10 @@ local TimerWindow = ns.TimerWindow
 
 local MIN_WIDTH = 320
 local MARGIN = 16
-local CONTENT_TOP = -42
+local TABS_TOP = -42
+local TAB_GAP = 12
+local CONTENT_TOP = -70
+local FOOTER_GAP = 8         -- Abstand zwischen Reiterinhalt und den Buttons unten
 local MIN_COLUMN_WIDTH = 144
 local COLUMN_GAP = 12        -- Mindestabstand zwischen einer Beschriftung und der rechten Spalte
 local ROW_SECTION = 24
@@ -35,18 +40,53 @@ Widgets.CreateCloseButton(panel)
 local title = panel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 title:SetPoint("TOP", 0, -14)
 
----------------------------------------------------------------------------
--- Bausteine: legen Steuerelemente von oben nach unten an
----------------------------------------------------------------------------
 local refreshers = {}
-local nextRowY = CONTENT_TOP
 local toggleCells = {}    -- { checkbox, column, y } aller Schalter; Spaltenbreite setzt fitWidth
-local chooserRows = {}    -- { label, tabs } je Auswahlzeile (Sprache, Hintergrund); Breite prüft fitWidth
+local chooserRows = {}    -- { label, tabs } je Auswahlzeile (Sprache, Hintergrund, ...); Breite prüft fitWidth
 
 local function onRefresh(refresh)
   table.insert(refreshers, refresh)
 end
 
+---------------------------------------------------------------------------
+-- Reiter: je Reiter eine Seite über das ganze Fenster; Steuerelemente hängen an ihrer Seite
+---------------------------------------------------------------------------
+local pages = {}          -- { key, tabButton, frame, bottom } in Reihenfolge
+local page                -- Seite, auf der die Bausteine gerade anlegen
+local nextRowY = CONTENT_TOP
+
+local function showPage(selected)
+  for _, entry in ipairs(pages) do
+    entry.frame:SetShown(entry == selected)
+    entry.tabButton:SetActive(entry == selected)
+  end
+end
+
+-- Neue Seite beginnen; folgende add*-Aufrufe landen darauf
+local function addPage(labelKey)
+  local entry = { key = labelKey, frame = CreateFrame("Frame", nil, panel) }
+  entry.frame:SetAllPoints(panel)
+  entry.tabButton = Widgets.CreateTab(panel, "GameFontNormal", function() showPage(entry) end)
+  local previous = pages[#pages]
+  if previous then
+    entry.tabButton:SetPoint("LEFT", previous.tabButton, "RIGHT", TAB_GAP, 0)
+  else
+    entry.tabButton:SetPoint("TOPLEFT", MARGIN, TABS_TOP)
+  end
+  table.insert(pages, entry)
+  page = entry.frame
+  nextRowY = CONTENT_TOP
+  onRefresh(function() entry.tabButton:SetLabel(L[labelKey]) end)
+end
+
+-- Seite abschließen: wie weit sie nach unten reicht (für die Fensterhöhe)
+local function finishPage()
+  pages[#pages].bottom = nextRowY
+end
+
+---------------------------------------------------------------------------
+-- Bausteine: legen Steuerelemente auf der aktuellen Seite von oben nach unten an
+---------------------------------------------------------------------------
 local function addRow(widget, height, stretch)
   widget:SetPoint("TOPLEFT", MARGIN, nextRowY)
   if stretch then widget:SetPoint("TOPRIGHT", -MARGIN, nextRowY) end
@@ -55,14 +95,14 @@ end
 
 local function addSection(labelKey)
   if nextRowY ~= CONTENT_TOP then nextRowY = nextRowY - SECTION_GAP end
-  local header = Widgets.CreateSectionHeader(panel)
+  local header = Widgets.CreateSectionHeader(page)
   addRow(header, ROW_SECTION, true)
   onRefresh(function() header:SetText(L[labelKey]) end)
 end
 
 -- slider = { label, min, max, step, get(db) -> Wert, set(Wert), format(Wert) -> Anzeigetext }
 local function addSlider(slider)
-  local control = Widgets.CreateSlider(panel, slider.min, slider.max, slider.step, slider.set)
+  local control = Widgets.CreateSlider(page, slider.min, slider.max, slider.step, slider.set)
   addRow(control, ROW_SLIDER, true)
   onRefresh(function(db)
     local value = slider.get(db)
@@ -71,12 +111,16 @@ local function addSlider(slider)
   end)
 end
 
--- Checkboxen in zwei Spalten; toggle = { label, get(db) -> bool, set(checked) }
-local function addToggles(toggles)
+-- Checkboxen in zwei Spalten; toggle = { label, get(db) -> bool, set(checked), available() optional }
+local function addToggles(allToggles)
+  local toggles = {}
+  for _, toggle in ipairs(allToggles) do
+    if not toggle.available or toggle.available() then table.insert(toggles, toggle) end
+  end
   for i, toggle in ipairs(toggles) do
     local column = (i - 1) % 2
     local row = math.floor((i - 1) / 2)
-    local checkbox = Widgets.CreateCheckbox(panel, toggle.set)
+    local checkbox = Widgets.CreateCheckbox(page, toggle.set)
     table.insert(toggleCells, { checkbox = checkbox, column = column, y = nextRowY - row * ROW_CHECKBOX })
     onRefresh(function(db)
       checkbox.label:SetText(L[toggle.label])
@@ -87,20 +131,31 @@ local function addToggles(toggles)
 end
 
 local function addButton(labelKey, onClick)
-  local button = Widgets.CreateButton(panel, MIN_WIDTH - 2 * MARGIN, BUTTON_HEIGHT, onClick)
+  local button = Widgets.CreateButton(page, MIN_WIDTH - 2 * MARGIN, BUTTON_HEIGHT, onClick)
   addRow(button, ROW_BUTTON, true)
+  onRefresh(function() button:SetText(L[labelKey]) end)
+end
+
+-- Buttons unten auf allen Reitern, von unten nach oben
+local footerButtons = 0
+local function addFooterButton(labelKey, onClick)
+  local button = Widgets.CreateButton(panel, MIN_WIDTH - 2 * MARGIN, BUTTON_HEIGHT, onClick)
+  local y = MARGIN + footerButtons * ROW_BUTTON
+  button:SetPoint("BOTTOMLEFT", MARGIN, y)
+  button:SetPoint("BOTTOMRIGHT", -MARGIN, y)
+  footerButtons = footerButtons + 1
   onRefresh(function() button:SetText(L[labelKey]) end)
 end
 
 -- Auswahl als Zeile von Reitern: chooser = { label = Locale-Key, setting, choices = { { value, name() }, ... } }
 local function addChooser(chooser)
-  local label = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+  local label = page:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
   addRow(label, 0)
   local row = { label = label, tabs = {} }
   table.insert(chooserRows, row)
   local anchor = label
   for _, choice in ipairs(chooser.choices) do
-    local tab = Widgets.CreateTab(panel, "GameFontHighlight", function()
+    local tab = Widgets.CreateTab(page, "GameFontHighlight", function()
       ns.Set(chooser.setting, choice.value)
     end)
     tab:SetPoint("LEFT", anchor, "RIGHT", CHOOSER_TAB_GAP, 0)
@@ -115,6 +170,10 @@ local function addChooser(chooser)
   onRefresh(function() label:SetText(L[chooser.label]) end)
 end
 
+local function localized(key)
+  return function() return L[key] end
+end
+
 -- Sprachnamen stehen immer in der eigenen Sprache
 local function addLanguageChooser()
   local choices = {}
@@ -124,10 +183,8 @@ local function addLanguageChooser()
   addChooser({ label = "LANGUAGE", setting = "language", choices = choices })
 end
 
--- Hintergrund des Fensters: Standard oder Chroma-Farbe für Streams
 -- Vergleich der Splits; ein fester Charakter wird per /lt compare Name gewählt
 local function addSplitComparisonChooser()
-  local function localized(key) return function() return L[key] end end
   local Splits = ns.Splits
   addChooser({ label = "SPLIT_COMPARISON", setting = "splitComparison", choices = {
     { value = Splits.BEST, name = localized("COMPARE_CHOICE_BEST") },
@@ -138,7 +195,6 @@ end
 
 -- Level-Up-Ansage: aus, Gruppe oder Gilde
 local function addAnnounceChooser()
-  local function localized(key) return function() return L[key] end end
   local Summary = ns.LevelUpSummary
   addChooser({ label = "LEVEL_UP_ANNOUNCE", setting = "levelUpAnnounce", choices = {
     { value = Summary.ANNOUNCE_OFF, name = localized("ANNOUNCE_OFF") },
@@ -147,8 +203,8 @@ local function addAnnounceChooser()
   } })
 end
 
+-- Hintergrund des Fensters: Standard oder Chroma-Farbe für Streams
 local function addBackgroundChooser()
-  local function localized(key) return function() return L[key] end end
   addChooser({ label = "WINDOW_BACKGROUND", setting = "windowBackground", choices = {
     { value = TimerWindow.BACKGROUND_DEFAULT, name = localized("BACKGROUND_DEFAULT") },
     { value = "green", name = localized("BACKGROUND_GREEN") },
@@ -157,7 +213,7 @@ local function addBackgroundChooser()
 end
 
 local function addHint(labelKey)
-  local hint = panel:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+  local hint = page:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
   hint:SetJustifyH("LEFT")
   addRow(hint, ROW_HINT, true)
   onRefresh(function() hint:SetText(L[labelKey]) end)
@@ -171,9 +227,22 @@ local function toPercent(fraction)
   return math.floor(fraction * 100 + 0.5)
 end
 
+-- Schalter für eine Einstellung in ns.db; available() optional (z.B. nur in WoW Forever)
+local function toggle(label, key, available)
+  return {
+    label = label,
+    get = function(db) return db[key] end,
+    set = function(checked) ns.Set(key, checked) end,
+    available = available,
+  }
+end
+
 ---------------------------------------------------------------------------
 -- Inhalt
 ---------------------------------------------------------------------------
+
+-- Allgemein: Fenster und grundlegende Einstellungen
+addPage("SECTION_GENERAL")
 addSection("SECTION_WINDOW")
 addSlider({
   label = "WINDOW_SIZE",
@@ -193,42 +262,66 @@ addSlider({
   set = function(value) ns.Set("bgAlpha", value / 100) end,
   format = percent,
 })
-addBackgroundChooser()
 addToggles({
-  { label = "SHOW_TIMER", get = function(db) return db.showTimer end,
-    set = function(checked) ns.Set("showTimer", checked) end },
-  { label = "LOCK_FRAME", get = function(db) return db.locked end,
-    set = function(checked) ns.Set("locked", checked) end },
-  { label = "SHOW_XP_BAR", get = function(db) return db.showXpBar end,
-    set = function(checked) ns.Set("showXpBar", checked) end },
-  { label = "COMPACT_MODE", get = function(db) return db.compactMode end,
-    set = function(checked) ns.Set("compactMode", checked) end },
-  { label = "HORIZONTAL_LAYOUT", get = function(db) return db.horizontalLayout end,
-    set = function(checked) ns.Set("horizontalLayout", checked) end },
-  { label = "HIGHLIGHT_DEATHS", get = function(db) return db.highlightDeaths end,
-    set = function(checked) ns.Set("highlightDeaths", checked) end },
-  { label = "STREAM_MODE", get = function() return ns.StreamMode.IsEnabled() end,
-    set = function(checked) ns.StreamMode.SetEnabled(checked) end },
+  toggle("SHOW_TIMER", "showTimer"),
+  toggle("LOCK_FRAME", "locked"),
+  toggle("SHOW_XP_BAR", "showXpBar"),
+  toggle("COMPACT_MODE", "compactMode"),
+  toggle("HORIZONTAL_LAYOUT", "horizontalLayout"),
 })
 addButton("RESET_WINDOW", function() TimerWindow.ResetLayout() end)
 addHint("OPTIONS_HINT")
+addSection("SECTION_GENERAL")
+addLanguageChooser()
+addToggles({
+  { label = "SHOW_MINIMAP", get = function(db) return not db.minimap.hide end,
+    set = function(checked) ns.SetMinimapHidden(not checked) end },
+})
+finishPage()
 
--- Ein Schalter je Stat-Zeile, direkt aus ns.STAT_LINES
+-- Statistiken: ein Schalter je Stat-Zeile, direkt aus ns.STAT_LINES
+addPage("STATISTICS")
 addSection("STATISTICS")
 local statToggles = {}
 for i, line in ipairs(ns.STAT_LINES) do
-  statToggles[i] = {
-    label = line.label,
-    get = function(db) return db[line.setting] end,
-    set = function(checked) ns.Set(line.setting, checked) end,
-  }
+  statToggles[i] = toggle(line.label, line.setting)
 end
 addToggles(statToggles)
-addSplitComparisonChooser()
+finishPage()
+
+-- Hinweise: Level-Up im Chat und Erinnerungen an Buffs
+addPage("OPTIONS_TAB_NOTIFICATIONS")
+addSection("SECTION_LEVEL_UP")
+addToggles({ toggle("LEVEL_UP_SUMMARY_TOGGLE", "levelUpSummary") })
+addAnnounceChooser()
+addSection("SECTION_REMINDERS")
 addToggles({
-  { label = "SHOW_SPLIT_LIST", get = function(db) return db.showSplitList end,
-    set = function(checked) ns.Set("showSplitList", checked) end },
+  toggle("REMIND_FOOD_TOGGLE", "remindFood"),
+  toggle("REMIND_CAMP_TOGGLE", "remindCamp", ns.BuffReminder.HasCampSystem),
 })
+finishPage()
+
+-- Stream: alles, was nur für Streams und Speedruns gedacht ist
+addPage("OPTIONS_TAB_STREAM")
+addSection("SECTION_STREAM")
+addToggles({
+  { label = "STREAM_MODE", get = function() return ns.StreamMode.IsEnabled() end,
+    set = function(checked) ns.StreamMode.SetEnabled(checked) end },
+  toggle("STREAMER_PRIVACY", "streamerPrivacy"),
+  toggle("HIGHLIGHT_DEATHS", "highlightDeaths"),
+})
+addBackgroundChooser()
+addSection("SECTION_ALERTS")
+addToggles({
+  toggle("ALERT_TOGGLE_LEVEL_UP", "alertLevelUp"),
+  toggle("ALERT_TOGGLE_RARE", "alertRareKill"),
+  toggle("ALERT_TOGGLE_ELITE", "alertEliteKill"),
+  toggle("ALERT_TOGGLE_LOOT", "alertEpicLoot"),
+  toggle("ALERT_TOGGLE_NEAR_DEATH", "alertNearDeath"),
+})
+addSection("SECTION_SPLITS")
+addSplitComparisonChooser()
+addToggles({ toggle("SHOW_SPLIT_LIST", "showSplitList") })
 addSlider({
   label = "SPLIT_LIST_ROWS",
   min = ns.SplitList.MIN_ROWS,
@@ -238,42 +331,19 @@ addSlider({
   set = function(value) ns.Set("splitListRows", value) end,
   format = tostring,
 })
+finishPage()
 
-addSection("SECTION_ALERTS")
-addToggles({
-  { label = "ALERT_TOGGLE_LEVEL_UP", get = function(db) return db.alertLevelUp end,
-    set = function(checked) ns.Set("alertLevelUp", checked) end },
-  { label = "ALERT_TOGGLE_RARE", get = function(db) return db.alertRareKill end,
-    set = function(checked) ns.Set("alertRareKill", checked) end },
-  { label = "ALERT_TOGGLE_ELITE", get = function(db) return db.alertEliteKill end,
-    set = function(checked) ns.Set("alertEliteKill", checked) end },
-  { label = "ALERT_TOGGLE_LOOT", get = function(db) return db.alertEpicLoot end,
-    set = function(checked) ns.Set("alertEpicLoot", checked) end },
-  { label = "ALERT_TOGGLE_NEAR_DEATH", get = function(db) return db.alertNearDeath end,
-    set = function(checked) ns.Set("alertNearDeath", checked) end },
-  { label = "REMIND_FOOD_TOGGLE", get = function(db) return db.remindFood end,
-    set = function(checked) ns.Set("remindFood", checked) end },
-  { label = "REMIND_CAMP_TOGGLE", get = function(db) return db.remindCamp end,
-    set = function(checked) ns.Set("remindCamp", checked) end },
-})
+addFooterButton("HISTORY", function() ns.ToggleHistory() end)
+addFooterButton("RECAP_TITLE", function() ns.ToggleRecap() end)
+addFooterButton("NEW_SESSION", function() ns.StartNewSession() end)
 
-addSection("SECTION_GENERAL")
-addLanguageChooser()
-addAnnounceChooser()
-addToggles({
-  { label = "SHOW_MINIMAP", get = function(db) return not db.minimap.hide end,
-    set = function(checked) ns.SetMinimapHidden(not checked) end },
-  { label = "LEVEL_UP_SUMMARY_TOGGLE", get = function(db) return db.levelUpSummary end,
-    set = function(checked) ns.Set("levelUpSummary", checked) end },
-  { label = "STREAMER_PRIVACY", get = function(db) return db.streamerPrivacy end,
-    set = function(checked) ns.Set("streamerPrivacy", checked) end },
-})
-nextRowY = nextRowY - SECTION_GAP
-addButton("NEW_SESSION", function() ns.StartNewSession() end)
-addButton("RECAP_TITLE", function() ns.ToggleRecap() end)
-addButton("HISTORY", function() ns.ToggleHistory() end)
-
-panel:SetHeight(-nextRowY + MARGIN)
+-- Höhe für die längste Seite, damit das Fenster beim Reiterwechsel nicht springt
+local lowestBottom = CONTENT_TOP
+for _, entry in ipairs(pages) do
+  lowestBottom = math.min(lowestBottom, entry.bottom)
+end
+panel:SetHeight(-lowestBottom + FOOTER_GAP + footerButtons * ROW_BUTTON + MARGIN)
+showPage(pages[1])
 
 ---------------------------------------------------------------------------
 -- Aktualisierung
@@ -301,6 +371,14 @@ local function widestChooserRow()
   return widest
 end
 
+local function tabRowWidth()
+  local width = 0
+  for i, entry in ipairs(pages) do
+    width = width + entry.tabButton:GetWidth() + (i > 1 and TAB_GAP or 0)
+  end
+  return width
+end
+
 -- Fensterbreite aus den Texten der gewählten Sprache; Abschnitte, Regler und Buttons strecken sich mit
 local function fitWidth()
   local column = columnWidth()
@@ -308,7 +386,7 @@ local function fitWidth()
     cell.checkbox:ClearAllPoints()
     cell.checkbox:SetPoint("TOPLEFT", MARGIN + cell.column * column, cell.y)
   end
-  local content = math.max(2 * column, widestChooserRow())
+  local content = math.max(2 * column, widestChooserRow(), tabRowWidth())
   panel:SetWidth(math.max(MIN_WIDTH, content + 2 * MARGIN))
 end
 

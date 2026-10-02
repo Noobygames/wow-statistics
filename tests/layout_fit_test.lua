@@ -3,10 +3,11 @@ local L = addon.L
 
 wow.login()
 
+-- Klickbares Element (Schalter, Reiter) mit dieser Beschriftung; Überschriften zählen nicht
 local function findByLabel(text)
   return wow.findFrame(function(frame)
     local label = rawget(frame, "label")
-    return label and label._text == text and frame._points[1] ~= nil
+    return label and label._text == text and frame._points[1] ~= nil and frame._scripts.OnClick ~= nil
   end)
 end
 
@@ -25,13 +26,18 @@ local function checkOptions(language)
   addon.Set("language", language)
   SlashCmdList.LEVELTIMER("config")
 
-  -- Minimap-Button (links) und Level-Up im Chat (rechts) teilen sich eine Zeile
-  local left = findByLabel(L.SHOW_MINIMAP)
-  local right = findByLabel(L.LEVEL_UP_SUMMARY_TOGGLE)
-  local leftEnd = anchorX(left) + left:GetWidth() + addon.Widgets.CHECKBOX_LABEL_GAP + left.label:GetStringWidth()
-  expectTrue(language .. ": rechte Spalte beginnt hinter der linken Beschriftung", anchorX(right) > leftEnd)
-  expectTrue(language .. ": rechte Spalte passt ins Fenster",
-    anchorX(right) + right:GetWidth() + right.label:GetStringWidth() <= options:GetWidth())
+  -- Schalterpaare in einer Zeile, je Reiter eins: links und rechts überlappen nicht
+  for _, pair in ipairs({
+    { "SHOW_XP_BAR", "COMPACT_MODE" },
+    { "STAT_XP_RATE", "STAT_LEVEL_ETA" },
+    { "ALERT_TOGGLE_LEVEL_UP", "ALERT_TOGGLE_RARE" },
+  }) do
+    local left, right = findByLabel(L[pair[1]]), findByLabel(L[pair[2]])
+    local leftEnd = anchorX(left) + left:GetWidth() + addon.Widgets.CHECKBOX_LABEL_GAP + left.label:GetStringWidth()
+    expectTrue(language .. ": " .. pair[2] .. " beginnt hinter " .. pair[1], anchorX(right) > leftEnd)
+    expectTrue(language .. ": " .. pair[2] .. " passt ins Fenster",
+      anchorX(right) + right:GetWidth() + right.label:GetStringWidth() <= options:GetWidth())
+  end
 
   -- Sprachwahl: Beschriftung und alle Reiter nebeneinander
   local row = L.LANGUAGE:len() * 6
