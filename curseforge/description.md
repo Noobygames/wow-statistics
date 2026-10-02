@@ -1,6 +1,6 @@
-# LevelTimer
+# Level Time
 
-See how your leveling is really going. LevelTimer tracks your play time, XP per hour, kills, deaths, quests and income for your **current level** and your **current session**, and keeps a history of every finished level and every past session for all of your characters.
+See how your leveling is really going. Level Time tracks your play time, XP per hour, kills, deaths, quests and income for your **current level** and your **current session**, and keeps a history of every finished level and every past session for all of your characters.
 
 ## Features
 
@@ -58,7 +58,7 @@ A session runs from login to logout. A `/reload` or a short break (up to 5 minut
 
 - **Window**: drag the bottom right corner to resize, right-click to open the settings
 - **Minimap button**: left-click opens the settings, Shift-left-click the history, right-click shows or hides the window, drag to move the button
-- On Retail, LevelTimer also appears in the addon compartment menu
+- On Retail, Level Time also appears in the addon compartment menu
 - **Data text** for Titan Panel, ElvUI and other LibDataBroker displays
 
 | Command | Effect |
@@ -89,7 +89,7 @@ A session runs from login to logout. A `/reload` or a short break (up to 5 minut
 - Statistics are recorded separately for every character and stored account-wide, so the history can show all of them.
 - Level statistics start counting when the addon is installed. Play time and XP per hour use the server's values, so they are correct for the whole level right away.
 - PvE kills count kills that gave you experience. Grey mobs and kills at max level don't count.
-- LevelTimer supports several game versions from one download. Features a game version doesn't provide stay off quietly.
+- Level Time supports several game versions from one download. Features a game version doesn't provide stay off quietly.
 
 ## Feedback
 

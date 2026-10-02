@@ -30,9 +30,9 @@ package:
 artwork:
 	go -C $(ARTWORK) run . -logo "$(CURDIR)/curseforge/logo.png" -icon "$(CURDIR)/Media/Icon.tga"
 
-# Speedrun-Rekorde von speedrun.com holen und SpeedrunRecords.lua neu schreiben (braucht Internet)
+# Speedrun-Rekorde von speedrun.com holen und Speedrun/SpeedrunRecords.lua neu schreiben (braucht Internet)
 records:
-	go -C $(RECORDS) run . -out "$(CURDIR)/SpeedrunRecords.lua"
+	go -C $(RECORDS) run . -out "$(CURDIR)/Speedrun/SpeedrunRecords.lua"
 
 test: test-addon test-installer test-artwork test-records
 

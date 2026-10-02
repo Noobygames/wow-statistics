@@ -219,7 +219,7 @@ function wow.combatLog(subevent, sourceName, destGUID, ...)
   wow.fire("COMBAT_LOG_EVENT_UNFILTERED")
 end
 
--- Die gerade sichtbare Tabellen-Ansicht der Historie (HistoryTables.lua)
+-- Die gerade sichtbare Tabellen-Ansicht der Historie (TableView.lua)
 function wow.shownTable()
   return wow.findFrame(function(frame)
     return rawget(frame, "GetVisibleRecords") ~= nil and frame:IsShown()
@@ -231,6 +231,13 @@ function wow.runTimers()
   local due = wow.timers
   wow.timers = {}
   for _, callback in ipairs(due) do callback() end
+end
+
+-- Ein Bild weiter: OnUpdate aller sichtbaren Frames mit elapsed Sekunden (ns.Every, Fenster, ...)
+function wow.update(elapsed)
+  for _, frame in ipairs(frames) do
+    if frame._scripts.OnUpdate and frame._shown then frame._scripts.OnUpdate(frame, elapsed) end
+  end
 end
 
 function wow.logout()
@@ -265,6 +272,9 @@ function StaticPopup_Show(name, textArg1, textArg2, data)
 end
 COMBATLOG_XPGAIN_FIRSTPERSON = "%s stirbt, Ihr bekommt %d Erfahrung."
 COMBATLOG_HONORGAIN = "%s stirbt, ehrenhafter Sieg Rang: %s (Geschätzte Ehrenpunkte: %d)"
+INSTANCE_RESET_SUCCESS = "%s wurde zurückgesetzt."
+INSTANCE_RESET_FAILED = "%s kann nicht zurückgesetzt werden. Es befinden sich noch Spieler in der Instanz."
+TRANSFER_ABORT_TOO_MANY_INSTANCES = "Ihr habt zu viele Instanzen betreten."
 LOOT_ITEM_SELF = "Ihr erhaltet Beute: %s."
 LOOT_ITEM_SELF_MULTIPLE = "Ihr erhaltet Beute: %sx%d."
 LOOT_ITEM_PUSHED_SELF = "Ihr erhaltet einen Gegenstand: %s."
@@ -290,8 +300,14 @@ function GetMaxPlayerLevel() return state.maxLevel end
 function GetXPExhaustion() return state.rested > 0 and state.rested or nil end
 function GetMoney() return state.money end
 function GetTime() return state.now end
+-- Fehler-Handler des Clients: merkt sich Fehler, statt sie anzuzeigen
+wow.errors = {}
+function geterrorhandler() return function(message) table.insert(wow.errors, message) end end
 function GetCursorPosition() return state.cursorX, state.cursorY end
-function UnitGUID() return state.guid end
+function UnitGUID(unit)
+  if state.units[unit] and state.units[unit].guid then return state.units[unit].guid end
+  return state.guid
+end
 function GetZoneText() return state.zone end
 function CombatLogGetCurrentEventInfo() return unpack(state.combatLog) end
 function time(dateTable)
@@ -457,7 +473,7 @@ C_Item = {
 ---------------------------------------------------------------------------
 addon = {}
 for line in io.lines(ADDON_DIR .. "/LevelTimer.toc") do
-  line = line:gsub("\r", "")
+  line = line:gsub("\r", ""):gsub("\\", "/")  -- .toc-Pfade mit \ wie bei Blizzard
   if line ~= "" and not line:match("^#") then
     local chunk, err = loadfile(ADDON_DIR .. "/" .. line)
     if not chunk then error(err, 0) end

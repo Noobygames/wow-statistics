@@ -18,7 +18,7 @@ wow.state.inGuild = true
 wow.levelUp(13)
 expect("an die Gilde", wow.sentChat[1].chatType, "GUILD")
 local message = wow.sentChat[1].message
-expectTrue("mit Präfix", message:find("LevelTimer: ", 1, true) == 1)
+expectTrue("mit Präfix", message:find("Level Time: ", 1, true) == 1)
 expectTrue("Text der Zusammenfassung", message:find("13", 1, true) ~= nil)
 expectTrue("ohne Farbcodes", message:find("|c", 1, true) == nil)
 

@@ -4,7 +4,7 @@ Values for the CurseForge project form.
 
 ## General
 
-- **Project name:** LevelTimer
+- **Project name:** Level Time
 - **Logo:** `logo.png` (512x512, own artwork, no Blizzard assets; regenerate with `make artwork`)
 - **Summary:** Tracks play time, XP per hour, kills, deaths, quests and gold per level and per session, with a history for all your characters.
 - **Class:** Addons

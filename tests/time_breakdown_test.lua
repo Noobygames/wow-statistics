@@ -75,3 +75,18 @@ expectNear("mit AFK: 500 XP/h", Experience.GetRatePerHour(Stats.LEVEL), 500, 1)
 addon.Set("xpRateWithoutAfk", true)
 expectNear("ohne AFK: 1000 XP/h", Experience.GetRatePerHour(Stats.LEVEL), 1000, 1)
 expect("Historie ohne Zähler: Spielzeit bleibt", Experience.RateSeconds(100, nil), 100)
+
+-- Historie, Vergleich und Graph rechnen XP/h nach denselben Regeln wie das Fenster
+local current = addon.History.GetLevelRecords(addon.characterKey)[1]
+expectNear("Historie ohne AFK", Experience.RecordRate(current), 1000, 1)
+local function compareRate() return addon.History.GetCharacterComparison()[1].xpRate end
+local function summaryRate()
+  return Experience.RecordRate(addon.History.Summarize(addon.History.GetLevelRecords(addon.characterKey)))
+end
+local withoutAfk = compareRate()
+expectNear("Vergleich ohne AFK wie Summenzeile", withoutAfk, summaryRate(), 0.01)
+local items = addon.Analysis.XpRatePerLevel(addon.characterKey)
+expectNear("Graph ohne AFK", items[#items].value, 1000, 1)
+addon.Set("xpRateWithoutAfk", false)
+expectTrue("Vergleich mit AFK langsamer", compareRate() < withoutAfk)
+expectNear("Vergleich mit AFK wie Summenzeile", compareRate(), summaryRate(), 0.01)

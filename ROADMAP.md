@@ -2,6 +2,41 @@
 
 Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt und unter „Erledigt“ mit Version vermerkt. Nummern laufen über alle Versionen weiter.
 
+## v2.8: Dungeons
+
+Schwerpunkt: Leveln in Dungeons auswerten und das Instanzlimit im Blick behalten.
+
+- [x] 90. **XP/h überall gleich** (S): Vergleich der Charaktere, XP/h-Graph und Level-Up-Zusammenfassung ziehen AFK-Zeit ab wie Fenster und Historie, wenn „XP/h ohne AFK“ an ist (`Experience.RecordRate`).
+- [x] 91. **Dungeon-Läufe** (M): Lauf endet erst beim lebendigen Verlassen (Geisterlauf zum Friedhof setzt ihn fort); XP/h je Lauf in der Historie; Zeile „Instanz“ im Fenster mit Zeit und XP des laufenden Laufs.
+- [x] 92. **Instanzlimit** (M): Classic Era, Anniversary und WoW Forever erlauben 5 neue Instanzen pro Stunde für alle Charaktere eines Realms (Retail 10). Zeile „Instanzen/h“ mit „3/5, nächste frei in 14m“, Hinweis beim Betreten der vorletzten und letzten; Instanzen heute als Info.
+- [x] 93. **Instanz-Kopien erkennen** (M): Kopie an der zoneUID der Gegner-GUIDs (Ziel, Maus, Namensplaketten) wie Nova Instance Tracker; Reset aus `INSTANCE_RESET_SUCCESS`/`_FAILED`. Ein Lauf ist eine Kopie: raus und wieder rein setzt ihn fort, Reset oder andere Kopie beenden ihn; falsche Schätzungen werden geteilt bzw. zusammengeführt, auch im Instanzlimit. Abweisung des Servers zeigt den Stand laut Addon.
+- [x] 94. **Prognose mit XP-Tabelle** (S–M): Prognose bis Max-Level und Session-Ziel rechnen die tatsächlich benötigten XP je Level (Classic Era, Anniversary und WoW Forever: Werte von 1.12; TBC: Werte ab 2.3, `XpTable.lua`) durch die XP/h der letzten 5 Level samt laufendem. Ohne passende Tabelle (Retail, abweichende Werte) wie bisher aus den Level-Zeiten.
+
+## v2.7: Aufräumen
+
+Schwerpunkt: Struktur und Wartbarkeit nach dem Code- und Architektur-Review, ohne neue Funktionen. Jeder Schritt ändert kein Verhalten; die Tests sichern das ab.
+
+### Doppelten Code zusammenführen
+
+- [x] 78. **Gedrosselter Ticker** (S): `ns.Every(seconds, fn)` im Kern statt fünf eigener OnUpdate-Frames (BuffReminder, GearWarnings, TimeBreakdown, RecentXpRate, Broker).
+- [x] 79. **Taschen-Helfer** (S): `Bags.lua` (Taschen durchlaufen, letzte Tasche) statt Kopien in Merchant und GearWarnings.
+- [x] 80. **Item-Helfer** (S): `Items.SellPrice(item)` und `Items.GetInfo` statt `getItemInfo` + `SELL_PRICE_INDEX` in Merchant, QuestAutomation und Loot.
+- [x] 81. **Hinweis-Helfer** (S): `Alerts.Notify(message, color)` (Chatzeile + Einblendung) für BuffReminder, GearWarnings, TrainerReminder; Declines dokumentiert, warum die Umschalttaste dort nicht gilt.
+
+### Große Dateien teilen
+
+- [x] 82. **TableView** (M): allgemeine Tabelle (Lazy Load, Sortieren, Filtern, CSV) aus `HistoryTables.lua` in `TableView.lua`; HistoryTables behält nur die Spalten.
+- [x] 83. **OptionsBuilder** (M): Baukasten (`addPage`, `addToggles`, `addChooser`, Breitenberechnung) aus `Options.lua` in `OptionsBuilder.lua`; Options behält nur den Inhalt.
+
+### Struktur
+
+- [x] 84. **Unterordner** (M): `Lib/`, `Core/`, `Tracking/`, `History/`, `Speedrun/`, `Assist/`, `UI/` statt 66 Dateien im Hauptordner (`.toc`-Änderung: Client neu starten).
+- [ ] 85. **Locales je Sprache** (S–M): `Locales/Core.lua` plus eine Datei je Sprache statt 1.700 Zeilen in einer.
+- [ ] 86. **Standardwerte je Modul** (M): Module melden ihre Einstellungen und Zähler selbst an (`ns.RegisterDefaults`), statt alles zentral in `Database.lua`.
+- [ ] 87. **Migrationen ohne Fachmodule** (S): Charakter-Migrationen v4/v5 rufen nicht mehr `ns.Daily` auf (eigener Helfer).
+- [ ] 88. **Zyklen auflösen** (S–M): `Stats.GetSeconds` bekommt die Zeitquellen (Session, /played) übergeben statt sie selbst zu kennen; Ladereihenfolge = Abhängigkeiten.
+- [ ] 89. **Test-Stub teilen** (S): `tests/wow_stub.lua` nach API-Bereichen aufteilen (Händler, Quests, Taschen, Chat, ...).
+
 ## v2.6: Leveln ohne Umwege
 
 Schwerpunkt: Komfort-Funktionen, die beim Leveln Klicks sparen, und Werte, die zeigen, wo Zeit verloren geht. Jede Komfort-Funktion ist einzeln schaltbar (Standard aus) und liegt im neuen Reiter „Komfort“; gedrückte Umschalttaste setzt die Automatik im Moment aus. Nutzt jemand schon Leatrix Plus o.ä., bleiben unsere Schalter einfach aus. Alle API-Annahmen werden vor der Umsetzung je Client gegen die Doku geprüft.
@@ -103,6 +138,7 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 
 ## Erledigt
 
+- v2.8.0: 78. Gedrosselter Ticker, 79. Taschen-Helfer, 80. Item-Helfer, 81. Hinweis-Helfer, 82. TableView, 83. OptionsBuilder, 84. Unterordner, 90. XP/h überall gleich, 91. Dungeon-Läufe, 92. Instanzlimit, 93. Instanz-Kopien erkennen, 94. Prognose mit XP-Tabelle; Anzeigename „Level Time“
 - v2.6.0: 55. Automatisch reparieren, 56. Schrott verkaufen, 57. Quests annehmen, 58. Quests abgeben, 59. Gespräche überspringen, 60. Zeitaufteilung, 61. XP/h ohne AFK, 62. Aktuelle XP/h, 63. Kills/Quests bis Level-Up, 64. Erholt-Anzeige, 65. Ausgaben, 66. Taschen fast voll, 67. Haltbarkeit niedrig, 68. Lehrer besuchen, 69. Munition knapp, 70. Stream-Modus ohne Größe/Transparenz, 71. Keine Elite-Einblendung in Instanzen, 72. Keine Beute-Einblendung in Raids, 73.–76. Handel, Gruppen-, Gilden- und Duellanfragen ablehnen, 77. Level-Up-Ansage ohne /sagen
 - v2.5.2: Fix der Zeile /played in der Split-Liste, 52. Erinnerungs-Abstand einstellbar, 53. Speedrun-Reiter, 54. Tooltips in den Einstellungen
 - v2.5.0: 32. Neue Session starten, 31. Hardcore-Anzeige, 27. Stream-Ansicht, 33. Streamer-Datenschutz, 28. Session-Ziel, 29. Große Einblendungen, 30. Session-Abschlusskarte, 26. Splits, 34. Ansage in Gilde/Gruppe, 38. Rote Tode abschaltbar, 37. Stream-Modus, 35. Fester Vergleichslauf, 36. Split-Liste, 39. Hinweis bei fehlendem Food-Buff, 40. Hinweis bei fehlendem Camp-Buff, 41. Einstellungen mit Reitern, 42. Client-spezifische Optionen, 43. Level-Up-Ansage in /sagen, 44. Debug-Modus, 45. Split-Liste mit /played, 46. Fester Vergleich bleibt fest, 47. Läufe, 48. Rekorde, 49. Läufe teilen und sichern, 50. Einstellungs-Profile, 51. Speedrun-Rekorde

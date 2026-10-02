@@ -2,7 +2,7 @@
 
 Useful WoW addon (compatible with WoW Forever) to show statistics.
 
-## LevelTimer
+## Level Time
 
 Shows statistics in a small, movable window, either for your **current level** or your **current session** (switch with the "Level | Session" tabs at the top):
 
@@ -54,8 +54,8 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 ### Minimap button and settings
 
 - Left-click the minimap button (pocket watch) to open the settings, Shift-left-click for the history, right-click to show or hide the window, drag to move it around the minimap.
-- On Retail, LevelTimer also shows up in the addon compartment menu.
-- **Data text** for Titan Panel, ElvUI, Bazooka and other LibDataBroker displays: play time and XP/h, tooltip with all enabled values, same clicks as the minimap button. Works when one of those addons is installed (LevelTimer does not bundle the library).
+- On Retail, Level Time also shows up in the addon compartment menu.
+- **Data text** for Titan Panel, ElvUI, Bazooka and other LibDataBroker displays: play time and XP/h, tooltip with all enabled values, same clicks as the minimap button. Works when one of those addons is installed (Level Time does not bundle the library).
 - Resize the window by dragging its bottom right corner; text and everything else scale with it. Right-click the window to open the settings.
 - **Compact mode** (`/lt compact` or settings): only play time, XP bar and XP/h.
 - **Horizontal bar** (`/lt bar` or settings): the window as a slim info bar, all values in one line; combines with compact mode.
