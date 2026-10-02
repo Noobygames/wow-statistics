@@ -15,6 +15,11 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 - [x] 30. **Session-Abschlusskarte** (M): `/lt recap` zeigt Zeit, Level, XP/h, Kills, Tode, beste Beute und gefährlichsten Gegner der Session, z.B. als Abspann oder Screenshot für Discord.
 - [x] 31. **Hardcore-Anzeige** (S): Tode rot, Zeile „Ohne Tod“ (Spielzeit seit dem letzten Tod), dazu die vorhandenen Beinahe-Tode.
 
+- [ ] 35. **Fester Vergleichslauf** (M): Splits wahlweise gegen die Bestzeit je Level oder gegen einen festen Lauf (persönliche Bestzeit = Charakter mit der kürzesten Zeit bis zum aktuellen Level, oder ein gewählter Charakter), wie ForeverSplits/LiveSplit.
+- [ ] 36. **Split-Liste** (M): eigene kleine Anzeige mit den letzten N Leveln, Zeit und Abweichung zum Vergleich.
+- [ ] 37. **Stream-Modus per Befehl** (S): `/lt stream` schaltet Stream-Einstellungen (Chroma, Größe, Einblendungen, Namen verbergen) gemeinsam ein und stellt beim Ausschalten den vorherigen Stand wieder her.
+- [ ] 38. **Rote Tode abschaltbar** (S): Hervorhebung der Tode als eigener Schalter, damit alle Stream-Optionen abschaltbar sind.
+
 ### Bedienung
 
 - [x] 32. **Neue Session starten** (S): Button in den Einstellungen und `/lt newsession`. Archiviert die laufende Session sofort und startet eine neue, z.B. zu Stream-Beginn, statt auf Logout und Login zu warten.
