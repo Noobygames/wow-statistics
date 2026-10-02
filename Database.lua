@@ -47,6 +47,7 @@ local SETTINGS_DEFAULTS = {
   reminderInterval = 5,  -- Minuten zwischen zwei Hinweisen auf denselben fehlenden Buff
   warnBagsFull = false,  -- Hinweis bei fast vollen Taschen (siehe GearWarnings.lua)
   warnDurability = false,  -- Hinweis bei niedriger Haltbarkeit
+  remindTrainer = false,   -- Hinweis auf neue Zauber beim Lehrer (TrainerReminder.lua, nicht Retail)
   -- Komfort beim Leveln (siehe Comfort.lua), alles aus
   autoRepair = false,       -- beim Händler reparieren (Merchant.lua)
   autoRepairGuild = false,  -- zuerst aus der Gildenbank

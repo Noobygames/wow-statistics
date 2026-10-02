@@ -47,3 +47,29 @@ expect("nur einmal", count(L.WARN_DURABILITY), 1)
 wow.state.durability = { [5] = { 100, 100 } }
 GearWarnings.Check()
 expect("repariert: still", count(L.WARN_DURABILITY), 1)
+
+---------------------------------------------------------------------------
+-- Lehrer besuchen: gerade Level, nicht in Retail
+---------------------------------------------------------------------------
+local function trainerReminders()
+  local found = 0
+  for _, line in ipairs(wow.printed) do
+    if line:find("neue Zauber beim Lehrer", 1, true) then found = found + 1 end
+  end
+  return found
+end
+
+addon.Set("remindTrainer", true)
+expect("Retail: nicht verfügbar", addon.TrainerReminder.IsAvailable(), false)
+wow.levelUp(12)
+expect("Retail: still", trainerReminders(), 0)
+
+wow.state.interface = 11509
+wow.levelUp(13)
+expect("ungerade: still", trainerReminders(), 0)
+wow.levelUp(14)
+expect("gerade: Hinweis", trainerReminders(), 1)
+expect("mit Level", LevelTimerAlert.text:GetText(), string.format(L.REMIND_TRAINER, 14))
+
+wow.state.interface = 16001
+expect("Forever: verfügbar", addon.TrainerReminder.IsAvailable(), true)

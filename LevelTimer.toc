@@ -59,6 +59,7 @@ LevelUpSummary.lua
 Alerts.lua
 BuffReminder.lua
 GearWarnings.lua
+TrainerReminder.lua
 Comfort.lua
 Merchant.lua
 QuestAutomation.lua
