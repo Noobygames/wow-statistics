@@ -42,6 +42,7 @@ Instances.lua
 Analysis.lua
 Forecast.lua
 Goal.lua
+Splits.lua
 
 # Oberfläche
 StatLines.lua

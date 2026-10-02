@@ -40,6 +40,12 @@ function Format.Duration(totalSeconds)
   return string.format("%ds", seconds)
 end
 
+-- Abweichung mit Vorzeichen: "+3m 12s", "-1m 05s" (Splits)
+function Format.SignedDuration(seconds)
+  local sign = seconds < 0 and "-" or "+"
+  return sign .. Format.Duration(math.abs(seconds))
+end
+
 -- Große Zahlen kürzen: 950, 12.3k, 1.2M
 function Format.Number(value)
   if value >= 1000000 then

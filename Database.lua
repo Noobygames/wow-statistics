@@ -22,6 +22,7 @@ local SETTINGS_DEFAULTS = {
   showXpRate = true,
   showLevelEta = true,
   showMaxLevelEta = true,
+  showSplits = false,  -- Splits gegen die Bestzeit je Level (siehe Splits.lua)
   showGoal = false,  -- Session-Ziel (siehe Goal.lua); /lt goal schaltet die Zeile ein
   streamerPrivacy = false,  -- Realm und andere Charaktere in der Historie verbergen (siehe History.DisplayName)
   -- Große Einblendungen (siehe Alerts.lua), für Streams gedacht und daher aus

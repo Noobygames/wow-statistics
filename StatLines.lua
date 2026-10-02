@@ -10,6 +10,8 @@ local DeathCounter = ns.DeathCounter
 
 local NO_VALUE = "-"
 local DEATH_COLOR = "|cffff4040"  -- Tode rot, damit sie (z.B. im Stream) auffallen
+local AHEAD_COLOR = "|cff40ff40"   -- Split schneller als die Bestzeit
+local BEHIND_COLOR = "|cffff4040"  -- Split langsamer als die Bestzeit
 local PENDING = "..."  -- noch nicht aussagekräftig (z.B. /played hat noch nicht geantwortet)
 
 local function counter(name)
@@ -46,6 +48,15 @@ local function deaths(scope)
     text = DEATH_COLOR .. text .. "|r"
   end
   return text
+end
+
+-- Split: "-1m 05s" grün (schneller), "+3m 12s" rot (langsamer), "-" ohne Bestzeit
+local function splitText(getDelta)
+  return function()
+    local delta = getDelta()
+    if not delta then return NO_VALUE end
+    return (delta < 0 and AHEAD_COLOR or BEHIND_COLOR) .. Format.SignedDuration(delta) .. "|r"
+  end
 end
 
 -- Session-Ziel: "Level 30: 45 %, 1h 20m" bzw. "Level 30 erreicht"
@@ -93,6 +104,10 @@ ns.STAT_LINES = {
   { setting = "showLevelEta", label = "STAT_LEVEL_ETA", rows = { { label = "ROW_LEVEL_ETA", value = timeToLevel } } },
   { setting = "showMaxLevelEta", label = "STAT_MAX_LEVEL_ETA",
     rows = { { label = "ROW_MAX_LEVEL_ETA", value = timeToMaxLevel } } },
+  { setting = "showSplits", label = "STAT_SPLITS", rows = {
+    { label = "ROW_SPLIT_LEVEL", value = splitText(ns.Splits.GetCurrentDelta) },
+    { label = "ROW_SPLIT_TOTAL", value = splitText(ns.Splits.GetTotalDelta) },
+  } },
   { setting = "showGoal", label = "STAT_GOAL", rows = { { label = "ROW_GOAL", value = goalText } } },
   { setting = "showPveKills", label = "STAT_PVE_KILLS",
     rows = { { label = "ROW_PVE_KILLS", value = counter(Stats.PVE_KILLS) } } },

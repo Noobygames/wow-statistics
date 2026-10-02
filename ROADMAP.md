@@ -8,7 +8,7 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 
 ### Für Zuschauer
 
-- [ ] 26. **Splits gegen Bestzeit** (M–L): jede Level-Zeit gegen eine Bestzeit vergleichen (z.B. schnellster eigener Charakter), „+3m 12s“ rot / „−1m 05s“ grün, Gesamtabweichung wie bei LiveSplit. Daten aus `levelHistory` aller Charaktere.
+- [x] 26. **Splits gegen Bestzeit** (M–L): Zeit des laufenden Levels gegen die schnellste Zeit anderer Charaktere für dieses Level, „+3m 12s“ rot / „-1m 05s“ grün, dazu Gesamtabweichung über alle Level mit Bestzeit (wie „Sum of Best“ bei LiveSplit).
 - [x] 27. **Stream-Ansicht** (S): Hintergrund wahlweise Chroma-Grün oder Magenta ohne Rahmen zum Freistellen in OBS; große Schrift über die Größe (bis 200 %), kombinierbar mit der horizontalen Leiste.
 - [x] 28. **Session-Ziel** (S–M): `/lt goal 30` setzt ein Ziel-Level; Zeile „Ziel“ zeigt Fortschritt in Prozent und Prognose („Level 30: 45 %, 1h 20m“), Meldung beim Erreichen.
 - [x] 29. **Große Einblendungen** (S–M): auffällige Meldung bei Level-Up, Rare-/Elite-Kill, epischer Beute und Beinahe-Tod, einzeln schaltbar (Standard aus). Ereignisse aus `ns.OnLevelStarted` und `Journal.OnAdd`.
@@ -27,7 +27,7 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 
 ## Erledigt
 
-- Nächstes Release (v2.5): 32. Neue Session starten, 31. Hardcore-Anzeige, 27. Stream-Ansicht, 33. Streamer-Datenschutz, 28. Session-Ziel, 29. Große Einblendungen, 30. Session-Abschlusskarte
+- Nächstes Release (v2.5): 32. Neue Session starten, 31. Hardcore-Anzeige, 27. Stream-Ansicht, 33. Streamer-Datenschutz, 28. Session-Ziel, 29. Große Einblendungen, 30. Session-Abschlusskarte, 26. Splits
 - v2.0.0:
   - Auswertung: 1. Prognose bis Max-Level, 2. alle Charaktere vergleichen, 3. Zonen-Auswertung, 4. Spielzeit pro Tag/Woche, 5. XP-Verlauf der Session, 6. Langzeit-Graphen als Tageswerte
   - Daten: 7. Quest-Journal, 8. Level-Timeline, 9. Instanzen, 10. Loot-Journal, 11. Elite- und Rare-Kills, 12. Beinahe-Tode, 24. Todesursache aus dem Death Recap (Retail, WoW Forever)
