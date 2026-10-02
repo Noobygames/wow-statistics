@@ -1,0 +1,96 @@
+-- Speedrun-Ansichten der Historie (Gruppe "Speedrun"): Läufe zum Vergleichen und Rekorde je Level.
+-- Läufe: Klick wählt den Lauf als festen Vergleich der Splits, Rechtsklick markiert ihn als Favorit;
+-- Favoriten stehen oben. Suchfeld filtert nach Name und Klasse (wie jede Tabelle über alle Zellen).
+local _, ns = ...
+local L = ns.L
+local Widgets = ns.Widgets
+local Format = ns.Format
+local History = ns.History
+local Runs = ns.Runs
+local Splits = ns.Splits
+local HistoryTables = ns.HistoryTables
+
+local GROUP = "HISTORY_GROUP_SPEEDRUN"
+local LEFT = "LEFT"
+local FAVORITE_MARK = "*"
+
+local function className(classToken)
+  local names = LOCALIZED_CLASS_NAMES_MALE
+  return classToken and (names and names[classToken] or classToken) or ""
+end
+
+-- Eigene Charaktere mit Streamer-Datenschutz, importierte Läufe mit Kennzeichen
+local function runName(run)
+  if run.imported then return (run.name or "?") .. " " .. L.RUN_IMPORTED end
+  return History.DisplayName(run.id)
+end
+
+local function isReference(run)
+  local reference = ns.db.splitReference
+  return ns.db.splitComparison == Splits.RUN and reference ~= nil and reference.id == run.id
+end
+
+local function countLevels(times)
+  local count = 0
+  for _ in pairs(times) do count = count + 1 end
+  return count
+end
+
+---------------------------------------------------------------------------
+-- Läufe
+---------------------------------------------------------------------------
+
+-- Favoriten zuerst, sonst Reihenfolge aus Runs.GetAll; Zeit über dieselbe Spanne wie die Splits
+local function runRecords()
+  local from, to = Splits.ComparableRange()
+  local favorites, others = {}, {}
+  for _, run in ipairs(Runs.GetAll()) do
+    run.timeToLevel = Runs.SumOfLevels(run.times, from, to - 1)
+    run.recordedLevels = countLevels(run.times)
+    run.isCurrent = run.id == ns.characterKey
+    table.insert(run.favorite and favorites or others, run)
+  end
+  for _, run in ipairs(others) do table.insert(favorites, run) end
+  return favorites
+end
+
+local RUN_COLUMNS = {
+  { header = "HISTORY_FAVORITE", width = 18, align = LEFT,
+    value = function(r) return r.favorite and FAVORITE_MARK or "" end },
+  { header = "HISTORY_CHARACTER_NAME", width = 140, align = LEFT, value = runName },
+  { header = "HISTORY_CLASS", width = 80, align = LEFT, value = function(r) return className(r.class) end },
+  { header = "HISTORY_LEVEL", width = 40, value = function(r) return r.reachedLevel or "" end,
+    sort = function(r) return r.reachedLevel end },
+  { header = "HISTORY_LEVELS_RECORDED", width = 56, value = function(r) return r.recordedLevels end },
+  { header = "HISTORY_TIME_TO_CURRENT", width = 90, value = function(r)
+      return r.timeToLevel and Format.Duration(r.timeToLevel) or "-"
+    end, sort = function(r) return r.timeToLevel end },
+  { header = "HISTORY_RUN_STATUS", width = 80, value = function(r)
+      return isReference(r) and L.RUN_REFERENCE or ""
+    end },
+}
+
+local function runColor(run)
+  if isReference(run) then return Widgets.COLORS.highlight end
+  return HistoryTables.ClassColor(run)
+end
+
+local function onRunClick(run, mouseButton)
+  if mouseButton == "RightButton" then
+    Runs.ToggleFavorite(run.id)
+  elseif not run.isCurrent then
+    Splits.SetReferenceRun(run)
+    ns.Print(string.format(L.COMPARE_SET, Splits.GetReferenceName()))
+  end
+end
+
+ns.HistoryWindow.AddView(HistoryTables.CreateTableView({
+  tab = "HISTORY_TAB_RUNS",
+  group = GROUP,
+  columns = RUN_COLUMNS,
+  records = runRecords,
+  footer = HistoryTables.CountCells,
+  rowColor = runColor,
+  onRowClick = onRunClick,
+  hint = "RUNS_HINT",
+}))

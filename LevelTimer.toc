@@ -58,6 +58,7 @@ Export.lua
 HistoryWindow.lua
 HistoryTables.lua
 HistoryCharts.lua
+SpeedrunViews.lua
 RecapWindow.lua
 StreamMode.lua
 MinimapButton.lua

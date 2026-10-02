@@ -49,6 +49,11 @@ local function firstOwnLevel()
   return first
 end
 
+-- Level-Spanne, über die Läufe verglichen werden: erstes eigenes Level bis einschließlich des aktuellen
+function Splits.ComparableRange()
+  return firstOwnLevel(), ns.level
+end
+
 -- Zeiten des schnellsten anderen Charakters bis einschließlich des aktuellen Levels
 local function personalBest()
   local from = firstOwnLevel()

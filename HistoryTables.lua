@@ -3,7 +3,10 @@
 -- (Mausrad oder Leiste) werden sie mit den passenden Einträgen neu gefüllt.
 -- So bleiben auch tausende Journal-Einträge flüssig. Klick auf einen Spaltenkopf sortiert,
 -- das Suchfeld filtert; die Summenzeile gilt für die gefilterten Zeilen.
+-- Weitere Ansichten (z.B. SpeedrunViews.lua) bauen Tabellen mit HistoryTables.CreateTableView.
 local _, ns = ...
+local HistoryTables = {}
+ns.HistoryTables = HistoryTables
 local L = ns.L
 local Widgets = ns.Widgets
 local Format = ns.Format
@@ -347,6 +350,8 @@ end
 
 -- definition = { tab, group (optional), columns, records(characterKey), footer(columns, records),
 --                rowColor(record) (optional, Standard: laufender Eintrag hervorgehoben, sonst weiß) }
+-- definition = { tab, group, columns, records(characterKey), footer(columns, records),
+--   rowColor(record) optional, onRowClick(record, mouseButton) optional, hint = Locale-Key optional }
 local function createTableView(definition)
   local columns = definition.columns
   local rowColor = definition.rowColor or defaultRowColor
@@ -375,10 +380,28 @@ local function createTableView(definition)
     footerRow:SetPoint("BOTTOMLEFT")
 
     local rows = {}
+    local apply  -- unten definiert
     for i = 1, visibleRows do
       rows[i] = createRow(frame, columns, "GameFontHighlightSmall")
       rows[i]:SetPoint("TOPLEFT", 0, -TOOLBAR_HEIGHT - i * ROW_HEIGHT)
     end
+
+    -- Klick auf eine Zeile (nur, wenn die Ansicht etwas damit macht); danach neu zeichnen
+    if definition.onRowClick then
+      for i, row in ipairs(rows) do
+        row:EnableMouse(true)
+        row:SetScript("OnMouseUp", function(_, mouseButton)
+          local record = records[frame.offset + i]
+          if not record then return end
+          definition.onRowClick(record, mouseButton)
+          frame:Render(frame.characterKey)
+        end)
+      end
+    end
+
+    -- Hinweis in der Werkzeugleiste, z.B. was ein Klick bewirkt
+    local hint = frame:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    hint:SetPoint("TOPLEFT", EXPORT_BUTTON_WIDTH + CELL_GAP, -6)
 
     local function draw()
       for i, row in ipairs(rows) do
@@ -418,7 +441,7 @@ local function createTableView(definition)
     end
 
     -- Filter und Sortierung auf alle Einträge anwenden und neu zeichnen
-    local function apply()
+    function apply()
       records = filterAndSort(columns, allRecords, filterText, sort)
       showHeaders()
       scrollBar:SetRange(math.max(0, #records - visibleRows))
@@ -484,8 +507,10 @@ local function createTableView(definition)
     exportButton:SetPoint("TOPLEFT", 0, -1)
 
     function frame:Render(characterKey, selectionChanged)
+      frame.characterKey = characterKey
       filterLabel:SetText(L.FILTER)
       exportButton:SetText(L.EXPORT)
+      hint:SetText(definition.hint and L[definition.hint] or "")
       allRecords = definition.records(characterKey)
       if selectionChanged then frame.offset = 0 end
       apply()
@@ -496,6 +521,10 @@ local function createTableView(definition)
 
   return { tab = definition.tab, group = definition.group, Create = create }
 end
+
+HistoryTables.CreateTableView = createTableView
+HistoryTables.ClassColor = classColor
+HistoryTables.CountCells = countCells
 
 local function addTable(tab, group, columns, records, footer)
   ns.HistoryWindow.AddView(createTableView({
