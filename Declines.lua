@@ -1,5 +1,6 @@
 -- Anfragen anderer Spieler automatisch ablehnen, jede Art einzeln schaltbar (Reiter "Komfort", aus):
--- Handel (declineTrades), Gruppeneinladungen (declineGroupInvites).
+-- Handel (declineTrades), Gruppeneinladungen (declineGroupInvites), Gildeneinladungen
+-- (declineGuildInvites; Retail zeigt dafür GuildInviteFrame statt eines Dialogs).
 -- Abläufe wie in Blizzards UIParent/StaticPopup aller Clients: das Event zeigt den Dialog, die
 -- Ablehnen-Taste ruft die Funktion; wir lehnen ab und schließen den Dialog. Eine Chatzeile nennt,
 -- wer gefragt hat.
@@ -15,6 +16,9 @@ Declines.KINDS = {
     popup = "TRADE", message = "DECLINED_TRADE" },
   { setting = "declineGroupInvites", event = "PARTY_INVITE_REQUEST", decline = function() DeclineGroup() end,
     popup = "PARTY_INVITE", message = "DECLINED_GROUP" },
+  { setting = "declineGuildInvites", event = "GUILD_INVITE_REQUEST", decline = function() DeclineGuild() end,
+    popup = "GUILD_INVITE", message = "DECLINED_GUILD",
+    hide = function() if GuildInviteFrame then GuildInviteFrame:Hide() end end },
 }
 
 for _, kind in ipairs(Declines.KINDS) do

@@ -15,7 +15,7 @@ Schwerpunkt: Komfort-Funktionen, die beim Leveln Klicks sparen, und Werte, die z
 - [x] 59. **Gespräche überspringen** (S–M): `GOSSIP_SHOW`/`QUEST_GREETING`: fertige Quests abgeben, verfügbare öffnen, sonst die einzige Gesprächsoption wählen (`C_GossipInfo`). Nie bei mehreren Optionen oder Optionen mit Bestätigung/Kosten.
 - [x] 73. **Trades** (S): Handel automatisch ablehnen
 - [x] 74. **Invites** (S): Gruppen Invite automatisch ablehnen
-- [ ] 75. **Gilde** (S): Gilden Invite automatisch ablehnen
+- [x] 75. **Gilde** (S): Gilden Invite automatisch ablehnen
 - [ ] 76. **Duell** (S): Duell Invite automatisch ablehnen
 
 ### Statistik: wohin die Zeit geht

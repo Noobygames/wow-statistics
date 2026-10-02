@@ -60,6 +60,7 @@ local SETTINGS_DEFAULTS = {
   skipGossip = false,       -- Gespräche mit nur einer Option überspringen
   declineTrades = false,    -- Handel ablehnen (Declines.lua)
   declineGroupInvites = false,
+  declineGuildInvites = false,
   levelUpSummary = true,
   levelUpAnnounce = "off",  -- Level-Up-Zusammenfassung an "party" oder "guild" (siehe LevelUpSummary.lua)  -- Chatzeile beim Level-Up (siehe LevelUpSummary.lua)
   showPveKills = true,
