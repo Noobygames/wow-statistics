@@ -2,6 +2,31 @@
 
 Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt und unter „Erledigt“ mit Version vermerkt. Nummern laufen über alle Versionen weiter.
 
+## v2.7: Aufräumen
+
+Schwerpunkt: Struktur und Wartbarkeit nach dem Code- und Architektur-Review, ohne neue Funktionen. Jeder Schritt ändert kein Verhalten; die Tests sichern das ab.
+
+### Doppelten Code zusammenführen
+
+- [ ] 78. **Gedrosselter Ticker** (S): `ns.Every(seconds, fn)` im Kern statt fünf eigener OnUpdate-Frames (BuffReminder, GearWarnings, TimeBreakdown, RecentXpRate, Broker).
+- [ ] 79. **Taschen-Helfer** (S): `Bags.lua` (Taschen durchlaufen, letzte Tasche) statt Kopien in Merchant und GearWarnings.
+- [ ] 80. **Item-Helfer** (S): `Items.SellPrice(item)` und `Items.GetInfo` statt `getItemInfo` + `SELL_PRICE_INDEX` in Merchant, QuestAutomation und Loot.
+- [ ] 81. **Hinweis-Helfer** (S): `Alerts.Notify(message, color)` (Chatzeile + Einblendung) für BuffReminder, GearWarnings, TrainerReminder; Declines dokumentiert, warum die Umschalttaste dort nicht gilt.
+
+### Große Dateien teilen
+
+- [ ] 82. **TableView** (M): allgemeine Tabelle (Lazy Load, Sortieren, Filtern, CSV) aus `HistoryTables.lua` in `TableView.lua`; HistoryTables behält nur die Spalten.
+- [ ] 83. **OptionsBuilder** (M): Baukasten (`addPage`, `addToggles`, `addChooser`, Breitenberechnung) aus `Options.lua` in `OptionsBuilder.lua`; Options behält nur den Inhalt.
+
+### Struktur
+
+- [ ] 84. **Unterordner** (M): `Lib/`, `Core/`, `Tracking/`, `History/`, `Speedrun/`, `Assist/`, `UI/` statt 66 Dateien im Hauptordner (`.toc`-Änderung: Client neu starten).
+- [ ] 85. **Locales je Sprache** (S–M): `Locales/Core.lua` plus eine Datei je Sprache statt 1.700 Zeilen in einer.
+- [ ] 86. **Standardwerte je Modul** (M): Module melden ihre Einstellungen und Zähler selbst an (`ns.RegisterDefaults`), statt alles zentral in `Database.lua`.
+- [ ] 87. **Migrationen ohne Fachmodule** (S): Charakter-Migrationen v4/v5 rufen nicht mehr `ns.Daily` auf (eigener Helfer).
+- [ ] 88. **Zyklen auflösen** (S–M): `Stats.GetSeconds` bekommt die Zeitquellen (Session, /played) übergeben statt sie selbst zu kennen; Ladereihenfolge = Abhängigkeiten.
+- [ ] 89. **Test-Stub teilen** (S): `tests/wow_stub.lua` nach API-Bereichen aufteilen (Händler, Quests, Taschen, Chat, ...).
+
 ## v2.6: Leveln ohne Umwege
 
 Schwerpunkt: Komfort-Funktionen, die beim Leveln Klicks sparen, und Werte, die zeigen, wo Zeit verloren geht. Jede Komfort-Funktion ist einzeln schaltbar (Standard aus) und liegt im neuen Reiter „Komfort“; gedrückte Umschalttaste setzt die Automatik im Moment aus. Nutzt jemand schon Leatrix Plus o.ä., bleiben unsere Schalter einfach aus. Alle API-Annahmen werden vor der Umsetzung je Client gegen die Doku geprüft.
