@@ -53,6 +53,10 @@ wow = {
     healthMax = 1000,
     -- Händler: Reparatur (CanMerchantRepair, GetRepairAllCost) und Gildenbank
     merchant = { canRepair = false, repairCost = 0, guildRepair = false, guildWithdraw = 0, guildMoney = 0 },
+    -- Taschen: bags[bag][slot] = { itemID, quality, stackCount, hasNoValue, isLocked } (C_Container)
+    bags = { [0] = {} },
+    bagSlots = 16,
+    sellPrices = {},         -- Verkaufspreis je itemID (C_Item.GetItemInfo)
   },
   printed = {},
   UNKNOWN_EVENT = UNKNOWN_EVENT,
@@ -340,6 +344,22 @@ end
 function CanGuildBankRepair() return state.merchant.guildRepair end
 function GetGuildBankWithdrawMoney() return state.merchant.guildWithdraw end
 function GetGuildBankMoney() return state.merchant.guildMoney end
+
+-- Taschen; UseContainerItem verkauft (Händler offen angenommen): Gegenstand weg, Geld dazu
+C_Container = {
+  GetContainerNumSlots = function(bag) return state.bags[bag] and state.bagSlots or 0 end,
+  GetContainerItemInfo = function(bag, slot) return state.bags[bag] and state.bags[bag][slot] end,
+  UseContainerItem = function(bag, slot)
+    local info = state.bags[bag][slot]
+    state.money = state.money + (state.sellPrices[info.itemID] or 0) * info.stackCount
+    state.bags[bag][slot] = nil
+  end,
+}
+C_Item = {
+  GetItemInfo = function(itemID)
+    return "Item " .. itemID, nil, nil, nil, nil, nil, nil, nil, nil, nil, state.sellPrices[itemID]
+  end,
+}
 
 ---------------------------------------------------------------------------
 -- Addon laden

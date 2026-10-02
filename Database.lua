@@ -46,6 +46,7 @@ local SETTINGS_DEFAULTS = {
   -- Komfort beim Leveln (siehe Comfort.lua), alles aus
   autoRepair = false,       -- beim Händler reparieren (Merchant.lua)
   autoRepairGuild = false,  -- zuerst aus der Gildenbank
+  autoSellJunk = false,     -- graue Gegenstände verkaufen
   levelUpSummary = true,
   levelUpAnnounce = "off",  -- Level-Up-Zusammenfassung an "party" oder "guild" (siehe LevelUpSummary.lua)  -- Chatzeile beim Level-Up (siehe LevelUpSummary.lua)
   showPveKills = true,

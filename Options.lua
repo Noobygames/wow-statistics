@@ -425,6 +425,7 @@ addSection("SECTION_MERCHANT")
 addToggles({
   toggle("AUTO_REPAIR", "autoRepair"),
   toggle("AUTO_REPAIR_GUILD", "autoRepairGuild", ns.Client.HasGuildBank),
+  toggle("AUTO_SELL_JUNK", "autoSellJunk"),
 })
 addHint("COMFORT_HINT")
 finishPage()
