@@ -10,4 +10,5 @@ ignore:
   - Makefile
   - README.md
   - ROADMAP.md
+  - ManualToCheck.md
   - image.png
