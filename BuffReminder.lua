@@ -1,44 +1,64 @@
--- Hinweis auf fehlende Buffs beim Leveln (Einstellung remindFood). In WoW Forever gibt "Satt"
--- (Well Fed) 5 % mehr XP aus Kills. Erinnert wird nur, wenn es sich lohnt: beim Leveln, außerhalb
--- von Kampf und Ruhegebiet, lebendig, und höchstens alle REPEAT_SECONDS.
--- Erkennung über den Namen, den der Client für den Zauber "Satt" (WELL_FED_SPELL_ID) in seiner
--- Sprache liefert; die vielen Essens-Buffs heißen alle so, haben aber verschiedene Spell-IDs.
+-- Hinweise auf fehlende Buffs beim Leveln, jeder einzeln schaltbar:
+--   remindFood  "Satt" (Well Fed); in WoW Forever 5 % mehr XP aus Kills
+--   remindCamp  "Lagervorteile" (Camp-Buff in WoW Forever, Spell 1229741)
+-- Erinnert wird nur, wenn es sich lohnt: beim Leveln, außerhalb von Kampf und Ruhegebiet, lebendig,
+-- und je Buff höchstens alle REPEAT_SECONDS.
+-- "Satt" wird über den Namen erkannt, den der Client für Zauber WELL_FED_SPELL_ID in seiner Sprache
+-- liefert: Die vielen Essens-Buffs heißen alle so, haben aber verschiedene Spell-IDs.
+-- Der Camp-Buff hat eine feste Spell-ID. Kennt der Client einen Zauber nicht (kein Camp-System),
+-- gibt es keinen Hinweis.
 local _, ns = ...
 local L = ns.L
 
 local BuffReminder = {}
 ns.BuffReminder = BuffReminder
 
-local WELL_FED_SPELL_ID = 19705  -- "Well Fed" (Classic), liefert den übersetzten Buff-Namen
-local CHECK_INTERVAL = 5         -- Sekunden zwischen zwei Prüfungen
-local REPEAT_SECONDS = 300       -- Abstand zwischen zwei Hinweisen
+local WELL_FED_SPELL_ID = 19705    -- "Well Fed" (Classic), liefert den übersetzten Buff-Namen
+local CAMP_SPELL_ID = 1229741      -- "Lagervorteile" (WoW Forever), im Spiel per /dump ermittelt
+local CHECK_INTERVAL = 5           -- Sekunden zwischen zwei Prüfungen
+local REPEAT_SECONDS = 300         -- Abstand zwischen zwei Hinweisen je Buff
 local MAX_AURAS = 40
 local REMINDER_COLOR = { 1, 0.6, 0.2 }
 
-local function wellFedName()
-  return C_Spell and C_Spell.GetSpellName and C_Spell.GetSpellName(WELL_FED_SPELL_ID)
+local function spellName(spellID)
+  return C_Spell and C_Spell.GetSpellName and C_Spell.GetSpellName(spellID)
 end
 
--- true/false, ob ein Buff mit diesem Namen aktiv ist; nil, wenn der Client Auren verbirgt
-local function hasBuffNamed(name)
+-- true/false, ob ein Buff mit matches(aura) aktiv ist; nil, wenn der Client Auren verbirgt
+local function hasBuff(matches)
   if not C_UnitAuras or not C_UnitAuras.GetAuraDataByIndex then return nil end
   for index = 1, MAX_AURAS do
     local aura = C_UnitAuras.GetAuraDataByIndex("player", index, "HELPFUL")
     if not aura then return false end
-    if ns.IsSecret(aura.name) then return nil end
-    if aura.name == name then return true end
+    if ns.IsSecret(aura.name) or ns.IsSecret(aura.spellId) then return nil end
+    if matches(aura) then return true end
   end
   return false
 end
 
--- true, wenn "Satt" fehlt; nil, wenn sich das nicht feststellen lässt
-function BuffReminder.IsFoodMissing()
-  local name = wellFedName()
-  if not name then return nil end
-  local active = hasBuffNamed(name)
+-- true, wenn der Buff fehlt; nil, wenn sich das nicht feststellen lässt
+local function missing(matches)
+  local active = hasBuff(matches)
   if active == nil then return nil end
   return not active
 end
+
+function BuffReminder.IsFoodMissing()
+  local name = spellName(WELL_FED_SPELL_ID)
+  if not name then return nil end
+  return missing(function(aura) return aura.name == name end)
+end
+
+function BuffReminder.IsCampMissing()
+  if not spellName(CAMP_SPELL_ID) then return nil end  -- Client ohne Camp-System
+  return missing(function(aura) return aura.spellId == CAMP_SPELL_ID end)
+end
+
+-- Je Hinweis: Einstellung, Prüfung, Text und Zeitpunkt des letzten Hinweises
+local REMINDERS = {
+  { setting = "remindFood", isMissing = BuffReminder.IsFoodMissing, message = "REMIND_FOOD" },
+  { setting = "remindCamp", isMissing = BuffReminder.IsCampMissing, message = "REMIND_CAMP" },
+}
 
 local function worthReminding()
   return ns.Experience.IsLeveling()
@@ -47,15 +67,25 @@ local function worthReminding()
     and not IsResting()
 end
 
-local lastReminder  -- GetTime() des letzten Hinweises
+local function isDue(reminder)
+  return ns.db[reminder.setting]
+    and (not reminder.lastShown or GetTime() - reminder.lastShown >= REPEAT_SECONDS)
+    and reminder.isMissing()
+end
 
+-- Fällige Hinweise als Chatzeilen und gemeinsam in einer Einblendung
 function BuffReminder.Check()
-  if not ns.db or not ns.db.remindFood or not worthReminding() then return end
-  if lastReminder and GetTime() - lastReminder < REPEAT_SECONDS then return end
-  if BuffReminder.IsFoodMissing() then
-    lastReminder = GetTime()
-    ns.Alerts.Show(L.REMIND_FOOD, REMINDER_COLOR)
-    ns.Print(L.REMIND_FOOD)
+  if not ns.db or not worthReminding() then return end
+  local messages = {}
+  for _, reminder in ipairs(REMINDERS) do
+    if isDue(reminder) then
+      reminder.lastShown = GetTime()
+      table.insert(messages, L[reminder.message])
+      ns.Print(L[reminder.message])
+    end
+  end
+  if #messages > 0 then
+    ns.Alerts.Show(table.concat(messages, "\n"), REMINDER_COLOR)
   end
 end
 
@@ -71,4 +101,8 @@ ticker:SetScript("OnUpdate", function(_, elapsed)
 end)
 
 -- Neuer Login: sofort erinnern dürfen
-ns.OnLogin(function() lastReminder = nil end)
+ns.OnLogin(function()
+  for _, reminder in ipairs(REMINDERS) do
+    reminder.lastShown = nil
+  end
+end)

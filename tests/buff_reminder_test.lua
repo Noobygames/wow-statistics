@@ -55,3 +55,29 @@ expect("Max-Level still", reminders(), 2)
 -- Unbekannter Zauber (anderer Client): nichts behaupten
 wow.state.spellNames = {}
 expect("ohne Namen unbekannt", BuffReminder.IsFoodMissing(), nil)
+
+---------------------------------------------------------------------------
+-- Camp-Buff "Lagervorteile" (Spell 1229741): Erkennung über die Spell-ID
+---------------------------------------------------------------------------
+wow.state.spellNames = { [19705] = "Satt", [1229741] = "Lagervorteile" }
+wow.state.level, addon.level = 20, 20
+wow.advance(301)
+wow.state.buffs = { "Satt" }
+expect("Camp fehlt", BuffReminder.IsCampMissing(), true)
+addon.Set("remindCamp", true)
+BuffReminder.Check()
+expect("Camp-Hinweis", LevelTimerAlert.text:GetText(), L.REMIND_CAMP)
+
+-- Aktiver Camp-Buff wird an der Spell-ID erkannt
+wow.state.buffs = { "Satt", { name = "Lagervorteile", spellId = 1229741 } }
+expect("Camp erkannt", BuffReminder.IsCampMissing(), false)
+
+-- Beide fehlen: beide Hinweise in einer Einblendung
+wow.advance(301)
+wow.state.buffs = {}
+BuffReminder.Check()
+expect("beide zusammen", LevelTimerAlert.text:GetText(), L.REMIND_FOOD .. "\n" .. L.REMIND_CAMP)
+
+-- Client ohne Camp-System: kein Hinweis
+wow.state.spellNames = { [19705] = "Satt" }
+expect("ohne Camp-System unbekannt", BuffReminder.IsCampMissing(), nil)

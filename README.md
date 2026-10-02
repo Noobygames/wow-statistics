@@ -57,7 +57,7 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 - **Stream view** (settings): solid green or magenta background without border for chroma keying in OBS.
 - **Splits** (settings): running level time against the fastest time of your other characters for that level, plus the total difference, green when ahead and red when behind.
 - **Level-up announcement** (settings): post the level summary to your party or guild.
-- **Food reminder** (settings): reminds you when you are not Well Fed while leveling (in WoW Forever food gives 5% more kill XP).
+- **Food and camp reminders** (settings): remind you when you are not Well Fed (in WoW Forever food gives 5% more kill XP) or have no camp benefits while leveling.
 - **Alerts** (settings): big on-screen messages for level up, rare and elite kills, epic loot and near deaths, each optional.
 - **Hide names** (settings): history shows no realm and lists other characters only as "Character 2, 3, ...".
 - Settings, grouped into Window, Statistics and General: size, background opacity, show/lock window, reset position & size, one toggle per statistic, language (English, Deutsch, Français, Español) and the minimap button.

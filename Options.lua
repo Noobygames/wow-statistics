@@ -253,6 +253,8 @@ addToggles({
     set = function(checked) ns.Set("alertNearDeath", checked) end },
   { label = "REMIND_FOOD_TOGGLE", get = function(db) return db.remindFood end,
     set = function(checked) ns.Set("remindFood", checked) end },
+  { label = "REMIND_CAMP_TOGGLE", get = function(db) return db.remindCamp end,
+    set = function(checked) ns.Set("remindCamp", checked) end },
 })
 
 addSection("SECTION_GENERAL")

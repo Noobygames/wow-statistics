@@ -29,7 +29,7 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 ### Leveln: Buff-Hinweise
 
 - [x] 39. **Hinweis bei fehlendem Food-Buff** (S–M): an/aus schaltbar (Standard aus). Fehlt „Satt“ beim Leveln außerhalb von Kampf und Ruhegebiet, erscheint eine Einblendung plus Chatzeile, höchstens alle 5 min. In WoW Forever gibt Satt 5 % mehr Kill-XP. Erkennung über den übersetzten Namen von Zauber 19705 (`C_Spell.GetSpellName`) und `C_UnitAuras.GetAuraDataByIndex`, beide laut Doku in allen Clients.
-- [ ] 40. **Hinweis bei fehlendem Camp-Buff** (S–M): an/aus schaltbar, wie 39. WoW Forever: Lagerfeuer-Camp mit Berufs-Objekten, Buffs halten ca. 1 h nach einer Minute Sitzen oder Herstellen am Feuer. Nur in Clients mit Camp-System; welche Auren als Camp-Buff zählen (Spell-IDs), vorher im Spiel per `/dump` ermitteln, da die Guides keine IDs nennen.
+- [x] 40. **Hinweis bei fehlendem Camp-Buff** (S–M): an/aus schaltbar (Standard aus), wie 39. WoW Forever: Buff „Lagervorteile“ (Spell 1229741, im Spiel ermittelt) nach einer Minute Sitzen oder Herstellen am Lagerfeuer. Clients ohne diesen Zauber bekommen keinen Hinweis.
 
 ### Projekt und Verbreitung
 
@@ -37,7 +37,7 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 
 ## Erledigt
 
-- Nächstes Release (v2.5): 32. Neue Session starten, 31. Hardcore-Anzeige, 27. Stream-Ansicht, 33. Streamer-Datenschutz, 28. Session-Ziel, 29. Große Einblendungen, 30. Session-Abschlusskarte, 26. Splits, 34. Ansage in Gilde/Gruppe, 38. Rote Tode abschaltbar, 37. Stream-Modus, 35. Fester Vergleichslauf, 36. Split-Liste, 39. Hinweis bei fehlendem Food-Buff
+- Nächstes Release (v2.5): 32. Neue Session starten, 31. Hardcore-Anzeige, 27. Stream-Ansicht, 33. Streamer-Datenschutz, 28. Session-Ziel, 29. Große Einblendungen, 30. Session-Abschlusskarte, 26. Splits, 34. Ansage in Gilde/Gruppe, 38. Rote Tode abschaltbar, 37. Stream-Modus, 35. Fester Vergleichslauf, 36. Split-Liste, 39. Hinweis bei fehlendem Food-Buff, 40. Hinweis bei fehlendem Camp-Buff
 - v2.0.0:
   - Auswertung: 1. Prognose bis Max-Level, 2. alle Charaktere vergleichen, 3. Zonen-Auswertung, 4. Spielzeit pro Tag/Woche, 5. XP-Verlauf der Session, 6. Langzeit-Graphen als Tageswerte
   - Daten: 7. Quest-Journal, 8. Level-Timeline, 9. Instanzen, 10. Loot-Journal, 11. Elite- und Rare-Kills, 12. Beinahe-Tode, 24. Todesursache aus dem Death Recap (Retail, WoW Forever)

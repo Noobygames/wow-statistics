@@ -46,8 +46,8 @@ wow = {
     chatLockdown = false,    -- C_ChatInfo.InChatMessagingLockdown
     inCombat = false,
     resting = false,
-    buffs = {},              -- Namen aktiver Buffs (C_UnitAuras.GetAuraDataByIndex)
-    spellNames = { [19705] = "Satt" },  -- C_Spell.GetSpellName
+    buffs = {},              -- aktive Buffs: Name oder { name, spellId } (C_UnitAuras.GetAuraDataByIndex)
+    spellNames = { [19705] = "Satt", [1229741] = "Lagervorteile" },  -- C_Spell.GetSpellName
     health = 1000,
     healthMax = 1000,
   },
@@ -285,8 +285,9 @@ function IsResting() return state.resting end
 C_Spell = { GetSpellName = function(spellID) return state.spellNames[spellID] end }
 C_UnitAuras = {
   GetAuraDataByIndex = function(_, index)
-    local name = state.buffs[index]
-    return name and { name = name } or nil
+    local buff = state.buffs[index]
+    if type(buff) == "string" then return { name = buff } end
+    return buff
   end,
 }
 function IsInGroup() return state.inGroup end
