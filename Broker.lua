@@ -73,11 +73,4 @@ ns.OnLogin(function()
   })
 end)
 
-local updater = CreateFrame("Frame")
-local sinceUpdate = 0
-updater:SetScript("OnUpdate", function(_, elapsed)
-  sinceUpdate = sinceUpdate + elapsed
-  if sinceUpdate < UPDATE_INTERVAL then return end
-  sinceUpdate = 0
-  Broker.Refresh()
-end)
+ns.Every(UPDATE_INTERVAL, Broker.Refresh)

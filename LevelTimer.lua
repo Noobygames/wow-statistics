@@ -81,6 +81,30 @@ eventFrame:SetScript("OnEvent", function(_, event, ...)
 end)
 
 ---------------------------------------------------------------------------
+-- Wiederkehrende Aufgaben: fn(elapsed) etwa alle seconds Sekunden, erst nach dem Login (vorher
+-- gibt es weder ns.db noch ns.character). elapsed = tatsächlich vergangene Zeit seit dem letzten Lauf.
+-- Ein gemeinsamer Frame statt eines OnUpdate-Frames je Modul.
+---------------------------------------------------------------------------
+local repeatingTasks = {}
+local taskFrame = CreateFrame("Frame")
+
+function ns.Every(seconds, fn)
+  table.insert(repeatingTasks, { interval = seconds, fn = fn, elapsed = 0 })
+end
+
+taskFrame:SetScript("OnUpdate", function(_, elapsed)
+  if not ns.character then return end
+  for _, task in ipairs(repeatingTasks) do
+    task.elapsed = task.elapsed + elapsed
+    if task.elapsed >= task.interval then
+      local due = task.elapsed
+      task.elapsed = 0
+      task.fn(due)
+    end
+  end
+end)
+
+---------------------------------------------------------------------------
 -- Login/Logout. Nach dem Login stehen bereit:
 --   ns.db            Einstellungen (Account)
 --   ns.characterKey  "Name-Realm" des eingeloggten Charakters

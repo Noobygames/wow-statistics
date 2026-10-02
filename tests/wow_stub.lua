@@ -233,6 +233,13 @@ function wow.runTimers()
   for _, callback in ipairs(due) do callback() end
 end
 
+-- Ein Bild weiter: OnUpdate aller sichtbaren Frames mit elapsed Sekunden (ns.Every, Fenster, ...)
+function wow.update(elapsed)
+  for _, frame in ipairs(frames) do
+    if frame._scripts.OnUpdate and frame._shown then frame._scripts.OnUpdate(frame, elapsed) end
+  end
+end
+
 function wow.logout()
   wow.fire("PLAYER_LOGOUT")
 end

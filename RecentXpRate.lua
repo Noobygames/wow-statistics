@@ -53,20 +53,11 @@ function RecentXpRate.Get()
   return total / span * SECONDS_PER_HOUR
 end
 
-local ticker = CreateFrame("Frame")
-local sinceSample = 0
-ticker:SetScript("OnUpdate", function(_, elapsed)
-  if not ns.character then return end
-  sinceSample = sinceSample + elapsed
-  if sinceSample < SAMPLE_INTERVAL then return end
-  sinceSample = 0
-  RecentXpRate.Sample()
-end)
+ns.Every(SAMPLE_INTERVAL, RecentXpRate.Sample)
 
 ns.OnLogin(function()
   samples = {}
   lastXp = Stats.Get(Stats.SESSION, Stats.XP_GAINED)
   lastSession = ns.character.currentSession.startedAt
-  sinceSample = 0
   RecentXpRate.Sample()
 end)

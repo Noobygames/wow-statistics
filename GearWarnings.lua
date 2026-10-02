@@ -89,14 +89,7 @@ function GearWarnings.Check()
   end
 end
 
-local ticker = CreateFrame("Frame")
-local sinceCheck = 0
-ticker:SetScript("OnUpdate", function(_, elapsed)
-  sinceCheck = sinceCheck + elapsed
-  if sinceCheck < CHECK_INTERVAL then return end
-  sinceCheck = 0
-  GearWarnings.Check()
-end)
+ns.Every(CHECK_INTERVAL, GearWarnings.Check)
 
 ns.OnLogin(function()
   for _, warning in ipairs(WARNINGS) do

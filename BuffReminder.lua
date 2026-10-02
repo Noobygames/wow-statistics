@@ -98,14 +98,7 @@ end
 
 -- Regelmäßig prüfen statt auf UNIT_AURA zu hören: Ablauf, Kampfende und Ruhegebiet ändern sich
 -- auch ohne Aura-Event, und die Prüfung ist billig
-local ticker = CreateFrame("Frame")
-local sinceCheck = 0
-ticker:SetScript("OnUpdate", function(_, elapsed)
-  sinceCheck = sinceCheck + elapsed
-  if sinceCheck < CHECK_INTERVAL then return end
-  sinceCheck = 0
-  BuffReminder.Check()
-end)
+ns.Every(CHECK_INTERVAL, BuffReminder.Check)
 
 -- Neuer Login: sofort erinnern dürfen
 ns.OnLogin(function()

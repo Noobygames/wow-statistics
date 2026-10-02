@@ -76,15 +76,7 @@ function TimeBreakdown.GetRestSeconds(scope)
   end)
 end
 
-local ticker = CreateFrame("Frame")
-local sinceTick = 0
-ticker:SetScript("OnUpdate", function(_, elapsed)
-  if not ns.character then return end
-  sinceTick = sinceTick + elapsed
-  if sinceTick < TICK then return end
-  TimeBreakdown.Update(sinceTick)
-  sinceTick = 0
-end)
+ns.Every(TICK, TimeBreakdown.Update)
 
 ns.OnLogin(function()
   activity, pending, sinceFlush = nil, 0, 0
