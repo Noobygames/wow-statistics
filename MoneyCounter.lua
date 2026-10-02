@@ -1,18 +1,20 @@
 -- Geld: Einnahmen (Beute, Quests, Verkäufe, Post) und Ausgaben nach Art.
 -- Ausgaben werden über das gerade offene Fenster zugeordnet: Händler, Flugmeister, Lehrer
 -- (MERCHANT_*, TAXIMAP_*, TRAINER_*); eine Reparatur erkennt der Hook auf RepairAllItems (unser
--- Merchant.lua und Blizzards Button). Der Flug wird erst nach dem Schließen der Karte bezahlt,
--- daher gilt die Art noch CLOSE_GRACE Sekunden nach dem Schließen. Alles andere (Post,
--- Auktionshaus, Gilde, ...) zählt als Sonstiges. Einnahmen werden nicht mit Ausgaben verrechnet.
+-- Merchant.lua und Blizzards Button). Kommt binnen REPAIR_GRACE Sekunden keine Abbuchung (z.B. zu
+-- wenig Gold), verfällt die Merke, damit spätere Ausgaben nicht als Reparatur zählen.
+-- Der Flug wird erst nach dem Schließen der Karte bezahlt, daher gilt die Art noch CLOSE_GRACE
+-- Sekunden nach dem Schließen. Alles andere (Post, Auktionshaus, Gilde, ...) zählt als Sonstiges. Einnahmen werden nicht mit Ausgaben verrechnet.
 local _, ns = ...
 local Stats = ns.Stats
 
-local CLOSE_GRACE = 2  -- Sekunden, die eine Art nach dem Schließen ihres Fensters noch gilt
+local CLOSE_GRACE = 2   -- Sekunden, die eine Art nach dem Schließen ihres Fensters noch gilt
+local REPAIR_GRACE = 3  -- Sekunden, in denen die Abbuchung einer Reparatur erwartet wird
 
 local lastMoney
 local context        -- Zähler der Ausgaben-Art des offenen Fensters
 local contextUntil   -- GetTime(), bis zu der context nach dem Schließen gilt; nil = offen
-local repairPending  -- RepairAllItems wurde aufgerufen, die Abbuchung steht noch aus
+local repairUntil    -- GetTime(), bis zu der eine Abbuchung als Reparatur gilt; nil = keine erwartet
 
 local function openContext(counter)
   context, contextUntil = counter, nil
@@ -28,16 +30,17 @@ local function currentContext()
 end
 
 local function spendingKind()
-  if repairPending then
-    repairPending = false
+  if repairUntil and GetTime() <= repairUntil then
+    repairUntil = nil
     return Stats.SPENT_REPAIR
   end
+  repairUntil = nil
   return currentContext() or Stats.SPENT_OTHER
 end
 
 ns.OnLogin(function()
   lastMoney = GetMoney()
-  context, contextUntil, repairPending = nil, nil, false
+  context, contextUntil, repairUntil = nil, nil, nil
 end)
 
 ns.RegisterEvent("PLAYER_MONEY", function()
@@ -52,7 +55,7 @@ end)
 
 -- Gildenbank-Reparaturen kosten den Charakter nichts
 hooksecurefunc("RepairAllItems", function(useGuildBank)
-  if not useGuildBank then repairPending = true end
+  if not useGuildBank then repairUntil = GetTime() + REPAIR_GRACE end
 end)
 
 for counter, events in pairs({

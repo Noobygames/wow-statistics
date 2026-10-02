@@ -48,6 +48,17 @@ wow.fire("PLAYER_MONEY")
 expect("Einnahme", spent(Stats.MONEY_EARNED), earned + 500)
 expect("Lehrer unverändert", spent(Stats.SPENT_TRAINER), 1000)
 
+-- Reparatur ohne Abbuchung (zu wenig Gold): spätere Ausgaben zählen nicht als Reparatur
+local repairs = spent(Stats.SPENT_REPAIR)
+wow.fire("MERCHANT_SHOW")
+wow.state.merchant.repairCost = 0
+RepairAllItems()
+wow.runTimers()
+wow.fire("MERCHANT_CLOSED")
+wow.advance(10)
+spend(50)
+expect("verfallen: Sonstiges statt Reparatur", spent(Stats.SPENT_REPAIR), repairs)
+
 -- Automatische Reparatur und Schrott-Erlös
 addon.Set("autoRepair", true)
 addon.Set("autoSellJunk", true)
