@@ -33,3 +33,9 @@ wow.fire("GUILD_INVITE_REQUEST", "Gildenwerber", "Die Gilde")
 expect("Gilde abgelehnt", wow.declined[#wow.declined], "DeclineGuild")
 expectTrue("Gildendialog zu", hidden("GUILD_INVITE"))
 expect("Gildenfenster zu", GuildInviteFrame:IsShown(), false)
+
+-- Duell
+addon.Set("declineDuels", true)
+wow.fire("DUEL_REQUESTED", "Raufbold")
+expect("Duell abgelehnt", wow.declined[#wow.declined], "CancelDuel")
+expectTrue("Dueldialog zu", hidden("DUEL_REQUESTED"))

@@ -61,6 +61,7 @@ local SETTINGS_DEFAULTS = {
   declineTrades = false,    -- Handel ablehnen (Declines.lua)
   declineGroupInvites = false,
   declineGuildInvites = false,
+  declineDuels = false,
   levelUpSummary = true,
   levelUpAnnounce = "off",  -- Level-Up-Zusammenfassung an "party" oder "guild" (siehe LevelUpSummary.lua)  -- Chatzeile beim Level-Up (siehe LevelUpSummary.lua)
   showPveKills = true,

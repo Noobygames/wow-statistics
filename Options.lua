@@ -449,6 +449,7 @@ addToggles({
   toggle("DECLINE_TRADES", "declineTrades"),
   toggle("DECLINE_GROUP_INVITES", "declineGroupInvites"),
   toggle("DECLINE_GUILD_INVITES", "declineGuildInvites"),
+  toggle("DECLINE_DUELS", "declineDuels"),
 })
 addHint("COMFORT_HINT")
 finishPage()

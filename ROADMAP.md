@@ -16,7 +16,7 @@ Schwerpunkt: Komfort-Funktionen, die beim Leveln Klicks sparen, und Werte, die z
 - [x] 73. **Trades** (S): Handel automatisch ablehnen
 - [x] 74. **Invites** (S): Gruppen Invite automatisch ablehnen
 - [x] 75. **Gilde** (S): Gilden Invite automatisch ablehnen
-- [ ] 76. **Duell** (S): Duell Invite automatisch ablehnen
+- [x] 76. **Duell** (S): Duell Invite automatisch ablehnen
 
 ### Statistik: wohin die Zeit geht
 
