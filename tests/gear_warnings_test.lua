@@ -32,3 +32,18 @@ GearWarnings.Check()
 wow.state.freeSlots[0] = { 0, 0 }
 GearWarnings.Check()
 expect("nach Platz wieder", count(L.WARN_BAGS_FULL), 2)
+
+---------------------------------------------------------------------------
+-- Haltbarkeit
+---------------------------------------------------------------------------
+wow.state.freeSlots[0] = { 10, 0 }
+wow.state.durability = { [1] = { 50, 60 }, [5] = { 10, 100 } }
+expectNear("niedrigste", GearWarnings.GetLowestDurability(), 0.1, 0.001)
+addon.Set("warnDurability", true)
+GearWarnings.Check()
+expect("Haltbarkeit-Warnung", count(L.WARN_DURABILITY), 1)
+GearWarnings.Check()
+expect("nur einmal", count(L.WARN_DURABILITY), 1)
+wow.state.durability = { [5] = { 100, 100 } }
+GearWarnings.Check()
+expect("repariert: still", count(L.WARN_DURABILITY), 1)

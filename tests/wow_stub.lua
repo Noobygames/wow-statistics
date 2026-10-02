@@ -59,6 +59,7 @@ wow = {
     bags = { [0] = {} },
     bagSlots = 16,
     freeSlots = { [0] = { 16, 0 } },  -- je Tasche { frei, bagFamily } (GetContainerNumFreeSlots)
+    durability = {},         -- je Ausrüstungsplatz { aktuell, max } (GetInventoryItemDurability)
     sellPrices = {},         -- Verkaufspreis je itemID (C_Item.GetItemInfo)
     -- Quest-NPC: Listen im Gespräch (GossipQuestUIInfo) und in der alten Quest-Liste (QUEST_GREETING)
     gossip = { available = {}, active = {}, options = {} },
@@ -309,6 +310,11 @@ function IsInGuild() return state.inGuild end
 function GetBuildInfo() return "12.1.0", "1", "2026-01-01", state.interface end
 function UnitAffectingCombat() return state.inCombat end
 function UnitOnTaxi() return state.onTaxi end
+function GetInventoryItemDurability(slot)
+  local entry = state.durability[slot]
+  if not entry then return nil end
+  return entry[1], entry[2]
+end
 function UnitIsAFK() return state.afk end
 function IsResting() return state.resting end
 C_Spell = { GetSpellName = function(spellID) return state.spellNames[spellID] end }

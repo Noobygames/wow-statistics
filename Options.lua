@@ -422,6 +422,7 @@ addSlider({
 addSection("SECTION_WARNINGS")
 addToggles({
   toggle("WARN_BAGS_FULL_TOGGLE", "warnBagsFull"),
+  toggle("WARN_DURABILITY_TOGGLE", "warnDurability"),
 })
 finishPage()
 
