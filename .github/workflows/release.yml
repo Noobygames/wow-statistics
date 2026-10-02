@@ -37,4 +37,8 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0  # Packager braucht die Historie für Version und Changelog
+      # Datei und Anzeigename auf CurseForge einheitlich "LevelTimer-v1.2.3(.zip)" wie bei den
+      # früheren Uploads; ohne -n hieße der Upload nur "v1.2.3" (Format: "{datei}:{label}")
       - uses: BigWigsMods/packager@v2
+        with:
+          args: -n "{package-name}-{project-version}:{package-name}-{project-version}.zip"
