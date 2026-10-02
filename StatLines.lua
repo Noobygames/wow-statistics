@@ -118,6 +118,13 @@ local function timePart(counter)
   return timeShare(function(scope) return ns.TimeBreakdown.GetSeconds(scope, counter) end)
 end
 
+-- Noch verfügbare Erholt-XP, Anteil am aktuellen Level (bis 150 %); unabhängig vom Bereich
+local function restedLeft()
+  if not Experience.IsLeveling() then return NO_VALUE end
+  local rested = GetXPExhaustion() or 0
+  return string.format("%s (%s)", Format.Number(rested), Format.Percent(rested, UnitXPMax("player")))
+end
+
 local function income(scope)
   return Format.Money(Stats.Get(scope, Stats.MONEY_EARNED))
 end
@@ -159,6 +166,7 @@ ns.STAT_LINES = {
     { label = "ROW_XP_OTHER", value = xpShare(3) },
   } },
   { setting = "showRested", label = "STAT_RESTED", rows = { { label = "ROW_RESTED", value = restedXp } } },
+  { setting = "showRestedLeft", label = "STAT_RESTED_LEFT", rows = { { label = "ROW_RESTED_LEFT", value = restedLeft } } },
   { setting = "showTimeBreakdown", label = "STAT_TIME_BREAKDOWN", rows = {
     { label = "ROW_TIME_COMBAT", value = timePart(Stats.COMBAT_SECONDS) },
     { label = "ROW_TIME_TAXI", value = timePart(Stats.TAXI_SECONDS) },

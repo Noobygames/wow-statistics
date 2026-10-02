@@ -66,6 +66,7 @@ local SETTINGS_DEFAULTS = {
   highlightDeaths = true,  -- Tode im Fenster rot (siehe StatLines.lua)  -- Hardcore: Zeit seit dem letzten Tod
   showXpSources = false,
   showRested = false,
+  showRestedLeft = false,  -- verbleibende Erholt-XP (GetXPExhaustion)
   showTimeBreakdown = false,  -- Zeit in Kampf, Flug, AFK und Rest (siehe TimeBreakdown.lua)
   xpRateWithoutAfk = false,   -- XP/h und Prognosen ohne AFK-Zeit (siehe Experience.RateSeconds)
   showQuests = true,

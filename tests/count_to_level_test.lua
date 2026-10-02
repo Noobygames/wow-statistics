@@ -24,3 +24,13 @@ for _, entry in ipairs(addon.STAT_LINES) do
   if entry.setting == "showCountToLevel" then line = entry end
 end
 expect("Zeile", line.rows[1].value(Stats.LEVEL), "~20")
+
+-- Verbleibende Erholt-XP
+local restedLine
+for _, entry in ipairs(addon.STAT_LINES) do
+  if entry.setting == "showRestedLeft" then restedLine = entry end
+end
+wow.state.rested = 1500
+expect("Erholt übrig", restedLine.rows[1].value(Stats.LEVEL), "1.5k (150%)")
+wow.state.rested = 0
+expect("nichts übrig", restedLine.rows[1].value(Stats.LEVEL), "0 (0%)")
