@@ -3,6 +3,7 @@
 -- Jedes Steuerelement registriert eine refresh(db)-Funktion; nach jeder Änderung
 -- (ns.Set/ns.ApplySettings) zeigen alle den aktuellen Stand und die gewählte Sprache.
 -- Schalter mit available() == false (z.B. nur in WoW Forever) werden gar nicht angelegt.
+-- Tooltips: Text aus L["<LABEL>_TIP"] (fehlt er, gibt es keinen Tooltip), Titel = Beschriftung.
 local _, ns = ...
 local L = ns.L
 local Widgets = ns.Widgets
@@ -92,6 +93,20 @@ end
 ---------------------------------------------------------------------------
 -- Bausteine: legen Steuerelemente auf der aktuellen Seite von oben nach unten an
 ---------------------------------------------------------------------------
+
+-- Tooltip aus L[tipKey]; L liefert bei fehlendem Text den Schlüssel, dann kein Tooltip
+local function addTooltip(frame, tipKey, title)
+  Widgets.AttachTooltip(frame, title, function()
+    local text = L[tipKey]
+    if text == tipKey then return nil end
+    return text
+  end)
+end
+
+local function labelText(labelKey)
+  return function() return L[labelKey] end
+end
+
 local function addRow(widget, height, stretch)
   widget:SetPoint("TOPLEFT", MARGIN, nextRowY)
   if stretch then widget:SetPoint("TOPRIGHT", -MARGIN, nextRowY) end
@@ -109,6 +124,7 @@ end
 local function addSlider(slider)
   local control = Widgets.CreateSlider(page, slider.min, slider.max, slider.step, slider.set)
   addRow(control, ROW_SLIDER, true)
+  addTooltip(control.slider, slider.label .. "_TIP", labelText(slider.label))
   onRefresh(function(db)
     local value = slider.get(db)
     control.label:SetText(L[slider.label])
@@ -117,7 +133,7 @@ local function addSlider(slider)
 end
 
 -- Checkboxen in zwei Spalten; toggle = { label, get(db) -> bool, set(checked), available() optional,
---   text() optional statt L[label], z.B. für Beschriftungen mit Werten }
+--   text() optional statt L[label], z.B. für Beschriftungen mit Werten, tip = Locale-Key optional }
 local function addToggles(allToggles)
   local toggles = {}
   for _, toggle in ipairs(allToggles) do
@@ -128,9 +144,12 @@ local function addToggles(allToggles)
     local row = math.floor((i - 1) / 2)
     local checkbox = Widgets.CreateCheckbox(page, toggle.set)
     table.insert(toggleCells, { checkbox = checkbox, column = column, y = nextRowY - row * ROW_CHECKBOX })
+    addTooltip(checkbox, toggle.tip or (toggle.label .. "_TIP"), function() return checkbox.label:GetText() end)
     onRefresh(function(db)
       checkbox.label:SetText(toggle.text and toggle.text() or L[toggle.label])
       checkbox:SetChecked(toggle.get(db))
+      -- Beschriftung gehört zur Klick- und Tooltip-Fläche
+      checkbox:SetHitRectInsets(0, -(Widgets.CHECKBOX_LABEL_GAP + checkbox.label:GetStringWidth()), 0, 0)
     end)
   end
   nextRowY = nextRowY - math.ceil(#toggles / 2) * ROW_CHECKBOX
@@ -139,6 +158,7 @@ end
 local function addButton(labelKey, onClick)
   local button = Widgets.CreateButton(page, MIN_WIDTH - 2 * MARGIN, BUTTON_HEIGHT, onClick)
   addRow(button, ROW_BUTTON, true)
+  addTooltip(button, labelKey .. "_TIP", labelText(labelKey))
   onRefresh(function() button:SetText(L[labelKey]) end)
 end
 
@@ -150,6 +170,7 @@ local function addFooterButton(labelKey, onClick)
   button:SetPoint("BOTTOMLEFT", MARGIN, y)
   button:SetPoint("BOTTOMRIGHT", -MARGIN, y)
   footerButtons = footerButtons + 1
+  addTooltip(button, labelKey .. "_TIP", labelText(labelKey))
   onRefresh(function() button:SetText(L[labelKey]) end)
 end
 
@@ -167,6 +188,7 @@ local function addChooser(chooser)
     tab:SetPoint("LEFT", anchor, "RIGHT", CHOOSER_TAB_GAP, 0)
     anchor = tab
     table.insert(row.tabs, tab)
+    addTooltip(tab, chooser.label .. "_TIP", labelText(chooser.label))
     onRefresh(function(db)
       tab:SetLabel(choice.name())
       tab:SetActive(db[chooser.setting] == choice.value)
@@ -263,6 +285,7 @@ local function addProfileList()
     end)
     tab:RegisterForClicks("LeftButtonUp", "RightButtonUp")
     addRow(tab, ROW_PROFILE)
+    addTooltip(tab, "PROFILE_LIST_TIP", function() return Profiles.DisplayName(tab.profileName) end)
     onRefresh(function()
       local name = Profiles.GetNames()[index]
       tab.profileName = name
@@ -298,6 +321,7 @@ local function addProfileSaver()
     end
   end)
   saveButton:SetPoint("LEFT", nameBox, "RIGHT", CHOOSER_TAB_GAP, 0)
+  addTooltip(saveButton, "PROFILE_SAVE_TIP", labelText("PROFILE_SAVE"))
   nameBox:SetScript("OnEnterPressed", function() saveButton:Click() end)
   nameBox:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
   nextRowY = nextRowY - ROW_BUTTON
@@ -451,6 +475,7 @@ local recordToggles = {
 for _, label in ipairs(ns.WorldRecords.GetBracketLabels()) do
   table.insert(recordToggles, {
     text = function() return string.format(L.WORLD_RECORD_ROW, label) end,
+    tip = "RECORD_BRACKET_TIP",
     get = function(db) return db.recordBrackets[label] ~= false end,
     set = function(checked)
       ns.db.recordBrackets[label] = checked

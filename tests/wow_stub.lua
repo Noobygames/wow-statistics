@@ -119,6 +119,14 @@ local frameMethods = {
   GetChecked = function(self) return self._checked end,
   SetChecked = function(self, checked) self._checked = checked end,
   SetScript = function(self, name, handler) self._scripts[name] = handler end,
+  -- Wie im Client: vorhandenen Handler behalten und den neuen danach aufrufen
+  HookScript = function(self, name, handler)
+    local previous = self._scripts[name]
+    self._scripts[name] = previous and function(...) previous(...); handler(...) end or handler
+  end,
+  AddLine = function(self, text) self._lines = self._lines or {}; table.insert(self._lines, text) end,
+  ClearLines = function(self) self._lines = {} end,
+  SetOwner = function(self) self._lines = {} end,
   RegisterEvent = function(self, event)
     if event == UNKNOWN_EVENT then error("Attempt to register unknown event") end
     self._events[event] = true
