@@ -419,6 +419,10 @@ addSlider({
   set = function(value) ns.Set("reminderInterval", value) end,
   format = function(value) return string.format(L.MINUTES, value) end,
 })
+addSection("SECTION_WARNINGS")
+addToggles({
+  toggle("WARN_BAGS_FULL_TOGGLE", "warnBagsFull"),
+})
 finishPage()
 
 -- Komfort: Automatik bei Händlern, Quests und Gesprächen

@@ -45,6 +45,7 @@ local SETTINGS_DEFAULTS = {
   remindFood = false,  -- Hinweis, wenn beim Leveln "Satt" fehlt (siehe BuffReminder.lua)
   remindCamp = false,  -- Hinweis, wenn beim Leveln der Camp-Buff fehlt (WoW Forever)
   reminderInterval = 5,  -- Minuten zwischen zwei Hinweisen auf denselben fehlenden Buff
+  warnBagsFull = false,  -- Hinweis bei fast vollen Taschen (siehe GearWarnings.lua)
   -- Komfort beim Leveln (siehe Comfort.lua), alles aus
   autoRepair = false,       -- beim Händler reparieren (Merchant.lua)
   autoRepairGuild = false,  -- zuerst aus der Gildenbank

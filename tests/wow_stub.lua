@@ -58,6 +58,7 @@ wow = {
     -- Taschen: bags[bag][slot] = { itemID, quality, stackCount, hasNoValue, isLocked } (C_Container)
     bags = { [0] = {} },
     bagSlots = 16,
+    freeSlots = { [0] = { 16, 0 } },  -- je Tasche { frei, bagFamily } (GetContainerNumFreeSlots)
     sellPrices = {},         -- Verkaufspreis je itemID (C_Item.GetItemInfo)
     -- Quest-NPC: Listen im Gespräch (GossipQuestUIInfo) und in der alten Quest-Liste (QUEST_GREETING)
     gossip = { available = {}, active = {}, options = {} },
@@ -378,6 +379,11 @@ function GetGuildBankMoney() return state.merchant.guildMoney end
 C_Container = {
   GetContainerNumSlots = function(bag) return state.bags[bag] and state.bagSlots or 0 end,
   GetContainerItemInfo = function(bag, slot) return state.bags[bag] and state.bags[bag][slot] end,
+  GetContainerNumFreeSlots = function(bag)
+    local entry = state.freeSlots[bag]
+    if not entry then return 0, 0 end
+    return entry[1], entry[2]
+  end,
   UseContainerItem = function(bag, slot)
     local info = state.bags[bag][slot]
     state.bags[bag][slot] = nil
