@@ -27,8 +27,8 @@ Schwerpunkt: Komfort-Funktionen, die beim Leveln Klicks sparen, und Werte, die z
 
 - [ ] 66. **Taschen fast voll** (S): Einblendung, wenn weniger als N Plätze frei sind (verlorene Beute).
 - [ ] 67. **Haltbarkeit niedrig** (S): Hinweis unter 20 % (`GetInventoryItemDurability`), bevor die Ausrüstung kaputtgeht.
-- [ ] 68. **Lehrer besuchen** (S): Hinweis beim Level-Up, wenn neue Zauber lernbar sind (Classic Era/TBC: gerade Level). Ob WoW Forever Lehrer nutzt, im Spiel prüfen; Retail lernt automatisch, dort keine Option.
-- [ ] 69. **Munition knapp** (S): Jäger in Classic Era/TBC, Hinweis unter N Schuss; in anderen Clients nicht sichtbar.
+- [ ] 68. **Lehrer besuchen** (S): Hinweis beim Level-Up, wenn neue Zauber lernbar sind (Classic Era, TBC und WoW Forever: gerade Level). Retail lernt automatisch, dort keine Option.
+- [ ] 69. **Munition knapp** (S): Jäger in Classic Era, TBC und WoW Forever, Hinweis unter N Schuss; in Retail nicht sichtbar.
 
 ## v2.5: Streaming
 
