@@ -3,8 +3,7 @@
 -- APIs wie in Blizzards MerchantFrame aller Clients: CanMerchantRepair, GetRepairAllCost
 -- (Kosten, ob etwas zu reparieren ist), RepairAllItems(useGuildBank). Die Gildenbank gibt es nur,
 -- wo CanGuildBankRepair existiert (nicht in Classic Era, siehe Client.HasGuildBank).
--- Schrott: Taschen über C_Container (GetContainerItemInfo: quality, hasNoValue, isLocked) in allen
--- Clients; verkauft wird mit C_Container.UseContainerItem bei offenem Händler. Den Erlös zählt
+-- Schrott: Taschen über Bags.ForEachItem (quality, hasNoValue, isLocked); verkauft wird mit C_Container.UseContainerItem bei offenem Händler. Den Erlös zählt
 -- MoneyCounter wie jede Einnahme, zusätzlich der Zähler moneyJunk (erwarteter Erlös).
 local _, ns = ...
 local L = ns.L
@@ -16,8 +15,6 @@ ns.Merchant = Merchant
 
 local UNLIMITED_WITHDRAW = -1  -- GetGuildBankWithdrawMoney beim Gildenmeister
 local POOR_QUALITY = 0         -- Enum.ItemQuality.Poor (grau)
-local BACKPACK = 0
-local DEFAULT_BAG_SLOTS = 4    -- ausgerüstete Taschen, falls der Client die Konstante nicht kennt
 local SELL_PRICE_INDEX = 11    -- Rückgabewert sellPrice von GetItemInfo
 
 local getItemInfo = (C_Item and C_Item.GetItemInfo) or GetItemInfo
@@ -55,13 +52,8 @@ function Merchant.Repair()
   end
 end
 
--- Letzte Tasche: Retail zählt die Reagenzientasche mit (NUM_TOTAL_EQUIPPED_BAG_SLOTS)
-local function lastBag()
-  return NUM_TOTAL_EQUIPPED_BAG_SLOTS or NUM_BAG_SLOTS or DEFAULT_BAG_SLOTS
-end
-
 local function isJunk(info)
-  return info and info.quality == POOR_QUALITY and not info.hasNoValue and not info.isLocked
+  return info.quality == POOR_QUALITY and not info.hasNoValue and not info.isLocked
 end
 
 local function sellPrice(info)
@@ -72,16 +64,13 @@ end
 function Merchant.SellJunk()
   if not Comfort.IsActive("autoSellJunk") then return end
   local count, total = 0, 0
-  for bag = BACKPACK, lastBag() do
-    for slot = 1, C_Container.GetContainerNumSlots(bag) do
-      local info = C_Container.GetContainerItemInfo(bag, slot)
-      if isJunk(info) then
-        count = count + 1
-        total = total + sellPrice(info)
-        C_Container.UseContainerItem(bag, slot)
-      end
+  ns.Bags.ForEachItem(function(bag, slot, info)
+    if isJunk(info) then
+      count = count + 1
+      total = total + sellPrice(info)
+      C_Container.UseContainerItem(bag, slot)
     end
-  end
+  end)
   ns.Debug("merchant", "sold %s junk items for %s", count, total)
   if count > 0 then
     ns.Stats.Increment(ns.Stats.MONEY_JUNK, total)

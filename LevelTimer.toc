@@ -23,6 +23,7 @@ Format.lua
 Serializer.lua
 Profiles.lua
 ChatPatterns.lua
+Bags.lua
 Widgets.lua
 
 # Daten (ohne UI)

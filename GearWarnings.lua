@@ -5,9 +5,8 @@
 --                  dort gibt es keine Munition; GearWarnings.HasAmmo)
 -- Gewarnt wird einmal, wenn der Zustand eintritt (Einblendung + Chat), und erst wieder, nachdem er
 -- vorbei war. Geprüft wird alle CHECK_INTERVAL Sekunden statt auf viele Einzel-Events zu hören.
--- APIs in allen Clients: C_Container.GetContainerNumFreeSlots(bag) -> frei, bagFamily
--- (0 = normale Tasche; Köcher, Munitions- und Berufstaschen zählen nicht),
--- GetInventoryItemDurability(slot) -> aktuell, max (nil bei Gegenständen ohne Haltbarkeit),
+-- Freie Plätze: Bags.GetFreeSlots (nur normale Taschen; Köcher und Berufstaschen zählen nicht).
+-- APIs in allen Clients: GetInventoryItemDurability(slot) -> aktuell, max (nil bei Gegenständen ohne Haltbarkeit),
 -- GetInventoryItemCount("player", INVSLOT_AMMO) wie Blizzards Munitionsplatz im Charakterfenster.
 local _, ns = ...
 local L = ns.L
@@ -17,9 +16,6 @@ ns.GearWarnings = GearWarnings
 
 local CHECK_INTERVAL = 5
 local BAGS_LOW = 2              -- freie Plätze, ab denen gewarnt wird
-local GENERAL_BAG_FAMILY = 0
-local BACKPACK = 0
-local DEFAULT_BAG_SLOTS = 4     -- ausgerüstete Taschen, falls der Client die Konstante nicht kennt
 local DURABILITY_LOW = 0.2      -- Anteil der Haltbarkeit, ab dem gewarnt wird
 local FIRST_EQUIPPED_SLOT = 1
 local DEFAULT_LAST_EQUIPPED_SLOT = 19
@@ -27,20 +23,6 @@ local AMMO_LOW = 200            -- Schuss, ab denen gewarnt wird
 local AMMO_SLOT = INVSLOT_AMMO or 0
 local HUNTER = "HUNTER"
 local WARNING_COLOR = { 1, 0.6, 0.2 }
-
-local function lastBag()
-  return NUM_TOTAL_EQUIPPED_BAG_SLOTS or NUM_BAG_SLOTS or DEFAULT_BAG_SLOTS
-end
-
--- Freie Plätze in normalen Taschen
-function GearWarnings.GetFreeBagSlots()
-  local free = 0
-  for bag = BACKPACK, lastBag() do
-    local slots, family = C_Container.GetContainerNumFreeSlots(bag)
-    if family == GENERAL_BAG_FAMILY then free = free + (slots or 0) end
-  end
-  return free
-end
 
 -- Niedrigste Haltbarkeit aller ausgerüsteten Gegenstände (0..1); 1 ohne Gegenstände mit Haltbarkeit
 function GearWarnings.GetLowestDurability()
@@ -66,7 +48,7 @@ end
 -- Je Hinweis: Einstellung, Prüfung (true = warnen), Text; active = Zustand bei der letzten Prüfung
 local WARNINGS = {
   { setting = "warnBagsFull", message = "WARN_BAGS_FULL",
-    isDue = function() return GearWarnings.GetFreeBagSlots() < BAGS_LOW end },
+    isDue = function() return ns.Bags.GetFreeSlots() < BAGS_LOW end },
   { setting = "warnDurability", message = "WARN_DURABILITY",
     isDue = function() return GearWarnings.GetLowestDurability() < DURABILITY_LOW end },
   { setting = "warnAmmo", message = "WARN_AMMO", isDue = isAmmoLow },
