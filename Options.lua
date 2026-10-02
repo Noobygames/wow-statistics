@@ -1,4 +1,4 @@
--- Einstellungsfenster mit Reitern: Allgemein (Fenster, Sprache), Statistiken, Hinweise, Stream, Profile.
+-- Einstellungsfenster mit Reitern: Allgemein (Fenster, Sprache), Statistiken, Hinweise, Stream, Speedrun, Profile.
 -- Darunter auf allen Reitern: Neue Session, Zusammenfassung, Historie.
 -- Jedes Steuerelement registriert eine refresh(db)-Funktion; nach jeder Änderung
 -- (ns.Set/ns.ApplySettings) zeigen alle den aktuellen Stand und die gewählte Sprache.
@@ -116,7 +116,8 @@ local function addSlider(slider)
   end)
 end
 
--- Checkboxen in zwei Spalten; toggle = { label, get(db) -> bool, set(checked), available() optional }
+-- Checkboxen in zwei Spalten; toggle = { label, get(db) -> bool, set(checked), available() optional,
+--   text() optional statt L[label], z.B. für Beschriftungen mit Werten }
 local function addToggles(allToggles)
   local toggles = {}
   for _, toggle in ipairs(allToggles) do
@@ -128,7 +129,7 @@ local function addToggles(allToggles)
     local checkbox = Widgets.CreateCheckbox(page, toggle.set)
     table.insert(toggleCells, { checkbox = checkbox, column = column, y = nextRowY - row * ROW_CHECKBOX })
     onRefresh(function(db)
-      checkbox.label:SetText(L[toggle.label])
+      checkbox.label:SetText(toggle.text and toggle.text() or L[toggle.label])
       checkbox:SetChecked(toggle.get(db))
     end)
   end
@@ -394,7 +395,7 @@ addSlider({
 })
 finishPage()
 
--- Stream: alles, was nur für Streams und Speedruns gedacht ist
+-- Stream: alles, was nur für Streams gedacht ist (Speedrun hat einen eigenen Reiter)
 addPage("OPTIONS_TAB_STREAM")
 addSection("SECTION_STREAM")
 addToggles({
@@ -412,13 +413,26 @@ addToggles({
   toggle("ALERT_TOGGLE_LOOT", "alertEpicLoot"),
   toggle("ALERT_TOGGLE_NEAR_DEATH", "alertNearDeath"),
 })
-addSection("SECTION_SPLITS")
-addSplitComparisonChooser()
+finishPage()
+
+-- Speedrun: Splits, Split-Liste und Speedrun-Rekorde
+addPage("OPTIONS_TAB_SPEEDRUN")
+addSection("SECTION_SPLIT_LIST")
 addToggles({
   toggle("SHOW_SPLIT_LIST", "showSplitList"),
-  toggle("SHOW_WORLD_RECORDS", "showWorldRecords"),
+  toggle("SHOW_SPLIT_TOTAL", "splitListShowTotal"),
+  toggle("SHOW_SPLIT_PLAYED", "splitListShowPlayed"),
 })
-addWorldRecordScopeChooser()
+addSplitComparisonChooser()
+addSlider({
+  label = "SPLIT_LIST_SIZE",
+  min = toPercent(TimerWindow.MIN_SCALE),
+  max = toPercent(TimerWindow.MAX_SCALE),
+  step = 5,
+  get = function(db) return toPercent(ns.SplitList.GetScale(db)) end,
+  set = function(value) ns.Set("splitListScale", value / 100) end,
+  format = percent,
+})
 addSlider({
   label = "SPLIT_LIST_ROWS",
   min = ns.SplitList.MIN_ROWS,
@@ -428,6 +442,24 @@ addSlider({
   set = function(value) ns.Set("splitListRows", value) end,
   format = tostring,
 })
+addSection("SECTION_WORLD_RECORDS")
+local recordToggles = {
+  toggle("SHOW_WORLD_RECORDS", "showWorldRecords"),
+  toggle("SHOW_RECORDS_AGE", "showRecordsAge"),
+}
+-- Ein Schalter je Abschnitt der Rekord-Daten (1-10, 1-20, ...)
+for _, label in ipairs(ns.WorldRecords.GetBracketLabels()) do
+  table.insert(recordToggles, {
+    text = function() return string.format(L.WORLD_RECORD_ROW, label) end,
+    get = function(db) return db.recordBrackets[label] ~= false end,
+    set = function(checked)
+      ns.db.recordBrackets[label] = checked
+      ns.ApplySettings()
+    end,
+  })
+end
+addToggles(recordToggles)
+addWorldRecordScopeChooser()
 finishPage()
 
 -- Profile: Einstellungen benannt speichern, je Charakter wählen, als Text teilen

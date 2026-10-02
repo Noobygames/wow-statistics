@@ -36,14 +36,37 @@ expect("1-20 laufende /played-Zeit", comparisons[2].ownSeconds, 5000)
 addon.Set("worldRecordScope", "overall")
 expect("Gesamtrekord", WorldRecords.GetComparisons()[1].record.runner, "Schnell")
 
--- Split-Liste zeigt die Rekorde als eigene Zeilen
-addon.Set("showSplitList", true)
-LevelTimerSplits._scripts.OnUpdate(LevelTimerSplits, 1)
-local row = wow.findFrame(function(frame) return frame._text == string.format(L.WORLD_RECORD_ROW, "1-10") end)
-expectTrue("Rekord-Zeile", row ~= nil and row:IsShown())
+-- Split-Liste: Rekorde als eigene Zeilen, einzeln abschaltbar, dazu der Stand der Daten
+local function footerLabels()
+  local labels = {}
+  for _, line in ipairs(addon.SplitList.BuildFooterLines()) do labels[line[1]] = line end
+  return labels
+end
+local recordRow = string.format(L.WORLD_RECORD_ROW, "1-10")
+expectTrue("Rekord-Zeile", footerLabels()[recordRow] ~= nil)
+expectTrue("Stand der Rekorde", footerLabels()[L.RECORDS_AGE] ~= nil)
+expect("Stand", footerLabels()[L.RECORDS_AGE][2], "2026-10-02")
+LevelTimerDB.recordBrackets["1-10"] = false
+expect("Abschnitt ausblendbar", footerLabels()[recordRow], nil)
+expectTrue("anderer Abschnitt bleibt", footerLabels()[string.format(L.WORLD_RECORD_ROW, "1-20")] ~= nil)
+LevelTimerDB.recordBrackets["1-10"] = nil
+addon.Set("showRecordsAge", false)
+expect("Stand ausblendbar", footerLabels()[L.RECORDS_AGE], nil)
+addon.Set("splitListShowPlayed", false)
+expect("/played ausblendbar", footerLabels()[L.SPLIT_LIST_PLAYED], nil)
 addon.Set("showWorldRecords", false)
-LevelTimerSplits._scripts.OnUpdate(LevelTimerSplits, 1)
-expect("abschaltbar", row:IsShown(), false)
+expect("Rekorde ausblendbar", footerLabels()[recordRow], nil)
+addon.Set("showWorldRecords", true)
+
+-- Alter der Daten in Tagen (Uhr im Stub: November 2023, Daten vom 2026-10-02 => 0)
+expect("Alter nie negativ", WorldRecords.GetAgeDays(), 0)
+wow.state.clock = time({ year = 2026, month = 10, day = 14, hour = 18 })
+expect("Alter in Tagen", WorldRecords.GetAgeDays(), 12)
+
+-- Eigene Größe der Split-Liste
+addon.Set("showSplitList", true)
+addon.Set("splitListScale", 1.4)
+expect("eigene Größe", LevelTimerSplits:GetScale(), 1.4)
 
 -- Historie: alle Rekorde, eigene Klasse hervorgehoben
 SlashCmdList.LEVELTIMER("history")

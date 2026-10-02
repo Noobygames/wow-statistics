@@ -21,6 +21,30 @@ function WorldRecords.GetSource()
   return source.source, source.fetched
 end
 
+local SECONDS_PER_DAY = 86400
+local NOON = 12  -- Mittag des Stichtags, damit Zeitzonen den Tag nicht verschieben
+
+-- Alter der Rekord-Daten in ganzen Tagen (Stand = Tag von "make records"); nil ohne Datum
+function WorldRecords.GetAgeDays()
+  local _, fetched = WorldRecords.GetSource()
+  local year, month, day = (fetched or ""):match("^(%d+)-(%d+)-(%d+)$")
+  if not year then return nil end
+  local fetchedAt = time({ year = tonumber(year), month = tonumber(month), day = tonumber(day), hour = NOON })
+  return math.max(0, math.floor((time() - fetchedAt) / SECONDS_PER_DAY))
+end
+
+-- Abschnitte lassen sich einzeln aus der Split-Liste nehmen (db.recordBrackets[label] = false)
+function WorldRecords.IsBracketShown(label)
+  return ns.db.recordBrackets[label] ~= false
+end
+
+-- Bezeichnungen aller Abschnitte in der Reihenfolge der Daten, z.B. für die Einstellungen
+function WorldRecords.GetBracketLabels()
+  local labels = {}
+  for _, bracket in ipairs(data().brackets) do table.insert(labels, bracket.label) end
+  return labels
+end
+
 -- Rekord eines Abschnitts für den gewählten Vergleich; ohne Klassenrekord der Gesamtrekord
 function WorldRecords.RecordFor(bracket)
   if ns.db.worldRecordScope == WorldRecords.CLASS then

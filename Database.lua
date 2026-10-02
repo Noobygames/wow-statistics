@@ -26,7 +26,11 @@ local SETTINGS_DEFAULTS = {
   splitComparison = "best",  -- "best", "pb" oder "run" (db.splitReference, siehe Splits.lua)
   showSplitList = false,  -- eigene Anzeige mit den letzten Leveln (siehe SplitList.lua)
   splitListRows = 5,
+  splitListShowTotal = true,   -- Zeile "Gesamt" in der Split-Liste
+  splitListShowPlayed = true,  -- Zeile "/played" in der Split-Liste
   showWorldRecords = true,  -- Speedrun-Rekorde in der Split-Liste (siehe WorldRecords.lua)
+  showRecordsAge = true,    -- Stand der Rekord-Daten in der Split-Liste
+  recordBrackets = {},      -- [Abschnitt] = false blendet ihn in der Split-Liste aus
   worldRecordScope = "class",  -- "overall" oder "class"
   showGoal = false,  -- Session-Ziel (siehe Goal.lua); /lt goal schaltet die Zeile ein
   streamerPrivacy = false,  -- Realm und andere Charaktere in der Historie verbergen (siehe History.DisplayName)
