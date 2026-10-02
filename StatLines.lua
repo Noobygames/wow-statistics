@@ -125,9 +125,11 @@ local function restedLeft()
   return string.format("%s (%s)", Format.Number(rested), Format.Percent(rested, UnitXPMax("player")))
 end
 
-local function income(scope)
-  return Format.Money(Stats.Get(scope, Stats.MONEY_EARNED))
+local function money(counterName)
+  return function(scope) return Format.Money(Stats.Get(scope, counterName)) end
 end
+
+local income = money(Stats.MONEY_EARNED)
 
 ns.STAT_LINES = {
   { setting = "showXpRate", label = "STAT_XP_RATE", rows = { { label = "ROW_XP_RATE", value = xpRate } } },
@@ -175,4 +177,12 @@ ns.STAT_LINES = {
   } },
   { setting = "showQuests", label = "STAT_QUESTS", rows = { { label = "ROW_QUESTS", value = counter(Stats.QUESTS) } } },
   { setting = "showMoney", label = "STAT_MONEY", rows = { { label = "ROW_MONEY", value = income } } },
+  { setting = "showSpending", label = "STAT_SPENDING", rows = {
+    { label = "ROW_SPENT_REPAIR", value = money(Stats.SPENT_REPAIR) },
+    { label = "ROW_SPENT_MERCHANT", value = money(Stats.SPENT_MERCHANT) },
+    { label = "ROW_SPENT_TAXI", value = money(Stats.SPENT_TAXI) },
+    { label = "ROW_SPENT_TRAINER", value = money(Stats.SPENT_TRAINER) },
+    { label = "ROW_SPENT_OTHER", value = money(Stats.SPENT_OTHER) },
+    { label = "ROW_JUNK_INCOME", value = money(Stats.MONEY_JUNK) },
+  } },
 }

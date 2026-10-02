@@ -71,6 +71,7 @@ local SETTINGS_DEFAULTS = {
   xpRateWithoutAfk = false,   -- XP/h und Prognosen ohne AFK-Zeit (siehe Experience.RateSeconds)
   showQuests = true,
   showMoney = true,
+  showSpending = false,  -- Ausgaben nach Art und Schrott-Erlös (siehe MoneyCounter.lua)
   minimap = { hide = false, angle = 225 },
 }
 
@@ -92,6 +93,12 @@ local COUNTER_DEFAULTS = {
   combatSeconds = 0,
   taxiSeconds = 0,
   afkSeconds = 0,
+  moneyJunk = 0,
+  spentRepair = 0,
+  spentMerchant = 0,
+  spentTaxi = 0,
+  spentTrainer = 0,
+  spentOther = 0,
 }
 
 local CHARACTER_DEFAULTS = {

@@ -17,15 +17,18 @@ wow.login({ money = 0 })
 fill()
 
 wow.fire("MERCHANT_SHOW")
+wow.runTimers()
 expect("aus: nichts verkauft", wow.state.money, 0)
 
 addon.Set("autoSellJunk", true)
 wow.state.shiftDown = true
 wow.fire("MERCHANT_SHOW")
+wow.runTimers()
 expect("Umschalttaste setzt aus", wow.state.money, 0)
 wow.state.shiftDown = false
 
 wow.fire("MERCHANT_SHOW")
+wow.runTimers()
 expect("Erlös aus Schrott beider Taschen", wow.state.money, 3 * 10 + 25)
 expect("Schrott weg", bags[0][1], nil)
 expect("weiß bleibt", bags[0][2] ~= nil, true)
@@ -36,4 +39,5 @@ expectTrue("Erlös im Chat", wow.printed[#wow.printed]:find(string.format(L.JUNK
 -- Nichts mehr zu verkaufen: keine Chatzeile
 local printed = #wow.printed
 wow.fire("MERCHANT_SHOW")
+wow.runTimers()
 expect("ohne Schrott still", #wow.printed, printed)

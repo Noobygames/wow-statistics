@@ -6,6 +6,7 @@ local function openMerchant(cost)
   merchant.canRepair = true
   merchant.repairCost = cost
   wow.fire("MERCHANT_SHOW")
+  wow.runTimers()
 end
 
 wow.login({ money = 10000 })

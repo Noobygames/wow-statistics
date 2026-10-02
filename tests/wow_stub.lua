@@ -338,8 +338,25 @@ end
 function GetInstanceInfo() return state.instance and state.instance.name or GetZoneText() end
 C_QuestLog = { GetTitleForQuestID = function(questID) return state.questTitles[questID] end }
 function strtrim(text) return (text:gsub("^%s+", ""):gsub("%s+$", "")) end
+-- Wie im Client: Funktion ersetzen, Original zuerst, dann der Hook
+function hooksecurefunc(name, hook)
+  local original = _G[name]
+  _G[name] = function(...)
+    local results = { original(...) }
+    hook(...)
+    return unpack(results)
+  end
+end
 
--- Händler; RepairAllItems bucht die Kosten ab und merkt sich die Reparatur in wow.repairs
+-- Geldänderung durch den Server: kommt wie im Client erst später, mit PLAYER_MONEY (wow.runTimers)
+local function serverMoneyUpdate(delta)
+  C_Timer.After(0, function()
+    state.money = state.money + delta
+    wow.fire("PLAYER_MONEY")
+  end)
+end
+
+-- Händler; RepairAllItems bucht die Kosten ab (mit PLAYER_MONEY) und merkt sich die Reparatur in wow.repairs
 wow.repairs = {}
 function CanMerchantRepair() return state.merchant.canRepair end
 function GetRepairAllCost() return state.merchant.repairCost, state.merchant.repairCost > 0 end
@@ -349,7 +366,7 @@ function RepairAllItems(useGuildBank)
   if useGuildBank then
     merchant.guildMoney = merchant.guildMoney - merchant.repairCost
   else
-    state.money = state.money - merchant.repairCost
+    serverMoneyUpdate(-merchant.repairCost)
   end
   merchant.repairCost = 0
 end
@@ -357,14 +374,14 @@ function CanGuildBankRepair() return state.merchant.guildRepair end
 function GetGuildBankWithdrawMoney() return state.merchant.guildWithdraw end
 function GetGuildBankMoney() return state.merchant.guildMoney end
 
--- Taschen; UseContainerItem verkauft (Händler offen angenommen): Gegenstand weg, Geld dazu
+-- Taschen; UseContainerItem verkauft (Händler offen angenommen): Gegenstand weg, Geld dazu (PLAYER_MONEY)
 C_Container = {
   GetContainerNumSlots = function(bag) return state.bags[bag] and state.bagSlots or 0 end,
   GetContainerItemInfo = function(bag, slot) return state.bags[bag] and state.bags[bag][slot] end,
   UseContainerItem = function(bag, slot)
     local info = state.bags[bag][slot]
-    state.money = state.money + (state.sellPrices[info.itemID] or 0) * info.stackCount
     state.bags[bag][slot] = nil
+    serverMoneyUpdate((state.sellPrices[info.itemID] or 0) * info.stackCount)
   end,
 }
 -- Quest-Aktionen landen in wow.questActions, z.B. { "accept" } oder { "selectAvailable", 123 }

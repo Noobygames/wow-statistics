@@ -53,7 +53,10 @@ expect("neues Level leer", Stats.Get(Stats.LEVEL, Stats.COMBAT_SECONDS), 0)
 
 -- Anzeige im Fenster
 addon.Set("showTimeBreakdown", true)
-local row = addon.STAT_LINES[#addon.STAT_LINES - 2].rows[1]
+local row
+for _, line in ipairs(addon.STAT_LINES) do
+  if line.setting == "showTimeBreakdown" then row = line.rows[1] end
+end
 expect("Zeile Kampf", row.label, "ROW_TIME_COMBAT")
 
 ---------------------------------------------------------------------------

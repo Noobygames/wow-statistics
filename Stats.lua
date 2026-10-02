@@ -27,6 +27,12 @@ Stats.NEAR_DEATHS = "nearDeaths"
 Stats.COMBAT_SECONDS = "combatSeconds"  -- Zeitaufteilung (TimeBreakdown.lua)
 Stats.TAXI_SECONDS = "taxiSeconds"
 Stats.AFK_SECONDS = "afkSeconds"
+Stats.MONEY_JUNK = "moneyJunk"            -- Erlös aus verkauftem Schrott (Merchant.lua), Teil der Einnahmen
+Stats.SPENT_REPAIR = "spentRepair"        -- Ausgaben nach Art (MoneyCounter.lua)
+Stats.SPENT_MERCHANT = "spentMerchant"
+Stats.SPENT_TAXI = "spentTaxi"
+Stats.SPENT_TRAINER = "spentTrainer"
+Stats.SPENT_OTHER = "spentOther"
 
 local function countersOf(scope)
   if scope == Stats.SESSION then

@@ -5,7 +5,7 @@
 -- wo CanGuildBankRepair existiert (nicht in Classic Era, siehe Client.HasGuildBank).
 -- Schrott: Taschen über C_Container (GetContainerItemInfo: quality, hasNoValue, isLocked) in allen
 -- Clients; verkauft wird mit C_Container.UseContainerItem bei offenem Händler. Den Erlös zählt
--- MoneyCounter wie jede Einnahme.
+-- MoneyCounter wie jede Einnahme, zusätzlich der Zähler moneyJunk (erwarteter Erlös).
 local _, ns = ...
 local L = ns.L
 local Comfort = ns.Comfort
@@ -84,11 +84,14 @@ function Merchant.SellJunk()
   end
   ns.Debug("merchant", "sold %s junk items for %s", count, total)
   if count > 0 then
+    ns.Stats.Increment(ns.Stats.MONEY_JUNK, total)
     ns.Print(string.format(L.JUNK_SOLD, count, Format.Money(total)))
   end
 end
 
+-- Erst reparieren, dann verkaufen: so kommt die Abbuchung vor den Erlösen (MoneyCounter ordnet
+-- Ausgaben der Reparatur zu)
 ns.RegisterEvent("MERCHANT_SHOW", function()
-  Merchant.SellJunk()
   Merchant.Repair()
+  Merchant.SellJunk()
 end)
