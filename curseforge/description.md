@@ -70,7 +70,7 @@ A session runs from login to logout. A `/reload` or a short break (up to 5 minut
 | `/lt compact` | Toggle compact mode (play time, XP bar and XP/h only) |
 | `/lt bar` | Toggle horizontal bar layout (everything in one line, like an info bar) |
 | `/lt newsession` | Archive the running session and start a new one (also a button in the settings) |
-| `/lt stream` | Stream mode: transparent larger window, alerts on, names hidden; again restores your settings |
+| `/lt stream` | Stream mode: alerts on, names hidden (window size and transparency unchanged); again restores your settings |
 | `/lt splits` | Show or hide the split list (last levels with time and difference) |
 | `/lt profile` | List profiles; `/lt profile Name` switches, `save Name`, `delete Name`, `export`, `import` (also in Settings > Profiles) |
 | `/lt runs backup` / `/lt runs import` | Copy all runs as text, or paste runs shared by others (also buttons in History > Speedrun) |

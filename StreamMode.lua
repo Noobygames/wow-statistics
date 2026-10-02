@@ -7,11 +7,9 @@ local L = ns.L
 local StreamMode = {}
 ns.StreamMode = StreamMode
 
--- Fenster ohne Hintergrund und größer, Einblendungen an, Namen verborgen
+-- Einblendungen an, Namen verborgen. Größe und Transparenz des Fensters bleiben, wie sie sind
+-- (stellt jeder selbst ein).
 StreamMode.PRESET = {
-  bgAlpha = 0,
-  windowBackground = "default",
-  scale = 1.5,
   alertLevelUp = true,
   alertRareKill = true,
   alertEpicLoot = true,
