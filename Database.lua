@@ -20,7 +20,9 @@ local SETTINGS_DEFAULTS = {
   windowScope = "level",  -- "level" oder "session" (siehe Stats.lua)
   -- Stat-Zeilen im Fenster (siehe StatLines.lua)
   showXpRate = true,
+  showRecentXpRate = false,  -- XP/h der letzten 15 min (siehe RecentXpRate.lua)
   showLevelEta = true,
+  showCountToLevel = false,  -- Kills und Quests bis zum Level-Up
   showMaxLevelEta = true,
   showSplits = false,  -- Splits gegen einen Vergleich (siehe Splits.lua)
   splitComparison = "best",  -- "best", "pb" oder "run" (db.splitReference, siehe Splits.lua)
@@ -43,6 +45,23 @@ local SETTINGS_DEFAULTS = {
   remindFood = false,  -- Hinweis, wenn beim Leveln "Satt" fehlt (siehe BuffReminder.lua)
   remindCamp = false,  -- Hinweis, wenn beim Leveln der Camp-Buff fehlt (WoW Forever)
   reminderInterval = 5,  -- Minuten zwischen zwei Hinweisen auf denselben fehlenden Buff
+  warnBagsFull = false,  -- Hinweis bei fast vollen Taschen (siehe GearWarnings.lua)
+  warnDurability = false,  -- Hinweis bei niedriger Haltbarkeit
+  remindTrainer = false,   -- Hinweis auf neue Zauber beim Lehrer (TrainerReminder.lua, nicht Retail)
+  warnAmmo = false,        -- Jäger: Munition knapp (GearWarnings.lua, nicht Retail)
+  -- Komfort beim Leveln (siehe Comfort.lua), alles aus
+  autoRepair = false,       -- beim Händler reparieren (Merchant.lua)
+  autoRepairGuild = false,  -- zuerst aus der Gildenbank
+  autoSellJunk = false,     -- graue Gegenstände verkaufen
+  autoAcceptQuests = false, -- Quests annehmen (QuestAutomation.lua)
+  autoAcceptShared = false, -- geteilte Quests und Eskorten bestätigen
+  autoTurnIn = false,       -- fertige Quests abgeben
+  autoChooseReward = false, -- bei mehreren Belohnungen die mit dem höchsten Verkaufswert
+  skipGossip = false,       -- Gespräche mit nur einer Option überspringen
+  declineTrades = false,    -- Handel ablehnen (Declines.lua)
+  declineGroupInvites = false,
+  declineGuildInvites = false,
+  declineDuels = false,
   levelUpSummary = true,
   levelUpAnnounce = "off",  -- Level-Up-Zusammenfassung an "party" oder "guild" (siehe LevelUpSummary.lua)  -- Chatzeile beim Level-Up (siehe LevelUpSummary.lua)
   showPveKills = true,
@@ -55,8 +74,12 @@ local SETTINGS_DEFAULTS = {
   highlightDeaths = true,  -- Tode im Fenster rot (siehe StatLines.lua)  -- Hardcore: Zeit seit dem letzten Tod
   showXpSources = false,
   showRested = false,
+  showRestedLeft = false,  -- verbleibende Erholt-XP (GetXPExhaustion)
+  showTimeBreakdown = false,  -- Zeit in Kampf, Flug, AFK und Rest (siehe TimeBreakdown.lua)
+  xpRateWithoutAfk = false,   -- XP/h und Prognosen ohne AFK-Zeit (siehe Experience.RateSeconds)
   showQuests = true,
   showMoney = true,
+  showSpending = false,  -- Ausgaben nach Art und Schrott-Erlös (siehe MoneyCounter.lua)
   minimap = { hide = false, angle = 225 },
 }
 
@@ -75,6 +98,15 @@ local COUNTER_DEFAULTS = {
   eliteKills = 0,
   rareKills = 0,
   nearDeaths = 0,
+  combatSeconds = 0,
+  taxiSeconds = 0,
+  afkSeconds = 0,
+  moneyJunk = 0,
+  spentRepair = 0,
+  spentMerchant = 0,
+  spentTaxi = 0,
+  spentTrainer = 0,
+  spentOther = 0,
 }
 
 local CHARACTER_DEFAULTS = {
@@ -137,7 +169,7 @@ local characterMigrations = {
 }
 
 -- Migrationen für die Einstellungen, Schlüssel = Zielversion
-local SETTINGS_SCHEMA_VERSION = 3
+local SETTINGS_SCHEMA_VERSION = 4
 local OLD_DEFAULT_FONT_SIZE = 16
 local settingsMigrations = {
   [2] = function(settings)  -- feste Schriftgröße der Zeitanzeige -> Skalierung des ganzen Fensters
@@ -160,6 +192,16 @@ local settingsMigrations = {
       settings.showKillsPerDeath = settings.showDeaths
     end
     settings.showKills = nil
+  end,
+  -- Level-Up-Ansage in /sagen entfernt (kam außerhalb von Instanzen nicht an): aus, auch in Profilen
+  [4] = function(settings)
+    local function dropSay(values)
+      if values.levelUpAnnounce == "say" then values.levelUpAnnounce = "off" end
+    end
+    dropSay(settings)
+    for _, profile in pairs(settings.profiles or {}) do
+      dropSay(profile)
+    end
   end,
 }
 

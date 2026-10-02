@@ -2,6 +2,45 @@
 
 Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt und unter „Erledigt“ mit Version vermerkt. Nummern laufen über alle Versionen weiter.
 
+## v2.6: Leveln ohne Umwege
+
+Schwerpunkt: Komfort-Funktionen, die beim Leveln Klicks sparen, und Werte, die zeigen, wo Zeit verloren geht. Jede Komfort-Funktion ist einzeln schaltbar (Standard aus) und liegt im neuen Reiter „Komfort“; gedrückte Umschalttaste setzt die Automatik im Moment aus. Nutzt jemand schon Leatrix Plus o.ä., bleiben unsere Schalter einfach aus. Alle API-Annahmen werden vor der Umsetzung je Client gegen die Doku geprüft.
+
+### Komfort
+
+- [x] 55. **Automatisch reparieren** (S): beim Händler mit Reparatur (`MERCHANT_SHOW`, `CanMerchantRepair`, `GetRepairAllCost`, `RepairAllItems`); optional zuerst aus der Gildenbank, nur in Clients mit `CanGuildBankRepair`. Kosten als Chatzeile.
+- [x] 56. **Schrott verkaufen** (S–M): graue Gegenstände beim Händler verkaufen; `C_MerchantFrame.SellAllJunkItems`, wo vorhanden, sonst Taschen über `C_Container` durchgehen (Qualität 0, Verkaufspreis > 0). Erlös als Chatzeile.
+- [x] 57. **Quests automatisch annehmen** (S): `QUEST_DETAIL` → `AcceptQuest`; geteilte Quests und Eskorten (`QUEST_ACCEPT_CONFIRM`) als eigener Schalter.
+- [x] 58. **Quests automatisch abgeben** (M): `QUEST_PROGRESS` → `CompleteQuest`, wenn `IsQuestCompletable`; `QUEST_COMPLETE` → `GetQuestReward` nur bei höchstens einer Belohnung. Bei Auswahl bleibt das Fenster offen; optional die Belohnung mit dem höchsten Verkaufswert (eigener Schalter).
+- [x] 59. **Gespräche überspringen** (S–M): `GOSSIP_SHOW`/`QUEST_GREETING`: fertige Quests abgeben, verfügbare öffnen, sonst die einzige Gesprächsoption wählen (`C_GossipInfo`). Nie bei mehreren Optionen oder Optionen mit Bestätigung/Kosten.
+- [x] 73. **Trades** (S): Handel automatisch ablehnen
+- [x] 74. **Invites** (S): Gruppen Invite automatisch ablehnen
+- [x] 75. **Gilde** (S): Gilden Invite automatisch ablehnen
+- [x] 76. **Duell** (S): Duell Invite automatisch ablehnen
+
+### Statistik: wohin die Zeit geht
+
+- [x] 60. **Zeitaufteilung** (M–L): Spielzeit je Level und Session aufgeteilt in Kampf (`PLAYER_REGEN_DISABLED/ENABLED`), Flugroute (`UnitOnTaxi`), tot, AFK (`UnitIsAFK`) und Rest (Laufen, Questen). Zeilen im Fenster, Spalten in der Historie.
+- [x] 61. **XP/h ohne AFK** (S): Schalter, ob AFK-Zeit in XP/h und Prognose zählt (baut auf 60 auf).
+- [x] 62. **Aktuelle XP/h** (S): gleitender Wert der letzten 15 min neben dem Durchschnitt, damit Einbrüche (Laufwege, Flugrouten) sofort sichtbar sind.
+- [x] 63. **Kills/Quests bis Level-Up** (S): „noch ~38 Kills oder ~5 Quests“ aus der durchschnittlichen Kill- und Quest-XP des laufenden Levels.
+- [x] 64. **Erholt-Anzeige** (S): verbleibende Erholt-XP in Prozent des Levels (`GetXPExhaustion`) als eigene Zeile.
+- [x] 65. **Ausgaben** (M): bisher zählen nur Einnahmen. Ausgaben nach Art (Reparatur, Händler, Flugmeister, Lehrer) über das gerade offene Fenster zuordnen; Schrotterlös als eigene Einnahme.
+
+### Hinweise
+
+- [x] 66. **Taschen fast voll** (S): Einblendung, wenn weniger als N Plätze frei sind (verlorene Beute).
+- [x] 67. **Haltbarkeit niedrig** (S): Hinweis unter 20 % (`GetInventoryItemDurability`), bevor die Ausrüstung kaputtgeht.
+- [x] 68. **Lehrer besuchen** (S): Hinweis beim Level-Up, wenn neue Zauber lernbar sind (Classic Era, TBC und WoW Forever: gerade Level). Retail lernt automatisch, dort keine Option.
+- [x] 69. **Munition knapp** (S): Jäger in Classic Era, TBC und WoW Forever, Hinweis unter N Schuss; in Retail nicht sichtbar.
+
+### Streamer
+
+- [x] 70. **Visuals** (S): Streamer mode soll weder größe noch transparenz von elementen ändern
+- [x] 71. **Elite Kill** (S): Elite Kill alerts sollten NICHT in dungeons passieren
+- [x] 72. **Epic Loot** (S): Epic loot alerts sollten NICHT in raids passieren
+- [x] 77. **Level-Up-Ansage ohne /sagen** (S): /sagen braucht außerhalb von Instanzen einen Klick und kam beim Level-Up nicht an; Auswahl und Button entfernt, alte Einstellung wird zu „aus“.
+
 ## v2.5: Streaming
 
 Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben kein Netzwerk und schreiben keine Dateien, alles muss also im Spiel sichtbar sein.
@@ -64,6 +103,7 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 
 ## Erledigt
 
+- v2.6.0: 55. Automatisch reparieren, 56. Schrott verkaufen, 57. Quests annehmen, 58. Quests abgeben, 59. Gespräche überspringen, 60. Zeitaufteilung, 61. XP/h ohne AFK, 62. Aktuelle XP/h, 63. Kills/Quests bis Level-Up, 64. Erholt-Anzeige, 65. Ausgaben, 66. Taschen fast voll, 67. Haltbarkeit niedrig, 68. Lehrer besuchen, 69. Munition knapp, 70. Stream-Modus ohne Größe/Transparenz, 71. Keine Elite-Einblendung in Instanzen, 72. Keine Beute-Einblendung in Raids, 73.–76. Handel, Gruppen-, Gilden- und Duellanfragen ablehnen, 77. Level-Up-Ansage ohne /sagen
 - v2.5.2: Fix der Zeile /played in der Split-Liste, 52. Erinnerungs-Abstand einstellbar, 53. Speedrun-Reiter, 54. Tooltips in den Einstellungen
 - v2.5.0: 32. Neue Session starten, 31. Hardcore-Anzeige, 27. Stream-Ansicht, 33. Streamer-Datenschutz, 28. Session-Ziel, 29. Große Einblendungen, 30. Session-Abschlusskarte, 26. Splits, 34. Ansage in Gilde/Gruppe, 38. Rote Tode abschaltbar, 37. Stream-Modus, 35. Fester Vergleichslauf, 36. Split-Liste, 39. Hinweis bei fehlendem Food-Buff, 40. Hinweis bei fehlendem Camp-Buff, 41. Einstellungen mit Reitern, 42. Client-spezifische Optionen, 43. Level-Up-Ansage in /sagen, 44. Debug-Modus, 45. Split-Liste mit /played, 46. Fester Vergleich bleibt fest, 47. Läufe, 48. Rekorde, 49. Läufe teilen und sichern, 50. Einstellungs-Profile, 51. Speedrun-Rekorde
 - v2.0.0:

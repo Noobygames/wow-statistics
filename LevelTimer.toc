@@ -36,6 +36,8 @@ KillCounter.lua
 DeathRecap.lua
 DeathCounter.lua
 NearDeath.lua
+TimeBreakdown.lua
+RecentXpRate.lua
 QuestCounter.lua
 Loot.lua
 MoneyCounter.lua
@@ -56,6 +58,12 @@ StatLines.lua
 LevelUpSummary.lua
 Alerts.lua
 BuffReminder.lua
+GearWarnings.lua
+TrainerReminder.lua
+Comfort.lua
+Merchant.lua
+QuestAutomation.lua
+Declines.lua
 TimerWindow.lua
 SplitList.lua
 Charts.lua

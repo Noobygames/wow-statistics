@@ -1,4 +1,4 @@
--- Einstellungsfenster mit Reitern: Allgemein (Fenster, Sprache), Statistiken, Hinweise, Stream, Speedrun, Profile.
+-- Einstellungsfenster mit Reitern: Allgemein (Fenster, Sprache), Statistiken, Hinweise, Komfort, Stream, Speedrun, Profile.
 -- Darunter auf allen Reitern: Neue Session, Zusammenfassung, Historie.
 -- Jedes Steuerelement registriert eine refresh(db)-Funktion; nach jeder Änderung
 -- (ns.Set/ns.ApplySettings) zeigen alle den aktuellen Stand und die gewählte Sprache.
@@ -237,7 +237,6 @@ local function addAnnounceChooser()
     { value = Summary.ANNOUNCE_OFF, name = localized("ANNOUNCE_OFF") },
     { value = Summary.ANNOUNCE_PARTY, name = localized("ANNOUNCE_PARTY") },
     { value = Summary.ANNOUNCE_GUILD, name = localized("ANNOUNCE_GUILD") },
-    { value = Summary.ANNOUNCE_SAY, name = localized("ANNOUNCE_SAY") },
   } })
 end
 
@@ -396,6 +395,8 @@ for i, line in ipairs(ns.STAT_LINES) do
   statToggles[i] = toggle(line.label, line.setting)
 end
 addToggles(statToggles)
+addSection("SECTION_CALCULATION")
+addToggles({ toggle("XP_RATE_WITHOUT_AFK", "xpRateWithoutAfk") })
 finishPage()
 
 -- Hinweise: Level-Up im Chat und Erinnerungen an Buffs
@@ -417,6 +418,39 @@ addSlider({
   set = function(value) ns.Set("reminderInterval", value) end,
   format = function(value) return string.format(L.MINUTES, value) end,
 })
+addSection("SECTION_WARNINGS")
+addToggles({
+  toggle("WARN_BAGS_FULL_TOGGLE", "warnBagsFull"),
+  toggle("WARN_DURABILITY_TOGGLE", "warnDurability"),
+  toggle("REMIND_TRAINER_TOGGLE", "remindTrainer", ns.TrainerReminder.IsAvailable),
+  toggle("WARN_AMMO_TOGGLE", "warnAmmo", ns.GearWarnings.HasAmmo),
+})
+finishPage()
+
+-- Komfort: Automatik bei Händlern, Quests und Gesprächen
+addPage("OPTIONS_TAB_COMFORT")
+addSection("SECTION_MERCHANT")
+addToggles({
+  toggle("AUTO_REPAIR", "autoRepair"),
+  toggle("AUTO_REPAIR_GUILD", "autoRepairGuild", ns.Client.HasGuildBank),
+  toggle("AUTO_SELL_JUNK", "autoSellJunk"),
+})
+addSection("SECTION_QUESTS")
+addToggles({
+  toggle("AUTO_ACCEPT_QUESTS", "autoAcceptQuests"),
+  toggle("AUTO_ACCEPT_SHARED", "autoAcceptShared"),
+  toggle("AUTO_TURN_IN", "autoTurnIn"),
+  toggle("AUTO_CHOOSE_REWARD", "autoChooseReward"),
+  toggle("SKIP_GOSSIP", "skipGossip"),
+})
+addSection("SECTION_DECLINE")
+addToggles({
+  toggle("DECLINE_TRADES", "declineTrades"),
+  toggle("DECLINE_GROUP_INVITES", "declineGroupInvites"),
+  toggle("DECLINE_GUILD_INVITES", "declineGuildInvites"),
+  toggle("DECLINE_DUELS", "declineDuels"),
+})
+addHint("COMFORT_HINT")
 finishPage()
 
 -- Stream: alles, was nur für Streams gedacht ist (Speedrun hat einen eigenen Reiter)

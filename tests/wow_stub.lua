@@ -45,12 +45,33 @@ wow = {
     inGroup = false,         -- Gruppe (IsInGroup)
     chatLockdown = false,    -- C_ChatInfo.InChatMessagingLockdown
     inCombat = false,
+    onTaxi = false,          -- UnitOnTaxi
+    afk = false,             -- UnitIsAFK
     resting = false,
     buffs = {},              -- aktive Buffs: Name oder { name, spellId } (C_UnitAuras.GetAuraDataByIndex)
     spellNames = { [19705] = "Satt", [1229741] = "Lagervorteile" },  -- C_Spell.GetSpellName
     interface = 120100,      -- Interface-Version (GetBuildInfo); 16001 = WoW Forever
     health = 1000,
     healthMax = 1000,
+    -- Händler: Reparatur (CanMerchantRepair, GetRepairAllCost) und Gildenbank
+    merchant = { canRepair = false, repairCost = 0, guildRepair = false, guildWithdraw = 0, guildMoney = 0 },
+    -- Taschen: bags[bag][slot] = { itemID, quality, stackCount, hasNoValue, isLocked } (C_Container)
+    bags = { [0] = {} },
+    bagSlots = 16,
+    freeSlots = { [0] = { 16, 0 } },  -- je Tasche { frei, bagFamily } (GetContainerNumFreeSlots)
+    durability = {},         -- je Ausrüstungsplatz { aktuell, max } (GetInventoryItemDurability)
+    inventoryCounts = {},    -- Anzahl je Ausrüstungsplatz (GetInventoryItemCount), 0 = Munition
+    sellPrices = {},         -- Verkaufspreis je itemID (C_Item.GetItemInfo)
+    -- Quest-NPC: Listen im Gespräch (GossipQuestUIInfo) und in der alten Quest-Liste (QUEST_GREETING)
+    gossip = { available = {}, active = {}, options = {} },
+    greeting = { available = {}, active = {} },  -- { title, isTrivial } bzw. { title, isComplete }
+    questPvp = false,        -- QuestFlagsPVP
+    questID = nil,           -- GetQuestID im offenen Quest-Text
+    trivialQuests = {},      -- C_QuestLog.IsQuestTrivial je Quest-ID
+    questAutoAccept = false, -- QuestGetAutoAccept
+    questCompletable = true, -- IsQuestCompletable
+    questMoney = 0,          -- GetQuestMoneyToGet
+    questChoices = {},       -- Belohnungen zur Auswahl: Item-Links (GetQuestItemLink("choice", i))
   },
   printed = {},
   UNKNOWN_EVENT = UNKNOWN_EVENT,
@@ -291,6 +312,14 @@ function UnitHealth() return state.health end
 function IsInGuild() return state.inGuild end
 function GetBuildInfo() return "12.1.0", "1", "2026-01-01", state.interface end
 function UnitAffectingCombat() return state.inCombat end
+function UnitOnTaxi() return state.onTaxi end
+function GetInventoryItemCount(_, slot) return state.inventoryCounts[slot] or 0 end
+function GetInventoryItemDurability(slot)
+  local entry = state.durability[slot]
+  if not entry then return nil end
+  return entry[1], entry[2]
+end
+function UnitIsAFK() return state.afk end
 function IsResting() return state.resting end
 C_Spell = { GetSpellName = function(spellID) return state.spellNames[spellID] end }
 C_UnitAuras = {
@@ -318,8 +347,110 @@ function IsInInstance()
   return false, "none"
 end
 function GetInstanceInfo() return state.instance and state.instance.name or GetZoneText() end
-C_QuestLog = { GetTitleForQuestID = function(questID) return state.questTitles[questID] end }
+C_QuestLog = {
+  GetTitleForQuestID = function(questID) return state.questTitles[questID] end,
+  IsQuestTrivial = function(questID) return state.trivialQuests[questID] or false end,
+}
+function GetQuestID() return state.questID or 0 end
 function strtrim(text) return (text:gsub("^%s+", ""):gsub("%s+$", "")) end
+-- Wie im Client: Funktion ersetzen, Original zuerst, dann der Hook
+function hooksecurefunc(name, hook)
+  local original = _G[name]
+  _G[name] = function(...)
+    local results = { original(...) }
+    hook(...)
+    return unpack(results)
+  end
+end
+
+-- Geldänderung durch den Server: kommt wie im Client erst später, mit PLAYER_MONEY (wow.runTimers)
+local function serverMoneyUpdate(delta)
+  C_Timer.After(0, function()
+    state.money = state.money + delta
+    wow.fire("PLAYER_MONEY")
+  end)
+end
+
+-- Händler; RepairAllItems bucht die Kosten ab (mit PLAYER_MONEY) und merkt sich die Reparatur in wow.repairs
+wow.repairs = {}
+function CanMerchantRepair() return state.merchant.canRepair end
+function GetRepairAllCost() return state.merchant.repairCost, state.merchant.repairCost > 0 end
+function RepairAllItems(useGuildBank)
+  local merchant = state.merchant
+  table.insert(wow.repairs, { cost = merchant.repairCost, guild = useGuildBank and true or false })
+  if useGuildBank then
+    merchant.guildMoney = merchant.guildMoney - merchant.repairCost
+  else
+    serverMoneyUpdate(-merchant.repairCost)
+  end
+  merchant.repairCost = 0
+end
+function CanGuildBankRepair() return state.merchant.guildRepair end
+function GetGuildBankWithdrawMoney() return state.merchant.guildWithdraw end
+function GetGuildBankMoney() return state.merchant.guildMoney end
+
+-- Taschen; UseContainerItem verkauft (Händler offen angenommen): Gegenstand weg, Geld dazu (PLAYER_MONEY)
+C_Container = {
+  GetContainerNumSlots = function(bag) return state.bags[bag] and state.bagSlots or 0 end,
+  GetContainerItemInfo = function(bag, slot) return state.bags[bag] and state.bags[bag][slot] end,
+  GetContainerNumFreeSlots = function(bag)
+    local entry = state.freeSlots[bag]
+    if not entry then return 0, 0 end
+    return entry[1], entry[2]
+  end,
+  UseContainerItem = function(bag, slot)
+    local info = state.bags[bag][slot]
+    state.bags[bag][slot] = nil
+    serverMoneyUpdate((state.sellPrices[info.itemID] or 0) * info.stackCount)
+  end,
+}
+-- Quest-Aktionen landen in wow.questActions, z.B. { "accept" } oder { "selectAvailable", 123 }
+wow.questActions = {}
+local function questAction(...) table.insert(wow.questActions, { ... }) end
+function QuestFlagsPVP() return state.questPvp end
+function QuestGetAutoAccept() return state.questAutoAccept end
+function AcceptQuest() questAction("accept") end
+function AcknowledgeAutoAcceptQuest() questAction("acknowledge") end
+function ConfirmAcceptQuest() questAction("confirm") end
+function StaticPopup_Hide(name) questAction("hidePopup", name) end
+-- Abgelehnte Anfragen landen in wow.declined (Name der Funktion)
+wow.declined = {}
+for _, name in ipairs({ "CancelTrade", "DeclineGroup", "DeclineGuild", "CancelDuel" }) do
+  _G[name] = function() table.insert(wow.declined, name) end
+end
+C_GossipInfo = {
+  GetAvailableQuests = function() return state.gossip.available end,
+  GetActiveQuests = function() return state.gossip.active end,
+  GetOptions = function() return state.gossip.options end,
+  GetNumAvailableQuests = function() return #state.gossip.available end,
+  GetNumActiveQuests = function() return #state.gossip.active end,
+  ForceGossip = function() return false end,
+  SelectAvailableQuest = function(questID) questAction("selectAvailable", questID) end,
+  SelectActiveQuest = function(questID) questAction("selectActive", questID) end,
+  SelectOptionByIndex = function(index) questAction("selectOption", index) end,
+}
+function GetNumAvailableQuests() return #state.greeting.available end
+function GetAvailableQuestInfo(index) return state.greeting.available[index].isTrivial end
+function SelectAvailableQuest(index) questAction("greetingAvailable", index) end
+function GetNumActiveQuests() return #state.greeting.active end
+function GetActiveTitle(index)
+  local quest = state.greeting.active[index]
+  return quest.title, quest.isComplete
+end
+function SelectActiveQuest(index) questAction("greetingActive", index) end
+function IsQuestCompletable() return state.questCompletable end
+function CompleteQuest() questAction("complete") end
+function GetQuestMoneyToGet() return state.questMoney end
+function GetNumQuestChoices() return #state.questChoices end
+function GetQuestItemLink(kind, index) return kind == "choice" and state.questChoices[index] or nil end
+function GetQuestReward(choice) questAction("reward", choice) end
+
+C_Item = {
+  -- itemID oder Link; Verkaufspreis aus state.sellPrices
+  GetItemInfo = function(itemID)
+    return "Item " .. itemID, nil, nil, nil, nil, nil, nil, nil, nil, nil, state.sellPrices[itemID]
+  end,
+}
 
 ---------------------------------------------------------------------------
 -- Addon laden

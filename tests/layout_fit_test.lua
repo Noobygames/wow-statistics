@@ -29,7 +29,7 @@ local function checkOptions(language)
   -- Schalterpaare in einer Zeile, je Reiter eins: links und rechts überlappen nicht
   for _, pair in ipairs({
     { "SHOW_XP_BAR", "COMPACT_MODE" },
-    { "STAT_XP_RATE", "STAT_LEVEL_ETA" },
+    { "STAT_XP_RATE", "STAT_RECENT_XP_RATE" },
     { "ALERT_TOGGLE_LEVEL_UP", "ALERT_TOGGLE_RARE" },
   }) do
     local left, right = findByLabel(L[pair[1]]), findByLabel(L[pair[2]])

@@ -22,6 +22,22 @@ local function xpRate(scope)
   return rate and Format.Number(rate) or PENDING
 end
 
+-- Unabhängig vom Bereich: Rate der letzten Minuten
+local function recentXpRate()
+  if not Experience.IsLeveling() then return NO_VALUE end
+  local rate = ns.RecentXpRate.Get()
+  return rate and Format.Number(rate) or PENDING
+end
+
+-- "~38": Kills bzw. Quests bis zum Level-Up beim Durchschnitt des Levels
+local function countToLevel(xpCounter, countCounter)
+  return function()
+    if not Experience.IsLeveling() then return NO_VALUE end
+    local count = Experience.CountToLevel(xpCounter, countCounter)
+    return count and ("~" .. count) or NO_VALUE
+  end
+end
+
 local function timeToLevel(scope)
   if not Experience.IsLeveling() then return NO_VALUE end
   local seconds = Experience.GetSecondsToLevel(scope)
@@ -89,13 +105,41 @@ local function restedXp(scope)
   return string.format("%s (%s)", Format.Number(rested), Format.Percent(rested, Stats.GetXp(scope)))
 end
 
-local function income(scope)
-  return Format.Money(Stats.Get(scope, Stats.MONEY_EARNED))
+-- Zeitaufteilung: "1h 20m (35%)" bezogen auf die Spielzeit des Bereichs
+local function timeShare(getSeconds)
+  return function(scope)
+    local seconds = getSeconds(scope)
+    if not seconds then return PENDING end
+    return string.format("%s (%s)", Format.Duration(seconds), Format.Percent(seconds, Stats.GetSeconds(scope) or 0))
+  end
 end
+
+local function timePart(counter)
+  return timeShare(function(scope) return ns.TimeBreakdown.GetSeconds(scope, counter) end)
+end
+
+-- Noch verfügbare Erholt-XP, Anteil am aktuellen Level (bis 150 %); unabhängig vom Bereich
+local function restedLeft()
+  if not Experience.IsLeveling() then return NO_VALUE end
+  local rested = GetXPExhaustion() or 0
+  return string.format("%s (%s)", Format.Number(rested), Format.Percent(rested, UnitXPMax("player")))
+end
+
+local function money(counterName)
+  return function(scope) return Format.Money(Stats.Get(scope, counterName)) end
+end
+
+local income = money(Stats.MONEY_EARNED)
 
 ns.STAT_LINES = {
   { setting = "showXpRate", label = "STAT_XP_RATE", rows = { { label = "ROW_XP_RATE", value = xpRate } } },
+  { setting = "showRecentXpRate", label = "STAT_RECENT_XP_RATE",
+    rows = { { label = "ROW_RECENT_XP_RATE", value = recentXpRate } } },
   { setting = "showLevelEta", label = "STAT_LEVEL_ETA", rows = { { label = "ROW_LEVEL_ETA", value = timeToLevel } } },
+  { setting = "showCountToLevel", label = "STAT_COUNT_TO_LEVEL", rows = {
+    { label = "ROW_KILLS_TO_LEVEL", value = countToLevel(Stats.XP_KILLS, Stats.PVE_KILLS) },
+    { label = "ROW_QUESTS_TO_LEVEL", value = countToLevel(Stats.XP_QUESTS, Stats.QUESTS) },
+  } },
   { setting = "showMaxLevelEta", label = "STAT_MAX_LEVEL_ETA",
     rows = { { label = "ROW_MAX_LEVEL_ETA", value = timeToMaxLevel } } },
   { setting = "showSplits", label = "STAT_SPLITS", rows = {
@@ -124,6 +168,21 @@ ns.STAT_LINES = {
     { label = "ROW_XP_OTHER", value = xpShare(3) },
   } },
   { setting = "showRested", label = "STAT_RESTED", rows = { { label = "ROW_RESTED", value = restedXp } } },
+  { setting = "showRestedLeft", label = "STAT_RESTED_LEFT", rows = { { label = "ROW_RESTED_LEFT", value = restedLeft } } },
+  { setting = "showTimeBreakdown", label = "STAT_TIME_BREAKDOWN", rows = {
+    { label = "ROW_TIME_COMBAT", value = timePart(Stats.COMBAT_SECONDS) },
+    { label = "ROW_TIME_TAXI", value = timePart(Stats.TAXI_SECONDS) },
+    { label = "ROW_TIME_AFK", value = timePart(Stats.AFK_SECONDS) },
+    { label = "ROW_TIME_REST", value = timeShare(function(scope) return ns.TimeBreakdown.GetRestSeconds(scope) end) },
+  } },
   { setting = "showQuests", label = "STAT_QUESTS", rows = { { label = "ROW_QUESTS", value = counter(Stats.QUESTS) } } },
   { setting = "showMoney", label = "STAT_MONEY", rows = { { label = "ROW_MONEY", value = income } } },
+  { setting = "showSpending", label = "STAT_SPENDING", rows = {
+    { label = "ROW_SPENT_REPAIR", value = money(Stats.SPENT_REPAIR) },
+    { label = "ROW_SPENT_MERCHANT", value = money(Stats.SPENT_MERCHANT) },
+    { label = "ROW_SPENT_TAXI", value = money(Stats.SPENT_TAXI) },
+    { label = "ROW_SPENT_TRAINER", value = money(Stats.SPENT_TRAINER) },
+    { label = "ROW_SPENT_OTHER", value = money(Stats.SPENT_OTHER) },
+    { label = "ROW_JUNK_INCOME", value = money(Stats.MONEY_JUNK) },
+  } },
 }

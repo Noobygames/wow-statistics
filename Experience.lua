@@ -22,8 +22,16 @@ function Experience.CalculateRate(xp, seconds)
   return xp / seconds * SECONDS_PER_HOUR
 end
 
+-- Spielzeit, auf die sich Raten und Prognosen beziehen: ohne AFK-Zeit, wenn eingestellt
+-- (xpRateWithoutAfk, AFK-Zeit aus TimeBreakdown.lua). Auch für Historie-Einträge.
+function Experience.RateSeconds(seconds, afkSeconds)
+  if not seconds or not ns.db or not ns.db.xpRateWithoutAfk then return seconds end
+  return math.max(0, seconds - (afkSeconds or 0))
+end
+
 function Experience.GetRatePerHour(scope)
-  return Experience.CalculateRate(Stats.GetXp(scope), Stats.GetSeconds(scope))
+  local afkSeconds = ns.TimeBreakdown.GetSeconds(scope, Stats.AFK_SECONDS)
+  return Experience.CalculateRate(Stats.GetXp(scope), Experience.RateSeconds(Stats.GetSeconds(scope), afkSeconds))
 end
 
 -- Geschätzte Spielzeit bis zum Level-Up bei der Rate des Bereichs
@@ -32,6 +40,20 @@ function Experience.GetSecondsToLevel(scope)
   if not rate then return nil end
   local remainingXp = UnitXPMax("player") - UnitXP("player")
   return remainingXp / rate * SECONDS_PER_HOUR
+end
+
+-- Wie viele Kills bzw. Quests noch bis zum Level-Up fehlen, bei der durchschnittlichen XP je
+-- Kill/Quest auf diesem Level (sonst der Session); nil ohne Grundlage
+function Experience.CountToLevel(xpCounter, countCounter)
+  for _, scope in ipairs({ Stats.LEVEL, Stats.SESSION }) do
+    local count = Stats.Get(scope, countCounter)
+    local xp = Stats.Get(scope, xpCounter)
+    if count > 0 and xp > 0 then
+      local remainingXp = UnitXPMax("player") - UnitXP("player")
+      return math.ceil(remainingXp / (xp / count))
+    end
+  end
+  return nil
 end
 
 -- XP-Quellen im Bereich. "Sonstige" ist der Rest (Entdecken, Berufe, ...).

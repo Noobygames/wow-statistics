@@ -33,11 +33,28 @@ addon.Set("alertEliteKill", true)
 Journal.AddKill(Journal.PVE, "Wächter", "elite")
 expect("Elite-Kill", shownText(), string.format(L.ALERT_ELITE_KILL, "Wächter"))
 
+-- In Dungeons und Raids keine Elite-Einblendung (dort ist fast alles Elite)
+for _, kind in ipairs({ "party", "raid" }) do
+  wow.state.instance = { name = "Todesminen", type = kind }
+  Journal.AddKill(Journal.PVE, "Minenarbeiter", "elite")
+  expect("keine Elite in " .. kind, shownText(), string.format(L.ALERT_ELITE_KILL, "Wächter"))
+end
+wow.state.instance = nil
+
 -- Nur epische Beute, seltene nicht
 Journal.AddLoot({ link = "[Blauer Ring]", quality = 3 })
 expect("seltene Beute ohne Einblendung", shownText(), string.format(L.ALERT_ELITE_KILL, "Wächter"))
 Journal.AddLoot({ link = "[Lila Schwert]", quality = 4 })
 expect("epische Beute", shownText(), string.format(L.ALERT_EPIC_LOOT, "[Lila Schwert]"))
+
+-- Im Raid ist epische Beute normal: keine Einblendung; im Dungeon schon
+wow.state.instance = { name = "Geschmolzener Kern", type = "raid" }
+Journal.AddLoot({ link = "[Raid-Helm]", quality = 4 })
+expect("keine Beute im Raid", shownText(), string.format(L.ALERT_EPIC_LOOT, "[Lila Schwert]"))
+wow.state.instance = { name = "Todesminen", type = "party" }
+Journal.AddLoot({ link = "[Dungeon-Helm]", quality = 4 })
+expect("Beute im Dungeon", shownText(), string.format(L.ALERT_EPIC_LOOT, "[Dungeon-Helm]"))
+wow.state.instance = nil
 
 Journal.AddNearDeath(4, {})
 expect("Beinahe-Tod", shownText(), string.format(L.ALERT_NEAR_DEATH, 4))

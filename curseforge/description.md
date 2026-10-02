@@ -10,13 +10,15 @@ A small, movable window shows either your current level or your current session.
 
 - **Play time**: on this level (synced with the server's `/played`) or in this session, counted up live
 - **XP bar** with rested bonus
-- **XP per hour**, the estimated play time until the next level and until max level
+- **XP per hour**, the estimated play time until the next level and until max level, optionally without AFK time
+- **Current XP/h** over the last 15 minutes and **kills/quests left** until the next level
+- **Time breakdown**: combat, flight paths, AFK and the rest
 - **Kills**, split into **PvE** (every kill that granted experience, including group kills), **PvP** (honorable kills) and optionally **elite** and **rare** kills
 - **Deaths**, with time spent dead or as a ghost and kills per death
 - **XP sources**: share of XP from kills, quests and everything else (exploration, professions, ...)
 - **Rested XP**: bonus XP gained from rest and its share of your XP
 - **Quests** turned in
-- **Income**: money earned from loot, quests, sales and mail
+- **Income**: money earned from loot, quests, sales and mail, and **spending** by kind (repairs, merchants, flights, trainers)
 - **Level-up summary** in chat when you ding
 
 Shown as a clear table, label left and value right. Every value can be switched on or off on its own, e.g. PvE and PvP kills separately.
@@ -24,6 +26,7 @@ Shown as a clear table, label left and value right. Every value can be switched 
 ### History and evaluation
 
 - **Levels**: play time, XP/h, kills, deaths, quests and gold of every finished level, saved automatically on level-up
+- **Time split**: combat, flying, AFK and dead time per level
 - **Timeline**: when each level was reached, with total /played and how long it took
 - **Sessions**: start, duration, level range, XP/h, kills, deaths, quests and gold of every past session
 - **Kills**: every killed creature and player with time, name, PvE/PvP, level and zone
@@ -48,6 +51,8 @@ A session runs from login to logout. A `/reload` or a short break (up to 5 minut
 - Lock, show or hide the window, reset position and size
 - Show or hide the minimap button
 - One toggle per statistic
+- Comfort (each off by default, hold Shift to skip once): auto repair (optionally from the guild bank), sell gray items, accept and turn in quests, accept shared quests, skip single-option gossip, decline trades, group and guild invites and duels
+- Warnings: bags almost full, low durability, new spells at the trainer and low ammo for hunters (the last two in Classic Era, TBC and WoW Forever)
 
 ## Usage
 
@@ -65,7 +70,7 @@ A session runs from login to logout. A `/reload` or a short break (up to 5 minut
 | `/lt compact` | Toggle compact mode (play time, XP bar and XP/h only) |
 | `/lt bar` | Toggle horizontal bar layout (everything in one line, like an info bar) |
 | `/lt newsession` | Archive the running session and start a new one (also a button in the settings) |
-| `/lt stream` | Stream mode: transparent larger window, alerts on, names hidden; again restores your settings |
+| `/lt stream` | Stream mode: alerts on, names hidden (window size and transparency unchanged); again restores your settings |
 | `/lt splits` | Show or hide the split list (last levels with time and difference) |
 | `/lt profile` | List profiles; `/lt profile Name` switches, `save Name`, `delete Name`, `export`, `import` (also in Settings > Profiles) |
 | `/lt runs backup` / `/lt runs import` | Copy all runs as text, or paste runs shared by others (also buttons in History > Speedrun) |
