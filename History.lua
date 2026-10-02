@@ -40,6 +40,22 @@ function History.GetCharacterKeys()
   return keys
 end
 
+-- Anzeigename "Name - Realm". Mit Streamer-Datenschutz (Einstellung streamerPrivacy) ohne Realm,
+-- andere Charaktere nur als "Charakter N" (N = Platz in GetCharacterKeys), gegen Stream-Sniping.
+function History.DisplayName(characterKey)
+  local character = History.GetCharacter(characterKey)
+  if not ns.db.streamerPrivacy then
+    return (character.name or "?") .. " - " .. (character.realm or "?")
+  end
+  if isLoggedIn(characterKey) then
+    return character.name or "?"
+  end
+  for index, key in ipairs(History.GetCharacterKeys()) do
+    if key == characterKey then return string.format(L.HIDDEN_CHARACTER, index) end
+  end
+  return "?"
+end
+
 local function currentLevelRecord(characterKey)
   if isLoggedIn(characterKey) then
     return {
@@ -145,7 +161,7 @@ end
 
 -- Vergleich aller Charaktere: eine Zeile je Charakter aus Level-Historie und laufendem Level.
 -- Sortiert nach durchschnittlicher Zeit je abgeschlossenem Level (schnellster zuerst, ohne Daten zuletzt).
--- Eintrag: { name, realm, class, level, levelsCompleted, averageLevelSeconds, xpRate, counters, isCurrent }
+-- Eintrag: { key, name, realm, class, level, levelsCompleted, averageLevelSeconds, xpRate, counters, isCurrent }
 local function compareRecord(characterKey)
   local character = History.GetCharacter(characterKey)
   local levelRecords = History.GetLevelRecords(characterKey)
@@ -160,6 +176,7 @@ local function compareRecord(characterKey)
   end
 
   return {
+    key = characterKey,
     name = character.name,
     realm = character.realm,
     class = character.class,

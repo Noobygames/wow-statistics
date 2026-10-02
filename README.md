@@ -54,6 +54,13 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 - Resize the window by dragging its bottom right corner; text and everything else scale with it. Right-click the window to open the settings.
 - **Compact mode** (`/lt compact` or settings): only play time, XP bar and XP/h.
 - **Horizontal bar** (`/lt bar` or settings): the window as a slim info bar, all values in one line; combines with compact mode.
+- **Stream view** (settings): solid green or magenta background without border for chroma keying in OBS.
+- **Splits** (settings): running level time against the fastest time of your other characters for that level, plus the total difference, green when ahead and red when behind.
+- **Level-up announcement** (settings): post the level summary to your party or guild, or to /say with one click on a button.
+- **Food and camp reminders** (settings): remind you when you are not Well Fed (in WoW Forever food gives 5% more kill XP) or have no camp benefits while leveling.
+- **Speedrun records**: compare your /played time at level 10, 20 and 60 with the fastest runs on speedrun.com (WoW Classic: Leveling, SSF Softcore), overall or for your class, in the split list and in History > Speedrun. Data: [speedrun.com](https://www.speedrun.com/wowclassicera).
+- **Alerts** (settings): big on-screen messages for level up, rare and elite kills, epic loot and near deaths, each optional.
+- **Hide names** (settings): history shows no realm and lists other characters only as "Character 2, 3, ...".
 - Settings, grouped into Window, Statistics and General: size, background opacity, show/lock window, reset position & size, one toggle per statistic, language (English, Deutsch, Français, Español) and the minimap button.
 
 ### Chat commands
@@ -66,10 +73,18 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 | `/lt reset` | Reset window position and size |
 | `/lt compact` | Toggle compact mode (play time, XP bar and XP/h only) |
 | `/lt bar` | Toggle horizontal bar layout (everything in one line, like an info bar) |
+| `/lt newsession` | Archive the running session and start a new one (also a button in the settings) |
+| `/lt stream` | Stream mode: transparent larger window, alerts on, names hidden; again restores your settings |
+| `/lt splits` | Show or hide the split list (last levels with time and difference) |
+| `/lt profile` | List profiles; `/lt profile Name` switches, `save Name`, `delete Name`, `export`, `import` (also in Settings > Profiles) |
+| `/lt runs backup` / `/lt runs import` | Copy all runs as text, or paste runs shared by others (also buttons in History > Speedrun) |
+| `/lt compare pb` | Splits against your personal best run (`best` = best time per level, or a character name) |
+| `/lt recap` | Session summary card: time, levels, XP, kills, deaths, best loot, most dangerous enemy |
+| `/lt goal 30` | Set a goal level with progress and forecast in the window; `/lt goal` removes it |
 | `/lt show` / `/lt hide` | Show or hide the window |
 | `/lt sync` | Re-sync play time with the server |
 | `/lt minimap` | Toggle the minimap button |
-| `/lt debug` | Show every XP message in chat and whether it counted as a kill (troubleshooting) |
+| `/lt debug` | Extended logging in chat until /reload; `/lt debug help` lists test commands (state, levelup, alert, remind, death, splits) |
 
 `/leveltimer` works as an alias for `/lt`.
 

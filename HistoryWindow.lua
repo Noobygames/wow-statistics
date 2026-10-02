@@ -144,13 +144,13 @@ StaticPopupDialogs[DELETE_POPUP] = {
 local deleteButton = Widgets.CreateButton(panel, DELETE_BUTTON_WIDTH, DELETE_BUTTON_HEIGHT, function()
   local character = History.GetCharacter(selectedCharacter)
   StaticPopupDialogs[DELETE_POPUP].text = L.DELETE_CHARACTER_CONFIRM  -- aktuelle Sprache
-  StaticPopup_Show(DELETE_POPUP, (character.name or "?") .. " - " .. (character.realm or "?"), nil, selectedCharacter)
+  StaticPopup_Show(DELETE_POPUP, History.DisplayName(selectedCharacter), nil, selectedCharacter)
 end)
 deleteButton:SetPoint("TOPLEFT", MARGIN, HEADER_TOP + 4)
 
-local function showCharacterName(character)
-  characterName:SetText(string.format(L.HISTORY_CHARACTER, character.name or "?", character.realm or "?",
-    character.currentLevel.level))
+local function showCharacterName(characterKey)
+  local character = History.GetCharacter(characterKey)
+  characterName:SetText(string.format(L.HISTORY_CHARACTER, History.DisplayName(characterKey), character.currentLevel.level))
   local classColor = RAID_CLASS_COLORS and character.class and RAID_CLASS_COLORS[character.class]
   if classColor then
     characterName:SetTextColor(classColor.r, classColor.g, classColor.b)
@@ -195,7 +195,7 @@ function refresh()
 
   header:SetText(L.HISTORY)
   deleteButton:SetText(L.DELETE_CHARACTER)
-  showCharacterName(History.GetCharacter(selectedCharacter))
+  showCharacterName(selectedCharacter)
 
   local selectedView = selectedEntry.selected
   local selectionChanged = rendered.view ~= selectedView or rendered.character ~= selectedCharacter

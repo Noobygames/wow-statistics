@@ -45,6 +45,7 @@ end
 
 function Stats.Increment(counter, amount)
   amount = amount or 1
+  ns.Debug("stats", "%s +%s", counter, amount)
   for _, scope in ipairs({ Stats.LEVEL, Stats.SESSION }) do
     local counters = countersOf(scope)
     counters[counter] = (counters[counter] or 0) + amount

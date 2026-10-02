@@ -17,7 +17,72 @@ local commands = {
   reset = function() ns.TimerWindow.ResetLayout() end,
   compact = function() ns.Set("compactMode", not ns.db.compactMode) end,
   bar = function() ns.Set("horizontalLayout", not ns.db.horizontalLayout) end,
-  debug = function()
+  newsession = function() ns.StartNewSession() end,
+  recap = function() ns.ToggleRecap() end,
+  stream = function() ns.StreamMode.Toggle() end,
+  splits = function() ns.Set("showSplitList", not ns.db.showSplitList) end,
+  -- /lt profile: Liste | <Name> wechseln | save <Name> | delete <Name> | export | import
+  profile = function(argument)
+    local Profiles = ns.Profiles
+    local action, name = argument:match("^(%S*)%s*(.-)$")
+    if argument == "" then
+      local names = {}
+      for i, profileName in ipairs(Profiles.GetNames()) do names[i] = Profiles.DisplayName(profileName) end
+      ns.Print(string.format(L.PROFILE_LIST, Profiles.DisplayName(Profiles.GetActive()), table.concat(names, ", ")))
+    elseif action == "save" and Profiles.SaveAs(name) then
+      ns.Print(string.format(L.PROFILE_SAVED, name))
+      ns.ApplySettings()
+    elseif action == "delete" then
+      ns.Print(Profiles.Delete(name) and string.format(L.PROFILE_DELETED, name) or L.PROFILE_NOT_DELETED)
+    elseif action == "export" then
+      ns.Export.Show(Profiles.DisplayName(Profiles.GetActive()), Profiles.Export(Profiles.GetActive()))
+    elseif action == "import" then
+      ns.ShowProfileImport()
+    elseif not Profiles.Switch(argument) then
+      ns.Print(L.PROFILE_UNKNOWN)
+    end
+  end,
+  -- /lt runs import | backup: Läufe einfügen bzw. alle als Text sichern
+  runs = function(argument)
+    if argument == "import" then
+      ns.ShowRunImport()
+    elseif argument == "backup" then
+      ns.Export.Show(L.RUNS_BACKUP, ns.Runs.ExportAll())
+    else
+      ns.Print(L.HELP)
+    end
+  end,
+  -- /lt compare best | pb | Name: Vergleich für die Splits
+  compare = function(argument)
+    local Splits = ns.Splits
+    local mode = argument:lower()
+    if mode == Splits.BEST or mode == Splits.PERSONAL_BEST then
+      ns.Set("splitComparison", mode)
+      ns.Print(L["COMPARE_" .. mode:upper()])
+    elseif argument ~= "" and Splits.CompareWith(argument) then
+      ns.Print(string.format(L.COMPARE_SET, Splits.GetReferenceName()))
+    else
+      ns.Print(L.COMPARE_USAGE)
+    end
+  end,
+  -- /lt goal 30 setzt das Ziel-Level, /lt goal ohne Zahl entfernt es
+  goal = function(argument)
+    if argument == "" then
+      ns.Goal.Clear()
+      ns.Print(L.GOAL_CLEARED)
+    elseif ns.Goal.Set(tonumber(argument)) then
+      ns.Set("showGoal", true)
+      ns.Print(string.format(L.GOAL_SET, ns.Goal.Get().level))
+    else
+      ns.Print(L.GOAL_INVALID)
+    end
+  end,
+  -- /lt debug schaltet das erweiterte Logging, /lt debug <befehl> löst Testfunktionen aus (DebugTools.lua)
+  debug = function(argument)
+    if argument ~= "" then
+      ns.DebugTools.Run(argument)
+      return
+    end
     ns.debug = not ns.debug  -- bewusst nicht gespeichert, gilt bis /reload
     ns.Print(ns.debug and L.DEBUG_ON or L.DEBUG_OFF)
   end,
@@ -29,10 +94,12 @@ local commands = {
 
 SLASH_LEVELTIMER1 = "/leveltimer"
 SLASH_LEVELTIMER2 = "/lt"
+-- Erstes Wort = Befehl, der Rest wird als Argument übergeben (z.B. "goal 30")
 SlashCmdList.LEVELTIMER = function(input)
-  local command = commands[strtrim(input or ""):lower()]
+  local name, argument = strtrim(input or ""):match("^(%S*)%s*(.-)$")
+  local command = commands[name:lower()]
   if command then
-    command()
+    command(argument)
   else
     ns.Print(L.HELP)
   end

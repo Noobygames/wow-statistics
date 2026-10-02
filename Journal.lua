@@ -23,11 +23,23 @@ Journal.MAX_INSTANCE_RUNS = 500
 Journal.MAX_LOOT = 2000
 Journal.MAX_NEAR_DEATHS = 500
 
--- Neuen Eintrag anhängen und die ältesten über dem Limit verwerfen
-local function append(log, entry, limit)
+-- Module, die auf neue Einträge reagieren (z.B. Einblendungen): listener(logName, entry)
+local addListeners = {}
+
+function Journal.OnAdd(listener)
+  table.insert(addListeners, listener)
+end
+
+-- Neuen Eintrag an character[logName] anhängen, die ältesten über dem Limit verwerfen
+local function append(logName, entry, limit)
+  ns.Debug("journal", "%s: %s", logName, entry.name or entry.killer or entry.link or entry.environment or "-")
+  local log = ns.character[logName]
   table.insert(log, entry)
   while #log > limit do
     table.remove(log, 1)
+  end
+  for _, listener in ipairs(addListeners) do
+    listener(logName, entry)
   end
 end
 
@@ -41,7 +53,7 @@ function Journal.AddKill(kind, name, classification)
   entry.kind = kind
   entry.name = name
   entry.classification = classification
-  append(ns.character.killLog, entry, Journal.MAX_KILLS)
+  append("killLog", entry, Journal.MAX_KILLS)
 end
 
 -- name darf nil sein, xp und money (Kupfer) ebenfalls
@@ -51,7 +63,7 @@ function Journal.AddQuest(questID, name, xp, money)
   entry.name = name
   entry.xp = xp
   entry.money = money
-  append(ns.character.questLog, entry, Journal.MAX_QUESTS)
+  append("questLog", entry, Journal.MAX_QUESTS)
 end
 
 -- lowestPercent = tiefster Lebensstand in Prozent, cause wie bei AddDeath
@@ -61,7 +73,7 @@ function Journal.AddNearDeath(lowestPercent, cause)
   entry.killer = cause.killer
   entry.spell = cause.spell
   entry.environment = cause.environment
-  append(ns.character.nearDeathLog, entry, Journal.MAX_NEAR_DEATHS)
+  append("nearDeathLog", entry, Journal.MAX_NEAR_DEATHS)
 end
 
 -- item = { link, name, quality, quantity, source }
@@ -72,12 +84,12 @@ function Journal.AddLoot(item)
   entry.quality = item.quality
   entry.quantity = item.quantity
   entry.source = item.source
-  append(ns.character.lootLog, entry, Journal.MAX_LOOT)
+  append("lootLog", entry, Journal.MAX_LOOT)
 end
 
 -- Beendeter Instanz-Lauf (Form siehe Instances.lua); time = Betreten der Instanz
 function Journal.AddInstanceRun(run)
-  append(ns.character.instanceLog, {
+  append("instanceLog", {
     time = run.startedAt,
     name = run.name,
     instanceType = run.instanceType,
@@ -93,7 +105,7 @@ end
 function Journal.AddDeath(cause)
   local entry = baseEntry()
   Journal.SetDeathCause(entry, cause)
-  append(ns.character.deathLog, entry, Journal.MAX_DEATHS)
+  append("deathLog", entry, Journal.MAX_DEATHS)
   return entry
 end
 

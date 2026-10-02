@@ -41,6 +41,14 @@ wow = {
     questTitles = {},        -- C_QuestLog.GetTitleForQuestID je Quest-ID
     instance = nil,          -- { name, type } wenn in einer Instanz (IsInInstance)
     units = {},              -- weitere Einheiten: units.target = { name, classification, isPlayer }
+    inGuild = false,
+    inGroup = false,         -- Gruppe (IsInGroup)
+    chatLockdown = false,    -- C_ChatInfo.InChatMessagingLockdown
+    inCombat = false,
+    resting = false,
+    buffs = {},              -- aktive Buffs: Name oder { name, spellId } (C_UnitAuras.GetAuraDataByIndex)
+    spellNames = { [19705] = "Satt", [1229741] = "Lagervorteile" },  -- C_Spell.GetSpellName
+    interface = 120100,      -- Interface-Version (GetBuildInfo); 16001 = WoW Forever
     health = 1000,
     healthMax = 1000,
   },
@@ -95,6 +103,8 @@ local frameMethods = {
   GetTop = function() return 500 end,
   SetNormalTexture = function(self, texture) self._normalTexture = texture end,
   GetPoint = function() return "CENTER", nil, "CENTER", 0, 0 end,
+  SetBackdropColor = function(self, r, g, b, a) self._backdropColor = { r, g, b, a } end,
+  SetBackdropBorderColor = function(self, r, g, b, a) self._borderColor = { r, g, b, a } end,
   -- Anker werden nur gemerkt (frame._points), nicht ausgewertet
   SetPoint = function(self, ...) table.insert(self._points, { ... }) end,
   ClearAllPoints = function(self) self._points = {} end,
@@ -270,6 +280,25 @@ function GetRealmName() return state.realm end
 function UnitClass() return state.class, state.class end
 function UnitIsDeadOrGhost() return state.dead end
 function UnitHealth() return state.health end
+function IsInGuild() return state.inGuild end
+function GetBuildInfo() return "12.1.0", "1", "2026-01-01", state.interface end
+function UnitAffectingCombat() return state.inCombat end
+function IsResting() return state.resting end
+C_Spell = { GetSpellName = function(spellID) return state.spellNames[spellID] end }
+C_UnitAuras = {
+  GetAuraDataByIndex = function(_, index)
+    local buff = state.buffs[index]
+    if type(buff) == "string" then return { name = buff } end
+    return buff
+  end,
+}
+function IsInGroup() return state.inGroup end
+-- Gesendete Chat-Nachrichten landen in wow.sentChat als { message, chatType }
+wow.sentChat = {}
+C_ChatInfo = {
+  SendChatMessage = function(message, chatType) table.insert(wow.sentChat, { message = message, chatType = chatType }) end,
+  InChatMessagingLockdown = function() return state.chatLockdown end,
+}
 function UnitHealthMax() return state.healthMax end
 function GetPVPSessionStats() return state.honorableKills end
 function IsShiftKeyDown() return state.shiftDown end

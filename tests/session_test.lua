@@ -71,3 +71,31 @@ local records = History.GetSessionRecords(addon.characterKey)
 local summary = History.Summarize(records)
 expect("Summe Kills", summary.counters.pveKills, 2)
 expect("Anzahl Einträge", summary.count, 2)
+
+-- Neue Session per Befehl: laufende wird sofort archiviert, Zähler beginnen bei 0
+wow.advance(600)
+kill()
+local before = #addon.character.sessionHistory
+SlashCmdList.LEVELTIMER("newsession")
+expect("manuell archiviert", #addon.character.sessionHistory, before + 1)
+local manual = addon.character.sessionHistory[#addon.character.sessionHistory]
+expectNear("archivierte Zeit bis jetzt", manual.seconds, 600)
+expect("archivierter Kill", manual.counters.pveKills, 1)
+expect("neue Session ohne Kills", Stats.Get(Stats.SESSION, Stats.PVE_KILLS), 0)
+expectNear("neue Session ohne Zeit", Stats.GetSeconds(Stats.SESSION), 0)
+expect("Level-Zähler unberührt", Stats.Get(Stats.LEVEL, Stats.PVE_KILLS), 2)
+expectTrue("Rückmeldung im Chat", wow.printed[#wow.printed]:find(addon.L.NEW_SESSION_STARTED, 1, true) ~= nil)
+
+-- Neue Session läuft normal weiter und übersteht /reload
+wow.advance(120)
+wow.logout()
+wow.advance(20)
+wow.login()
+expect("nach Reload nichts zusätzlich archiviert", #addon.character.sessionHistory, before + 1)
+expectNear("neue Session zählt weiter", Stats.GetSeconds(Stats.SESSION), 120)
+
+-- Button in den Einstellungen
+SlashCmdList.LEVELTIMER("config")
+wow.advance(120)
+expectTrue("Button Neue Session", wow.click(addon.L.NEW_SESSION))
+expect("Button archiviert", #addon.character.sessionHistory, before + 2)

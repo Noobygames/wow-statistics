@@ -9,6 +9,7 @@ local Experience = ns.Experience
 local DeathCounter = ns.DeathCounter
 
 local NO_VALUE = "-"
+local DEATH_COLOR = "|cffff4040"  -- Tode rot, damit sie (z.B. im Stream) auffallen (Einstellung highlightDeaths)
 local PENDING = "..."  -- noch nicht aussagekräftig (z.B. /played hat noch nicht geantwortet)
 
 local function counter(name)
@@ -37,8 +38,35 @@ end
 local function deaths(scope)
   local count = Stats.Get(scope, Stats.DEATHS)
   local deadSeconds = DeathCounter.GetDeadSeconds(scope)
-  if deadSeconds < 1 then return tostring(count) end
-  return string.format("%d (%s)", count, Format.Duration(deadSeconds))
+  local text = tostring(count)
+  if deadSeconds >= 1 then
+    text = string.format("%d (%s)", count, Format.Duration(deadSeconds))
+  end
+  if count > 0 and ns.db.highlightDeaths then
+    text = DEATH_COLOR .. text .. "|r"
+  end
+  return text
+end
+
+-- Split: "-1m 05s" grün (schneller), "+3m 12s" rot (langsamer), "-" ohne Vergleich
+local function splitText(getDelta)
+  return function() return Format.SplitDelta(getDelta()) end
+end
+
+-- Session-Ziel: "Level 30: 45 %, 1h 20m" bzw. "Level 30 erreicht"
+local function goalText()
+  local goal = ns.Goal.Get()
+  if not goal then return NO_VALUE end
+  if goal.reached then return string.format(ns.L.GOAL_DONE, goal.level) end
+  local seconds = ns.Goal.GetSecondsLeft()
+  return string.format(ns.L.GOAL_PROGRESS, goal.level, Format.Percent(ns.Goal.GetProgress(), 1),
+    seconds and Format.Duration(seconds) or PENDING)
+end
+
+-- Unabhängig vom Bereich: seit dem letzten Tod des Charakters
+local function timeWithoutDeath()
+  local seconds = DeathCounter.GetSecondsSinceDeath()
+  return seconds and Format.Duration(seconds) or NO_VALUE
 end
 
 local function killsPerDeath(scope)
@@ -70,6 +98,11 @@ ns.STAT_LINES = {
   { setting = "showLevelEta", label = "STAT_LEVEL_ETA", rows = { { label = "ROW_LEVEL_ETA", value = timeToLevel } } },
   { setting = "showMaxLevelEta", label = "STAT_MAX_LEVEL_ETA",
     rows = { { label = "ROW_MAX_LEVEL_ETA", value = timeToMaxLevel } } },
+  { setting = "showSplits", label = "STAT_SPLITS", rows = {
+    { label = "ROW_SPLIT_LEVEL", value = splitText(ns.Splits.GetCurrentDelta) },
+    { label = "ROW_SPLIT_TOTAL", value = splitText(ns.Splits.GetTotalDelta) },
+  } },
+  { setting = "showGoal", label = "STAT_GOAL", rows = { { label = "ROW_GOAL", value = goalText } } },
   { setting = "showPveKills", label = "STAT_PVE_KILLS",
     rows = { { label = "ROW_PVE_KILLS", value = counter(Stats.PVE_KILLS) } } },
   { setting = "showPvpKills", label = "STAT_PVP_KILLS",
@@ -83,6 +116,8 @@ ns.STAT_LINES = {
     rows = { { label = "ROW_KILLS_PER_DEATH", value = killsPerDeath } } },
   { setting = "showNearDeaths", label = "STAT_NEAR_DEATHS",
     rows = { { label = "ROW_NEAR_DEATHS", value = counter(Stats.NEAR_DEATHS) } } },
+  { setting = "showDeathless", label = "STAT_DEATHLESS",
+    rows = { { label = "ROW_DEATHLESS", value = timeWithoutDeath } } },
   { setting = "showXpSources", label = "STAT_XP_SOURCES", rows = {
     { label = "ROW_XP_KILLS", value = xpShare(1) },
     { label = "ROW_XP_QUESTS", value = xpShare(2) },

@@ -23,6 +23,18 @@ function DeathCounter.GetDeadSeconds(scope)
   return Stats.Get(scope, Stats.DEAD_SECONDS) + running
 end
 
+-- Gespielte Zeit seit dem letzten Tod (Hardcore-Anzeige), über alle Level und Sessions.
+-- Grundlage: /played beim Tod (character.lastDeathPlayed). Noch nie gestorben = gesamte Spielzeit.
+-- nil, solange /played nicht geantwortet hat oder der letzte Tod vor dieser Funktion lag.
+function DeathCounter.GetSecondsSinceDeath()
+  local total = ns.PlayedTime.GetTotalSeconds()
+  if not total then return nil end
+  local lastDeath = ns.character.lastDeathPlayed
+  if lastDeath then return math.max(0, total - lastDeath) end
+  if #ns.character.deathLog > 0 then return nil end
+  return total
+end
+
 -- Kills pro Tod, nil solange man im Bereich nicht gestorben ist
 function DeathCounter.GetKillsPerDeath(scope)
   local deaths = Stats.Get(scope, Stats.DEATHS)
@@ -89,11 +101,14 @@ end
 local function fillCauseFromRecap(entry)
   local cause = DeathRecap.GetLastCause()
   if cause then
+    ns.Debug("death", "cause from death recap: %s / %s / %s", cause.killer, cause.spell, cause.environment)
     Journal.SetDeathCause(entry, cause)
     return
   end
+  ns.Debug("death", "death recap not ready, retry in %s s", RECAP_RETRY_DELAY)
   C_Timer.After(RECAP_RETRY_DELAY, function()
     local delayed = DeathRecap.GetLastCause()
+    ns.Debug("death", "death recap retry: %s", delayed and delayed.killer or "no cause")
     if delayed and not isKnown(entry) then
       Journal.SetDeathCause(entry, delayed)
     end
@@ -112,7 +127,9 @@ end
 ns.RegisterEvent("PLAYER_DEAD", function()
   if deadSince then return end  -- schon tot (z.B. Login als Geist), nicht doppelt zählen
   Stats.Increment(Stats.DEATHS)
+  ns.character.lastDeathPlayed = ns.PlayedTime.GetTotalSeconds()
   local cause = takeDeathCause()
+  ns.Debug("death", "died, combat log cause: %s / %s / %s", cause.killer, cause.spell, cause.environment)
   local entry = Journal.AddDeath(cause)
   if not isKnown(cause) and DeathRecap.IsAvailable() then
     fillCauseFromRecap(entry)

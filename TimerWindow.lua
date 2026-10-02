@@ -4,6 +4,7 @@
 -- der XP-Balken darunter über die ganze Breite.
 -- Größe: Ziehgriff unten rechts (erscheint bei Mauskontakt) oder Einstellung "scale" skaliert das ganze Fenster.
 -- Rechtsklick öffnet die Einstellungen.
+-- Stream-Ansicht: Einstellung "windowBackground" färbt den Hintergrund grün oder magenta ohne Rahmen.
 local _, ns = ...
 local L = ns.L
 local Widgets = ns.Widgets
@@ -33,6 +34,12 @@ local COMPACT_ROW_SETTING = "showXpRate"  -- einzige Zeile im Kompaktmodus
 local XP_BAR_HEIGHT = 6
 local XP_BAR_BACKGROUND = { 1, 1, 1, 0.1 }
 local XP_BAR_RESTED = { 0.3, 0.55, 1, 0.6 }
+-- Einstellung "windowBackground": Standard oder einfarbig zum Freistellen in OBS (Chroma-Key)
+TimerWindow.BACKGROUND_DEFAULT = "default"
+TimerWindow.CHROMA_COLORS = {
+  green = { 0, 1, 0 },
+  magenta = { 1, 0, 1 },
+}
 local BAR_PADDING_X = 10              -- Info-Leiste: Rand links und rechts
 local BAR_ITEM_GAP = 14               -- Info-Leiste: Abstand zwischen zwei Einträgen
 local BAR_LABEL_GAP = 4               -- Info-Leiste: Abstand zwischen Bezeichnung und Wert
@@ -264,6 +271,16 @@ local function updateLayout(db)
   end
 end
 
+-- Hintergrund aus den Einstellungen (auch für weitere Anzeigen wie die Split-Liste)
+function TimerWindow.ApplyBackground(frame, db)
+  local chroma = TimerWindow.CHROMA_COLORS[db.windowBackground]
+  if chroma then
+    Widgets.SetSolidBackground(frame, chroma)
+  else
+    Widgets.SetDefaultBackground(frame, db.bgAlpha)
+  end
+end
+
 ---------------------------------------------------------------------------
 -- Position und Größe
 ---------------------------------------------------------------------------
@@ -298,6 +315,7 @@ end
 
 function TimerWindow.ResetLayout()
   ns.db.pos = nil
+  ns.db.splitListPos = nil
   ns.db.scale = DEFAULT_SCALE
   restorePosition()
   ns.ApplySettings()
@@ -379,7 +397,7 @@ ns.OnLogin(restorePosition)
 ns.RegisterApply(function(db)
   updateLayout(db)
   refreshTexts()
-  Widgets.SetBackgroundAlpha(window, db.bgAlpha)
+  TimerWindow.ApplyBackground(window, db)
 
   -- Größe aus den Einstellungen (Regler); beim Login ist sie schon gesetzt
   local scale = clampScale(db.scale)

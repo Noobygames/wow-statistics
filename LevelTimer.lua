@@ -7,6 +7,25 @@ function ns.Print(msg)
   print(PREFIX .. msg)
 end
 
+-- Erweitertes Logging für /lt debug (ns.debug, bis /reload). Technische Zeilen für die
+-- Fehlersuche, daher englisch und nicht übersetzt. Werte werden zu Text, daher nur %s:
+-- ns.Debug("stats", "%s +%s", counter, amount)
+local DEBUG_PREFIX = "|cff888888[debug] %s:|r "
+
+-- Technische Zeile immer ausgeben (Ergebnisse der /lt debug-Befehle)
+function ns.DebugPrint(area, format, ...)
+  local args = { ... }
+  for i = 1, select("#", ...) do
+    args[i] = ns.IsSecret(args[i]) and "<secret>" or tostring(args[i])
+  end
+  print(PREFIX .. string.format(DEBUG_PREFIX, area) .. string.format(format, unpack(args, 1, select("#", ...))))
+end
+
+-- Nur bei eingeschaltetem Logging
+function ns.Debug(area, format, ...)
+  if ns.debug then ns.DebugPrint(area, format, ...) end
+end
+
 -- Retail kann Werte als "secret" markieren; die dürfen Addons nicht auswerten
 function ns.IsSecret(value)
   return issecretvalue ~= nil and issecretvalue(value)
@@ -83,6 +102,7 @@ end
 local function startTracking()
   ns.db, ns.characterKey, ns.character = ns.Database.Load()
   ns.level = UnitLevel("player")
+  ns.Debug("core", "login %s level %s", ns.characterKey, ns.level)
   runAll(loginCallbacks)
   ns.ApplySettings()
 end
@@ -99,6 +119,7 @@ function ns.DeleteCharacter(characterKey)
 end
 
 ns.RegisterEvent("PLAYER_LOGOUT", function()
+  ns.Debug("core", "logout")
   runAll(logoutCallbacks)
 end)
 
@@ -119,6 +140,7 @@ function ns.OnLevelStarted(callback)
 end
 
 ns.RegisterEvent("PLAYER_LEVEL_UP", function(newLevel)
+  ns.Debug("core", "level up %s -> %s", ns.level, newLevel)
   runAll(levelCompletedCallbacks, ns.level)
   ns.level = newLevel
   runAll(levelStartedCallbacks, newLevel)

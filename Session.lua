@@ -1,6 +1,7 @@
 -- Aktive Session: vom Login bis zum Logout.
 -- /reload und kurze Unterbrechungen setzen die Session fort. Beim nächsten echten Login
 -- wird die alte Session in die Session-Historie verschoben und eine neue beginnt.
+-- Session.StartNew beendet sie sofort (Button in den Einstellungen, /lt newsession).
 local _, ns = ...
 
 local Session = {}
@@ -56,13 +57,40 @@ local function canResume(session)
   return session.lastSeen ~= nil and time() - session.lastSeen <= RESUME_GAP_SECONDS
 end
 
+-- Laufende Zeit in die Session schreiben und den Stand festhalten (Logout oder manuelles Beenden)
+local function closeCurrent()
+  local session = current()
+  session.seconds = Session.GetSeconds()
+  session.lastSeen = time()
+  session.endLevel = ns.level
+  loginTime = GetTime()  -- falls danach noch gelesen wird, nicht doppelt zählen
+end
+
+-- Laufende Session archivieren und eine neue beginnen, z.B. zu Stream-Beginn
+function Session.StartNew()
+  ns.Debug("session", "started new session manually")
+  closeCurrent()
+  archive(current())
+  startNew()
+end
+
+-- Für Button und Befehl: neue Session mit Rückmeldung im Chat
+function ns.StartNewSession()
+  Session.StartNew()
+  ns.Print(ns.L.NEW_SESSION_STARTED)
+end
+
 ns.OnLogin(function()
   local session = current()
   if not session.startedAt then
+    ns.Debug("session", "first session")
     startNew()
   elseif not canResume(session) then
+    ns.Debug("session", "archived previous session (%s s), new session", session.seconds)
     archive(session)
     startNew()
+  else
+    ns.Debug("session", "resumed session (gap %s s)", time() - session.lastSeen)
   end
   loginTime = GetTime()
 end)
@@ -85,10 +113,4 @@ ns.Stats.OnIncrement(function(counter, amount)
   session.xpTimeline[step] = (session.xpTimeline[step] or 0) + amount
 end)
 
-ns.OnLogout(function()
-  local session = current()
-  session.seconds = Session.GetSeconds()
-  session.lastSeen = time()
-  session.endLevel = ns.level
-  loginTime = GetTime()  -- falls nach dem Logout noch gelesen wird, nicht doppelt zählen
-end)
+ns.OnLogout(closeCurrent)

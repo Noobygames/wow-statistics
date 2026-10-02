@@ -11,6 +11,7 @@ local SETTINGS_DEFAULTS = {
   language = ns.DefaultLanguage(),
   scale = 1,  -- Größe des Fensters samt Inhalt (siehe TimerWindow.lua)
   bgAlpha = 0.8,
+  windowBackground = "default",  -- "default", "green" oder "magenta" (Chroma-Key, siehe TimerWindow.lua)
   locked = false,
   showTimer = true,
   showXpBar = true,
@@ -21,13 +22,32 @@ local SETTINGS_DEFAULTS = {
   showXpRate = true,
   showLevelEta = true,
   showMaxLevelEta = true,
-  levelUpSummary = true,  -- Chatzeile beim Level-Up (siehe LevelUpSummary.lua)
+  showSplits = false,  -- Splits gegen einen Vergleich (siehe Splits.lua)
+  splitComparison = "best",  -- "best", "pb" oder "run" (db.splitReference, siehe Splits.lua)
+  showSplitList = false,  -- eigene Anzeige mit den letzten Leveln (siehe SplitList.lua)
+  splitListRows = 5,
+  showWorldRecords = true,  -- Speedrun-Rekorde in der Split-Liste (siehe WorldRecords.lua)
+  worldRecordScope = "class",  -- "overall" oder "class"
+  showGoal = false,  -- Session-Ziel (siehe Goal.lua); /lt goal schaltet die Zeile ein
+  streamerPrivacy = false,  -- Realm und andere Charaktere in der Historie verbergen (siehe History.DisplayName)
+  -- Große Einblendungen (siehe Alerts.lua), für Streams gedacht und daher aus
+  alertLevelUp = false,
+  alertRareKill = false,
+  alertEliteKill = false,
+  alertEpicLoot = false,
+  alertNearDeath = false,
+  remindFood = false,  -- Hinweis, wenn beim Leveln "Satt" fehlt (siehe BuffReminder.lua)
+  remindCamp = false,  -- Hinweis, wenn beim Leveln der Camp-Buff fehlt (WoW Forever)
+  levelUpSummary = true,
+  levelUpAnnounce = "off",  -- Level-Up-Zusammenfassung an "party" oder "guild" (siehe LevelUpSummary.lua)  -- Chatzeile beim Level-Up (siehe LevelUpSummary.lua)
   showPveKills = true,
   showPvpKills = true,
   showSpecialKills = false,
   showDeaths = true,
   showKillsPerDeath = false,
   showNearDeaths = false,
+  showDeathless = false,
+  highlightDeaths = true,  -- Tode im Fenster rot (siehe StatLines.lua)  -- Hardcore: Zeit seit dem letzten Tod
   showXpSources = false,
   showRested = false,
   showQuests = true,
@@ -159,6 +179,11 @@ local function applyDefaults(data, defaults)
     end
   end
   return data
+end
+
+-- Fehlende Einstellungen mit Defaults füllen (z.B. nach dem Laden eines Profils)
+function Database.ApplySettingDefaults(settings)
+  return applyDefaults(settings, SETTINGS_DEFAULTS)
 end
 
 function Database.NewCounters()

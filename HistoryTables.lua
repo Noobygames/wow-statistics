@@ -3,7 +3,10 @@
 -- (Mausrad oder Leiste) werden sie mit den passenden Einträgen neu gefüllt.
 -- So bleiben auch tausende Journal-Einträge flüssig. Klick auf einen Spaltenkopf sortiert,
 -- das Suchfeld filtert; die Summenzeile gilt für die gefilterten Zeilen.
+-- Weitere Ansichten (z.B. SpeedrunViews.lua) bauen Tabellen mit HistoryTables.CreateTableView.
 local _, ns = ...
+local HistoryTables = {}
+ns.HistoryTables = HistoryTables
 local L = ns.L
 local Widgets = ns.Widgets
 local Format = ns.Format
@@ -22,6 +25,7 @@ local TOOLBAR_HEIGHT = 22     -- Zeile mit dem Suchfeld über der Tabelle
 local FILTER_WIDTH = 150
 local FILTER_HEIGHT = 18
 local EXPORT_BUTTON_WIDTH = 70
+local EXTRA_BUTTON_WIDTH = 90   -- weitere Buttons der Ansicht (definition.buttons)
 local SORT_DESCENDING = " v"
 local SORT_ASCENDING = " ^"
 
@@ -199,9 +203,7 @@ local ZONE_COLUMNS = {
 }
 
 local COMPARE_COLUMNS = {
-  { header = "HISTORY_CHARACTER_NAME", width = 140, value = function(r)
-      return (r.name or "?") .. " - " .. (r.realm or "?")
-    end },
+  { header = "HISTORY_CHARACTER_NAME", width = 140, value = function(r) return History.DisplayName(r.key) end },
   levelColumn(40),
   { header = "HISTORY_LEVELS_DONE", width = 56, value = function(r) return r.levelsCompleted end },
   { header = "HISTORY_AVERAGE_LEVEL_TIME", width = 84, value = function(r)
@@ -349,6 +351,10 @@ end
 
 -- definition = { tab, group (optional), columns, records(characterKey), footer(columns, records),
 --                rowColor(record) (optional, Standard: laufender Eintrag hervorgehoben, sonst weiß) }
+-- definition = { tab, group, columns, records(characterKey), footer(columns, records),
+--   rowColor(record) optional, onRowClick(record, mouseButton) optional,
+--   hint = Locale-Key oder function() -> Text optional,
+--   buttons = { { label = Locale-Key, onClick() }, ... } optional (neben dem Export-Button) }
 local function createTableView(definition)
   local columns = definition.columns
   local rowColor = definition.rowColor or defaultRowColor
@@ -377,9 +383,35 @@ local function createTableView(definition)
     footerRow:SetPoint("BOTTOMLEFT")
 
     local rows = {}
+    local apply  -- unten definiert
     for i = 1, visibleRows do
       rows[i] = createRow(frame, columns, "GameFontHighlightSmall")
       rows[i]:SetPoint("TOPLEFT", 0, -TOOLBAR_HEIGHT - i * ROW_HEIGHT)
+    end
+
+    -- Klick auf eine Zeile (nur, wenn die Ansicht etwas damit macht); danach neu zeichnen
+    if definition.onRowClick then
+      for i, row in ipairs(rows) do
+        row:EnableMouse(true)
+        row:SetScript("OnMouseUp", function(_, mouseButton)
+          local record = records[frame.offset + i]
+          if not record then return end
+          definition.onRowClick(record, mouseButton)
+          frame:Render(frame.characterKey)
+        end)
+      end
+    end
+
+    -- Hinweis unten rechts neben der Summenzeile, z.B. was ein Klick bewirkt
+    local hint = frame:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    hint:SetPoint("BOTTOMRIGHT", -SCROLLBAR_GAP, 2)
+
+    -- Weitere Buttons der Ansicht rechts neben dem Export-Button
+    local extraButtons = {}
+    for i, button in ipairs(definition.buttons or {}) do
+      local widget = Widgets.CreateButton(frame, EXTRA_BUTTON_WIDTH, FILTER_HEIGHT + 2, button.onClick)
+      widget:SetPoint("TOPLEFT", EXPORT_BUTTON_WIDTH + CELL_GAP + (i - 1) * (EXTRA_BUTTON_WIDTH + CELL_GAP), -1)
+      extraButtons[i] = { widget = widget, label = button.label }
     end
 
     local function draw()
@@ -420,7 +452,7 @@ local function createTableView(definition)
     end
 
     -- Filter und Sortierung auf alle Einträge anwenden und neu zeichnen
-    local function apply()
+    function apply()
       records = filterAndSort(columns, allRecords, filterText, sort)
       showHeaders()
       scrollBar:SetRange(math.max(0, #records - visibleRows))
@@ -486,8 +518,13 @@ local function createTableView(definition)
     exportButton:SetPoint("TOPLEFT", 0, -1)
 
     function frame:Render(characterKey, selectionChanged)
+      frame.characterKey = characterKey
       filterLabel:SetText(L.FILTER)
       exportButton:SetText(L.EXPORT)
+      local hintText = definition.hint
+      if type(hintText) == "function" then hintText = hintText() elseif hintText then hintText = L[hintText] end
+      hint:SetText(hintText or "")
+      for _, button in ipairs(extraButtons) do button.widget:SetText(L[button.label]) end
       allRecords = definition.records(characterKey)
       if selectionChanged then frame.offset = 0 end
       apply()
@@ -498,6 +535,10 @@ local function createTableView(definition)
 
   return { tab = definition.tab, group = definition.group, Create = create }
 end
+
+HistoryTables.CreateTableView = createTableView
+HistoryTables.ClassColor = classColor
+HistoryTables.CountCells = countCells
 
 local function addTable(tab, group, columns, records, footer)
   ns.HistoryWindow.AddView(createTableView({

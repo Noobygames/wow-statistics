@@ -48,6 +48,7 @@ if ChatFrame_DisplayTimePlayed then
 end
 
 ns.RegisterEvent("TIME_PLAYED_MSG", function(total, thisLevel)
+  ns.Debug("played", "server total %s s, level %s s", total, thisLevel)
   totalSeconds = total
   levelSeconds = thisLevel
   syncedAt = GetTime()
