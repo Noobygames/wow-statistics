@@ -106,6 +106,7 @@ local function referenceTimes()
   if cachedTimes and cachedFor == key then return cachedTimes end
   local build = REFERENCES[ns.db.splitComparison] or REFERENCES[Splits.BEST]
   cachedTimes, cachedFor = build(), key
+  ns.Debug("splits", "reference rebuilt (%s)", key)
   return cachedTimes
 end
 

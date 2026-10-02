@@ -96,8 +96,26 @@ local function announce(text)
     return
   end
   local chatType = announceChannel(target)
-  if not chatType or chatLocked() then return end
+  if not chatType or chatLocked() then
+    ns.Debug("announce", "skipped: target %s, channel %s, lockdown %s", target, chatType, chatLocked())
+    return
+  end
+  ns.Debug("announce", "sending to %s", chatType)
   sendChat(announcement(text), chatType)
+end
+
+-- Fehlersuche (/lt debug levelup): Zusammenfassung des laufenden Levels, als wäre es geschafft.
+-- Sendet nichts an Gruppe oder Gilde, sondern nennt nur den Kanal; /sagen zeigt den Button.
+function LevelUpSummary.Preview()
+  local text = summaryText(ns.level)
+  ns.Print(text)
+  local target = ns.db.levelUpAnnounce
+  if target == LevelUpSummary.ANNOUNCE_SAY then
+    offerSay(text)
+  else
+    ns.DebugPrint("announce", "preview: target %s, channel %s, lockdown %s",
+      target, announceChannel(target), chatLocked())
+  end
 end
 
 ns.OnLevelCompleted(function(completedLevel)

@@ -68,6 +68,7 @@ end
 
 -- Laufende Session archivieren und eine neue beginnen, z.B. zu Stream-Beginn
 function Session.StartNew()
+  ns.Debug("session", "started new session manually")
   closeCurrent()
   archive(current())
   startNew()
@@ -82,10 +83,14 @@ end
 ns.OnLogin(function()
   local session = current()
   if not session.startedAt then
+    ns.Debug("session", "first session")
     startNew()
   elseif not canResume(session) then
+    ns.Debug("session", "archived previous session (%s s), new session", session.seconds)
     archive(session)
     startNew()
+  else
+    ns.Debug("session", "resumed session (gap %s s)", time() - session.lastSeen)
   end
   loginTime = GetTime()
 end)

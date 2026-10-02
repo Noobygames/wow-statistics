@@ -64,7 +64,7 @@ local REMINDERS = {
   { setting = "remindCamp", isMissing = BuffReminder.IsCampMissing, message = "REMIND_CAMP" },
 }
 
-local function worthReminding()
+function BuffReminder.WorthReminding()
   return ns.Experience.IsLeveling()
     and not UnitAffectingCombat("player")
     and not UnitIsDeadOrGhost("player")
@@ -79,10 +79,11 @@ end
 
 -- Fällige Hinweise als Chatzeilen und gemeinsam in einer Einblendung
 function BuffReminder.Check()
-  if not ns.db or not worthReminding() then return end
+  if not ns.db or not BuffReminder.WorthReminding() then return end
   local messages = {}
   for _, reminder in ipairs(REMINDERS) do
     if isDue(reminder) then
+      ns.Debug("reminder", "%s missing, reminding", reminder.setting)
       reminder.lastShown = GetTime()
       table.insert(messages, L[reminder.message])
       ns.Print(L[reminder.message])

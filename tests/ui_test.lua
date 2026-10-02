@@ -39,7 +39,14 @@ addon.Set("showPvpKills", true)
 SlashCmdList.LEVELTIMER("debug")
 local debugPrintedBefore = #wow.printed
 wow.fire("CHAT_MSG_COMBAT_XP_GAIN", "Wolf stirbt, Ihr bekommt 100 Erfahrung.")
-expectTrue("Debug-Ausgabe für Kill", (wow.printed[debugPrintedBefore + 1] or ""):find("Wolf", 1, true) ~= nil)
+local function printedSince(index, text)
+  for i = index + 1, #wow.printed do
+    if wow.printed[i]:find(text, 1, true) then return true end
+  end
+  return false
+end
+expectTrue("Debug-Ausgabe für Kill", printedSince(debugPrintedBefore, "Wolf"))
+expectTrue("erweitertes Logging der Zähler", printedSince(debugPrintedBefore, "[debug] stats:"))
 SlashCmdList.LEVELTIMER("debug")
 
 -- Fenster zwischen Level und Session umschalten

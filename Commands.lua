@@ -46,7 +46,12 @@ local commands = {
       ns.Print(L.GOAL_INVALID)
     end
   end,
-  debug = function()
+  -- /lt debug schaltet das erweiterte Logging, /lt debug <befehl> löst Testfunktionen aus (DebugTools.lua)
+  debug = function(argument)
+    if argument ~= "" then
+      ns.DebugTools.Run(argument)
+      return
+    end
     ns.debug = not ns.debug  -- bewusst nicht gespeichert, gilt bis /reload
     ns.Print(ns.debug and L.DEBUG_ON or L.DEBUG_OFF)
   end,

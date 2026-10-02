@@ -81,7 +81,7 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 | `/lt show` / `/lt hide` | Show or hide the window |
 | `/lt sync` | Re-sync play time with the server |
 | `/lt minimap` | Toggle the minimap button |
-| `/lt debug` | Show every XP message in chat and whether it counted as a kill (troubleshooting) |
+| `/lt debug` | Extended logging in chat until /reload; `/lt debug help` lists test commands (state, levelup, alert, remind, death, splits) |
 
 `/leveltimer` works as an alias for `/lt`.
 

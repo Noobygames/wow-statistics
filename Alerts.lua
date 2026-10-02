@@ -42,6 +42,7 @@ end)
 
 -- Neue Einblendung ersetzt eine laufende
 function Alerts.Show(message, color)
+  ns.Debug("alert", "%s", message)
   frame.text:SetText(message)
   frame.text:SetTextColor(unpack(color))
   shownAt = GetTime()
@@ -49,32 +50,57 @@ function Alerts.Show(message, color)
   frame:Show()
 end
 
-ns.OnLevelStarted(function(newLevel)
-  if ns.db.alertLevelUp then
-    Alerts.Show(string.format(L.ALERT_LEVEL_UP, newLevel), COLORS.levelUp)
-  end
-end)
+-- Arten: Einstellung, Farbe, Text aus einem Wert (Level, Name, Link, Prozent) und Beispielwert
+-- für /lt debug alert
+Alerts.KINDS = {
+  levelUp = { setting = "alertLevelUp", color = COLORS.levelUp, format = "ALERT_LEVEL_UP",
+    sample = function() return ns.level + 1 end },
+  rare = { setting = "alertRareKill", color = COLORS.rare, format = "ALERT_RARE_KILL",
+    sample = function() return "Hogger" end },
+  elite = { setting = "alertEliteKill", color = COLORS.elite, format = "ALERT_ELITE_KILL",
+    sample = function() return "Hogger" end },
+  loot = { setting = "alertEpicLoot", color = COLORS.loot, format = "ALERT_EPIC_LOOT",
+    sample = function() return "[Thunderfury]" end },
+  nearDeath = { setting = "alertNearDeath", color = COLORS.nearDeath, format = "ALERT_NEAR_DEATH",
+    sample = function() return 4 end },
+}
 
-local function onKill(entry)
-  local name = entry.name or L.UNKNOWN_NAME
-  if ns.db.alertRareKill and Classification.IsRare(entry.classification) then
-    Alerts.Show(string.format(L.ALERT_RARE_KILL, name), COLORS.rare)
-  elseif ns.db.alertEliteKill and Classification.IsElite(entry.classification) then
-    Alerts.Show(string.format(L.ALERT_ELITE_KILL, name), COLORS.elite)
-  end
+local function showKind(kind, value)
+  local definition = Alerts.KINDS[kind]
+  Alerts.Show(string.format(L[definition.format], value), definition.color)
 end
 
+-- Nur, wenn die Art eingeschaltet ist
+local function alert(kind, value)
+  if ns.db[Alerts.KINDS[kind].setting] then showKind(kind, value) end
+end
+
+-- Beispiel unabhängig von der Einstellung (Fehlersuche); false bei unbekannter Art
+function Alerts.ShowSample(kind)
+  local definition = Alerts.KINDS[kind]
+  if not definition then return false end
+  showKind(kind, definition.sample())
+  return true
+end
+
+ns.OnLevelStarted(function(newLevel)
+  alert("levelUp", newLevel)
+end)
+
 local handlers = {
-  killLog = onKill,
-  lootLog = function(entry)
-    if ns.db.alertEpicLoot and (entry.quality or 0) >= EPIC_QUALITY then
-      Alerts.Show(string.format(L.ALERT_EPIC_LOOT, entry.link or entry.name or "?"), COLORS.loot)
+  killLog = function(entry)
+    local name = entry.name or L.UNKNOWN_NAME
+    if Classification.IsRare(entry.classification) and ns.db.alertRareKill then
+      alert("rare", name)
+    elseif Classification.IsElite(entry.classification) then
+      alert("elite", name)
     end
   end,
+  lootLog = function(entry)
+    if (entry.quality or 0) >= EPIC_QUALITY then alert("loot", entry.link or entry.name or "?") end
+  end,
   nearDeathLog = function(entry)
-    if ns.db.alertNearDeath then
-      Alerts.Show(string.format(L.ALERT_NEAR_DEATH, entry.lowestPercent), COLORS.nearDeath)
-    end
+    alert("nearDeath", entry.lowestPercent)
   end,
 }
 

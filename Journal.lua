@@ -32,6 +32,7 @@ end
 
 -- Neuen Eintrag an character[logName] anhängen, die ältesten über dem Limit verwerfen
 local function append(logName, entry, limit)
+  ns.Debug("journal", "%s: %s", logName, entry.name or entry.killer or entry.link or entry.environment or "-")
   local log = ns.character[logName]
   table.insert(log, entry)
   while #log > limit do

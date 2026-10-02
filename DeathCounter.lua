@@ -101,11 +101,14 @@ end
 local function fillCauseFromRecap(entry)
   local cause = DeathRecap.GetLastCause()
   if cause then
+    ns.Debug("death", "cause from death recap: %s / %s / %s", cause.killer, cause.spell, cause.environment)
     Journal.SetDeathCause(entry, cause)
     return
   end
+  ns.Debug("death", "death recap not ready, retry in %s s", RECAP_RETRY_DELAY)
   C_Timer.After(RECAP_RETRY_DELAY, function()
     local delayed = DeathRecap.GetLastCause()
+    ns.Debug("death", "death recap retry: %s", delayed and delayed.killer or "no cause")
     if delayed and not isKnown(entry) then
       Journal.SetDeathCause(entry, delayed)
     end
@@ -126,6 +129,7 @@ ns.RegisterEvent("PLAYER_DEAD", function()
   Stats.Increment(Stats.DEATHS)
   ns.character.lastDeathPlayed = ns.PlayedTime.GetTotalSeconds()
   local cause = takeDeathCause()
+  ns.Debug("death", "died, combat log cause: %s / %s / %s", cause.killer, cause.spell, cause.environment)
   local entry = Journal.AddDeath(cause)
   if not isKnown(cause) and DeathRecap.IsAvailable() then
     fillCauseFromRecap(entry)
