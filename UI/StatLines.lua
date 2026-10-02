@@ -131,6 +131,13 @@ end
 
 local income = money(Stats.MONEY_EARNED)
 
+-- Unabhängig vom Bereich: laufender Instanz-Lauf "12m 30s, 5.000 XP"
+local function instanceRun()
+  local run = ns.Instances.GetCurrentRun()
+  if not run then return NO_VALUE end
+  return string.format(ns.L.INSTANCE_RUN_VALUE, Format.Duration(ns.Instances.GetRunSeconds(run)), Format.Number(run.xp))
+end
+
 ns.STAT_LINES = {
   { setting = "showXpRate", label = "STAT_XP_RATE", rows = { { label = "ROW_XP_RATE", value = xpRate } } },
   { setting = "showRecentXpRate", label = "STAT_RECENT_XP_RATE",
@@ -175,6 +182,8 @@ ns.STAT_LINES = {
     { label = "ROW_TIME_AFK", value = timePart(Stats.AFK_SECONDS) },
     { label = "ROW_TIME_REST", value = timeShare(function(scope) return ns.TimeBreakdown.GetRestSeconds(scope) end) },
   } },
+  { setting = "showInstanceRun", label = "STAT_INSTANCE_RUN",
+    rows = { { label = "ROW_INSTANCE_RUN", value = instanceRun } } },
   { setting = "showQuests", label = "STAT_QUESTS", rows = { { label = "ROW_QUESTS", value = counter(Stats.QUESTS) } } },
   { setting = "showMoney", label = "STAT_MONEY", rows = { { label = "ROW_MONEY", value = income } } },
   { setting = "showSpending", label = "STAT_SPENDING", rows = {

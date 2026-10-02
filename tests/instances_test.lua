@@ -47,6 +47,42 @@ expect("Kills", run.counters.kills, 2)
 expect("Tode", run.counters.deaths, 1)
 expect("Level beim Betreten", run.level, 20)
 
+-- Tod im Dungeon: als Geist zum Friedhof draußen und zurück bleibt derselbe Lauf
+local runs = #addon.character.instanceLog
+enter("Burg Schattenfang")
+addon.Set("showInstanceRun", true)
+gainXp(1000)
+wow.state.dead = true
+wow.fire("PLAYER_DEAD")
+wow.fire("PLAYER_ALIVE")
+enter(nil)
+expect("Geist draußen: Lauf läuft weiter", addon.character.currentRun.name, "Burg Schattenfang")
+wow.advance(120)
+enter("Burg Schattenfang")
+wow.state.dead = false
+wow.fire("PLAYER_UNGHOST")
+expect("zurück in der Instanz: kein neuer Lauf", #addon.character.instanceLog, runs)
+local function instanceRow()
+  for _, line in ipairs(addon.STAT_LINES) do
+    if line.setting == "showInstanceRun" then return line.rows[1].value() end
+  end
+end
+local runningRun = addon.Instances.GetCurrentRun()
+expect("Zeile Instanz: Zeit und XP", instanceRow(), string.format(addon.L.INSTANCE_RUN_VALUE,
+  addon.Format.Duration(addon.Instances.GetRunSeconds(runningRun)), addon.Format.Number(1000)))
+
+-- Tod und Wiederbelebung beim Geistheiler draußen beendet den Lauf
+wow.state.dead = true
+wow.fire("PLAYER_DEAD")
+enter(nil)
+expect("Geist: noch kein Ende", #addon.character.instanceLog, runs)
+wow.state.dead = false
+wow.fire("PLAYER_ALIVE")
+expect("lebend draußen: Lauf beendet", #addon.character.instanceLog, runs + 1)
+expect("Lauf-XP", addon.character.instanceLog[runs + 1].xp, 1000)
+expect("kein laufender Lauf", addon.Instances.GetCurrentRun(), nil)
+expect("Zeile Instanz ohne Lauf", instanceRow(), "-")
+
 -- Kills in der offenen Welt zählen nicht zum Lauf; Raid wird ebenfalls erfasst
 wow.fire("CHAT_MSG_COMBAT_XP_GAIN", "Wolf stirbt, Ihr bekommt 10 Erfahrung.")
 expect("Welt-Kill nicht im Lauf", run.counters.kills, 2)
@@ -58,8 +94,8 @@ wow.advance(600)
 wow.logout()
 wow.advance(3600)
 wow.login()
-expect("alter Raid-Lauf abgeschlossen", #addon.character.instanceLog, 2)
-expectNear("Dauer bis Logout", addon.character.instanceLog[2].seconds, 600)
+expect("alter Raid-Lauf abgeschlossen", #addon.character.instanceLog, 3)
+expectNear("Dauer bis Logout", addon.character.instanceLog[3].seconds, 600)
 
 SlashCmdList.LEVELTIMER("history")
 expectTrue("Reiter Instanzen", wow.click("Instanzen"))

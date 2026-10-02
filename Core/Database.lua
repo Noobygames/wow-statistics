@@ -77,6 +77,7 @@ local SETTINGS_DEFAULTS = {
   showRestedLeft = false,  -- verbleibende Erholt-XP (GetXPExhaustion)
   showTimeBreakdown = false,  -- Zeit in Kampf, Flug, AFK und Rest (siehe TimeBreakdown.lua)
   xpRateWithoutAfk = false,   -- XP/h und Prognosen ohne AFK-Zeit (siehe Experience.RateSeconds)
+  showInstanceRun = false,  -- laufender Dungeon-/Raid-Lauf (siehe Instances.lua)
   showQuests = true,
   showMoney = true,
   showSpending = false,  -- Ausgaben nach Art und Schrott-Erlös (siehe MoneyCounter.lua)

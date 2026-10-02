@@ -175,10 +175,11 @@ local QUEST_COLUMNS = {
 
 local INSTANCE_COLUMNS = {
   whenColumn(100),
-  { header = "HISTORY_INSTANCE", width = 150, align = LEFT, value = function(r) return r.name or "" end },
+  { header = "HISTORY_INSTANCE", width = 120, align = LEFT, value = function(r) return r.name or "" end },
   durationColumn(60),
   { header = "HISTORY_XP", width = 60, value = function(r) return Format.Number(r.xp or 0) end,
     sort = function(r) return r.xp end },
+  xpRateColumn(50),
   counterColumn("HISTORY_KILLS", "kills", 50),
   counterColumn("HISTORY_DEATHS", "deaths", 40),
   levelColumn(40),
