@@ -58,6 +58,7 @@ Alerts.lua
 BuffReminder.lua
 Comfort.lua
 Merchant.lua
+QuestAutomation.lua
 TimerWindow.lua
 SplitList.lua
 Charts.lua

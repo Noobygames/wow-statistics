@@ -427,6 +427,11 @@ addToggles({
   toggle("AUTO_REPAIR_GUILD", "autoRepairGuild", ns.Client.HasGuildBank),
   toggle("AUTO_SELL_JUNK", "autoSellJunk"),
 })
+addSection("SECTION_QUESTS")
+addToggles({
+  toggle("AUTO_ACCEPT_QUESTS", "autoAcceptQuests"),
+  toggle("AUTO_ACCEPT_SHARED", "autoAcceptShared"),
+})
 addHint("COMFORT_HINT")
 finishPage()
 

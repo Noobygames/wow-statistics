@@ -10,7 +10,7 @@ Schwerpunkt: Komfort-Funktionen, die beim Leveln Klicks sparen, und Werte, die z
 
 - [x] 55. **Automatisch reparieren** (S): beim Händler mit Reparatur (`MERCHANT_SHOW`, `CanMerchantRepair`, `GetRepairAllCost`, `RepairAllItems`); optional zuerst aus der Gildenbank, nur in Clients mit `CanGuildBankRepair`. Kosten als Chatzeile.
 - [x] 56. **Schrott verkaufen** (S–M): graue Gegenstände beim Händler verkaufen; `C_MerchantFrame.SellAllJunkItems`, wo vorhanden, sonst Taschen über `C_Container` durchgehen (Qualität 0, Verkaufspreis > 0). Erlös als Chatzeile.
-- [ ] 57. **Quests automatisch annehmen** (S): `QUEST_DETAIL` → `AcceptQuest`; geteilte Quests und Eskorten (`QUEST_ACCEPT_CONFIRM`) als eigener Schalter.
+- [x] 57. **Quests automatisch annehmen** (S): `QUEST_DETAIL` → `AcceptQuest`; geteilte Quests und Eskorten (`QUEST_ACCEPT_CONFIRM`) als eigener Schalter.
 - [ ] 58. **Quests automatisch abgeben** (M): `QUEST_PROGRESS` → `CompleteQuest`, wenn `IsQuestCompletable`; `QUEST_COMPLETE` → `GetQuestReward` nur bei höchstens einer Belohnung. Bei Auswahl bleibt das Fenster offen; optional die Belohnung mit dem höchsten Verkaufswert (eigener Schalter).
 - [ ] 59. **Gespräche überspringen** (S–M): `GOSSIP_SHOW`/`QUEST_GREETING`: fertige Quests abgeben, verfügbare öffnen, sonst die einzige Gesprächsoption wählen (`C_GossipInfo`). Nie bei mehreren Optionen oder Optionen mit Bestätigung/Kosten.
 

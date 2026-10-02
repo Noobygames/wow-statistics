@@ -57,6 +57,11 @@ wow = {
     bags = { [0] = {} },
     bagSlots = 16,
     sellPrices = {},         -- Verkaufspreis je itemID (C_Item.GetItemInfo)
+    -- Quest-NPC: Listen im Gespräch (GossipQuestUIInfo) und in der alten Quest-Liste (QUEST_GREETING)
+    gossip = { available = {}, active = {}, options = {} },
+    greeting = { available = {}, active = {} },  -- { title, isTrivial } bzw. { title, isComplete }
+    questPvp = false,        -- QuestFlagsPVP
+    questAutoAccept = false, -- QuestGetAutoAccept
   },
   printed = {},
   UNKNOWN_EVENT = UNKNOWN_EVENT,
@@ -355,6 +360,36 @@ C_Container = {
     state.bags[bag][slot] = nil
   end,
 }
+-- Quest-Aktionen landen in wow.questActions, z.B. { "accept" } oder { "selectAvailable", 123 }
+wow.questActions = {}
+local function questAction(...) table.insert(wow.questActions, { ... }) end
+function QuestFlagsPVP() return state.questPvp end
+function QuestGetAutoAccept() return state.questAutoAccept end
+function AcceptQuest() questAction("accept") end
+function AcknowledgeAutoAcceptQuest() questAction("acknowledge") end
+function ConfirmAcceptQuest() questAction("confirm") end
+function StaticPopup_Hide(name) questAction("hidePopup", name) end
+C_GossipInfo = {
+  GetAvailableQuests = function() return state.gossip.available end,
+  GetActiveQuests = function() return state.gossip.active end,
+  GetOptions = function() return state.gossip.options end,
+  GetNumAvailableQuests = function() return #state.gossip.available end,
+  GetNumActiveQuests = function() return #state.gossip.active end,
+  ForceGossip = function() return false end,
+  SelectAvailableQuest = function(questID) questAction("selectAvailable", questID) end,
+  SelectActiveQuest = function(questID) questAction("selectActive", questID) end,
+  SelectOptionByIndex = function(index) questAction("selectOption", index) end,
+}
+function GetNumAvailableQuests() return #state.greeting.available end
+function GetAvailableQuestInfo(index) return state.greeting.available[index].isTrivial end
+function SelectAvailableQuest(index) questAction("greetingAvailable", index) end
+function GetNumActiveQuests() return #state.greeting.active end
+function GetActiveTitle(index)
+  local quest = state.greeting.active[index]
+  return quest.title, quest.isComplete
+end
+function SelectActiveQuest(index) questAction("greetingActive", index) end
+
 C_Item = {
   GetItemInfo = function(itemID)
     return "Item " .. itemID, nil, nil, nil, nil, nil, nil, nil, nil, nil, state.sellPrices[itemID]
