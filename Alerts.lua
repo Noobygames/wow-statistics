@@ -1,6 +1,7 @@
 -- Große Einblendungen oben in der Bildschirmmitte für Stream-Momente: Level-Up, Rare- und Elite-Kill,
 -- epische Beute, Beinahe-Tod. Jede Art ist einzeln schaltbar (Einstellungen alert*), alle aus.
 -- Quellen: ns.OnLevelStarted und neue Journal-Einträge (Journal.OnAdd), kein eigenes Event-Parsing.
+-- In Dungeons und Raids ist fast jeder Gegner Elite: dort keine Elite-Einblendung (IsInInstance).
 local _, ns = ...
 local L = ns.L
 local Journal = ns.Journal
@@ -13,6 +14,7 @@ local HOLD_SECONDS = 3   -- voll sichtbar
 local FADE_SECONDS = 1   -- danach ausblenden
 local OFFSET_Y = -160    -- Abstand zur Bildschirmoberkante
 local EPIC_QUALITY = 4
+local GROUP_INSTANCES = { party = true, raid = true }  -- Instanzarten von IsInInstance mit Elite-Gegnern
 local COLORS = {
   levelUp = { 1, 0.82, 0 },
   rare = { 0.75, 0.75, 1 },
@@ -87,12 +89,17 @@ ns.OnLevelStarted(function(newLevel)
   alert("levelUp", newLevel)
 end)
 
+local function instanceType()
+  local inInstance, kind = IsInInstance()
+  return inInstance and kind or nil
+end
+
 local handlers = {
   killLog = function(entry)
     local name = entry.name or L.UNKNOWN_NAME
     if Classification.IsRare(entry.classification) and ns.db.alertRareKill then
       alert("rare", name)
-    elseif Classification.IsElite(entry.classification) then
+    elseif Classification.IsElite(entry.classification) and not GROUP_INSTANCES[instanceType()] then
       alert("elite", name)
     end
   end,

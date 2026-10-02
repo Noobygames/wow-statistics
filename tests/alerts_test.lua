@@ -33,6 +33,14 @@ addon.Set("alertEliteKill", true)
 Journal.AddKill(Journal.PVE, "Wächter", "elite")
 expect("Elite-Kill", shownText(), string.format(L.ALERT_ELITE_KILL, "Wächter"))
 
+-- In Dungeons und Raids keine Elite-Einblendung (dort ist fast alles Elite)
+for _, kind in ipairs({ "party", "raid" }) do
+  wow.state.instance = { name = "Todesminen", type = kind }
+  Journal.AddKill(Journal.PVE, "Minenarbeiter", "elite")
+  expect("keine Elite in " .. kind, shownText(), string.format(L.ALERT_ELITE_KILL, "Wächter"))
+end
+wow.state.instance = nil
+
 -- Nur epische Beute, seltene nicht
 Journal.AddLoot({ link = "[Blauer Ring]", quality = 3 })
 expect("seltene Beute ohne Einblendung", shownText(), string.format(L.ALERT_ELITE_KILL, "Wächter"))
