@@ -8,7 +8,10 @@ Shows statistics in a small, movable window, either for your **current level** o
 
 - **Play time**: on this level synced with the server (`/played`), for the session since login; both counted up live.
 - **XP bar** with the rested bonus shown as a lighter segment (can be turned off).
-- **XP per hour**, the estimated play time until the next level and an estimate until max level (based on your recent levels).
+- **XP per hour**, the estimated play time until the next level and an estimate until max level (based on your recent levels). Optionally without AFK time.
+- **Current XP/h** (optional row): XP per hour over the last 15 minutes, so slow phases show right away.
+- **Kills/quests to level** (optional row): how many kills or quests are left at this level's average XP.
+- **Time breakdown** (optional row): play time in combat, on flight paths, AFK and the rest.
 - **Kills**, split into:
   - **PvE**: every kill that granted experience, including group kills. Grey mobs and kills at max level don't count.
   - **PvP**: honorable kills.
@@ -16,10 +19,11 @@ Shows statistics in a small, movable window, either for your **current level** o
 - **Deaths**, with time spent dead or as a ghost and kills per death.
 - **Near deaths** (optional row): health dropped below 10 % and you survived (counted once health is back above 30 %).
 - **XP sources**: share of XP from kills, quests and other sources (exploration, professions, ...).
-- **Rested XP**: bonus XP gained from rest and its share of the XP.
+- **Rested XP**: bonus XP gained from rest and its share of the XP; optionally the rested XP still left.
 - **Level-up summary** in chat: how long the level took, kills, deaths and XP/h (can be turned off).
 - **Quests** turned in.
 - **Income**: money earned (loot, quests, sales, mail); spending is not subtracted.
+- **Spending** (optional row): repairs, merchants, flights, trainers and other, plus income from sold junk.
 
 The window shows them as a table, label on the left and value on the right. Every value can be switched on or off on its own (e.g. PvE and PvP kills separately). Level statistics restart on level-up. A session runs from login to logout; a `/reload` or a short break (up to 5 minutes) continues it.
 
@@ -30,6 +34,7 @@ Statistics are recorded separately for every character. They are stored account-
 The history window shows, per character:
 
 - **Levels**: play time, XP/h, kills, deaths, quests and income of every finished level, saved on level-up.
+- **Time split**: time in combat, flying, AFK, dead and the rest for every level.
 - **Timeline**: when each level was reached, with total /played at that moment and how long the level took.
 - **Sessions**: start, duration, level range, XP/h, kills, deaths, quests and income of every past session.
 - **Kills**: every killed creature and player with time, name, PvE/PvP, level and zone (newest 5000).
@@ -57,6 +62,8 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 - **Stream view** (settings): solid green or magenta background without border for chroma keying in OBS.
 - **Splits** (settings): running level time against the fastest time of your other characters for that level, plus the total difference, green when ahead and red when behind.
 - **Level-up announcement** (settings): post the level summary to your party or guild, or to /say with one click on a button.
+- **Comfort** (settings, each off by default, hold Shift to skip once): repair automatically (optionally from the guild bank), sell gray items, accept and turn in quests (gray quests are skipped, several reward choices stay manual unless you let it pick the most valuable), accept shared quests and skip gossip with a single option.
+- **Warnings** (settings): bags almost full, low durability, new spells at the trainer on even levels and low ammo for hunters (the last two not in Retail).
 - **Food and camp reminders** (settings): remind you when you are not Well Fed (in WoW Forever food gives 5% more kill XP) or have no camp benefits while leveling.
 - **Speedrun records**: compare your /played time at level 10, 20 and 60 with the fastest runs on speedrun.com (WoW Classic: Leveling, SSF Softcore), overall or for your class, in the split list and in History > Speedrun. Data: [speedrun.com](https://www.speedrun.com/wowclassicera).
 - **Alerts** (settings): big on-screen messages for level up, rare and elite kills, epic loot and near deaths, each optional.
