@@ -4,6 +4,9 @@
 ## Author: Nerzal
 ## Notes: Statistics per level and per session (play time, XP rate, kills, deaths and more) with history for all characters
 ## Notes-deDE: Statistiken pro Level und pro Session (Spielzeit, XP-Rate, Kills, Tode und mehr) mit Historie für alle Charaktere
+## Notes-frFR: Statistiques par niveau et par session (temps de jeu, XP/h, victimes, morts et plus) avec historique pour tous les personnages
+## Notes-esES: Estadísticas por nivel y por sesión (tiempo de juego, PX/h, abatidos, muertes y más) con historial para todos los personajes
+## Notes-esMX: Estadísticas por nivel y por sesión (tiempo de juego, PX/h, abatidos, muertes y más) con historial para todos los personajes
 ## IconTexture: Interface\AddOns\LevelTimer\Media\Icon
 ## AddonCompartmentFunc: LevelTimer_OnAddonCompartmentClick
 ## SavedVariables: LevelTimerDB, LevelTimerStatsDB
@@ -15,24 +18,40 @@ Locales.lua
 Database.lua
 LevelTimer.lua
 Format.lua
+ChatPatterns.lua
 Widgets.lua
 
 # Daten (ohne UI)
 Stats.lua
 Journal.lua
+Classification.lua
 PlayedTime.lua
 Session.lua
 Experience.lua
 KillCounter.lua
+DeathRecap.lua
 DeathCounter.lua
+NearDeath.lua
 QuestCounter.lua
+Loot.lua
 MoneyCounter.lua
 History.lua
+Zones.lua
+Daily.lua
+Instances.lua
+Analysis.lua
+Forecast.lua
 
 # Oberfläche
 StatLines.lua
+LevelUpSummary.lua
 TimerWindow.lua
+Charts.lua
+Export.lua
 HistoryWindow.lua
+HistoryTables.lua
+HistoryCharts.lua
 MinimapButton.lua
+Broker.lua
 Options.lua
 Commands.lua

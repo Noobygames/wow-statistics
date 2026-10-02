@@ -1,171 +1,34 @@
--- Historie und Auswertung: Charakter wählen, Reiter "Level | Sessions | Kills | Tode",
--- Tabelle (laufender Eintrag oben hervorgehoben) und Summenzeile darunter.
+-- Historie und Auswertung: Fenster mit Charakter-Auswahl, Reitern und Unterreitern.
+-- Ansichten registrieren sich über HistoryWindow.AddView (HistoryTables.lua, HistoryCharts.lua, ...).
+-- Ansichten mit gleicher group teilen sich einen Reiter und erscheinen dort als Unterreiter;
+-- die Ladereihenfolge bestimmt die Reihenfolge.
 local _, ns = ...
 local L = ns.L
 local Widgets = ns.Widgets
-local Format = ns.Format
-local Experience = ns.Experience
-local Stats = ns.Stats
 local History = ns.History
-local Journal = ns.Journal
+
+local HistoryWindow = {
+  CONTENT_WIDTH = 540,   -- Platz, den jede Ansicht bekommt
+  CONTENT_HEIGHT = 290,
+}
+ns.HistoryWindow = HistoryWindow
 
 local MARGIN = 16
 local HEADER_TOP = -14
 local CHARACTER_ROW_TOP = -40
 local TABS_TOP = -66
-local TABLE_TOP = -90
-local ROW_HEIGHT = 16
-local CELL_GAP = 6
-local VISIBLE_ROWS = 14
-local SCROLLBAR_SPACE = 26
+local SUBTABS_TOP = -88
+local SUBTAB_ROW_HEIGHT = 18  -- zu viele Unterreiter für eine Zeile brechen in weitere Zeilen um
+local SUBTABS_TO_CONTENT = 22 -- Abstand von der ersten Unterreiter-Zeile zum Inhalt
 local ARROW_SIZE = 22
+local DELETE_BUTTON_WIDTH = 110
+local DELETE_BUTTON_HEIGHT = 20
 local TAB_GAP = 12
+local SUBTAB_GAP = 10
 local UPDATE_INTERVAL = 1  -- Sekunden; hält laufende Einträge aktuell
-local WHITE = { 1, 1, 1 }
 
----------------------------------------------------------------------------
--- Spalten: header = Locale-Key, value(record) = Zellentext
----------------------------------------------------------------------------
-local function counter(record, name)
-  return record.counters[name] or 0
-end
-
-local function dateTime(timestamp)
-  return timestamp and date(L.DATE_FORMAT, timestamp) or ""
-end
-
-local function durationColumn(width)
-  return { header = "HISTORY_TIME", width = width, value = function(r)
-    return r.seconds and Format.Duration(r.seconds) or "?"
-  end }
-end
-
-local function xpRateColumn(width)
-  return { header = "HISTORY_XP_RATE", width = width, value = function(r)
-    local rate = Experience.CalculateRate(r.xp, r.seconds)
-    return rate and Format.Number(rate) or "-"
-  end }
-end
-
-local function counterColumn(header, name, width)
-  return { header = header, width = width, value = function(r) return counter(r, name) end }
-end
-
-local function goldColumn(width)
-  return { header = "HISTORY_GOLD", width = width, value = function(r)
-    return Format.Gold(counter(r, Stats.MONEY_EARNED))
-  end }
-end
-
-local function levelColumn(width)
-  return { header = "HISTORY_LEVEL", width = width, value = function(r) return r.level or "" end }
-end
-
-local function zoneColumn(width)
-  return { header = "HISTORY_ZONE", width = width, value = function(r) return r.zone or "" end }
-end
-
-local function levelRange(r)
-  if not r.startLevel then return "" end
-  if r.endLevel and r.endLevel ~= r.startLevel then
-    return r.startLevel .. "-" .. r.endLevel
-  end
-  return r.startLevel
-end
-
--- Todesursache als Text: "Verursacher (Zauber)", Umgebung (z.B. Sturz) oder "Unbekannt"
-local function deathCause(r)
-  if r.environment then
-    return L["CAUSE_" .. string.upper(r.environment)] or r.environment
-  end
-  if r.killer and r.spell then
-    return string.format("%s (%s)", r.killer, r.spell)
-  end
-  return r.killer or r.spell or L.CAUSE_UNKNOWN
-end
-
-local LEVEL_COLUMNS = {
-  levelColumn(44),
-  durationColumn(62),
-  xpRateColumn(52),
-  counterColumn("HISTORY_PVE", Stats.PVE_KILLS, 40),
-  counterColumn("HISTORY_PVP", Stats.PVP_KILLS, 40),
-  counterColumn("HISTORY_DEATHS", Stats.DEATHS, 40),
-  counterColumn("HISTORY_QUESTS", Stats.QUESTS, 48),
-  goldColumn(56),
-}
-
-local SESSION_COLUMNS = {
-  { header = "HISTORY_START", width = 80, value = function(r) return dateTime(r.startedAt) end },
-  durationColumn(56),
-  { header = "HISTORY_LEVEL", width = 44, value = levelRange },
-  xpRateColumn(48),
-  counterColumn("HISTORY_PVE", Stats.PVE_KILLS, 36),
-  counterColumn("HISTORY_PVP", Stats.PVP_KILLS, 36),
-  counterColumn("HISTORY_DEATHS", Stats.DEATHS, 40),
-  counterColumn("HISTORY_QUESTS", Stats.QUESTS, 44),
-  goldColumn(52),
-}
-
-local KILL_COLUMNS = {
-  { header = "HISTORY_WHEN", width = 80, value = function(r) return dateTime(r.time) end },
-  { header = "HISTORY_NAME", width = 140, value = function(r) return r.name or L.UNKNOWN_NAME end },
-  { header = "HISTORY_KIND", width = 40, value = function(r)
-      return r.kind == Journal.PVP and L.KIND_PVP or L.KIND_PVE
-    end },
-  levelColumn(40),
-  zoneColumn(136),
-}
-
-local DEATH_COLUMNS = {
-  { header = "HISTORY_WHEN", width = 80, value = function(r) return dateTime(r.time) end },
-  { header = "HISTORY_CAUSE", width = 180, value = deathCause },
-  levelColumn(40),
-  zoneColumn(136),
-}
-
--- Summenzeile für Level und Sessions: Spaltenwerte der Summe, vorne "Gesamt"
-local function summaryCells(columns, records)
-  local summary = History.Summarize(records)
-  local cells = {}
-  for i, column in ipairs(columns) do
-    cells[i] = column.value(summary)
-  end
-  cells[1] = L.HISTORY_TOTAL
-  return cells
-end
-
--- Summenzeile für Kills und Tode: nur die Anzahl
-local function countCells(_, records)
-  return { string.format(L.HISTORY_COUNT, #records) }
-end
-
--- Reiter in Anzeigereihenfolge
-local VIEWS = {
-  { tab = "HISTORY_TAB_LEVELS", columns = LEVEL_COLUMNS, records = History.GetLevelRecords, footer = summaryCells },
-  { tab = "HISTORY_TAB_SESSIONS", columns = SESSION_COLUMNS, records = History.GetSessionRecords, footer = summaryCells },
-  { tab = "HISTORY_TAB_KILLS", columns = KILL_COLUMNS, records = History.GetKillLog, footer = countCells },
-  { tab = "HISTORY_TAB_DEATHS", columns = DEATH_COLUMNS, records = History.GetDeathLog, footer = countCells },
-}
-
-local function tableWidth(columns)
-  local width = 0
-  for _, column in ipairs(columns) do
-    width = width + column.width
-  end
-  return width
-end
-
-local widestTable = 0
-for _, view in ipairs(VIEWS) do
-  widestTable = math.max(widestTable, tableWidth(view.columns))
-end
-
----------------------------------------------------------------------------
--- Fenster
----------------------------------------------------------------------------
 local panel = Widgets.CreatePanel("LevelTimerHistory", 0.95)
-panel:SetSize(widestTable + 2 * MARGIN + SCROLLBAR_SPACE, -TABLE_TOP + ROW_HEIGHT * (VISIBLE_ROWS + 3) + MARGIN)
+panel:SetWidth(HistoryWindow.CONTENT_WIDTH + 2 * MARGIN)  -- Höhe hängt von den Unterreiter-Zeilen ab (refresh)
 panel:SetPoint("CENTER")
 panel:SetFrameStrata("DIALOG")
 panel:SetScript("OnDragStart", panel.StartMoving)
@@ -173,106 +36,67 @@ panel:SetScript("OnDragStop", panel.StopMovingOrSizing)
 panel:Hide()
 table.insert(UISpecialFrames, "LevelTimerHistory")  -- mit ESC schließen
 
-local closeButton = CreateFrame("Button", nil, panel, "UIPanelCloseButton")
-closeButton:SetPoint("TOPRIGHT", -2, -2)
+Widgets.CreateCloseButton(panel)
 
 local header = panel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 header:SetPoint("TOP", 0, HEADER_TOP)
 
+local content = CreateFrame("Frame", nil, panel)
+content:SetSize(HistoryWindow.CONTENT_WIDTH, HistoryWindow.CONTENT_HEIGHT)
+
+-- Reiter: entry = { tab = Locale-Key, members = { view, ... }, selected = view, tabButton }
+local entries = {}
+local entriesByGroup = {}
+local selectedEntry
 local selectedCharacter  -- Schlüssel "Name-Realm"; nil = eingeloggter Charakter
-local selectedView = VIEWS[1]
+local rendered = {}      -- zuletzt angezeigte Ansicht und Charakter (Wechsel setzt den Bildlauf zurück)
 local refresh            -- unten definiert
 
+local function selectView(entry, view)
+  selectedEntry = entry
+  entry.selected = view
+  refresh()
+end
+
+local function createEntry(tabKey)
+  local entry = { tab = tabKey, members = {} }
+  entry.tabButton = Widgets.CreateTab(panel, "GameFontNormal", function()
+    selectView(entry, entry.selected)
+  end)
+  local previous = entries[#entries]
+  if previous then
+    entry.tabButton:SetPoint("LEFT", previous.tabButton, "RIGHT", TAB_GAP, 0)
+  else
+    entry.tabButton:SetPoint("TOPLEFT", MARGIN, TABS_TOP)
+  end
+  table.insert(entries, entry)
+  selectedEntry = selectedEntry or entry
+  return entry
+end
+
 ---------------------------------------------------------------------------
--- Tabelle: Kopfzeile, scrollbare Zeilen, Summenzeile
+-- Ansichten
 ---------------------------------------------------------------------------
-local function createRow(parent, columns, fontObject)
-  local row = CreateFrame("Frame", nil, parent)
-  row:SetSize(tableWidth(columns), ROW_HEIGHT)
-  row.cells = {}
-  local x = 0
-  for i, column in ipairs(columns) do
-    local cell = row:CreateFontString(nil, "OVERLAY", fontObject)
-    cell:SetPoint("LEFT", x, 0)
-    cell:SetWidth(column.width - CELL_GAP)
-    cell:SetJustifyH(i == 1 and "LEFT" or "RIGHT")
-    cell:SetWordWrap(false)
-    row.cells[i] = cell
-    x = x + column.width
-  end
-  return row
-end
 
-local function fillRow(row, cells, color)
-  for i, cell in ipairs(row.cells) do
-    cell:SetText(cells[i] or "")
-    cell:SetTextColor(unpack(color))
-  end
-  row:Show()
-end
+-- view = { tab = Locale-Key, group = Locale-Key (optional),
+--          Create = function(parent, width, height) -> frame mit Render(characterKey, selectionChanged) }
+function HistoryWindow.AddView(view)
+  view.frame = view.Create(content, HistoryWindow.CONTENT_WIDTH, HistoryWindow.CONTENT_HEIGHT)
+  view.frame:Hide()
 
-local function recordCells(columns, record)
-  local cells = {}
-  for i, column in ipairs(columns) do
-    cells[i] = column.value(record)
-  end
-  return cells
-end
-
-local function createTable(view)
-  local columns = view.columns
-  local frame = CreateFrame("Frame", nil, panel)
-  frame:SetPoint("TOPLEFT", MARGIN, TABLE_TOP)
-  frame:SetPoint("BOTTOMRIGHT", -MARGIN, MARGIN)
-
-  local headerRow = createRow(frame, columns, "GameFontNormalSmall")
-  headerRow:SetPoint("TOPLEFT")
-
-  local footerRow = createRow(frame, columns, "GameFontNormalSmall")
-  footerRow:SetPoint("BOTTOMLEFT")
-
-  local scrollFrame = CreateFrame("ScrollFrame", nil, frame, "UIPanelScrollFrameTemplate")
-  scrollFrame:SetPoint("TOPLEFT", 0, -ROW_HEIGHT)
-  scrollFrame:SetPoint("BOTTOMRIGHT", -SCROLLBAR_SPACE, ROW_HEIGHT + 4)
-
-  local content = CreateFrame("Frame", nil, scrollFrame)
-  content:SetSize(tableWidth(columns), ROW_HEIGHT)
-  scrollFrame:SetScrollChild(content)
-
-  local rows = {}  -- werden bei Bedarf angelegt und wiederverwendet
-
-  local function getRow(index)
-    if not rows[index] then
-      rows[index] = createRow(content, columns, "GameFontHighlightSmall")
-      rows[index]:SetPoint("TOPLEFT", 0, -(index - 1) * ROW_HEIGHT)
-    end
-    return rows[index]
+  local entry = view.group and entriesByGroup[view.group]
+  if not entry then
+    entry = createEntry(view.group or view.tab)
+    if view.group then entriesByGroup[view.group] = entry end
   end
 
-  function frame:Render(records)
-    for i, column in ipairs(columns) do
-      headerRow.cells[i]:SetText(L[column.header])
-    end
+  -- Position setzt layoutSubtabs, weil die Breite von der Sprache abhängt
+  view.subtabButton = Widgets.CreateTab(panel, "GameFontHighlightSmall", function()
+    selectView(entry, view)
+  end)
 
-    for i, record in ipairs(records) do
-      local color = record.isCurrent and Widgets.COLORS.highlight or WHITE
-      fillRow(getRow(i), recordCells(columns, record), color)
-    end
-    for i = #records + 1, #rows do
-      rows[i]:Hide()
-    end
-    content:SetHeight(math.max(1, #records) * ROW_HEIGHT)
-
-    fillRow(footerRow, view.footer(columns, records), Widgets.COLORS.highlight)
-    self:Show()
-  end
-
-  frame:Hide()
-  return frame
-end
-
-for _, view in ipairs(VIEWS) do
-  view.table = createTable(view)
+  table.insert(entry.members, view)
+  entry.selected = entry.selected or view
 end
 
 ---------------------------------------------------------------------------
@@ -299,6 +123,31 @@ local nextButton = Widgets.CreateButton(panel, ARROW_SIZE, ARROW_SIZE, function(
 nextButton:SetText(">")
 nextButton:SetPoint("TOPRIGHT", -MARGIN, CHARACTER_ROW_TOP + 4)
 
+---------------------------------------------------------------------------
+-- Daten des gewählten Charakters löschen (mit Rückfrage)
+---------------------------------------------------------------------------
+local DELETE_POPUP = "LEVELTIMER_DELETE_CHARACTER"
+
+StaticPopupDialogs[DELETE_POPUP] = {
+  button1 = YES or "Yes",
+  button2 = NO or "No",
+  OnAccept = function(_, characterKey)
+    ns.DeleteCharacter(characterKey)
+    refresh()
+  end,
+  timeout = 0,
+  whileDead = true,
+  hideOnEscape = true,
+  preferredIndex = 3,  -- eigener Platz, kollidiert nicht mit Blizzard-Dialogen
+}
+
+local deleteButton = Widgets.CreateButton(panel, DELETE_BUTTON_WIDTH, DELETE_BUTTON_HEIGHT, function()
+  local character = History.GetCharacter(selectedCharacter)
+  StaticPopupDialogs[DELETE_POPUP].text = L.DELETE_CHARACTER_CONFIRM  -- aktuelle Sprache
+  StaticPopup_Show(DELETE_POPUP, (character.name or "?") .. " - " .. (character.realm or "?"), nil, selectedCharacter)
+end)
+deleteButton:SetPoint("TOPLEFT", MARGIN, HEADER_TOP + 4)
+
 local function showCharacterName(character)
   characterName:SetText(string.format(L.HISTORY_CHARACTER, character.name or "?", character.realm or "?",
     character.currentLevel.level))
@@ -311,42 +160,69 @@ local function showCharacterName(character)
 end
 
 ---------------------------------------------------------------------------
--- Reiter: einer pro Ansicht, nebeneinander von links
----------------------------------------------------------------------------
-local previousTab
-for _, view in ipairs(VIEWS) do
-  view.tabButton = Widgets.CreateTab(panel, "GameFontNormal", function()
-    selectedView = view
-    refresh()
-  end)
-  if previousTab then
-    view.tabButton:SetPoint("LEFT", previousTab, "RIGHT", TAB_GAP, 0)
-  else
-    view.tabButton:SetPoint("TOPLEFT", MARGIN, TABS_TOP)
-  end
-  previousTab = view.tabButton
-end
-
----------------------------------------------------------------------------
 -- Aufbau
 ---------------------------------------------------------------------------
+
+-- Unterreiter einer Gruppe von links nach rechts, bei Platzmangel in die nächste Zeile.
+-- Erwartet gesetzte Beschriftungen (Breite); gibt die Zahl der Zeilen zurück.
+local function layoutSubtabs(entry)
+  local x, row = 0, 0
+  for _, view in ipairs(entry.members) do
+    local width = view.subtabButton:GetWidth()
+    if x > 0 and x + width > HistoryWindow.CONTENT_WIDTH then
+      x, row = 0, row + 1
+    end
+    view.subtabButton:ClearAllPoints()
+    view.subtabButton:SetPoint("TOPLEFT", MARGIN + x, SUBTABS_TOP - row * SUBTAB_ROW_HEIGHT)
+    x = x + width + SUBTAB_GAP
+  end
+  return row + 1
+end
+
+-- Inhalt unter die Unterreiter. Platz für die meisten Zeilen aller Gruppen, damit das Fenster
+-- beim Reiterwechsel nicht springt.
+local function placeContent(subtabRows)
+  local contentTop = SUBTABS_TOP - (subtabRows - 1) * SUBTAB_ROW_HEIGHT - SUBTABS_TO_CONTENT
+  content:ClearAllPoints()
+  content:SetPoint("TOPLEFT", MARGIN, contentTop)
+  panel:SetHeight(-contentTop + HistoryWindow.CONTENT_HEIGHT + MARGIN)
+end
+
 function refresh()
   if not History.GetCharacter(selectedCharacter or "") then
     selectedCharacter = ns.characterKey
   end
 
   header:SetText(L.HISTORY)
+  deleteButton:SetText(L.DELETE_CHARACTER)
   showCharacterName(History.GetCharacter(selectedCharacter))
 
-  for _, view in ipairs(VIEWS) do
-    view.tabButton:SetLabel(L[view.tab])
-    view.tabButton:SetActive(view == selectedView)
-    if view == selectedView then
-      view.table:Render(view.records(selectedCharacter))
-    else
-      view.table:Hide()
+  local selectedView = selectedEntry.selected
+  local selectionChanged = rendered.view ~= selectedView or rendered.character ~= selectedCharacter
+  rendered.view, rendered.character = selectedView, selectedCharacter
+
+  local subtabRows = 1
+  for _, entry in ipairs(entries) do
+    local isSelectedEntry = entry == selectedEntry
+    entry.tabButton:SetLabel(L[entry.tab])
+    entry.tabButton:SetActive(isSelectedEntry)
+
+    -- Unterreiter nur bei Gruppen mit mehreren Ansichten
+    local showSubtabs = isSelectedEntry and #entry.members > 1
+    for _, view in ipairs(entry.members) do
+      view.subtabButton:SetLabel(L[view.tab])
+      view.subtabButton:SetActive(view == entry.selected)
+      view.subtabButton:SetShown(showSubtabs)
+      if view == selectedView then
+        view.frame:Render(selectedCharacter, selectionChanged)
+        view.frame:Show()
+      else
+        view.frame:Hide()
+      end
     end
+    subtabRows = math.max(subtabRows, layoutSubtabs(entry))
   end
+  placeContent(subtabRows)
 end
 
 local sinceUpdate = 0

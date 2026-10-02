@@ -21,6 +21,9 @@ Stats.XP_KILLS = "xpKills"
 Stats.XP_QUESTS = "xpQuests"
 Stats.XP_RESTED = "xpRested"
 Stats.MONEY_EARNED = "moneyEarned"
+Stats.ELITE_KILLS = "eliteKills"
+Stats.RARE_KILLS = "rareKills"
+Stats.NEAR_DEATHS = "nearDeaths"
 
 local function countersOf(scope)
   if scope == Stats.SESSION then
@@ -33,11 +36,21 @@ function Stats.Get(scope, counter)
   return countersOf(scope)[counter] or 0
 end
 
+-- Module, die zusätzlich mitzählen (z.B. pro Zone oder pro Tag): listener(counter, amount)
+local incrementListeners = {}
+
+function Stats.OnIncrement(listener)
+  table.insert(incrementListeners, listener)
+end
+
 function Stats.Increment(counter, amount)
   amount = amount or 1
   for _, scope in ipairs({ Stats.LEVEL, Stats.SESSION }) do
     local counters = countersOf(scope)
     counters[counter] = (counters[counter] or 0) + amount
+  end
+  for _, listener in ipairs(incrementListeners) do
+    listener(counter, amount)
   end
 end
 

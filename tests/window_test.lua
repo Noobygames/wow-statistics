@@ -46,3 +46,59 @@ window._scripts.OnMouseUp(window, "RightButton")
 expect("Einstellungen offen", LevelTimerOptions:IsShown(), true)
 window._scripts.OnMouseUp(window, "LeftButton")
 expect("Linksklick öffnet nichts", LevelTimerOptions:IsShown(), true)
+
+-- XP-Balken: braucht Platz im Fenster, nur beim Leveln
+wow.state.xp, wow.state.xpMax, wow.state.rested = 250, 1000, 200
+addon.Set("showXpBar", true)
+local withBar = window:GetHeight()
+addon.Set("showXpBar", false)
+local withoutBar = window:GetHeight()
+expectTrue("Balken vergrößert das Fenster", withBar > withoutBar)
+addon.Set("showXpBar", true)
+wow.state.level, addon.level = 60, 60
+addon.ApplySettings()
+expect("auf Max-Level kein Balken", window:GetHeight(), withoutBar)
+
+-- Kompaktmodus: ohne Reiter und ohne weitere Zeilen deutlich kleiner
+wow.state.level, addon.level = 30, 30
+addon.Set("compactMode", false)
+local fullHeight = window:GetHeight()
+local sessionTab = wow.findFrame(function(frame)
+  local label = rawget(frame, "label")
+  return label and label._text == "Session"
+end)
+SlashCmdList.LEVELTIMER("compact")
+expect("Kompaktmodus an", LevelTimerDB.compactMode, true)
+expectTrue("kompakt ist kleiner", window:GetHeight() < fullHeight)
+expect("Reiter versteckt", sessionTab:IsShown(), false)
+SlashCmdList.LEVELTIMER("compact")
+expect("Kompaktmodus aus", LevelTimerDB.compactMode, false)
+expect("Reiter wieder da", sessionTab:IsShown(), true)
+
+-- Horizontale Leiste: eine Zeile, also breiter und flacher als das Fenster
+addon.Set("horizontalLayout", false)
+local verticalWidth, verticalHeight = window:GetWidth(), window:GetHeight()
+SlashCmdList.LEVELTIMER("bar")
+expect("Leiste an", LevelTimerDB.horizontalLayout, true)
+expectTrue("Leiste ist breiter", window:GetWidth() > verticalWidth)
+expectTrue("Leiste ist flacher", window:GetHeight() < verticalHeight)
+expect("Reiter in der Leiste", sessionTab:IsShown(), true)
+
+-- Ohne XP-Balken nur noch eine Textzeile hoch
+local barHeight = window:GetHeight()
+addon.Set("showXpBar", false)
+expectTrue("Leiste ohne Balken flacher", window:GetHeight() < barHeight)
+addon.Set("showXpBar", true)
+
+-- Mit Kompaktmodus kombinierbar: schmaler, ohne Reiter
+local barWidth = window:GetWidth()
+addon.Set("compactMode", true)
+expectTrue("kompakte Leiste schmaler", window:GetWidth() < barWidth)
+expect("kompakte Leiste ohne Reiter", sessionTab:IsShown(), false)
+addon.Set("compactMode", false)
+
+-- Abschalten stellt das Fenster wieder her
+SlashCmdList.LEVELTIMER("bar")
+expect("Leiste aus", LevelTimerDB.horizontalLayout, false)
+expect("Breite wie vorher", window:GetWidth(), verticalWidth)
+expect("Höhe wie vorher", window:GetHeight(), verticalHeight)

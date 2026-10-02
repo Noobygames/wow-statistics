@@ -73,8 +73,8 @@ expectTrue("Reiter Tode", wow.click("Tode"))
 ---------------------------------------------------------------------------
 -- Begrenzung: nur die neuesten Einträge bleiben
 ---------------------------------------------------------------------------
-for i = 1, 310 do
+for i = 1, Journal.MAX_KILLS + 10 do
   Journal.AddKill(Journal.PVE, "Ratte " .. i)
 end
-expect("Kill-Journal begrenzt", #addon.character.killLog, 300)
-expect("neuester Eintrag bleibt", addon.character.killLog[300].name, "Ratte 310")
+expect("Kill-Journal begrenzt", #addon.character.killLog, Journal.MAX_KILLS)
+expect("neuester Eintrag bleibt", addon.character.killLog[Journal.MAX_KILLS].name, "Ratte " .. (Journal.MAX_KILLS + 10))

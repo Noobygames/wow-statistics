@@ -30,8 +30,13 @@ local SLIDER_BACKDROP = {
 local INACTIVE_TAB_COLOR = { 0.55, 0.55, 0.55 }
 local TAB_PADDING = 8
 local SECTION_HEADER_HEIGHT = 18
+local CLOSE_BUTTON_SIZE = 24
+local SCROLLBAR_WIDTH = 8
+local SCROLLBAR_THUMB_HEIGHT = 30
+local WHITE_TEXTURE = "Interface\\Buttons\\WHITE8x8"
 
 local CHECKBOX_SIZE = 26
+Widgets.CHECKBOX_LABEL_GAP = 2  -- Abstand Kästchen zu Beschriftung (Options.lua rechnet damit)
 local SLIDER_HEIGHT = 17
 local SLIDER_LABEL_HEIGHT = 18
 
@@ -58,7 +63,7 @@ function Widgets.CreateCheckbox(parent, onToggle)
   local checkbox = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
   checkbox:SetSize(CHECKBOX_SIZE, CHECKBOX_SIZE)
   checkbox.label = checkbox:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-  checkbox.label:SetPoint("LEFT", checkbox, "RIGHT", 2, 0)
+  checkbox.label:SetPoint("LEFT", checkbox, "RIGHT", Widgets.CHECKBOX_LABEL_GAP, 0)
   checkbox:SetScript("OnClick", function(self)
     onToggle(self:GetChecked() and true or false)
   end)
@@ -155,4 +160,53 @@ function Widgets.CreateSectionHeader(parent)
   end
 
   return header
+end
+
+-- Schließen-Knopf oben rechts, kleiner als die Vorlage, damit er nicht über den Rand ragt
+function Widgets.CreateCloseButton(panel)
+  local button = CreateFrame("Button", nil, panel, "UIPanelCloseButton")
+  button:SetSize(CLOSE_BUTTON_SIZE, CLOSE_BUTTON_SIZE)
+  button:SetPoint("TOPRIGHT", -4, -4)
+  return button
+end
+
+-- Schmale senkrechte Bildlaufleiste im Addon-Stil (die Vorlage sieht je nach Client anders aus).
+-- onScroll(offset) wird nur bei Benutzereingabe aufgerufen, Werte sind ganze Zeilen.
+function Widgets.CreateScrollBar(parent, onScroll)
+  local bar = CreateFrame("Slider", nil, parent, "BackdropTemplate")
+  bar:SetOrientation("VERTICAL")
+  bar:SetWidth(SCROLLBAR_WIDTH)
+  bar:SetBackdrop({ bgFile = WHITE_TEXTURE })
+  bar:SetBackdropColor(1, 1, 1, 0.08)
+
+  local thumb = bar:CreateTexture(nil, "OVERLAY")
+  local r, g, b = unpack(Widgets.COLORS.border)
+  thumb:SetColorTexture(r, g, b, 0.9)
+  thumb:SetSize(SCROLLBAR_WIDTH, SCROLLBAR_THUMB_HEIGHT)
+  bar:SetThumbTexture(thumb)
+
+  bar:SetMinMaxValues(0, 0)
+  bar:SetValueStep(1)
+  if bar.SetObeyStepOnDrag then bar:SetObeyStepOnDrag(true) end
+
+  local silent = false
+  bar:SetScript("OnValueChanged", function(_, value)
+    if not silent then onScroll(math.floor(value + 0.5)) end
+  end)
+
+  -- Bereich 0..maxOffset; ohne etwas zu scrollen wird die Leiste ausgeblendet
+  function bar:SetRange(maxOffset)
+    silent = true
+    self:SetMinMaxValues(0, maxOffset)
+    silent = false
+    self:SetShown(maxOffset > 0)
+  end
+
+  function bar:SetOffsetSilently(offset)
+    silent = true
+    self:SetValue(offset)
+    silent = false
+  end
+
+  return bar
 end

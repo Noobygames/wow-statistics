@@ -13,14 +13,21 @@ local SETTINGS_DEFAULTS = {
   bgAlpha = 0.8,
   locked = false,
   showTimer = true,
+  showXpBar = true,
+  compactMode = false,  -- nur Zeit, XP-Balken und XP/h (siehe TimerWindow.lua)
+  horizontalLayout = false,  -- Fenster als Info-Leiste: alles in einer Zeile (siehe TimerWindow.lua)
   windowScope = "level",  -- "level" oder "session" (siehe Stats.lua)
   -- Stat-Zeilen im Fenster (siehe StatLines.lua)
   showXpRate = true,
   showLevelEta = true,
+  showMaxLevelEta = true,
+  levelUpSummary = true,  -- Chatzeile beim Level-Up (siehe LevelUpSummary.lua)
   showPveKills = true,
   showPvpKills = true,
+  showSpecialKills = false,
   showDeaths = true,
   showKillsPerDeath = false,
+  showNearDeaths = false,
   showXpSources = false,
   showRested = false,
   showQuests = true,
@@ -40,6 +47,9 @@ local COUNTER_DEFAULTS = {
   xpQuests = 0,
   xpRested = 0,
   moneyEarned = 0,
+  eliteKills = 0,
+  rareKills = 0,
+  nearDeaths = 0,
 }
 
 local CHARACTER_DEFAULTS = {
@@ -57,11 +67,17 @@ local CHARACTER_DEFAULTS = {
   sessionHistory = {},  -- beendete Sessions, älteste zuerst
   killLog = {},         -- getötete Kreaturen und Spieler, älteste zuerst (siehe Journal.lua)
   deathLog = {},        -- eigene Tode mit Ursache, älteste zuerst (siehe Journal.lua)
+  questLog = {},        -- abgegebene Quests, älteste zuerst (siehe Journal.lua)
+  instanceLog = {},     -- beendete Instanz-Läufe, älteste zuerst (siehe Instances.lua)
+  lootLog = {},         -- seltene und bessere Beute, älteste zuerst (siehe Loot.lua)
+  nearDeathLog = {},    -- Beinahe-Tode, älteste zuerst (siehe NearDeath.lua)
+  zoneStats = {},       -- Spielzeit, XP, Kills und Tode je Zone (siehe Zones.lua)
+  dailyStats = {},      -- Tageswerte, Schlüssel "JJJJ-MM-TT" (siehe Daily.lua)
 }
 
 -- Migrationen für die Daten eines Charakters, Schlüssel = Zielversion.
 -- Laufen auch für frische (leere) Daten und müssen daher fehlende Felder vertragen.
-local CHARACTER_SCHEMA_VERSION = 3
+Database.CHARACTER_SCHEMA_VERSION = 5
 local characterMigrations = {
   [2] = function(data)  -- kills (nur PvE) -> counters.pveKills
     data.counters = data.counters or {}
@@ -72,6 +88,26 @@ local characterMigrations = {
     data.currentLevel = { level = data.level, counters = data.counters }
     data.levelHistory = data.history
     data.level, data.counters, data.history = nil, nil, nil
+  end,
+  [4] = function(data)  -- Tageswerte neu: Spielzeit bisheriger Sessions ihrem Starttag zuordnen
+    data.dailyStats = data.dailyStats or {}
+    for _, session in ipairs(data.sessionHistory or {}) do
+      if session.startedAt and session.seconds then
+        local entry = ns.Daily.Entry(data.dailyStats, session.startedAt)
+        entry.seconds = entry.seconds + session.seconds
+      end
+    end
+  end,
+  [5] = function(data)  -- Tageswerte zählen Kills und Tode: aus dem vorhandenen Journal übernehmen
+    data.dailyStats = data.dailyStats or {}
+    for _, kill in ipairs(data.killLog or {}) do
+      local entry = ns.Daily.Entry(data.dailyStats, kill.time)
+      entry.kills = entry.kills + 1
+    end
+    for _, death in ipairs(data.deathLog or {}) do
+      local entry = ns.Daily.Entry(data.dailyStats, death.time)
+      entry.deaths = entry.deaths + 1
+    end
   end,
 }
 
@@ -146,7 +182,7 @@ local function loadCharacter(stats)
   end
   LevelTimerCharDB = nil
 
-  migrate(data, characterMigrations, CHARACTER_SCHEMA_VERSION)
+  migrate(data, characterMigrations, Database.CHARACTER_SCHEMA_VERSION)
   applyDefaults(data, CHARACTER_DEFAULTS)
 
   data.name, data.realm = name, realm
@@ -167,4 +203,9 @@ end
 
 function Database.GetCharacters()
   return LevelTimerStatsDB.characters
+end
+
+-- Entfernt alle Statistiken eines Charakters (Einstellungen bleiben unberührt)
+function Database.DeleteCharacter(characterKey)
+  LevelTimerStatsDB.characters[characterKey] = nil
 end

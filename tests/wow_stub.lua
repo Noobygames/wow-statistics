@@ -9,6 +9,7 @@
 --   wow.levelUp(level, xpMax)  Level-Up wie im Client
 --   wow.fire(event, ...)   Event an alle registrierten Frames senden
 --   wow.advance(seconds)   Spielzeit (GetTime) und Uhrzeit (time) vorstellen
+--   wow.runTimers()        geplante C_Timer.After-Callbacks ausführen
 --   wow.printed            alle Chat-Ausgaben (print)
 --   expect, expectNear, expectTrue   Prüfungen; Fehlschläge landen in TEST_FAILURES
 
@@ -36,6 +37,12 @@ wow = {
     guid = "Player-1-0001",
     zone = "Wald von Elwynn",
     combatLog = {},          -- Rückgabewerte von CombatLogGetCurrentEventInfo
+    questTitle = nil,        -- Titel im offenen Quest-Abgabe-Dialog (GetTitleText)
+    questTitles = {},        -- C_QuestLog.GetTitleForQuestID je Quest-ID
+    instance = nil,          -- { name, type } wenn in einer Instanz (IsInInstance)
+    units = {},              -- weitere Einheiten: units.target = { name, classification, isPlayer }
+    health = 1000,
+    healthMax = 1000,
   },
   printed = {},
   UNKNOWN_EVENT = UNKNOWN_EVENT,
@@ -88,6 +95,9 @@ local frameMethods = {
   GetTop = function() return 500 end,
   SetNormalTexture = function(self, texture) self._normalTexture = texture end,
   GetPoint = function() return "CENTER", nil, "CENTER", 0, 0 end,
+  -- Anker werden nur gemerkt (frame._points), nicht ausgewertet
+  SetPoint = function(self, ...) table.insert(self._points, { ... }) end,
+  ClearAllPoints = function(self) self._points = {} end,
   GetCenter = function() return 0, 0 end,
   GetEffectiveScale = function() return 1 end,
   IsShown = function(self) return self._shown end,
@@ -110,7 +120,7 @@ local function noop() end
 local function newFrame()
   local frame = {
     _shown = true, _scripts = {}, _events = {}, _text = "",
-    _width = 200, _height = 100, _scale = 1, _checked = false, _normalTexture = "",
+    _width = 200, _height = 100, _scale = 1, _checked = false, _normalTexture = "", _points = {},
   }
   frame.CreateFontString = function() return newFrame() end
   frame.CreateTexture = function() return newFrame() end
@@ -170,6 +180,20 @@ function wow.combatLog(subevent, sourceName, destGUID, ...)
   wow.fire("COMBAT_LOG_EVENT_UNFILTERED")
 end
 
+-- Die gerade sichtbare Tabellen-Ansicht der Historie (HistoryTables.lua)
+function wow.shownTable()
+  return wow.findFrame(function(frame)
+    return rawget(frame, "GetVisibleRecords") ~= nil and frame:IsShown()
+  end)
+end
+
+-- Alle bisher mit C_Timer.After geplanten Callbacks ausführen (Verzögerung egal)
+function wow.runTimers()
+  local due = wow.timers
+  wow.timers = {}
+  for _, callback in ipairs(due) do callback() end
+end
+
 function wow.logout()
   wow.fire("PLAYER_LOGOUT")
 end
@@ -195,9 +219,19 @@ CreateFrame = function(_, name)
 end
 UIParent, Minimap, GameTooltip, GameFontNormalLarge = newFrame(), newFrame(), newFrame(), newFrame()
 UISpecialFrames, SlashCmdList = {}, {}
+StaticPopupDialogs, YES, NO = {}, "Ja", "Nein"
+-- Dialog nicht anzeigen, sondern merken; Tests bestätigen mit StaticPopupDialogs[name].OnAccept
+function StaticPopup_Show(name, textArg1, textArg2, data)
+  wow.popup = { name = name, text = textArg1, data = data }
+end
 COMBATLOG_XPGAIN_FIRSTPERSON = "%s stirbt, Ihr bekommt %d Erfahrung."
 COMBATLOG_HONORGAIN = "%s stirbt, ehrenhafter Sieg Rang: %s (Geschätzte Ehrenpunkte: %d)"
-C_Timer = { After = noop }
+LOOT_ITEM_SELF = "Ihr erhaltet Beute: %s."
+LOOT_ITEM_SELF_MULTIPLE = "Ihr erhaltet Beute: %sx%d."
+LOOT_ITEM_PUSHED_SELF = "Ihr erhaltet einen Gegenstand: %s."
+-- Timer laufen nicht von selbst; Tests starten sie mit wow.runTimers()
+wow.timers = {}
+C_Timer = { After = function(_, callback) table.insert(wow.timers, callback) end }
 ChatFrame_DisplayTimePlayed = noop
 date = os.date
 
@@ -221,15 +255,33 @@ function GetCursorPosition() return state.cursorX, state.cursorY end
 function UnitGUID() return state.guid end
 function GetZoneText() return state.zone end
 function CombatLogGetCurrentEventInfo() return unpack(state.combatLog) end
-function time() return state.clock end
-function UnitName() return state.name end
+function time(dateTable)
+  if dateTable then return os.time(dateTable) end
+  return state.clock
+end
+function UnitName(unit)
+  if unit == nil or unit == "player" then return state.name end
+  return state.units[unit] and state.units[unit].name
+end
+function UnitExists(unit) return unit == "player" or state.units[unit] ~= nil end
+function UnitIsPlayer(unit) return unit == "player" or (state.units[unit] and state.units[unit].isPlayer) or false end
+function UnitClassification(unit) return state.units[unit] and state.units[unit].classification or "normal" end
 function GetRealmName() return state.realm end
 function UnitClass() return state.class, state.class end
 function UnitIsDeadOrGhost() return state.dead end
+function UnitHealth() return state.health end
+function UnitHealthMax() return state.healthMax end
 function GetPVPSessionStats() return state.honorableKills end
 function IsShiftKeyDown() return state.shiftDown end
 function RequestTimePlayed() end
 function GetCoinTextureString(copper) return copper .. "c" end
+function GetTitleText() return state.questTitle end
+function IsInInstance()
+  if state.instance then return true, state.instance.type end
+  return false, "none"
+end
+function GetInstanceInfo() return state.instance and state.instance.name or GetZoneText() end
+C_QuestLog = { GetTitleForQuestID = function(questID) return state.questTitles[questID] end }
 function strtrim(text) return (text:gsub("^%s+", ""):gsub("%s+$", "")) end
 
 ---------------------------------------------------------------------------

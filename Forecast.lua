@@ -1,0 +1,38 @@
+-- Prognose bis zum Max-Level: Rest des aktuellen Levels plus geschätzte Zeit je weiteres Level.
+-- Schätzung je Level = Durchschnitt der letzten SAMPLE_SIZE abgeschlossenen Level, ohne solche die
+-- hochgerechnete Dauer des aktuellen. Höhere Level dauern meist länger, die Prognose ist daher eher knapp.
+local _, ns = ...
+local Stats = ns.Stats
+local Experience = ns.Experience
+local History = ns.History
+
+local Forecast = {}
+ns.Forecast = Forecast
+
+local SAMPLE_SIZE = 5
+
+local function averageRecentLevelSeconds()
+  local sum, count = 0, 0
+  for _, record in ipairs(History.GetLevelRecords(ns.characterKey)) do
+    if not record.isCurrent and record.seconds then
+      sum = sum + record.seconds
+      count = count + 1
+      if count == SAMPLE_SIZE then break end
+    end
+  end
+  if count == 0 then return nil end
+  return sum / count
+end
+
+-- Geschätzte Spielzeit bis zum Max-Level; nil, solange keine Schätzung möglich ist
+function Forecast.SecondsToMaxLevel()
+  if not GetMaxPlayerLevel or not Experience.IsLeveling() then return nil end
+  local remaining = Experience.GetSecondsToLevel(Stats.LEVEL)
+  if not remaining then return nil end
+
+  local levelsAfterThis = GetMaxPlayerLevel() - ns.level - 1
+  if levelsAfterThis <= 0 then return remaining end
+
+  local perLevel = averageRecentLevelSeconds() or (Stats.GetSeconds(Stats.LEVEL) + remaining)
+  return remaining + levelsAfterThis * perLevel
+end

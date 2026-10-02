@@ -1,0 +1,54 @@
+-- Graphen der Historie: Reiter "Graphen" mit einem Unterreiter je Diagramm.
+-- Daten aus Analysis.lua, Darstellung aus Charts.lua.
+local _, ns = ...
+local L = ns.L
+local Format = ns.Format
+local Analysis = ns.Analysis
+local Charts = ns.Charts
+
+local GROUP = "HISTORY_TAB_CHARTS"
+
+-- kind: Säulen (Verlauf) oder Rangliste; axis beschriftet bei Säulen den Maximalwert
+local function createChartView(tab, kind, data, axis)
+  local function create(parent, width, height)
+    local frame = CreateFrame("Frame", nil, parent)
+    frame:SetAllPoints(parent)
+
+    local chart
+    if kind == "column" then
+      chart = Charts.CreateColumnChart(frame, width, height)
+    else
+      chart = Charts.CreateRankChart(frame, width, height)
+    end
+    chart:SetPoint("TOPLEFT")
+
+    local emptyText = frame:CreateFontString(nil, "OVERLAY", "GameFontDisable")
+    emptyText:SetPoint("CENTER")
+
+    function frame:Render(characterKey)
+      local items = data(characterKey)
+      local hasData = #items > 0
+      emptyText:SetText(L.CHART_EMPTY)
+      emptyText:SetShown(not hasData)
+      chart:SetShown(hasData)
+      if hasData then
+        chart:SetItems(items, axis)
+      end
+    end
+
+    return frame
+  end
+
+  return { tab = tab, group = GROUP, Create = create }
+end
+
+local AddView = ns.HistoryWindow.AddView
+AddView(createChartView("CHART_LEVEL_TIME", "column", Analysis.TimePerLevel, Format.Duration))
+AddView(createChartView("CHART_LEVEL_XP_RATE", "column", Analysis.XpRatePerLevel, Format.Number))
+AddView(createChartView("CHART_KILLS_PER_DAY", "column", Analysis.KillsPerDay, tostring))
+AddView(createChartView("CHART_TOP_KILLS", "rank", Analysis.TopKills))
+AddView(createChartView("CHART_DEATH_CAUSES", "rank", Analysis.DeathCauses))
+AddView(createChartView("CHART_ZONE_XP_RATE", "rank", Analysis.XpRatePerZone))
+AddView(createChartView("CHART_PLAYTIME_PER_DAY", "column", Analysis.PlayTimePerDay, Format.Duration))
+AddView(createChartView("CHART_PLAYTIME_PER_WEEK", "column", Analysis.PlayTimePerWeek, Format.Duration))
+AddView(createChartView("CHART_SESSION_XP", "column", Analysis.SessionXpTimeline, Format.Number))

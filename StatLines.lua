@@ -27,6 +27,13 @@ local function timeToLevel(scope)
   return seconds and Format.Duration(seconds) or PENDING
 end
 
+-- Prognose ist unabhängig vom Bereich (Level/Session)
+local function timeToMaxLevel()
+  if not Experience.IsLeveling() then return NO_VALUE end
+  local seconds = ns.Forecast.SecondsToMaxLevel()
+  return seconds and Format.Duration(seconds) or PENDING
+end
+
 local function deaths(scope)
   local count = Stats.Get(scope, Stats.DEATHS)
   local deadSeconds = DeathCounter.GetDeadSeconds(scope)
@@ -61,13 +68,21 @@ end
 ns.STAT_LINES = {
   { setting = "showXpRate", label = "STAT_XP_RATE", rows = { { label = "ROW_XP_RATE", value = xpRate } } },
   { setting = "showLevelEta", label = "STAT_LEVEL_ETA", rows = { { label = "ROW_LEVEL_ETA", value = timeToLevel } } },
+  { setting = "showMaxLevelEta", label = "STAT_MAX_LEVEL_ETA",
+    rows = { { label = "ROW_MAX_LEVEL_ETA", value = timeToMaxLevel } } },
   { setting = "showPveKills", label = "STAT_PVE_KILLS",
     rows = { { label = "ROW_PVE_KILLS", value = counter(Stats.PVE_KILLS) } } },
   { setting = "showPvpKills", label = "STAT_PVP_KILLS",
     rows = { { label = "ROW_PVP_KILLS", value = counter(Stats.PVP_KILLS) } } },
+  { setting = "showSpecialKills", label = "STAT_SPECIAL_KILLS", rows = {
+    { label = "ROW_ELITE_KILLS", value = counter(Stats.ELITE_KILLS) },
+    { label = "ROW_RARE_KILLS", value = counter(Stats.RARE_KILLS) },
+  } },
   { setting = "showDeaths", label = "STAT_DEATHS", rows = { { label = "ROW_DEATHS", value = deaths } } },
   { setting = "showKillsPerDeath", label = "STAT_KILLS_PER_DEATH",
     rows = { { label = "ROW_KILLS_PER_DEATH", value = killsPerDeath } } },
+  { setting = "showNearDeaths", label = "STAT_NEAR_DEATHS",
+    rows = { { label = "ROW_NEAR_DEATHS", value = counter(Stats.NEAR_DEATHS) } } },
   { setting = "showXpSources", label = "STAT_XP_SOURCES", rows = {
     { label = "ROW_XP_KILLS", value = xpShare(1) },
     { label = "ROW_XP_QUESTS", value = xpShare(2) },

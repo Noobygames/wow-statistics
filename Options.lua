@@ -6,10 +6,11 @@ local L = ns.L
 local Widgets = ns.Widgets
 local TimerWindow = ns.TimerWindow
 
-local WIDTH = 320
+local MIN_WIDTH = 320
 local MARGIN = 16
 local CONTENT_TOP = -42
-local COLUMN_WIDTH = 144
+local MIN_COLUMN_WIDTH = 144
+local COLUMN_GAP = 12        -- Mindestabstand zwischen einer Beschriftung und der rechten Spalte
 local ROW_SECTION = 24
 local ROW_CHECKBOX = 26
 local ROW_SLIDER = 44
@@ -21,7 +22,7 @@ local BUTTON_HEIGHT = 22
 local LANGUAGE_TAB_GAP = 10
 
 local panel = Widgets.CreatePanel("LevelTimerOptions", 0.95)
-panel:SetWidth(WIDTH)
+panel:SetWidth(MIN_WIDTH)  -- wächst mit den Texten der gewählten Sprache (fitWidth)
 panel:SetPoint("CENTER")
 panel:SetFrameStrata("DIALOG")
 panel:SetScript("OnDragStart", panel.StartMoving)
@@ -29,8 +30,7 @@ panel:SetScript("OnDragStop", panel.StopMovingOrSizing)
 panel:Hide()
 table.insert(UISpecialFrames, "LevelTimerOptions")  -- mit ESC schließen
 
-local closeButton = CreateFrame("Button", nil, panel, "UIPanelCloseButton")
-closeButton:SetPoint("TOPRIGHT", -2, -2)
+Widgets.CreateCloseButton(panel)
 
 local title = panel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 title:SetPoint("TOP", 0, -14)
@@ -40,6 +40,8 @@ title:SetPoint("TOP", 0, -14)
 ---------------------------------------------------------------------------
 local refreshers = {}
 local nextRowY = CONTENT_TOP
+local toggleCells = {}    -- { checkbox, column, y } aller Schalter; Spaltenbreite setzt fitWidth
+local languageRow         -- { label, tabs } der Sprachwahl
 
 local function onRefresh(refresh)
   table.insert(refreshers, refresh)
@@ -75,7 +77,7 @@ local function addToggles(toggles)
     local column = (i - 1) % 2
     local row = math.floor((i - 1) / 2)
     local checkbox = Widgets.CreateCheckbox(panel, toggle.set)
-    checkbox:SetPoint("TOPLEFT", MARGIN + column * COLUMN_WIDTH, nextRowY - row * ROW_CHECKBOX)
+    table.insert(toggleCells, { checkbox = checkbox, column = column, y = nextRowY - row * ROW_CHECKBOX })
     onRefresh(function(db)
       checkbox.label:SetText(L[toggle.label])
       checkbox:SetChecked(toggle.get(db))
@@ -85,8 +87,8 @@ local function addToggles(toggles)
 end
 
 local function addButton(labelKey, onClick)
-  local button = Widgets.CreateButton(panel, WIDTH - 2 * MARGIN, BUTTON_HEIGHT, onClick)
-  addRow(button, ROW_BUTTON)
+  local button = Widgets.CreateButton(panel, MIN_WIDTH - 2 * MARGIN, BUTTON_HEIGHT, onClick)
+  addRow(button, ROW_BUTTON, true)
   onRefresh(function() button:SetText(L[labelKey]) end)
 end
 
@@ -94,6 +96,7 @@ end
 local function addLanguageChooser()
   local label = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
   addRow(label, 0)
+  languageRow = { label = label, tabs = {} }
   local anchor = label
   for _, language in ipairs(ns.languages) do
     local tab = Widgets.CreateTab(panel, "GameFontHighlight", function()
@@ -101,6 +104,7 @@ local function addLanguageChooser()
     end)
     tab:SetPoint("LEFT", anchor, "RIGHT", LANGUAGE_TAB_GAP, 0)
     anchor = tab
+    table.insert(languageRow.tabs, tab)
     onRefresh(function(db)
       tab:SetLabel(language.name)
       tab:SetActive(db.language == language.code)
@@ -152,6 +156,12 @@ addToggles({
     set = function(checked) ns.Set("showTimer", checked) end },
   { label = "LOCK_FRAME", get = function(db) return db.locked end,
     set = function(checked) ns.Set("locked", checked) end },
+  { label = "SHOW_XP_BAR", get = function(db) return db.showXpBar end,
+    set = function(checked) ns.Set("showXpBar", checked) end },
+  { label = "COMPACT_MODE", get = function(db) return db.compactMode end,
+    set = function(checked) ns.Set("compactMode", checked) end },
+  { label = "HORIZONTAL_LAYOUT", get = function(db) return db.horizontalLayout end,
+    set = function(checked) ns.Set("horizontalLayout", checked) end },
 })
 addButton("RESET_WINDOW", function() TimerWindow.ResetLayout() end)
 addHint("OPTIONS_HINT")
@@ -173,6 +183,8 @@ addLanguageChooser()
 addToggles({
   { label = "SHOW_MINIMAP", get = function(db) return not db.minimap.hide end,
     set = function(checked) ns.SetMinimapHidden(not checked) end },
+  { label = "LEVEL_UP_SUMMARY_TOGGLE", get = function(db) return db.levelUpSummary end,
+    set = function(checked) ns.Set("levelUpSummary", checked) end },
 })
 nextRowY = nextRowY - SECTION_GAP
 addButton("HISTORY", function() ns.ToggleHistory() end)
@@ -182,11 +194,42 @@ panel:SetHeight(-nextRowY + MARGIN)
 ---------------------------------------------------------------------------
 -- Aktualisierung
 ---------------------------------------------------------------------------
+
+-- Zwei Schalter-Spalten so breit wie die längste Beschriftung, damit sich nichts überlappt
+local function columnWidth()
+  local width = MIN_COLUMN_WIDTH
+  for _, cell in ipairs(toggleCells) do
+    local checkbox = cell.checkbox
+    width = math.max(width, checkbox:GetWidth() + Widgets.CHECKBOX_LABEL_GAP + checkbox.label:GetStringWidth() + COLUMN_GAP)
+  end
+  return width
+end
+
+local function languageRowWidth()
+  local width = languageRow.label:GetStringWidth()
+  for _, tab in ipairs(languageRow.tabs) do
+    width = width + LANGUAGE_TAB_GAP + tab:GetWidth()
+  end
+  return width
+end
+
+-- Fensterbreite aus den Texten der gewählten Sprache; Abschnitte, Regler und Buttons strecken sich mit
+local function fitWidth()
+  local column = columnWidth()
+  for _, cell in ipairs(toggleCells) do
+    cell.checkbox:ClearAllPoints()
+    cell.checkbox:SetPoint("TOPLEFT", MARGIN + cell.column * column, cell.y)
+  end
+  local content = math.max(2 * column, languageRowWidth())
+  panel:SetWidth(math.max(MIN_WIDTH, content + 2 * MARGIN))
+end
+
 local function refresh(db)
   title:SetText("LevelTimer - " .. L.SETTINGS)
   for _, refreshControl in ipairs(refreshers) do
     refreshControl(db)
   end
+  fitWidth()
 end
 
 ns.RegisterApply(refresh)

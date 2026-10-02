@@ -1,11 +1,12 @@
 -- Historie und Auswertung: Level-, Session-, Kill- und Tod-Einträge aller Charaktere.
 --
 -- Kill- und Tod-Einträge: siehe Journal.lua
--- Level-Eintrag:   { level, seconds, xp, counters, completedAt }
+-- Level-Eintrag:   { level, seconds, xp, counters, completedAt, totalPlayed }
 -- Session-Eintrag: { startedAt, endedAt, seconds, startLevel, endLevel, xp, counters }
 -- isCurrent markiert das noch laufende Level bzw. die laufende Session.
 -- Für den eingeloggten Charakter sind das Live-Werte, für andere der Stand ihres letzten Logouts.
 local _, ns = ...
+local L = ns.L
 local Stats = ns.Stats
 
 local History = {}
@@ -86,6 +87,22 @@ function History.GetSessionRecords(characterKey)
   return records
 end
 
+-- Timeline: nur abgeschlossene Level, neueste zuerst. reachedLevel = das damit erreichte Level.
+function History.GetMilestones(characterKey)
+  local milestones = {}
+  for _, record in ipairs(History.GetLevelRecords(characterKey)) do
+    if not record.isCurrent then
+      table.insert(milestones, {
+        reachedLevel = record.level + 1,
+        reachedAt = record.completedAt,
+        totalPlayed = record.totalPlayed,
+        seconds = record.seconds,
+      })
+    end
+  end
+  return milestones
+end
+
 -- Kills und Tode einzeln (Form siehe Journal.lua), neueste zuerst
 function History.GetKillLog(characterKey)
   return newestFirst(History.GetCharacter(characterKey).killLog)
@@ -93,6 +110,96 @@ end
 
 function History.GetDeathLog(characterKey)
   return newestFirst(History.GetCharacter(characterKey).deathLog)
+end
+
+function History.GetQuestLog(characterKey)
+  return newestFirst(History.GetCharacter(characterKey).questLog)
+end
+
+function History.GetLootLog(characterKey)
+  return newestFirst(History.GetCharacter(characterKey).lootLog)
+end
+
+function History.GetNearDeathLog(characterKey)
+  return newestFirst(History.GetCharacter(characterKey).nearDeathLog)
+end
+
+-- Instanz-Läufe, neueste zuerst; ein laufender (bzw. beim letzten Logout offener) Lauf steht vorne
+function History.GetInstanceLog(characterKey)
+  local character = History.GetCharacter(characterKey)
+  local records = newestFirst(character.instanceLog)
+  local run = character.currentRun
+  if run then
+    table.insert(records, 1, {
+      time = run.startedAt,
+      name = run.name,
+      seconds = ns.Instances.GetRunSeconds(run),
+      level = run.level,
+      xp = run.xp,
+      counters = run.counters,
+      isCurrent = true,
+    })
+  end
+  return records
+end
+
+-- Vergleich aller Charaktere: eine Zeile je Charakter aus Level-Historie und laufendem Level.
+-- Sortiert nach durchschnittlicher Zeit je abgeschlossenem Level (schnellster zuerst, ohne Daten zuletzt).
+-- Eintrag: { name, realm, class, level, levelsCompleted, averageLevelSeconds, xpRate, counters, isCurrent }
+local function compareRecord(characterKey)
+  local character = History.GetCharacter(characterKey)
+  local levelRecords = History.GetLevelRecords(characterKey)
+  local summary = History.Summarize(levelRecords)
+
+  local completedSeconds, completedCount = 0, 0
+  for _, record in ipairs(levelRecords) do
+    if not record.isCurrent and record.seconds then
+      completedSeconds = completedSeconds + record.seconds
+      completedCount = completedCount + 1
+    end
+  end
+
+  return {
+    name = character.name,
+    realm = character.realm,
+    class = character.class,
+    level = character.currentLevel.level,
+    levelsCompleted = completedCount,
+    averageLevelSeconds = completedCount > 0 and completedSeconds / completedCount or nil,
+    xpRate = ns.Experience.CalculateRate(summary.xp, summary.seconds),
+    counters = summary.counters,
+    isCurrent = isLoggedIn(characterKey),
+  }
+end
+
+function History.GetCharacterComparison()
+  local records = {}
+  for _, key in ipairs(History.GetCharacterKeys()) do
+    table.insert(records, compareRecord(key))
+  end
+  table.sort(records, function(a, b)
+    if a.averageLevelSeconds and b.averageLevelSeconds then
+      return a.averageLevelSeconds < b.averageLevelSeconds
+    end
+    if a.averageLevelSeconds or b.averageLevelSeconds then
+      return a.averageLevelSeconds ~= nil
+    end
+    return (a.name or "") < (b.name or "")
+  end)
+  return records
+end
+
+-- Todesursache als Text: Umgebung (z.B. "Sturz"), "Verursacher (Zauber)" oder "Unbekannt"
+function History.DeathCauseText(entry)
+  if entry.environment then
+    local key = "CAUSE_" .. string.upper(entry.environment)
+    local text = L[key]
+    return text ~= key and text or entry.environment  -- L liefert bei fehlendem Text den Schlüssel
+  end
+  if entry.killer and entry.spell then
+    return string.format("%s (%s)", entry.killer, entry.spell)
+  end
+  return entry.killer or entry.spell or L.CAUSE_UNKNOWN
 end
 
 -- Auswertung: Summe über Einträge (Zeit, XP und alle Zähler)
@@ -109,12 +216,14 @@ function History.Summarize(records)
 end
 
 -- Läuft vor dem Zurücksetzen der Zähler. UnitXPMax liefert hier noch den Bedarf des alten Levels.
+-- seconds/totalPlayed sind nil, falls /played noch nicht geantwortet hatte.
 ns.OnLevelCompleted(function(completedLevel)
   ns.character.levelHistory[completedLevel] = {
     level = completedLevel,
-    seconds = Stats.GetSeconds(Stats.LEVEL),  -- nil, falls /played noch nicht geantwortet hatte
+    seconds = Stats.GetSeconds(Stats.LEVEL),
     xp = UnitXPMax("player"),
     counters = Stats.Snapshot(Stats.LEVEL),
-    completedAt = time(),
+    completedAt = time(),                           -- Zeitpunkt, an dem das nächste Level erreicht wurde
+    totalPlayed = ns.PlayedTime.GetTotalSeconds(),  -- /played gesamt in diesem Moment
   }
 end)

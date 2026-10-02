@@ -9,4 +9,5 @@ ignore:
   - curseforge
   - Makefile
   - README.md
+  - ROADMAP.md
   - image.png

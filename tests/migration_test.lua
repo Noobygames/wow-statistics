@@ -14,7 +14,7 @@ wow.login({ level = 10 })
 local character = LevelTimerStatsDB.characters["Testchar-Testrealm"]
 expectTrue("Charakter unter Name-Realm angelegt", character ~= nil)
 expect("alte Datei geleert", LevelTimerCharDB, nil)
-expect("Schema-Version aktuell", character.schemaVersion, 3)
+expect("Schema-Version aktuell", character.schemaVersion, addon.Database.CHARACTER_SCHEMA_VERSION)
 expect("Name gespeichert", character.name, "Testchar")
 expect("Klasse gespeichert", character.class, "WARRIOR")
 
@@ -39,3 +39,16 @@ character.currentLevel.counters.pveKills = 20
 wow.logout()
 wow.login()
 expect("keine Doppelmigration", Stats.Get(Stats.LEVEL, Stats.PVE_KILLS), 20)
+
+-- Schema 5: vorhandenes Journal wird in Tageswerte übernommen
+wow.logout()
+LevelTimerStatsDB.characters["Alt-Testrealm"] = {
+  schemaVersion = 4,
+  killLog = { { time = os.time({ year = 2026, month = 9, day = 1, hour = 10 }), name = "Wolf" } },
+  deathLog = { { time = os.time({ year = 2026, month = 9, day = 1, hour = 11 }) } },
+}
+wow.login({ name = "Alt" })
+local day = addon.character.dailyStats["2026-09-01"]
+expectTrue("Tageswert angelegt", day ~= nil)
+expect("Kill übernommen", day and day.kills, 1)
+expect("Tod übernommen", day and day.deaths, 1)

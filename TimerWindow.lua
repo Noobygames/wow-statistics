@@ -1,5 +1,7 @@
--- Anzeigefenster: Reiter "Level | Session", Spielzeit im gewählten Bereich und darunter
+-- Anzeigefenster: Reiter "Level | Session", Spielzeit im gewählten Bereich, XP-Balken und darunter
 -- eine Tabelle der eingeschalteten Stats (Bezeichnung links, Wert rechts).
+-- Einstellung "horizontalLayout": dieselben Elemente nebeneinander in einer Zeile (Info-Leiste),
+-- der XP-Balken darunter über die ganze Breite.
 -- Größe: Ziehgriff unten rechts (erscheint bei Mauskontakt) oder Einstellung "scale" skaliert das ganze Fenster.
 -- Rechtsklick öffnet die Einstellungen.
 local _, ns = ...
@@ -24,8 +26,16 @@ local GRIP_SIZE = 14
 local COLUMN_GAP = 16                 -- Mindestabstand zwischen Bezeichnung und Wert
 local TABLE_GAP = 4                   -- Abstand zwischen Zeitanzeige und Tabelle
 local WIDEST_TIME = "00d 00h 00m 00s" -- für die Fensterbreite
+local TIME_WIDTH_SLACK = 2            -- Reserve, damit die Zeit nicht wegen Rundung abgeschnitten wird
 local DEFAULT_POSITION = { "TOP", "TOP", 0, -120 }
 local DEFAULT_SCALE = 1
+local COMPACT_ROW_SETTING = "showXpRate"  -- einzige Zeile im Kompaktmodus
+local XP_BAR_HEIGHT = 6
+local XP_BAR_BACKGROUND = { 1, 1, 1, 0.1 }
+local XP_BAR_RESTED = { 0.3, 0.55, 1, 0.6 }
+local BAR_PADDING_X = 10              -- Info-Leiste: Rand links und rechts
+local BAR_ITEM_GAP = 14               -- Info-Leiste: Abstand zwischen zwei Einträgen
+local BAR_LABEL_GAP = 4               -- Info-Leiste: Abstand zwischen Bezeichnung und Wert
 
 local window = Widgets.CreatePanel("LevelTimerFrame", 0.8)
 window:Hide()  -- erst nach Login anzeigen, wenn Daten und Einstellungen bereitstehen
@@ -34,15 +44,27 @@ window:Hide()  -- erst nach Login anzeigen, wenn Daten und Einstellungen bereits
 local levelTab = Widgets.CreateTab(window, "GameFontNormalSmall", function()
   ns.Set("windowScope", Stats.LEVEL)
 end)
-levelTab:SetPoint("TOPRIGHT", window, "TOP", -TAB_GAP / 2, -PADDING_Y)
 
 local sessionTab = Widgets.CreateTab(window, "GameFontNormalSmall", function()
   ns.Set("windowScope", Stats.SESSION)
 end)
-sessionTab:SetPoint("TOPLEFT", window, "TOP", TAB_GAP / 2, -PADDING_Y)
 
 local timeText = window:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 timeText:SetTextColor(unpack(Widgets.COLORS.highlight))
+
+-- XP-Balken unter der Zeit: Fortschritt im Level, Erholungs-Bonus als helleres Stück dahinter
+local xpBarBackground = window:CreateTexture(nil, "ARTWORK")
+xpBarBackground:SetColorTexture(unpack(XP_BAR_BACKGROUND))
+xpBarBackground:SetHeight(XP_BAR_HEIGHT)
+local xpBarRested = window:CreateTexture(nil, "ARTWORK", nil, 1)
+xpBarRested:SetColorTexture(unpack(XP_BAR_RESTED))
+xpBarRested:SetPoint("TOPLEFT", xpBarBackground)
+xpBarRested:SetHeight(XP_BAR_HEIGHT)
+local xpBarFill = window:CreateTexture(nil, "ARTWORK", nil, 2)
+xpBarFill:SetColorTexture(unpack(Widgets.COLORS.highlight))
+xpBarFill:SetPoint("TOPLEFT", xpBarBackground)
+xpBarFill:SetHeight(XP_BAR_HEIGHT)
+local xpBarParts = { xpBarBackground, xpBarRested, xpBarFill }
 
 -- Tabellenzeilen: Bezeichnung links, Wert rechtsbündig. Je Stat aus ns.STAT_LINES
 -- so viele Zeilen wie sie rows hat; stat.setting entscheidet über die Sichtbarkeit.
@@ -67,14 +89,46 @@ end
 -- Inhalt
 ---------------------------------------------------------------------------
 
+local function growTo(width)
+  if width > window:GetWidth() then
+    window:SetWidth(width)
+  end
+end
+
 -- Fenster verbreitern, falls Bezeichnung und Wert einer Zeile nicht mehr nebeneinander passen
 local function growToFitRows()
   for _, row in ipairs(rows) do
-    local needed = row.label:GetStringWidth() + COLUMN_GAP + row.value:GetStringWidth() + 2 * PADDING_X
-    if row.label:IsShown() and needed > window:GetWidth() then
-      window:SetWidth(needed)
+    if row.label:IsShown() then
+      growTo(row.label:GetStringWidth() + COLUMN_GAP + row.value:GetStringWidth() + 2 * PADDING_X)
     end
   end
+end
+
+-- Info-Leiste: Summe aller sichtbaren Einträge einer Zeile
+local function growToFitLine()
+  local width = 2 * BAR_PADDING_X + timeText:GetWidth()
+  if levelTab:IsShown() then
+    width = width + levelTab:GetWidth() + sessionTab:GetWidth() + 2 * BAR_ITEM_GAP
+  end
+  for _, row in ipairs(rows) do
+    if row.label:IsShown() then
+      width = width + BAR_ITEM_GAP + row.label:GetStringWidth() + BAR_LABEL_GAP + row.value:GetStringWidth()
+    end
+  end
+  growTo(width)
+end
+
+-- Breiten von Fortschritt und Erholungs-Bonus aus XP, Bedarf und Erholungs-Pool
+local function refreshXpBar()
+  if not xpBarBackground:IsShown() then return end
+  local xpMax = UnitXPMax("player")
+  if xpMax <= 0 then return end
+  local paddingX = ns.db.horizontalLayout and BAR_PADDING_X or PADDING_X
+  local barWidth = window:GetWidth() - 2 * paddingX
+  local xp = UnitXP("player")
+  local withRested = math.min(xpMax, xp + (GetXPExhaustion() or 0))
+  xpBarFill:SetWidth(math.max(1, barWidth * xp / xpMax))
+  xpBarRested:SetWidth(math.max(1, barWidth * withRested / xpMax))
 end
 
 local function refreshTexts()
@@ -92,26 +146,65 @@ local function refreshTexts()
       row.value:SetText(row.definition.value(scope))
     end
   end
-  growToFitRows()
+  if ns.db.horizontalLayout then
+    growToFitLine()
+  else
+    growToFitRows()
+  end
+  refreshXpBar()
 end
 
--- Sichtbare Zeilen untereinander unter die Zeit setzen, Fenstergröße aus Schriftgrößen berechnen.
--- Alle Maße gelten bei Skalierung 1; SetScale vergrößert das Ergebnis gleichmäßig.
-local function updateLayout(db)
-  timeText:SetText(WIDEST_TIME)
-  local width = math.max(MIN_WIDTH, timeText:GetStringWidth() + 2 * PADDING_X)
+-- Sichtbarkeit unabhängig von der Anordnung: Kompaktmodus ohne Reiter und nur mit XP/h,
+-- XP-Balken nur beim Leveln
+local function updateVisibility(db)
+  local compact = db.compactMode
+  levelTab:SetShown(not compact)
+  sessionTab:SetShown(not compact)
 
-  local tabHeight = fontSize(levelTab.label) + 4
-  local y = PADDING_Y + tabHeight + LINE_GAP
-  timeText:ClearAllPoints()
-  timeText:SetPoint("TOP", window, "TOP", 0, -y)
-  y = y + fontSize(timeText) + TABLE_GAP
+  local showXpBar = db.showXpBar and ns.Experience.IsLeveling()
+  for _, part in ipairs(xpBarParts) do
+    part:SetShown(showXpBar)
+  end
 
   for _, row in ipairs(rows) do
     local visible = db[row.setting]
+    if compact then
+      visible = row.setting == COMPACT_ROW_SETTING
+    end
     row.label:SetShown(visible)
     row.value:SetShown(visible)
-    if visible then
+  end
+end
+
+-- XP-Balken über die ganze Breite bei Höhe y, gibt die Höhe darunter zurück
+local function placeXpBar(y, paddingX)
+  if not xpBarBackground:IsShown() then return y end
+  xpBarBackground:ClearAllPoints()
+  xpBarBackground:SetPoint("TOPLEFT", window, "TOPLEFT", paddingX, -y)
+  xpBarBackground:SetPoint("TOPRIGHT", window, "TOPRIGHT", -paddingX, -y)
+  return y + XP_BAR_HEIGHT + TABLE_GAP
+end
+
+-- Vertikal: Reiter, Zeit, XP-Balken und Zeilen untereinander
+local function layoutVertical()
+  local width = math.max(MIN_WIDTH, timeText:GetWidth() + 2 * PADDING_X)
+  timeText:SetJustifyH("CENTER")
+
+  local y = PADDING_Y
+  if levelTab:IsShown() then
+    levelTab:ClearAllPoints()
+    levelTab:SetPoint("TOPRIGHT", window, "TOP", -TAB_GAP / 2, -y)
+    sessionTab:ClearAllPoints()
+    sessionTab:SetPoint("TOPLEFT", window, "TOP", TAB_GAP / 2, -y)
+    y = y + fontSize(levelTab.label) + 4 + LINE_GAP
+  end
+  timeText:ClearAllPoints()
+  timeText:SetPoint("TOP", window, "TOP", 0, -y)
+  y = y + fontSize(timeText) + TABLE_GAP
+  y = placeXpBar(y, PADDING_X)
+
+  for _, row in ipairs(rows) do
+    if row.label:IsShown() then
       row.label:ClearAllPoints()
       row.label:SetPoint("TOPLEFT", window, "TOPLEFT", PADDING_X, -y)
       row.value:ClearAllPoints()
@@ -121,6 +214,54 @@ local function updateLayout(db)
   end
 
   window:SetSize(width, y + PADDING_Y)
+end
+
+-- Horizontal (Info-Leiste): alle Einträge an der Mittellinie einer Zeile aneinandergereiht,
+-- jeder Eintrag links am rechten Rand des vorigen. Die Breite wächst in refreshTexts mit den Texten.
+local function layoutHorizontal()
+  timeText:SetJustifyH("LEFT")
+  local lineHeight = fontSize(timeText)
+  local centerY = -(PADDING_Y + lineHeight / 2)
+  local previous
+
+  local function chain(element, gap)
+    element:ClearAllPoints()
+    if previous then
+      element:SetPoint("LEFT", previous, "RIGHT", gap, 0)
+    else
+      element:SetPoint("LEFT", window, "TOPLEFT", BAR_PADDING_X, centerY)
+    end
+    previous = element
+  end
+
+  if levelTab:IsShown() then
+    chain(levelTab)
+    chain(sessionTab, BAR_ITEM_GAP)
+  end
+  chain(timeText, BAR_ITEM_GAP)
+  for _, row in ipairs(rows) do
+    if row.label:IsShown() then
+      chain(row.label, BAR_ITEM_GAP)
+      chain(row.value, BAR_LABEL_GAP)
+    end
+  end
+
+  local y = placeXpBar(PADDING_Y + lineHeight + TABLE_GAP, BAR_PADDING_X)
+  window:SetSize(0, y - TABLE_GAP + PADDING_Y)
+end
+
+-- Fenstergröße aus Schriftgrößen berechnen. Alle Maße gelten bei Skalierung 1;
+-- SetScale vergrößert das Ergebnis gleichmäßig.
+local function updateLayout(db)
+  -- Feste Breite der Zeit, damit nichts springt, wenn sich die Ziffern ändern
+  timeText:SetText(WIDEST_TIME)
+  timeText:SetWidth(math.ceil(timeText:GetStringWidth()) + TIME_WIDTH_SLACK)
+  updateVisibility(db)
+  if db.horizontalLayout then
+    layoutHorizontal()
+  else
+    layoutVertical()
+  end
 end
 
 ---------------------------------------------------------------------------

@@ -9,30 +9,41 @@ See how your leveling is really going. LevelTimer tracks your play time, XP per 
 A small, movable window shows either your current level or your current session. Switch with the **Level | Session** tabs.
 
 - **Play time**: on this level (synced with the server's `/played`) or in this session, counted up live
-- **XP per hour** and the estimated play time until the next level
-- **Kills**, split into **PvE** (every kill that granted experience, including group kills) and **PvP** (honorable kills)
+- **XP bar** with rested bonus
+- **XP per hour**, the estimated play time until the next level and until max level
+- **Kills**, split into **PvE** (every kill that granted experience, including group kills), **PvP** (honorable kills) and optionally **elite** and **rare** kills
 - **Deaths**, with time spent dead or as a ghost and kills per death
 - **XP sources**: share of XP from kills, quests and everything else (exploration, professions, ...)
 - **Rested XP**: bonus XP gained from rest and its share of your XP
 - **Quests** turned in
 - **Income**: money earned from loot, quests, sales and mail
+- **Level-up summary** in chat when you ding
 
 Shown as a clear table, label left and value right. Every value can be switched on or off on its own, e.g. PvE and PvP kills separately.
 
 ### History and evaluation
 
 - **Levels**: play time, XP/h, kills, deaths, quests and gold of every finished level, saved automatically on level-up
+- **Timeline**: when each level was reached, with total /played and how long it took
 - **Sessions**: start, duration, level range, XP/h, kills, deaths, quests and gold of every past session
 - **Kills**: every killed creature and player with time, name, PvE/PvP, level and zone
 - **Deaths**: every death with time, cause (enemy and spell, or falling, drowning, ...), level and zone. Retail hides the combat log from addons, so the cause shows as "Unknown" there.
-- A **Total** row sums everything up
+- **Quests**: every quest turned in with time, name, XP and gold
+- **Near deaths**: every close call below 10 % health with lowest value and cause
+- **Loot**: rare and better items with time, quantity and likely source
+- **Instances**: every dungeon, raid and scenario run with duration, XP, kills and deaths
+- **Zones**: XP/h, kills and deaths per zone, so you see where leveling pays off
+- **Compare**: all your characters side by side, fastest leveler first
+- **Charts**: time per level, XP/h per level, kills per day, top enemies, death causes, XP/h per zone, play time per day and week and the XP timeline of your session
+- Sort by any column, filter by any text; a **Total** row sums up the shown rows; long lists scroll smoothly
+- **Export** any table as CSV to copy into a spreadsheet
 - Browse **all your characters** from any character
 
 A session runs from login to logout. A `/reload` or a short break (up to 5 minutes) continues it.
 
 ### Settings
 
-- Language: English or German
+- Language: English, German, French or Spanish
 - Window size (also by dragging the bottom right corner) and background opacity
 - Lock, show or hide the window, reset position and size
 - Show or hide the minimap button
@@ -43,6 +54,7 @@ A session runs from login to logout. A `/reload` or a short break (up to 5 minut
 - **Window**: drag the bottom right corner to resize, right-click to open the settings
 - **Minimap button**: left-click opens the settings, Shift-left-click the history, right-click shows or hides the window, drag to move the button
 - On Retail, LevelTimer also appears in the addon compartment menu
+- **Data text** for Titan Panel, ElvUI and other LibDataBroker displays
 
 | Command | Effect |
 |---|---|
@@ -50,6 +62,8 @@ A session runs from login to logout. A `/reload` or a short break (up to 5 minut
 | `/lt history` | Open the history |
 | `/lt lock` / `/lt unlock` | Lock or unlock the window position and size |
 | `/lt reset` | Reset window position and size |
+| `/lt compact` | Toggle compact mode (play time, XP bar and XP/h only) |
+| `/lt bar` | Toggle horizontal bar layout (everything in one line, like an info bar) |
 | `/lt show` / `/lt hide` | Show or hide the window |
 | `/lt sync` | Re-sync play time with the server |
 | `/lt minimap` | Toggle the minimap button |

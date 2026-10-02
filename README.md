@@ -7,39 +7,54 @@ Useful WoW addon (compatible with WoW Forever) to show statistics.
 Shows statistics in a small, movable window, either for your **current level** or your **current session** (switch with the "Level | Session" tabs at the top):
 
 - **Play time**: on this level synced with the server (`/played`), for the session since login; both counted up live.
-- **XP per hour** and the estimated play time until the next level.
+- **XP bar** with the rested bonus shown as a lighter segment (can be turned off).
+- **XP per hour**, the estimated play time until the next level and an estimate until max level (based on your recent levels).
 - **Kills**, split into:
   - **PvE**: every kill that granted experience, including group kills. Grey mobs and kills at max level don't count.
   - **PvP**: honorable kills.
+  - **Elite and rare** kills (optional rows): enemies are classified when you target, hover or see their nameplate.
 - **Deaths**, with time spent dead or as a ghost and kills per death.
+- **Near deaths** (optional row): health dropped below 10 % and you survived (counted once health is back above 30 %).
 - **XP sources**: share of XP from kills, quests and other sources (exploration, professions, ...).
 - **Rested XP**: bonus XP gained from rest and its share of the XP.
+- **Level-up summary** in chat: how long the level took, kills, deaths and XP/h (can be turned off).
 - **Quests** turned in.
 - **Income**: money earned (loot, quests, sales, mail); spending is not subtracted.
 
 The window shows them as a table, label on the left and value on the right. Every value can be switched on or off on its own (e.g. PvE and PvP kills separately). Level statistics restart on level-up. A session runs from login to logout; a `/reload` or a short break (up to 5 minutes) continues it.
 
-Statistics are recorded separately for every character. They are stored account-wide, so you can look at all your characters from any of them.
+Statistics are recorded separately for every character. They are stored account-wide, so you can look at all your characters from any of them. Use "Delete data" in the history window to remove a character's statistics (e.g. after deleting the character).
 
 ### History and evaluation
 
 The history window shows, per character:
 
 - **Levels**: play time, XP/h, kills, deaths, quests and income of every finished level, saved on level-up.
+- **Timeline**: when each level was reached, with total /played at that moment and how long the level took.
 - **Sessions**: start, duration, level range, XP/h, kills, deaths, quests and income of every past session.
-- **Kills**: every killed creature and player with time, name, PvE/PvP, level and zone (newest 300).
-- **Deaths**: every death with time, cause, level and zone (newest 100). The cause is the last hit before dying: enemy and spell, or falling, drowning, lava and so on. Retail hides the combat log from addons, so there the cause stays "Unknown".
+- **Kills**: every killed creature and player with time, name, PvE/PvP, level and zone (newest 5000).
+- **Deaths**: every death with time, cause, level and zone (newest 1000). The cause is the last hit before dying: enemy and spell, or falling, drowning, lava and so on. Retail hides the combat log from addons, so there the cause stays "Unknown".
+- **Quests**: every quest turned in with time, name, XP, gold, level and zone (newest 2000).
+- **Near deaths**: time, lowest health, cause, level and zone of every close call.
+- **Loot**: rare and better items you received, with time, quantity and likely source (the enemy you just killed or the quest you just turned in).
+- **Instances**: every dungeon, raid and scenario run with duration, XP, kills and deaths, plus totals; a `/reload` inside continues the run.
+- **Zones**: play time, XP, XP/h, kills and deaths per zone, best XP/h first, so you see where leveling pays off.
+- **Compare**: all characters side by side (level, levels gained, average time per level, XP/h, kills, deaths, gold), fastest leveler first.
+- **Charts**: time per level, XP/h per level, kills per day (last 30 days, kept as daily totals even when old journal entries are dropped), top enemies, death causes, XP/h per zone, play time per day and week, and the XP timeline of the session (5-minute steps, breaks show as gaps). Hover a column for the exact value.
 
-The running level or session is highlighted at the top, a **Total** row at the bottom sums everything up. Switch characters with the arrows. Open it with Shift-left-click on the minimap button, the button in the settings, or `/lt history`.
+The running level or session is highlighted at the top, a **Total** row at the bottom sums everything up. Click a column header to sort (again to reverse), type in the filter box to search all columns; the total row then covers the filtered rows only. "Export" shows the visible rows as CSV, already selected: press Ctrl+C and paste them into a spreadsheet. Long lists scroll smoothly with the mouse wheel, only the visible rows are drawn. Switch characters with the arrows. Open it with Shift-left-click on the minimap button, the button in the settings, or `/lt history`.
 
-Works across several game versions (Retail, Classic Era, Anniversary, ...) from a single `.toc`. Features a client doesn't support stay off silently. German and English UI.
+Works across several game versions (Retail, Classic Era, Anniversary, ...) from a single `.toc`. Features a client doesn't support stay off silently. Available in English, German, French and Spanish.
 
 ### Minimap button and settings
 
 - Left-click the minimap button (pocket watch) to open the settings, Shift-left-click for the history, right-click to show or hide the window, drag to move it around the minimap.
 - On Retail, LevelTimer also shows up in the addon compartment menu.
+- **Data text** for Titan Panel, ElvUI, Bazooka and other LibDataBroker displays: play time and XP/h, tooltip with all enabled values, same clicks as the minimap button. Works when one of those addons is installed (LevelTimer does not bundle the library).
 - Resize the window by dragging its bottom right corner; text and everything else scale with it. Right-click the window to open the settings.
-- Settings, grouped into Window, Statistics and General: size, background opacity, show/lock window, reset position & size, one toggle per statistic, language (Deutsch / English) and the minimap button.
+- **Compact mode** (`/lt compact` or settings): only play time, XP bar and XP/h.
+- **Horizontal bar** (`/lt bar` or settings): the window as a slim info bar, all values in one line; combines with compact mode.
+- Settings, grouped into Window, Statistics and General: size, background opacity, show/lock window, reset position & size, one toggle per statistic, language (English, Deutsch, Français, Español) and the minimap button.
 
 ### Chat commands
 
@@ -49,6 +64,8 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 | `/lt history` | Open the history |
 | `/lt lock` / `/lt unlock` | Lock or unlock the window position and size |
 | `/lt reset` | Reset window position and size |
+| `/lt compact` | Toggle compact mode (play time, XP bar and XP/h only) |
+| `/lt bar` | Toggle horizontal bar layout (everything in one line, like an info bar) |
 | `/lt show` / `/lt hide` | Show or hide the window |
 | `/lt sync` | Re-sync play time with the server |
 | `/lt minimap` | Toggle the minimap button |

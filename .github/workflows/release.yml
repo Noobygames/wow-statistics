@@ -1,7 +1,10 @@
 # Release bei jedem Tag "v*" (z.B. v1.0.0): erst alle Tests, dann packt der
-# BigWigs-Packager die ZIP, erstellt ein GitHub-Release und lädt zu CurseForge hoch.
-# CurseForge-Upload braucht "## X-Curse-Project-ID" in der .toc und das Secret CF_API_KEY;
-# fehlt eines davon, entsteht nur das GitHub-Release.
+# BigWigs-Packager die ZIP, erstellt ein GitHub-Release und lädt zu CurseForge, Wago und WoWInterface hoch.
+# Jede Plattform braucht ihre ID in der .toc und ihr Secret, sonst wird sie übersprungen:
+#   CurseForge:  "## X-Curse-Project-ID"  + Secret CF_API_KEY
+#   Wago:        "## X-Wago-ID"           + Secret WAGO_API_TOKEN
+#   WoWInterface: "## X-WoWI-ID"          + Secret WOWI_API_TOKEN
+# Fehlt alles, entsteht nur das GitHub-Release.
 name: Release
 
 on:
@@ -13,10 +16,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
         with:
           go-version: "1.23"
+          cache-dependency-path: tools/*/go.sum
       - run: make test
 
   release:
@@ -26,9 +30,11 @@ jobs:
       contents: write  # GitHub-Release anlegen
     env:
       CF_API_KEY: ${{ secrets.CF_API_KEY }}
+      WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
+      WOWI_API_TOKEN: ${{ secrets.WOWI_API_TOKEN }}
       GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0  # Packager braucht die Historie für Version und Changelog
       - uses: BigWigsMods/packager@v2
