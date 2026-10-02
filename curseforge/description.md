@@ -51,7 +51,7 @@ A session runs from login to logout. A `/reload` or a short break (up to 5 minut
 - Lock, show or hide the window, reset position and size
 - Show or hide the minimap button
 - One toggle per statistic
-- Comfort (each off by default, hold Shift to skip once): auto repair (optionally from the guild bank), sell gray items, accept and turn in quests, accept shared quests, skip single-option gossip
+- Comfort (each off by default, hold Shift to skip once): auto repair (optionally from the guild bank), sell gray items, accept and turn in quests, accept shared quests, skip single-option gossip, decline trades, group and guild invites and duels
 - Warnings: bags almost full, low durability, new spells at the trainer and low ammo for hunters (the last two in Classic Era, TBC and WoW Forever)
 
 ## Usage

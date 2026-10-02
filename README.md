@@ -62,11 +62,11 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 - **Stream view** (settings): solid green or magenta background without border for chroma keying in OBS.
 - **Splits** (settings): running level time against the fastest time of your other characters for that level, plus the total difference, green when ahead and red when behind.
 - **Level-up announcement** (settings): post the level summary to your party or guild, or to /say.
-- **Comfort** (settings, each off by default, hold Shift to skip once): repair automatically (optionally from the guild bank), sell gray items, accept and turn in quests (gray quests are skipped, several reward choices stay manual unless you let it pick the most valuable), accept shared quests and skip gossip with a single option.
+- **Comfort** (settings, each off by default, hold Shift to skip once): repair automatically (optionally from the guild bank), sell gray items, accept and turn in quests (gray quests are skipped, several reward choices stay manual unless you let it pick the most valuable), accept shared quests, skip gossip with a single option and decline trades, group and guild invites and duels.
 - **Warnings** (settings): bags almost full, low durability, new spells at the trainer on even levels and low ammo for hunters (the last two not in Retail).
 - **Food and camp reminders** (settings): remind you when you are not Well Fed (in WoW Forever food gives 5% more kill XP) or have no camp benefits while leveling.
 - **Speedrun records**: compare your /played time at level 10, 20 and 60 with the fastest runs on speedrun.com (WoW Classic: Leveling, SSF Softcore), overall or for your class, in the split list and in History > Speedrun. Data: [speedrun.com](https://www.speedrun.com/wowclassicera).
-- **Alerts** (settings): big on-screen messages for level up, rare and elite kills, epic loot and near deaths, each optional.
+- **Alerts** (settings): big on-screen messages for level up, rare and elite kills, epic loot and near deaths, each optional. No elite alerts in dungeons and raids, no loot alerts in raids.
 - **Hide names** (settings): history shows no realm and lists other characters only as "Character 2, 3, ...".
 - Settings, grouped into Window, Statistics and General: size, background opacity, show/lock window, reset position & size, one toggle per statistic, language (English, Deutsch, Français, Español) and the minimap button.
 
