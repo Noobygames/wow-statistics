@@ -1,8 +1,8 @@
 -- Zusammenfassung beim Level-Up mit den Werten des abgeschlossenen Levels:
 -- Chatzeile für sich selbst (Einstellung levelUpSummary) und optional als Ansage an
--- Gruppe, Gilde oder /sagen (Einstellung levelUpAnnounce = "off" | "party" | "guild" | "say").
--- Alle Ansagen gehen direkt beim Level-Up raus. Laut warcraft.wiki verlangt /sagen außerhalb von
--- Instanzen eine Hardware-Eingabe; ob der Client die Nachricht dort annimmt, zeigt nur der Test im Spiel.
+-- Gruppe oder Gilde (Einstellung levelUpAnnounce = "off" | "party" | "guild").
+-- Kein /sagen: das verlangt außerhalb von Instanzen eine Hardware-Eingabe, die ein Level-Up nicht hat
+-- (Einstellungs-Migration v4 setzt alte "say"-Werte auf "off").
 -- Läuft in OnLevelCompleted, also bevor die Zähler für das neue Level zurückgesetzt werden.
 local _, ns = ...
 local L = ns.L
@@ -14,7 +14,6 @@ local LevelUpSummary = {
   ANNOUNCE_OFF = "off",
   ANNOUNCE_PARTY = "party",
   ANNOUNCE_GUILD = "guild",
-  ANNOUNCE_SAY = "say",
 }
 ns.LevelUpSummary = LevelUpSummary
 
@@ -37,7 +36,6 @@ end
 -- Gruppen aus der Dungeonsuche/Schlachtfeldern erreicht man nur über INSTANCE_CHAT.
 ---------------------------------------------------------------------------
 local function announceChannel(target)
-  if target == LevelUpSummary.ANNOUNCE_SAY then return "SAY" end
   if target == LevelUpSummary.ANNOUNCE_GUILD then
     return IsInGuild and IsInGuild() and "GUILD" or nil
   end

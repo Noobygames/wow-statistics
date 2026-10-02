@@ -61,7 +61,7 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 - **Horizontal bar** (`/lt bar` or settings): the window as a slim info bar, all values in one line; combines with compact mode.
 - **Stream view** (settings): solid green or magenta background without border for chroma keying in OBS.
 - **Splits** (settings): running level time against the fastest time of your other characters for that level, plus the total difference, green when ahead and red when behind.
-- **Level-up announcement** (settings): post the level summary to your party or guild, or to /say.
+- **Level-up announcement** (settings): post the level summary to your party or guild.
 - **Comfort** (settings, each off by default, hold Shift to skip once): repair automatically (optionally from the guild bank), sell gray items, accept and turn in quests (gray quests are skipped, several reward choices stay manual unless you let it pick the most valuable), accept shared quests, skip gossip with a single option and decline trades, group and guild invites and duels.
 - **Warnings** (settings): bags almost full, low durability, new spells at the trainer on even levels and low ammo for hunters (the last two not in Retail).
 - **Food and camp reminders** (settings): remind you when you are not Well Fed (in WoW Forever food gives 5% more kill XP) or have no camp benefits while leveling.

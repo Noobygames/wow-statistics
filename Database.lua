@@ -169,7 +169,7 @@ local characterMigrations = {
 }
 
 -- Migrationen für die Einstellungen, Schlüssel = Zielversion
-local SETTINGS_SCHEMA_VERSION = 3
+local SETTINGS_SCHEMA_VERSION = 4
 local OLD_DEFAULT_FONT_SIZE = 16
 local settingsMigrations = {
   [2] = function(settings)  -- feste Schriftgröße der Zeitanzeige -> Skalierung des ganzen Fensters
@@ -192,6 +192,16 @@ local settingsMigrations = {
       settings.showKillsPerDeath = settings.showDeaths
     end
     settings.showKills = nil
+  end,
+  -- Level-Up-Ansage in /sagen entfernt (kam außerhalb von Instanzen nicht an): aus, auch in Profilen
+  [4] = function(settings)
+    local function dropSay(values)
+      if values.levelUpAnnounce == "say" then values.levelUpAnnounce = "off" end
+    end
+    dropSay(settings)
+    for _, profile in pairs(settings.profiles or {}) do
+      dropSay(profile)
+    end
   end,
 }
 

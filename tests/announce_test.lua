@@ -43,16 +43,12 @@ wow.levelUp(17)
 expect("Ansage ohne eigene Zeile", #wow.sentChat, 3)
 expect("keine eigene Zeile", #wow.printed, printed)
 
--- /sagen: direkt beim Level-Up
-addon.Set("levelUpAnnounce", "say")
-local sent = #wow.sentChat
-wow.levelUp(18)
-expect("direkt gesendet", #wow.sentChat, sent + 1)
-expect("in /sagen", wow.sentChat[#wow.sentChat].chatType, "SAY")
-expectTrue("Text vom Level-Up", wow.sentChat[#wow.sentChat].message:find("18", 1, true) ~= nil)
-
 -- Chat-Sperre: nichts senden
+local sent = #wow.sentChat
 wow.state.chatLockdown = true
-wow.levelUp(19)
-expect("gesperrt: nichts gesendet", #wow.sentChat, sent + 1)
+wow.levelUp(18)
+expect("gesperrt: nichts gesendet", #wow.sentChat, sent)
 wow.state.chatLockdown = false
+
+-- Kein /sagen mehr: alte Einstellung wird bei der Migration ausgeschaltet
+expect("keine Sagen-Auswahl", addon.LevelUpSummary.ANNOUNCE_SAY, nil)
