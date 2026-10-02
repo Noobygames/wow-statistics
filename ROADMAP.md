@@ -10,6 +10,7 @@ Schwerpunkt: Leveln in Dungeons auswerten und das Instanzlimit im Blick behalten
 - [x] 91. **Dungeon-Läufe** (M): Lauf endet erst beim lebendigen Verlassen (Geisterlauf zum Friedhof setzt ihn fort); XP/h je Lauf in der Historie; Zeile „Instanz“ im Fenster mit Zeit und XP des laufenden Laufs.
 - [x] 92. **Instanzlimit** (M): Classic Era, Anniversary und WoW Forever erlauben 5 neue Instanzen pro Stunde für alle Charaktere eines Realms (Retail 10). Zeile „Instanzen/h“ mit „3/5, nächste frei in 14m“, Hinweis beim Betreten der vorletzten und letzten; Instanzen heute als Info.
 - [x] 93. **Instanz-Kopien erkennen** (M): Kopie an der zoneUID der Gegner-GUIDs (Ziel, Maus, Namensplaketten) wie Nova Instance Tracker; Reset aus `INSTANCE_RESET_SUCCESS`/`_FAILED`. Ein Lauf ist eine Kopie: raus und wieder rein setzt ihn fort, Reset oder andere Kopie beenden ihn; falsche Schätzungen werden geteilt bzw. zusammengeführt, auch im Instanzlimit. Abweisung des Servers zeigt den Stand laut Addon.
+- [x] 94. **Prognose mit XP-Tabelle** (S–M): Prognose bis Max-Level und Session-Ziel rechnen die tatsächlich benötigten XP je Level (Classic Era, Anniversary und WoW Forever: Werte von 1.12; TBC: Werte ab 2.3, `XpTable.lua`) durch die XP/h der letzten 5 Level samt laufendem. Ohne passende Tabelle (Retail, abweichende Werte) wie bisher aus den Level-Zeiten.
 
 ## v2.7: Aufräumen
 

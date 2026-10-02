@@ -32,6 +32,14 @@ function Client.IsClassicEra()
   return Client.GetInterfaceVersion() <= CLASSIC_ERA_LAST and not Client.IsForever()
 end
 
+-- Burning Crusade (Classic, Anniversary): z.B. 20506
+local BURNING_CRUSADE_FIRST, BURNING_CRUSADE_LAST = 20000, 29999
+
+function Client.IsBurningCrusade()
+  local version = Client.GetInterfaceVersion()
+  return version >= BURNING_CRUSADE_FIRST and version <= BURNING_CRUSADE_LAST
+end
+
 -- Gildenbank (Reparatur aus der Gildenkasse); Classic Era hat keine
 function Client.HasGuildBank()
   return CanGuildBankRepair ~= nil and not Client.IsClassicEra()

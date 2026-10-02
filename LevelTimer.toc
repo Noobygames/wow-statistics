@@ -52,6 +52,7 @@ History\Daily.lua
 History\Instances.lua
 History\InstanceLimit.lua
 History\Analysis.lua
+History\XpTable.lua
 History\Forecast.lua
 History\Goal.lua
 

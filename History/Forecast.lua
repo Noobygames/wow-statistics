@@ -1,27 +1,70 @@
--- Prognose bis zum Max-Level: Rest des aktuellen Levels plus geschätzte Zeit je weiteres Level.
--- Schätzung je Level = Durchschnitt der letzten SAMPLE_SIZE abgeschlossenen Level, ohne solche die
--- hochgerechnete Dauer des aktuellen. Höhere Level dauern meist länger, die Prognose ist daher eher knapp.
+-- Prognose bis zu einem Level (Max-Level, Session-Ziel): Rest des aktuellen Levels (wie "Zeit bis
+-- Level-Up") plus die weiteren Level.
+--   Mit XP-Tabelle (XpTable.lua: Classic Era, WoW Forever, TBC): XP der weiteren Level geteilt durch die
+--   XP/h der letzten SAMPLE_SIZE abgeschlossenen Level samt dem laufenden. XP/h steigt mit dem Level
+--   meist etwas, die Prognose ist daher eher großzügig.
+--   Ohne Tabelle (Retail): Durchschnittszeit der letzten SAMPLE_SIZE Level je weiteres Level; höhere
+--   Level dauern meist länger, die Prognose ist daher eher knapp.
+-- Zeiten ohne AFK, wenn eingestellt (Experience.RecordRate/RateSeconds).
 local _, ns = ...
 local Stats = ns.Stats
 local Experience = ns.Experience
 local History = ns.History
+local XpTable = ns.XpTable
 
 local Forecast = {}
 ns.Forecast = Forecast
 
 local SAMPLE_SIZE = 5
+local SECONDS_PER_HOUR = 3600
 
-local function averageRecentLevelSeconds()
-  local sum, count = 0, 0
+-- Die letzten SAMPLE_SIZE abgeschlossenen Level mit bekannter Dauer, neueste zuerst
+local function recentCompletedLevels()
+  local records = {}
   for _, record in ipairs(History.GetLevelRecords(ns.characterKey)) do
     if not record.isCurrent and record.seconds then
-      sum = sum + Experience.RateSeconds(record.seconds, record.counters[Stats.AFK_SECONDS])
-      count = count + 1
-      if count == SAMPLE_SIZE then break end
+      table.insert(records, record)
+      if #records == SAMPLE_SIZE then break end
     end
   end
-  if count == 0 then return nil end
-  return sum / count
+  return records
+end
+
+local function rateSeconds(record)
+  return Experience.RateSeconds(record.seconds, record.counters[Stats.AFK_SECONDS])
+end
+
+local function averageRecentLevelSeconds()
+  local records = recentCompletedLevels()
+  if #records == 0 then return nil end
+  local sum = 0
+  for _, record in ipairs(records) do
+    sum = sum + rateSeconds(record)
+  end
+  return sum / #records
+end
+
+-- XP/h über die letzten Level und das laufende zusammen (gewichtet nach Spielzeit)
+local function recentXpRate()
+  local current = History.GetLevelRecords(ns.characterKey)[1]
+  local xp, seconds = current.xp or 0, current.seconds and rateSeconds(current) or 0
+  for _, record in ipairs(recentCompletedLevels()) do
+    xp = xp + (record.xp or 0)
+    seconds = seconds + rateSeconds(record)
+  end
+  return Experience.CalculateRate(xp, seconds)
+end
+
+-- Weitere Level nach dem aktuellen bis targetLevel: aus der XP-Tabelle, sonst aus den Level-Zeiten
+local function secondsForLaterLevels(targetLevel, remaining)
+  local xp = XpTable.XpBetween(ns.level + 1, targetLevel)
+  local rate = xp and recentXpRate()
+  if rate then return xp / rate * SECONDS_PER_HOUR end
+
+  local levelSeconds = Experience.RateSeconds(Stats.GetSeconds(Stats.LEVEL),
+    ns.TimeBreakdown.GetSeconds(Stats.LEVEL, Stats.AFK_SECONDS))
+  local perLevel = averageRecentLevelSeconds() or (levelSeconds + remaining)
+  return (targetLevel - ns.level - 1) * perLevel
 end
 
 -- Geschätzte Spielzeit bis zum Erreichen von targetLevel; nil, solange keine Schätzung möglich ist
@@ -30,14 +73,8 @@ function Forecast.SecondsToLevel(targetLevel)
   if targetLevel <= ns.level then return 0 end
   local remaining = Experience.GetSecondsToLevel(Stats.LEVEL)
   if not remaining then return nil end
-
-  local levelsAfterThis = targetLevel - ns.level - 1
-  if levelsAfterThis <= 0 then return remaining end
-
-  local levelSeconds = Experience.RateSeconds(Stats.GetSeconds(Stats.LEVEL),
-    ns.TimeBreakdown.GetSeconds(Stats.LEVEL, Stats.AFK_SECONDS))
-  local perLevel = averageRecentLevelSeconds() or (levelSeconds + remaining)
-  return remaining + levelsAfterThis * perLevel
+  if targetLevel == ns.level + 1 then return remaining end
+  return remaining + secondsForLaterLevels(targetLevel, remaining)
 end
 
 function Forecast.SecondsToMaxLevel()
