@@ -22,7 +22,6 @@ local DEFAULT_LAST_EQUIPPED_SLOT = 19
 local AMMO_LOW = 200            -- Schuss, ab denen gewarnt wird
 local AMMO_SLOT = INVSLOT_AMMO or 0
 local HUNTER = "HUNTER"
-local WARNING_COLOR = { 1, 0.6, 0.2 }
 
 -- Niedrigste Haltbarkeit aller ausgerüsteten Gegenstände (0..1); 1 ohne Gegenstände mit Haltbarkeit
 function GearWarnings.GetLowestDurability()
@@ -54,18 +53,13 @@ local WARNINGS = {
   { setting = "warnAmmo", message = "WARN_AMMO", isDue = isAmmoLow },
 }
 
-local function warn(message)
-  ns.Print(message)
-  ns.Alerts.Show(message, WARNING_COLOR)
-end
-
 function GearWarnings.Check()
   if not ns.db then return end
   for _, warning in ipairs(WARNINGS) do
     local due = ns.db[warning.setting] and warning.isDue() or false
     if due and not warning.active then
       ns.Debug("warnings", "%s", warning.setting)
-      warn(L[warning.message])
+      ns.Alerts.Notify(L[warning.message], ns.Alerts.WARNING_COLOR)
     end
     warning.active = due
   end

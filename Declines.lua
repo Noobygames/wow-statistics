@@ -3,7 +3,8 @@
 -- (declineGuildInvites; Retail zeigt dafür GuildInviteFrame statt eines Dialogs), Duelle (declineDuels).
 -- Abläufe wie in Blizzards UIParent/StaticPopup aller Clients: das Event zeigt den Dialog, die
 -- Ablehnen-Taste ruft die Funktion; wir lehnen ab und schließen den Dialog. Eine Chatzeile nennt,
--- wer gefragt hat.
+-- wer gefragt hat. Anders als die übrigen Komfort-Funktionen ohne Comfort.IsActive: Die Anfrage kommt
+-- vom anderen Spieler, eine gedrückte Umschalttaste in dem Moment wäre Zufall.
 local _, ns = ...
 local L = ns.L
 

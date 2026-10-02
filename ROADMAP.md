@@ -11,7 +11,7 @@ Schwerpunkt: Struktur und Wartbarkeit nach dem Code- und Architektur-Review, ohn
 - [x] 78. **Gedrosselter Ticker** (S): `ns.Every(seconds, fn)` im Kern statt fünf eigener OnUpdate-Frames (BuffReminder, GearWarnings, TimeBreakdown, RecentXpRate, Broker).
 - [x] 79. **Taschen-Helfer** (S): `Bags.lua` (Taschen durchlaufen, letzte Tasche) statt Kopien in Merchant und GearWarnings.
 - [x] 80. **Item-Helfer** (S): `Items.SellPrice(item)` und `Items.GetInfo` statt `getItemInfo` + `SELL_PRICE_INDEX` in Merchant, QuestAutomation und Loot.
-- [ ] 81. **Hinweis-Helfer** (S): `Alerts.Notify(message, color)` (Chatzeile + Einblendung) für BuffReminder, GearWarnings, TrainerReminder; Declines dokumentiert, warum die Umschalttaste dort nicht gilt.
+- [x] 81. **Hinweis-Helfer** (S): `Alerts.Notify(message, color)` (Chatzeile + Einblendung) für BuffReminder, GearWarnings, TrainerReminder; Declines dokumentiert, warum die Umschalttaste dort nicht gilt.
 
 ### Große Dateien teilen
 

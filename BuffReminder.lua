@@ -20,7 +20,6 @@ local SECONDS_PER_MINUTE = 60
 BuffReminder.MIN_INTERVAL = 1      -- Minuten; Grenzen des Reglers in den Einstellungen
 BuffReminder.MAX_INTERVAL = 30
 local MAX_AURAS = 40
-local REMINDER_COLOR = { 1, 0.6, 0.2 }
 
 local function spellName(spellID)
   return C_Spell and C_Spell.GetSpellName and C_Spell.GetSpellName(spellID)
@@ -88,11 +87,10 @@ function BuffReminder.Check()
       ns.Debug("reminder", "%s missing, reminding", reminder.setting)
       reminder.lastShown = GetTime()
       table.insert(messages, L[reminder.message])
-      ns.Print(L[reminder.message])
     end
   end
   if #messages > 0 then
-    ns.Alerts.Show(table.concat(messages, "\n"), REMINDER_COLOR)
+    ns.Alerts.Notify(messages, ns.Alerts.WARNING_COLOR)
   end
 end
 

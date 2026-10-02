@@ -23,6 +23,8 @@ local COLORS = {
   loot = { 0.64, 0.21, 0.93 },
   nearDeath = { 1, 0.25, 0.25 },
 }
+Alerts.WARNING_COLOR = { 1, 0.6, 0.2 }   -- Hinweise beim Leveln (fehlende Buffs, Taschen, ...)
+Alerts.REMINDER_COLOR = COLORS.levelUp   -- Hinweise zum Level-Up (Lehrer)
 
 local frame = CreateFrame("Frame", "LevelTimerAlert", UIParent)
 frame:SetSize(1, 1)
@@ -51,6 +53,16 @@ function Alerts.Show(message, color)
   shownAt = GetTime()
   frame:SetAlpha(1)
   frame:Show()
+end
+
+-- Hinweis an den Spieler: jede Nachricht als Chatzeile, alle zusammen in einer Einblendung.
+-- messages = Text oder Liste von Texten
+function Alerts.Notify(messages, color)
+  if type(messages) == "string" then messages = { messages } end
+  for _, message in ipairs(messages) do
+    ns.Print(message)
+  end
+  Alerts.Show(table.concat(messages, "\n"), color)
 end
 
 -- Arten: Einstellung, Farbe, Text aus einem Wert (Level, Name, Link, Prozent) und Beispielwert
