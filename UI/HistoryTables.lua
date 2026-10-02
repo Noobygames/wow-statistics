@@ -33,15 +33,11 @@ local function durationColumn(width)
   end, sort = function(r) return r.seconds end }
 end
 
-local function xpRate(r)
-  return Experience.CalculateRate(r.xp, Experience.RateSeconds(r.seconds, r.counters[Stats.AFK_SECONDS]))
-end
-
 local function xpRateColumn(width)
   return { header = "HISTORY_XP_RATE", width = width, value = function(r)
-    local rate = xpRate(r)
+    local rate = Experience.RecordRate(r)
     return rate and Format.Number(rate) or "-"
-  end, sort = xpRate }
+  end, sort = Experience.RecordRate }
 end
 
 local function counterColumn(header, name, width)

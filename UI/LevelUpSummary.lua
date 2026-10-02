@@ -21,7 +21,8 @@ local ANNOUNCE_PREFIX = ns.DISPLAY_NAME .. ": "
 
 local function summaryText(completedLevel)
   local seconds = Stats.GetSeconds(Stats.LEVEL)
-  local rate = Experience.CalculateRate(UnitXPMax("player"), seconds)  -- UnitXPMax: Bedarf des alten Levels
+  -- UnitXPMax: Bedarf des alten Levels; Zeit wie im Fenster (ohne AFK, wenn eingestellt)
+  local rate = Experience.RecordRate({ xp = UnitXPMax("player"), seconds = seconds, counters = Stats.Snapshot(Stats.LEVEL) })
   return string.format(L.LEVEL_UP_SUMMARY,
     completedLevel + 1,
     completedLevel,

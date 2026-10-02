@@ -183,7 +183,7 @@ local function compareRecord(characterKey)
     level = character.currentLevel.level,
     levelsCompleted = completedCount,
     averageLevelSeconds = completedCount > 0 and completedSeconds / completedCount or nil,
-    xpRate = ns.Experience.CalculateRate(summary.xp, summary.seconds),
+    xpRate = ns.Experience.RecordRate(summary),
     counters = summary.counters,
     isCurrent = isLoggedIn(characterKey),
   }

@@ -29,6 +29,13 @@ function Experience.RateSeconds(seconds, afkSeconds)
   return math.max(0, seconds - (afkSeconds or 0))
 end
 
+-- XP/h eines gespeicherten Eintrags ({ xp, seconds, counters }: Level, Session, Instanz-Lauf, Summe),
+-- nach denselben Regeln wie die Live-Werte. Einträge ohne AFK-Zähler (Zonen) zählen die volle Zeit.
+function Experience.RecordRate(record)
+  local afkSeconds = record.counters and record.counters[Stats.AFK_SECONDS]
+  return Experience.CalculateRate(record.xp, Experience.RateSeconds(record.seconds, afkSeconds))
+end
+
 function Experience.GetRatePerHour(scope)
   local afkSeconds = ns.TimeBreakdown.GetSeconds(scope, Stats.AFK_SECONDS)
   return Experience.CalculateRate(Stats.GetXp(scope), Experience.RateSeconds(Stats.GetSeconds(scope), afkSeconds))

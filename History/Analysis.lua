@@ -41,7 +41,7 @@ end
 function Analysis.XpRatePerLevel(characterKey)
   local items = {}
   for _, record in ipairs(levelRecordsAscending(characterKey)) do
-    local rate = Experience.CalculateRate(record.xp, record.seconds)
+    local rate = Experience.RecordRate(record)
     table.insert(items, {
       label = tostring(record.level),
       value = rate or 0,
@@ -188,7 +188,7 @@ local MIN_ZONE_SECONDS = 300
 function Analysis.XpRatePerZone(characterKey)
   local items = {}
   for _, record in ipairs(ns.Zones.GetRecords(characterKey)) do
-    local rate = record.seconds >= MIN_ZONE_SECONDS and Experience.CalculateRate(record.xp, record.seconds)
+    local rate = record.seconds >= MIN_ZONE_SECONDS and Experience.RecordRate(record)
     if rate then
       table.insert(items, { label = record.zone, value = rate, text = Format.Number(rate), highlight = record.isCurrent })
     end
