@@ -87,7 +87,8 @@ end)
 ---------------------------------------------------------------------------
 -- Wiederkehrende Aufgaben: fn(elapsed) etwa alle seconds Sekunden, erst nach dem Login (vorher
 -- gibt es weder ns.db noch ns.character). elapsed = tatsächlich vergangene Zeit seit dem letzten Lauf.
--- Ein gemeinsamer Frame statt eines OnUpdate-Frames je Modul.
+-- Ein gemeinsamer Frame statt eines OnUpdate-Frames je Modul. Jede Aufgabe läuft geschützt (xpcall):
+-- ein Fehler landet beim Fehler-Handler des Clients (BugSack, Fehlerfenster), die übrigen laufen weiter.
 ---------------------------------------------------------------------------
 local repeatingTasks = {}
 local taskFrame = CreateFrame("Frame")
@@ -103,7 +104,8 @@ taskFrame:SetScript("OnUpdate", function(_, elapsed)
     if task.elapsed >= task.interval then
       local due = task.elapsed
       task.elapsed = 0
-      task.fn(due)
+      -- Closure statt Zusatzargumenten: xpcall in Lua 5.1 reicht keine Argumente durch
+      xpcall(function() task.fn(due) end, geterrorhandler())
     end
   end
 end)

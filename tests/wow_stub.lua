@@ -297,6 +297,9 @@ function GetMaxPlayerLevel() return state.maxLevel end
 function GetXPExhaustion() return state.rested > 0 and state.rested or nil end
 function GetMoney() return state.money end
 function GetTime() return state.now end
+-- Fehler-Handler des Clients: merkt sich Fehler, statt sie anzuzeigen
+wow.errors = {}
+function geterrorhandler() return function(message) table.insert(wow.errors, message) end end
 function GetCursorPosition() return state.cursorX, state.cursorY end
 function UnitGUID() return state.guid end
 function GetZoneText() return state.zone end
