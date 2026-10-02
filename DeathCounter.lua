@@ -23,6 +23,18 @@ function DeathCounter.GetDeadSeconds(scope)
   return Stats.Get(scope, Stats.DEAD_SECONDS) + running
 end
 
+-- Gespielte Zeit seit dem letzten Tod (Hardcore-Anzeige), über alle Level und Sessions.
+-- Grundlage: /played beim Tod (character.lastDeathPlayed). Noch nie gestorben = gesamte Spielzeit.
+-- nil, solange /played nicht geantwortet hat oder der letzte Tod vor dieser Funktion lag.
+function DeathCounter.GetSecondsSinceDeath()
+  local total = ns.PlayedTime.GetTotalSeconds()
+  if not total then return nil end
+  local lastDeath = ns.character.lastDeathPlayed
+  if lastDeath then return math.max(0, total - lastDeath) end
+  if #ns.character.deathLog > 0 then return nil end
+  return total
+end
+
 -- Kills pro Tod, nil solange man im Bereich nicht gestorben ist
 function DeathCounter.GetKillsPerDeath(scope)
   local deaths = Stats.Get(scope, Stats.DEATHS)
@@ -112,6 +124,7 @@ end
 ns.RegisterEvent("PLAYER_DEAD", function()
   if deadSince then return end  -- schon tot (z.B. Login als Geist), nicht doppelt zählen
   Stats.Increment(Stats.DEATHS)
+  ns.character.lastDeathPlayed = ns.PlayedTime.GetTotalSeconds()
   local cause = takeDeathCause()
   local entry = Journal.AddDeath(cause)
   if not isKnown(cause) and DeathRecap.IsAvailable() then

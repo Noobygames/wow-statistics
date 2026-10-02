@@ -28,6 +28,7 @@ local SETTINGS_DEFAULTS = {
   showDeaths = true,
   showKillsPerDeath = false,
   showNearDeaths = false,
+  showDeathless = false,  -- Hardcore: Zeit seit dem letzten Tod
   showXpSources = false,
   showRested = false,
   showQuests = true,

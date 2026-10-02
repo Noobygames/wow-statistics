@@ -9,6 +9,7 @@ local Experience = ns.Experience
 local DeathCounter = ns.DeathCounter
 
 local NO_VALUE = "-"
+local DEATH_COLOR = "|cffff4040"  -- Tode rot, damit sie (z.B. im Stream) auffallen
 local PENDING = "..."  -- noch nicht aussagekräftig (z.B. /played hat noch nicht geantwortet)
 
 local function counter(name)
@@ -37,8 +38,20 @@ end
 local function deaths(scope)
   local count = Stats.Get(scope, Stats.DEATHS)
   local deadSeconds = DeathCounter.GetDeadSeconds(scope)
-  if deadSeconds < 1 then return tostring(count) end
-  return string.format("%d (%s)", count, Format.Duration(deadSeconds))
+  local text = tostring(count)
+  if deadSeconds >= 1 then
+    text = string.format("%d (%s)", count, Format.Duration(deadSeconds))
+  end
+  if count > 0 then
+    text = DEATH_COLOR .. text .. "|r"
+  end
+  return text
+end
+
+-- Unabhängig vom Bereich: seit dem letzten Tod des Charakters
+local function timeWithoutDeath()
+  local seconds = DeathCounter.GetSecondsSinceDeath()
+  return seconds and Format.Duration(seconds) or NO_VALUE
 end
 
 local function killsPerDeath(scope)
@@ -83,6 +96,8 @@ ns.STAT_LINES = {
     rows = { { label = "ROW_KILLS_PER_DEATH", value = killsPerDeath } } },
   { setting = "showNearDeaths", label = "STAT_NEAR_DEATHS",
     rows = { { label = "ROW_NEAR_DEATHS", value = counter(Stats.NEAR_DEATHS) } } },
+  { setting = "showDeathless", label = "STAT_DEATHLESS",
+    rows = { { label = "ROW_DEATHLESS", value = timeWithoutDeath } } },
   { setting = "showXpSources", label = "STAT_XP_SOURCES", rows = {
     { label = "ROW_XP_KILLS", value = xpShare(1) },
     { label = "ROW_XP_QUESTS", value = xpShare(2) },
