@@ -59,3 +59,14 @@ expect("Filter nach Klasse", #filtered == 1 and filtered[1].name, "Lahm")
 -- Status-Spalte zeigt den gewählten Vergleich
 view:SetFilter("")
 expectTrue("Status im Export", view:BuildCsv():find(L.RUN_REFERENCE, 1, true) ~= nil)
+
+-- Rekorde: schnellste Zeit je Level, eigene Zeit und Abweichung
+expectTrue("Unterreiter Rekorde", wow.click(L.HISTORY_TAB_RECORDS))
+local records = wow.shownTable():GetVisibleRecords()
+expect("ein Rekord je Level", #records, 2)
+expect("höchstes Level zuerst", records[1].level, 11)
+expect("Rekord Level 11", records[1].seconds, 2000)
+expect("hält der eingeloggte", records[1].run.name, "Neu")
+expect("Rekord Level 10", records[2].seconds, 2500)
+expect("hält Rekord", records[2].run.name, "Rekord")
+expect("eigene Zeit", records[2].ownSeconds, 3000)

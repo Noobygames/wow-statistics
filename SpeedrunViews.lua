@@ -1,4 +1,5 @@
--- Speedrun-Ansichten der Historie (Gruppe "Speedrun"): Läufe zum Vergleichen und Rekorde je Level.
+-- Speedrun-Ansichten der Historie (Gruppe "Speedrun"): Läufe zum Vergleichen und Rekorde je Level
+-- (schnellste Zeit je Level über die eigenen Charaktere, importierte Läufe zählen nicht).
 -- Läufe: Klick wählt den Lauf als festen Vergleich der Splits, Rechtsklick markiert ihn als Favorit;
 -- Favoriten stehen oben. Suchfeld filtert nach Name und Klasse (wie jede Tabelle über alle Zellen).
 local _, ns = ...
@@ -93,4 +94,55 @@ ns.HistoryWindow.AddView(HistoryTables.CreateTableView({
   rowColor = runColor,
   onRowClick = onRunClick,
   hint = "RUNS_HINT",
+}))
+
+---------------------------------------------------------------------------
+-- Rekorde: schnellste Zeit je Level über alle eigenen Charaktere, dazu die eigene Zeit
+---------------------------------------------------------------------------
+
+-- { level, seconds, run, ownSeconds }, höchstes Level zuerst
+local function recordRows()
+  local best = {}
+  for _, run in ipairs(Runs.GetAll()) do
+    if not run.imported then
+      for level, seconds in pairs(run.times) do
+        if not best[level] or seconds < best[level].seconds then
+          best[level] = { level = level, seconds = seconds, run = run }
+        end
+      end
+    end
+  end
+  local rows = {}
+  for level, entry in pairs(best) do
+    local own = ns.character.levelHistory[level]
+    entry.ownSeconds = own and own.seconds
+    entry.isCurrent = entry.run.id == ns.characterKey  -- Rekord vom eingeloggten Charakter hervorheben
+    table.insert(rows, entry)
+  end
+  table.sort(rows, function(a, b) return a.level > b.level end)
+  return rows
+end
+
+local RECORD_COLUMNS = {
+  { header = "HISTORY_LEVEL", width = 40, value = function(r) return r.level end,
+    sort = function(r) return r.level end },
+  { header = "HISTORY_BEST_TIME", width = 80, value = function(r) return Format.Duration(r.seconds) end,
+    sort = function(r) return r.seconds end },
+  { header = "HISTORY_CHARACTER_NAME", width = 140, align = LEFT, value = function(r) return runName(r.run) end },
+  { header = "HISTORY_CLASS", width = 80, align = LEFT, value = function(r) return className(r.run.class) end },
+  { header = "HISTORY_OWN_TIME", width = 80, value = function(r)
+      return r.ownSeconds and Format.Duration(r.ownSeconds) or "-"
+    end, sort = function(r) return r.ownSeconds end },
+  { header = "HISTORY_DELTA", width = 80, value = function(r)
+      return r.ownSeconds and Format.SplitDelta(r.ownSeconds - r.seconds) or "-"
+    end, sort = function(r) return r.ownSeconds and r.ownSeconds - r.seconds end },
+}
+
+ns.HistoryWindow.AddView(HistoryTables.CreateTableView({
+  tab = "HISTORY_TAB_RECORDS",
+  group = GROUP,
+  columns = RECORD_COLUMNS,
+  records = recordRows,
+  footer = HistoryTables.CountCells,
+  rowColor = function(r) return r.isCurrent and Widgets.COLORS.highlight or HistoryTables.ClassColor(r.run) end,
 }))
