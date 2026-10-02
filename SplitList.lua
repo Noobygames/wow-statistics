@@ -1,5 +1,6 @@
 -- Split-Liste wie bei LiveSplit: eigene kleine Anzeige mit dem laufenden Level und den zuletzt
--- abgeschlossenen Leveln (Level, Zeit, Abweichung zum Vergleich aus Splits.lua), darunter die Summe.
+-- abgeschlossenen Leveln (Level, Zeit, Abweichung zum Vergleich aus Splits.lua), darunter die Summe
+-- und die gesamte Spielzeit (/played).
 -- Einstellungen: showSplitList (an/aus, /lt splits), splitListRows (Zahl der Level), Position splitListPos.
 -- Größe, Hintergrund und Fixieren folgen dem Hauptfenster.
 local _, ns = ...
@@ -102,12 +103,14 @@ local function render()
     setCells(getRow(i), tostring(line.level),
       line.seconds and Format.Duration(line.seconds) or "...", Format.SplitDelta(line.delta))
   end
-  local totalRow = getRow(#lines + 1)
-  setCells(totalRow, L.SPLIT_LIST_TOTAL, "", Format.SplitDelta(Splits.GetTotalDelta()))
-  for i = #lines + 2, #rows do
+  setCells(getRow(#lines + 1), L.SPLIT_LIST_TOTAL, "", Format.SplitDelta(Splits.GetTotalDelta()))
+  local played = ns.PlayedTime.GetTotalSeconds()
+  setCells(getRow(#lines + 2), L.SPLIT_LIST_PLAYED, played and Format.Duration(played) or "...", "")
+  local used = #lines + 2
+  for i = used + 1, #rows do
     for _, fontString in pairs(rows[i]) do fontString:Hide() end
   end
-  layout(#lines + 1)
+  layout(used)
 end
 
 ---------------------------------------------------------------------------
