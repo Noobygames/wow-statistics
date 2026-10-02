@@ -444,6 +444,10 @@ addToggles({
   toggle("AUTO_CHOOSE_REWARD", "autoChooseReward"),
   toggle("SKIP_GOSSIP", "skipGossip"),
 })
+addSection("SECTION_DECLINE")
+addToggles({
+  toggle("DECLINE_TRADES", "declineTrades"),
+})
 addHint("COMFORT_HINT")
 finishPage()
 

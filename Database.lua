@@ -58,6 +58,7 @@ local SETTINGS_DEFAULTS = {
   autoTurnIn = false,       -- fertige Quests abgeben
   autoChooseReward = false, -- bei mehreren Belohnungen die mit dem höchsten Verkaufswert
   skipGossip = false,       -- Gespräche mit nur einer Option überspringen
+  declineTrades = false,    -- Handel ablehnen (Declines.lua)
   levelUpSummary = true,
   levelUpAnnounce = "off",  -- Level-Up-Zusammenfassung an "party" oder "guild" (siehe LevelUpSummary.lua)  -- Chatzeile beim Level-Up (siehe LevelUpSummary.lua)
   showPveKills = true,

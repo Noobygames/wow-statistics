@@ -63,6 +63,7 @@ TrainerReminder.lua
 Comfort.lua
 Merchant.lua
 QuestAutomation.lua
+Declines.lua
 TimerWindow.lua
 SplitList.lua
 Charts.lua

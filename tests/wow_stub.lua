@@ -407,6 +407,11 @@ function AcceptQuest() questAction("accept") end
 function AcknowledgeAutoAcceptQuest() questAction("acknowledge") end
 function ConfirmAcceptQuest() questAction("confirm") end
 function StaticPopup_Hide(name) questAction("hidePopup", name) end
+-- Abgelehnte Anfragen landen in wow.declined (Name der Funktion)
+wow.declined = {}
+for _, name in ipairs({ "CancelTrade", "DeclineGroup", "DeclineGuild", "CancelDuel" }) do
+  _G[name] = function() table.insert(wow.declined, name) end
+end
 C_GossipInfo = {
   GetAvailableQuests = function() return state.gossip.available end,
   GetActiveQuests = function() return state.gossip.active end,
