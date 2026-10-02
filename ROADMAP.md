@@ -15,7 +15,7 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 - [x] 30. **Session-Abschlusskarte** (M): `/lt recap` zeigt Zeit, Level, XP/h, Kills, Tode, beste Beute und gefährlichsten Gegner der Session, z.B. als Abspann oder Screenshot für Discord.
 - [x] 31. **Hardcore-Anzeige** (S): Tode rot, Zeile „Ohne Tod“ (Spielzeit seit dem letzten Tod), dazu die vorhandenen Beinahe-Tode.
 
-- [ ] 35. **Fester Vergleichslauf** (M): Splits wahlweise gegen die Bestzeit je Level oder gegen einen festen Lauf (persönliche Bestzeit = Charakter mit der kürzesten Zeit bis zum aktuellen Level, oder ein gewählter Charakter), wie ForeverSplits/LiveSplit.
+- [x] 35. **Fester Vergleichslauf** (M): Splits wahlweise gegen die Bestzeit je Level, die persönliche Bestzeit (schnellster Lauf bis zum aktuellen Level, innerhalb eines Levels fest) oder einen gewählten Charakter (`/lt compare Name`).
 - [ ] 36. **Split-Liste** (M): eigene kleine Anzeige mit den letzten N Leveln, Zeit und Abweichung zum Vergleich.
 - [x] 37. **Stream-Modus per Befehl** (S): `/lt stream` schaltet Stream-Einstellungen (transparent, Größe 150 %, Einblendungen, Namen verbergen) gemeinsam ein und stellt beim Ausschalten den vorherigen Stand wieder her.
 - [x] 38. **Rote Tode abschaltbar** (S): Hervorhebung der Tode als eigener Schalter, damit alle Stream-Optionen abschaltbar sind.
@@ -32,7 +32,7 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 
 ## Erledigt
 
-- Nächstes Release (v2.5): 32. Neue Session starten, 31. Hardcore-Anzeige, 27. Stream-Ansicht, 33. Streamer-Datenschutz, 28. Session-Ziel, 29. Große Einblendungen, 30. Session-Abschlusskarte, 26. Splits, 34. Ansage in Gilde/Gruppe, 38. Rote Tode abschaltbar, 37. Stream-Modus
+- Nächstes Release (v2.5): 32. Neue Session starten, 31. Hardcore-Anzeige, 27. Stream-Ansicht, 33. Streamer-Datenschutz, 28. Session-Ziel, 29. Große Einblendungen, 30. Session-Abschlusskarte, 26. Splits, 34. Ansage in Gilde/Gruppe, 38. Rote Tode abschaltbar, 37. Stream-Modus, 35. Fester Vergleichslauf
 - v2.0.0:
   - Auswertung: 1. Prognose bis Max-Level, 2. alle Charaktere vergleichen, 3. Zonen-Auswertung, 4. Spielzeit pro Tag/Woche, 5. XP-Verlauf der Session, 6. Langzeit-Graphen als Tageswerte
   - Daten: 7. Quest-Journal, 8. Level-Timeline, 9. Instanzen, 10. Loot-Journal, 11. Elite- und Rare-Kills, 12. Beinahe-Tode, 24. Todesursache aus dem Death Recap (Retail, WoW Forever)

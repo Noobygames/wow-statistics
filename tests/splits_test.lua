@@ -23,8 +23,8 @@ expect("Zeile ohne Vergleich", row("ROW_SPLIT_LEVEL"), "-")
 
 otherCharacter("Rekord", { [10] = { level = 10, seconds = 3600 }, [11] = { level = 11, seconds = 1800 } })
 otherCharacter("Lahm", { [10] = { level = 10, seconds = 7200 }, [12] = { level = 12, seconds = 5000 } })
-expect("Bestzeit = schnellster", Splits.GetBest(10), 3600)
-expect("Bestzeit aus anderem Charakter", Splits.GetBest(12), 5000)
+expect("Bestzeit = schnellster", Splits.GetReference(10), 3600)
+expect("Bestzeit aus anderem Charakter", Splits.GetReference(12), 5000)
 
 -- Level 10 in 50 min: 10 min schneller
 wow.advance(3000)
@@ -42,5 +42,34 @@ expectNear("gesamt", Splits.GetTotalDelta(), -300)
 
 -- Gelöschter Vergleichs-Charakter: Bestzeiten neu
 addon.DeleteCharacter("Rekord-Testrealm")
-expect("nach Löschen nächstbeste Zeit", Splits.GetBest(10), 7200)
+expect("nach Löschen nächstbeste Zeit", Splits.GetReference(10), 7200)
 expect("Level 11 ohne Bestzeit", Splits.GetCurrentDelta(), nil)
+
+---------------------------------------------------------------------------
+-- Fester Vergleich: persönliche Bestzeit und gewählter Charakter
+---------------------------------------------------------------------------
+-- Ausgangslage: eingeloggt Level 11, Level 10 in 3000 s abgeschlossen. Vergleichs-Charaktere:
+otherCharacter("Schnell", { [10] = { level = 10, seconds = 3200 }, [11] = { level = 11, seconds = 2400 } })  -- 5600
+otherCharacter("Stetig", { [10] = { level = 10, seconds = 3400 }, [11] = { level = 11, seconds = 2000 } })   -- 5400
+otherCharacter("Kurz", { [11] = { level = 11, seconds = 100 } })  -- ohne Level 10: zählt nicht als Lauf
+
+SlashCmdList.LEVELTIMER("compare pb")
+expect("Einstellung pb", LevelTimerDB.splitComparison, "pb")
+-- schnellster Lauf bis Level 11 = Stetig (5400 s), nicht die Bestzeit je Level
+expect("PB Level 10", Splits.GetReference(10), 3400)
+expect("PB Level 11", Splits.GetReference(11), 2000)
+expectNear("PB laufend", Splits.GetCurrentDelta(), 2100 - 2000)
+expectNear("PB gesamt", Splits.GetTotalDelta(), (3000 - 3400) + (2100 - 2000))
+
+SlashCmdList.LEVELTIMER("compare schnell")
+expect("Einstellung Charakter", LevelTimerDB.splitComparison, "character")
+expect("Charakter gemerkt", LevelTimerDB.splitCharacter, "Schnell-Testrealm")
+expect("Charakter Level 10", Splits.GetReference(10), 3200)
+expect("Abweichung einzelnes Level", Splits.GetLevelDelta(10), -200)
+
+SlashCmdList.LEVELTIMER("compare niemand")
+expect("unbekannter Name: Hilfe", wow.printed[#wow.printed]:find(addon.L.COMPARE_USAGE, 1, true) ~= nil, true)
+expect("unbekannter Name ändert nichts", LevelTimerDB.splitCharacter, "Schnell-Testrealm")
+
+SlashCmdList.LEVELTIMER("compare best")
+expect("zurück zur Bestzeit je Level", Splits.GetReference(11), 100)

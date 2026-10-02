@@ -73,6 +73,7 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 | `/lt bar` | Toggle horizontal bar layout (everything in one line, like an info bar) |
 | `/lt newsession` | Archive the running session and start a new one (also a button in the settings) |
 | `/lt stream` | Stream mode: transparent larger window, alerts on, names hidden; again restores your settings |
+| `/lt compare pb` | Splits against your personal best run (`best` = best time per level, or a character name) |
 | `/lt recap` | Session summary card: time, levels, XP, kills, deaths, best loot, most dangerous enemy |
 | `/lt goal 30` | Set a goal level with progress and forecast in the window; `/lt goal` removes it |
 | `/lt show` / `/lt hide` | Show or hide the window |

@@ -125,6 +125,17 @@ local function addLanguageChooser()
 end
 
 -- Hintergrund des Fensters: Standard oder Chroma-Farbe für Streams
+-- Vergleich der Splits; ein fester Charakter wird per /lt compare Name gewählt
+local function addSplitComparisonChooser()
+  local function localized(key) return function() return L[key] end end
+  local Splits = ns.Splits
+  addChooser({ label = "SPLIT_COMPARISON", setting = "splitComparison", choices = {
+    { value = Splits.BEST, name = localized("COMPARE_CHOICE_BEST") },
+    { value = Splits.PERSONAL_BEST, name = localized("COMPARE_CHOICE_PB") },
+    { value = Splits.CHARACTER, name = localized("COMPARE_CHOICE_CHARACTER") },
+  } })
+end
+
 -- Level-Up-Ansage: aus, Gruppe oder Gilde
 local function addAnnounceChooser()
   local function localized(key) return function() return L[key] end end
@@ -213,6 +224,7 @@ for i, line in ipairs(ns.STAT_LINES) do
   }
 end
 addToggles(statToggles)
+addSplitComparisonChooser()
 
 addSection("SECTION_ALERTS")
 addToggles({

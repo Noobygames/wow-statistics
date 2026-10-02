@@ -20,6 +20,19 @@ local commands = {
   newsession = function() ns.StartNewSession() end,
   recap = function() ns.ToggleRecap() end,
   stream = function() ns.StreamMode.Toggle() end,
+  -- /lt compare best | pb | Name: Vergleich für die Splits
+  compare = function(argument)
+    local Splits = ns.Splits
+    local mode = argument:lower()
+    if mode == Splits.BEST or mode == Splits.PERSONAL_BEST then
+      ns.Set("splitComparison", mode)
+      ns.Print(L["COMPARE_" .. mode:upper()])
+    elseif argument ~= "" and Splits.CompareWith(argument) then
+      ns.Print(string.format(L.COMPARE_SET, ns.History.DisplayName(ns.db.splitCharacter)))
+    else
+      ns.Print(L.COMPARE_USAGE)
+    end
+  end,
   -- /lt goal 30 setzt das Ziel-Level, /lt goal ohne Zahl entfernt es
   goal = function(argument)
     if argument == "" then
