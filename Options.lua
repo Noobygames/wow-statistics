@@ -196,6 +196,8 @@ addToggles({
     set = function(checked) ns.Set("horizontalLayout", checked) end },
   { label = "HIGHLIGHT_DEATHS", get = function(db) return db.highlightDeaths end,
     set = function(checked) ns.Set("highlightDeaths", checked) end },
+  { label = "STREAM_MODE", get = function() return ns.StreamMode.IsEnabled() end,
+    set = function(checked) ns.StreamMode.SetEnabled(checked) end },
 })
 addButton("RESET_WINDOW", function() TimerWindow.ResetLayout() end)
 addHint("OPTIONS_HINT")

@@ -19,6 +19,7 @@ local commands = {
   bar = function() ns.Set("horizontalLayout", not ns.db.horizontalLayout) end,
   newsession = function() ns.StartNewSession() end,
   recap = function() ns.ToggleRecap() end,
+  stream = function() ns.StreamMode.Toggle() end,
   -- /lt goal 30 setzt das Ziel-Level, /lt goal ohne Zahl entfernt es
   goal = function(argument)
     if argument == "" then
