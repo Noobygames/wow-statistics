@@ -1,5 +1,6 @@
 -- Speedrun-Ansichten der Historie (Gruppe "Speedrun"): Läufe zum Vergleichen und Rekorde je Level
--- (schnellste Zeit je Level über die eigenen Charaktere, importierte Läufe zählen nicht).
+-- (schnellste Zeit je Level über die eigenen Charaktere, importierte Läufe zählen nicht) sowie die
+-- Speedrun-Rekorde von speedrun.com je Abschnitt (WorldRecords.lua).
 -- Läufe: Klick wählt den Lauf als festen Vergleich der Splits, Rechtsklick markiert ihn als Favorit,
 -- Shift+Klick zeigt ihn als Text zum Teilen; Favoriten stehen oben. Buttons: alle Läufe sichern, importieren. Suchfeld filtert nach Name und Klasse (wie jede Tabelle über alle Zellen).
 local _, ns = ...
@@ -160,4 +161,62 @@ ns.HistoryWindow.AddView(HistoryTables.CreateTableView({
   records = recordRows,
   footer = HistoryTables.CountCells,
   rowColor = function(r) return r.isCurrent and Widgets.COLORS.highlight or HistoryTables.ClassColor(r.run) end,
+}))
+
+---------------------------------------------------------------------------
+-- Speedrun-Rekorde (speedrun.com): je Abschnitt gesamt und je Klasse, mit deiner /played-Zeit
+---------------------------------------------------------------------------
+local WorldRecords = ns.WorldRecords
+
+-- Eigene Zeit je Abschnitt aus WorldRecords.GetComparisons (für alle Zeilen des Abschnitts gleich)
+local function worldRecordRows()
+  local own = {}
+  for _, comparison in ipairs(WorldRecords.GetComparisons()) do
+    own[comparison.label] = comparison
+  end
+  local rows = WorldRecords.GetAllRecords()
+  for _, row in ipairs(rows) do
+    local comparison = own[row.label]
+    row.ownSeconds = comparison and comparison.ownSeconds
+    row.reached = comparison and comparison.reached
+    row.delta = row.ownSeconds and row.ownSeconds - row.record.seconds
+    row.isCurrent = not row.isOverall and row.record.class == ns.character.class  -- eigene Klasse hervorheben
+  end
+  return rows
+end
+
+local WORLD_RECORD_COLUMNS = {
+  { header = "HISTORY_BRACKET", width = 46, align = LEFT, value = function(r) return r.label end,
+    sort = function(r) return r.level end },
+  { header = "HISTORY_CLASS", width = 74, align = LEFT, value = function(r)
+      return r.isOverall and L.WORLD_RECORD_ALL_CLASSES or className(r.record.class)
+    end },
+  { header = "HISTORY_BEST_TIME", width = 70, value = function(r) return Format.Duration(r.record.seconds) end,
+    sort = function(r) return r.record.seconds end },
+  { header = "HISTORY_RUNNER", width = 100, align = LEFT, value = function(r) return r.record.runner end },
+  { header = "HISTORY_WHEN", width = 70, value = function(r) return r.record.date end },
+  { header = "HISTORY_OWN_TIME", width = 70, value = function(r)
+      if not r.ownSeconds then return "-" end
+      return Format.Duration(r.ownSeconds) .. (r.reached and "" or "*")
+    end, sort = function(r) return r.ownSeconds end },
+  { header = "HISTORY_DELTA", width = 70, value = function(r) return Format.SplitDelta(r.delta) end,
+    sort = function(r) return r.delta end },
+}
+
+local function worldRecordHint()
+  local _, fetched = WorldRecords.GetSource()
+  return string.format(L.WORLD_RECORDS_HINT, fetched or "?")
+end
+
+ns.HistoryWindow.AddView(HistoryTables.CreateTableView({
+  tab = "HISTORY_TAB_WORLD_RECORDS",
+  group = GROUP,
+  columns = WORLD_RECORD_COLUMNS,
+  records = worldRecordRows,
+  footer = HistoryTables.CountCells,
+  rowColor = function(r)
+    if r.isCurrent then return Widgets.COLORS.highlight end
+    return HistoryTables.ClassColor(r.record)
+  end,
+  hint = worldRecordHint,
 }))

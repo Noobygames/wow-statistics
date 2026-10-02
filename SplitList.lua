@@ -1,6 +1,6 @@
 -- Split-Liste wie bei LiveSplit: eigene kleine Anzeige mit dem laufenden Level und den zuletzt
 -- abgeschlossenen Leveln (Level, Zeit, Abweichung zum Vergleich aus Splits.lua), darunter die Summe
--- und die gesamte Spielzeit (/played).
+-- und die gesamte Spielzeit (/played); optional die Speedrun-Rekorde je Abschnitt (WorldRecords.lua).
 -- Einstellungen: showSplitList (an/aus, /lt splits), splitListRows (Zahl der Level), Position splitListPos.
 -- Größe, Hintergrund und Fixieren folgen dem Hauptfenster.
 local _, ns = ...
@@ -107,6 +107,13 @@ local function render()
   local played = ns.PlayedTime.GetTotalSeconds()
   setCells(getRow(#lines + 2), L.SPLIT_LIST_PLAYED, played and Format.Duration(played) or "...", "")
   local used = #lines + 2
+  if ns.db.showWorldRecords then
+    for _, comparison in ipairs(ns.WorldRecords.GetComparisons()) do
+      used = used + 1
+      setCells(getRow(used), string.format(L.WORLD_RECORD_ROW, comparison.label),
+        Format.Duration(comparison.record.seconds), Format.SplitDelta(comparison.delta))
+    end
+  end
   for i = used + 1, #rows do
     for _, fontString in pairs(rows[i]) do fontString:Hide() end
   end

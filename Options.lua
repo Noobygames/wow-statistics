@@ -198,6 +198,15 @@ local function addSplitComparisonChooser()
   } })
 end
 
+-- Speedrun-Rekorde: schnellster Lauf insgesamt oder der eigenen Klasse
+local function addWorldRecordScopeChooser()
+  local WorldRecords = ns.WorldRecords
+  addChooser({ label = "WORLD_RECORD_SCOPE", setting = "worldRecordScope", choices = {
+    { value = WorldRecords.CLASS, name = localized("WORLD_RECORD_OWN_CLASS") },
+    { value = WorldRecords.OVERALL, name = localized("WORLD_RECORD_ALL_CLASSES") },
+  } })
+end
+
 -- Level-Up-Ansage: aus, Gruppe oder Gilde
 local function addAnnounceChooser()
   local Summary = ns.LevelUpSummary
@@ -396,7 +405,11 @@ addToggles({
 })
 addSection("SECTION_SPLITS")
 addSplitComparisonChooser()
-addToggles({ toggle("SHOW_SPLIT_LIST", "showSplitList") })
+addToggles({
+  toggle("SHOW_SPLIT_LIST", "showSplitList"),
+  toggle("SHOW_WORLD_RECORDS", "showWorldRecords"),
+})
+addWorldRecordScopeChooser()
 addSlider({
   label = "SPLIT_LIST_ROWS",
   min = ns.SplitList.MIN_ROWS,

@@ -58,6 +58,7 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 - **Splits** (settings): running level time against the fastest time of your other characters for that level, plus the total difference, green when ahead and red when behind.
 - **Level-up announcement** (settings): post the level summary to your party or guild, or to /say with one click on a button.
 - **Food and camp reminders** (settings): remind you when you are not Well Fed (in WoW Forever food gives 5% more kill XP) or have no camp benefits while leveling.
+- **Speedrun records**: compare your /played time at level 10, 20 and 60 with the fastest runs on speedrun.com (WoW Classic: Leveling, SSF Softcore), overall or for your class, in the split list and in History > Speedrun. Data: [speedrun.com](https://www.speedrun.com/wowclassicera).
 - **Alerts** (settings): big on-screen messages for level up, rare and elite kills, epic loot and near deaths, each optional.
 - **Hide names** (settings): history shows no realm and lists other characters only as "Character 2, 3, ...".
 - Settings, grouped into Window, Statistics and General: size, background opacity, show/lock window, reset position & size, one toggle per statistic, language (English, Deutsch, Français, Español) and the minimap button.

@@ -352,7 +352,8 @@ end
 -- definition = { tab, group (optional), columns, records(characterKey), footer(columns, records),
 --                rowColor(record) (optional, Standard: laufender Eintrag hervorgehoben, sonst weiß) }
 -- definition = { tab, group, columns, records(characterKey), footer(columns, records),
---   rowColor(record) optional, onRowClick(record, mouseButton) optional, hint = Locale-Key optional,
+--   rowColor(record) optional, onRowClick(record, mouseButton) optional,
+--   hint = Locale-Key oder function() -> Text optional,
 --   buttons = { { label = Locale-Key, onClick() }, ... } optional (neben dem Export-Button) }
 local function createTableView(definition)
   local columns = definition.columns
@@ -520,7 +521,9 @@ local function createTableView(definition)
       frame.characterKey = characterKey
       filterLabel:SetText(L.FILTER)
       exportButton:SetText(L.EXPORT)
-      hint:SetText(definition.hint and L[definition.hint] or "")
+      local hintText = definition.hint
+      if type(hintText) == "function" then hintText = hintText() elseif hintText then hintText = L[hintText] end
+      hint:SetText(hintText or "")
       for _, button in ipairs(extraButtons) do button.widget:SetText(L[button.label]) end
       allRecords = definition.records(characterKey)
       if selectionChanged then frame.offset = 0 end

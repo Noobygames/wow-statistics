@@ -47,6 +47,8 @@ Forecast.lua
 Goal.lua
 Runs.lua
 Splits.lua
+SpeedrunRecords.lua
+WorldRecords.lua
 
 # Oberfläche
 StatLines.lua
