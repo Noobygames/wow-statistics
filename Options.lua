@@ -194,6 +194,8 @@ addToggles({
     set = function(checked) ns.Set("compactMode", checked) end },
   { label = "HORIZONTAL_LAYOUT", get = function(db) return db.horizontalLayout end,
     set = function(checked) ns.Set("horizontalLayout", checked) end },
+  { label = "HIGHLIGHT_DEATHS", get = function(db) return db.highlightDeaths end,
+    set = function(checked) ns.Set("highlightDeaths", checked) end },
 })
 addButton("RESET_WINDOW", function() TimerWindow.ResetLayout() end)
 addHint("OPTIONS_HINT")

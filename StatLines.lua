@@ -9,7 +9,7 @@ local Experience = ns.Experience
 local DeathCounter = ns.DeathCounter
 
 local NO_VALUE = "-"
-local DEATH_COLOR = "|cffff4040"  -- Tode rot, damit sie (z.B. im Stream) auffallen
+local DEATH_COLOR = "|cffff4040"  -- Tode rot, damit sie (z.B. im Stream) auffallen (Einstellung highlightDeaths)
 local AHEAD_COLOR = "|cff40ff40"   -- Split schneller als die Bestzeit
 local BEHIND_COLOR = "|cffff4040"  -- Split langsamer als die Bestzeit
 local PENDING = "..."  -- noch nicht aussagekräftig (z.B. /played hat noch nicht geantwortet)
@@ -44,7 +44,7 @@ local function deaths(scope)
   if deadSeconds >= 1 then
     text = string.format("%d (%s)", count, Format.Duration(deadSeconds))
   end
-  if count > 0 then
+  if count > 0 and ns.db.highlightDeaths then
     text = DEATH_COLOR .. text .. "|r"
   end
   return text

@@ -34,3 +34,8 @@ expectNear("über Level und Session hinweg", DeathCounter.GetSecondsSinceDeath()
 addon.character.lastDeathPlayed = nil
 expect("alter Tod ohne /played", DeathCounter.GetSecondsSinceDeath(), nil)
 expect("Zeile ohne Wert", statValue("showDeathless", Stats.LEVEL), "-")
+
+-- Rote Tode abschaltbar
+addon.Set("highlightDeaths", false)
+expect("ohne Hervorhebung", statValue("showDeaths", Stats.LEVEL):find("|c", 1, true), nil)
+addon.Set("highlightDeaths", true)
