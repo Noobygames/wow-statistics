@@ -14,70 +14,74 @@
 # LevelTimerCharDB: veraltet, nur noch geladen, um alte Daten in LevelTimerStatsDB zu übernehmen
 ## SavedVariablesPerCharacter: LevelTimerCharDB
 
-# Grundlagen
-Locales.lua
-Database.lua
-LevelTimer.lua
-Client.lua
-Format.lua
-Serializer.lua
-Profiles.lua
-ChatPatterns.lua
-Bags.lua
-Items.lua
-Widgets.lua
+# Grundlagen: Sprachen, Kern (Core), allgemeine Helfer (Lib)
+Locales\Locales.lua
+Core\Database.lua
+Core\LevelTimer.lua
+Core\Client.lua
+Lib\Format.lua
+Lib\Serializer.lua
+Core\Profiles.lua
+Lib\ChatPatterns.lua
+Lib\Bags.lua
+Lib\Items.lua
+Lib\Widgets.lua
 
-# Daten (ohne UI)
-Stats.lua
-Journal.lua
-Classification.lua
-PlayedTime.lua
-Session.lua
-Experience.lua
-KillCounter.lua
-DeathRecap.lua
-DeathCounter.lua
-NearDeath.lua
-TimeBreakdown.lua
-RecentXpRate.lua
-QuestCounter.lua
-Loot.lua
-MoneyCounter.lua
-History.lua
-Zones.lua
-Daily.lua
-Instances.lua
-Analysis.lua
-Forecast.lua
-Goal.lua
-Runs.lua
-Splits.lua
-SpeedrunRecords.lua
-WorldRecords.lua
+# Erfassung: Zähler und Ereignisse (Tracking)
+Tracking\Stats.lua
+Tracking\Journal.lua
+Tracking\Classification.lua
+Tracking\PlayedTime.lua
+Tracking\Session.lua
+Tracking\Experience.lua
+Tracking\KillCounter.lua
+Tracking\DeathRecap.lua
+Tracking\DeathCounter.lua
+Tracking\NearDeath.lua
+Tracking\TimeBreakdown.lua
+Tracking\RecentXpRate.lua
+Tracking\QuestCounter.lua
+Tracking\Loot.lua
+Tracking\MoneyCounter.lua
 
-# Oberfläche
-StatLines.lua
-LevelUpSummary.lua
-Alerts.lua
-BuffReminder.lua
-GearWarnings.lua
-TrainerReminder.lua
-Comfort.lua
-Merchant.lua
-QuestAutomation.lua
-Declines.lua
-TimerWindow.lua
-SplitList.lua
-Charts.lua
-Export.lua
-HistoryWindow.lua
-HistoryTables.lua
-HistoryCharts.lua
-SpeedrunViews.lua
-RecapWindow.lua
-StreamMode.lua
-MinimapButton.lua
-Broker.lua
-Options.lua
-DebugTools.lua
-Commands.lua
+# Historie, Auswertung, Prognose
+History\History.lua
+History\Zones.lua
+History\Daily.lua
+History\Instances.lua
+History\Analysis.lua
+History\Forecast.lua
+History\Goal.lua
+
+# Speedrun (Daten)
+Speedrun\Runs.lua
+Speedrun\Splits.lua
+Speedrun\SpeedrunRecords.lua
+Speedrun\WorldRecords.lua
+
+# Oberfläche (UI), Leveling-Hilfe (Assist), Speedrun-Fenster, Befehle
+UI\StatLines.lua
+UI\LevelUpSummary.lua
+UI\Alerts.lua
+Assist\BuffReminder.lua
+Assist\GearWarnings.lua
+Assist\TrainerReminder.lua
+Assist\Comfort.lua
+Assist\Merchant.lua
+Assist\QuestAutomation.lua
+Assist\Declines.lua
+UI\TimerWindow.lua
+Speedrun\SplitList.lua
+Lib\Charts.lua
+Lib\Export.lua
+UI\HistoryWindow.lua
+UI\HistoryTables.lua
+UI\HistoryCharts.lua
+Speedrun\SpeedrunViews.lua
+UI\RecapWindow.lua
+UI\StreamMode.lua
+UI\MinimapButton.lua
+UI\Broker.lua
+UI\Options.lua
+Core\DebugTools.lua
+Core\Commands.lua

@@ -20,7 +20,7 @@ Schwerpunkt: Struktur und Wartbarkeit nach dem Code- und Architektur-Review, ohn
 
 ### Struktur
 
-- [ ] 84. **Unterordner** (M): `Lib/`, `Core/`, `Tracking/`, `History/`, `Speedrun/`, `Assist/`, `UI/` statt 66 Dateien im Hauptordner (`.toc`-Änderung: Client neu starten).
+- [x] 84. **Unterordner** (M): `Lib/`, `Core/`, `Tracking/`, `History/`, `Speedrun/`, `Assist/`, `UI/` statt 66 Dateien im Hauptordner (`.toc`-Änderung: Client neu starten).
 - [ ] 85. **Locales je Sprache** (S–M): `Locales/Core.lua` plus eine Datei je Sprache statt 1.700 Zeilen in einer.
 - [ ] 86. **Standardwerte je Modul** (M): Module melden ihre Einstellungen und Zähler selbst an (`ns.RegisterDefaults`), statt alles zentral in `Database.lua`.
 - [ ] 87. **Migrationen ohne Fachmodule** (S): Charakter-Migrationen v4/v5 rufen nicht mehr `ns.Daily` auf (eigener Helfer).

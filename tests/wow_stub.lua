@@ -464,7 +464,7 @@ C_Item = {
 ---------------------------------------------------------------------------
 addon = {}
 for line in io.lines(ADDON_DIR .. "/LevelTimer.toc") do
-  line = line:gsub("\r", "")
+  line = line:gsub("\r", ""):gsub("\\", "/")  -- .toc-Pfade mit \ wie bei Blizzard
   if line ~= "" and not line:match("^#") then
     local chunk, err = loadfile(ADDON_DIR .. "/" .. line)
     if not chunk then error(err, 0) end

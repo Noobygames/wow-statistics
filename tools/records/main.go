@@ -1,5 +1,5 @@
 // Records holt die schnellsten Leveling-Läufe von speedrun.com und schreibt sie als Lua-Datei
-// (SpeedrunRecords.lua), damit das Addon ohne Netzwerk dagegen vergleichen kann.
+// (Speedrun/SpeedrunRecords.lua), damit das Addon ohne Netzwerk dagegen vergleichen kann.
 // Aufruf über "make records".
 package main
 
@@ -14,7 +14,7 @@ import (
 const requestTimeout = 30 * time.Second
 
 func main() {
-	out := flag.String("out", "SpeedrunRecords.lua", "Ziel-Datei (Lua)")
+	out := flag.String("out", "Speedrun/SpeedrunRecords.lua", "Ziel-Datei (Lua)")
 	baseURL := flag.String("api", "https://www.speedrun.com/api/v1", "speedrun.com API")
 	flag.Parse()
 
