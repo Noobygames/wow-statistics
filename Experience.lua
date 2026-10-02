@@ -22,8 +22,16 @@ function Experience.CalculateRate(xp, seconds)
   return xp / seconds * SECONDS_PER_HOUR
 end
 
+-- Spielzeit, auf die sich Raten und Prognosen beziehen: ohne AFK-Zeit, wenn eingestellt
+-- (xpRateWithoutAfk, AFK-Zeit aus TimeBreakdown.lua). Auch für Historie-Einträge.
+function Experience.RateSeconds(seconds, afkSeconds)
+  if not seconds or not ns.db or not ns.db.xpRateWithoutAfk then return seconds end
+  return math.max(0, seconds - (afkSeconds or 0))
+end
+
 function Experience.GetRatePerHour(scope)
-  return Experience.CalculateRate(Stats.GetXp(scope), Stats.GetSeconds(scope))
+  local afkSeconds = ns.TimeBreakdown.GetSeconds(scope, Stats.AFK_SECONDS)
+  return Experience.CalculateRate(Stats.GetXp(scope), Experience.RateSeconds(Stats.GetSeconds(scope), afkSeconds))
 end
 
 -- Geschätzte Spielzeit bis zum Level-Up bei der Rate des Bereichs

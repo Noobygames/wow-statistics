@@ -65,6 +65,7 @@ local SETTINGS_DEFAULTS = {
   showXpSources = false,
   showRested = false,
   showTimeBreakdown = false,  -- Zeit in Kampf, Flug, AFK und Rest (siehe TimeBreakdown.lua)
+  xpRateWithoutAfk = false,   -- XP/h und Prognosen ohne AFK-Zeit (siehe Experience.RateSeconds)
   showQuests = true,
   showMoney = true,
   minimap = { hide = false, angle = 225 },

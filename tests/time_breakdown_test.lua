@@ -55,3 +55,20 @@ expect("neues Level leer", Stats.Get(Stats.LEVEL, Stats.COMBAT_SECONDS), 0)
 addon.Set("showTimeBreakdown", true)
 local row = addon.STAT_LINES[#addon.STAT_LINES - 2].rows[1]
 expect("Zeile Kampf", row.label, "ROW_TIME_COMBAT")
+
+---------------------------------------------------------------------------
+-- XP/h ohne AFK (xpRateWithoutAfk)
+---------------------------------------------------------------------------
+local Experience = addon.Experience
+wow.state.inCombat = false
+wow.state.afk = true
+TimeBreakdown.Update(1)
+for _ = 1, 1800 do TimeBreakdown.Update(1) end
+wow.state.afk = false
+TimeBreakdown.Update(1)
+wow.state.xp = 500
+wow.fire("TIME_PLAYED_MSG", 5000, 3600)
+expectNear("mit AFK: 500 XP/h", Experience.GetRatePerHour(Stats.LEVEL), 500, 1)
+addon.Set("xpRateWithoutAfk", true)
+expectNear("ohne AFK: 1000 XP/h", Experience.GetRatePerHour(Stats.LEVEL), 1000, 1)
+expect("Historie ohne Zähler: Spielzeit bleibt", Experience.RateSeconds(100, nil), 100)

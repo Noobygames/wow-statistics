@@ -396,6 +396,8 @@ for i, line in ipairs(ns.STAT_LINES) do
   statToggles[i] = toggle(line.label, line.setting)
 end
 addToggles(statToggles)
+addSection("SECTION_CALCULATION")
+addToggles({ toggle("XP_RATE_WITHOUT_AFK", "xpRateWithoutAfk") })
 finishPage()
 
 -- Hinweise: Level-Up im Chat und Erinnerungen an Buffs

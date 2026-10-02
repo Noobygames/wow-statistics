@@ -15,7 +15,7 @@ local function averageRecentLevelSeconds()
   local sum, count = 0, 0
   for _, record in ipairs(History.GetLevelRecords(ns.characterKey)) do
     if not record.isCurrent and record.seconds then
-      sum = sum + record.seconds
+      sum = sum + Experience.RateSeconds(record.seconds, record.counters[Stats.AFK_SECONDS])
       count = count + 1
       if count == SAMPLE_SIZE then break end
     end
@@ -34,7 +34,9 @@ function Forecast.SecondsToLevel(targetLevel)
   local levelsAfterThis = targetLevel - ns.level - 1
   if levelsAfterThis <= 0 then return remaining end
 
-  local perLevel = averageRecentLevelSeconds() or (Stats.GetSeconds(Stats.LEVEL) + remaining)
+  local levelSeconds = Experience.RateSeconds(Stats.GetSeconds(Stats.LEVEL),
+    ns.TimeBreakdown.GetSeconds(Stats.LEVEL, Stats.AFK_SECONDS))
+  local perLevel = averageRecentLevelSeconds() or (levelSeconds + remaining)
   return remaining + levelsAfterThis * perLevel
 end
 
