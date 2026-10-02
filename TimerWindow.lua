@@ -271,6 +271,16 @@ local function updateLayout(db)
   end
 end
 
+-- Hintergrund aus den Einstellungen (auch für weitere Anzeigen wie die Split-Liste)
+function TimerWindow.ApplyBackground(frame, db)
+  local chroma = TimerWindow.CHROMA_COLORS[db.windowBackground]
+  if chroma then
+    Widgets.SetSolidBackground(frame, chroma)
+  else
+    Widgets.SetDefaultBackground(frame, db.bgAlpha)
+  end
+end
+
 ---------------------------------------------------------------------------
 -- Position und Größe
 ---------------------------------------------------------------------------
@@ -305,6 +315,7 @@ end
 
 function TimerWindow.ResetLayout()
   ns.db.pos = nil
+  ns.db.splitListPos = nil
   ns.db.scale = DEFAULT_SCALE
   restorePosition()
   ns.ApplySettings()
@@ -386,12 +397,7 @@ ns.OnLogin(restorePosition)
 ns.RegisterApply(function(db)
   updateLayout(db)
   refreshTexts()
-  local chroma = TimerWindow.CHROMA_COLORS[db.windowBackground]
-  if chroma then
-    Widgets.SetSolidBackground(window, chroma)
-  else
-    Widgets.SetDefaultBackground(window, db.bgAlpha)
-  end
+  TimerWindow.ApplyBackground(window, db)
 
   -- Größe aus den Einstellungen (Regler); beim Login ist sie schon gesetzt
   local scale = clampScale(db.scale)

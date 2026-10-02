@@ -20,6 +20,7 @@ local commands = {
   newsession = function() ns.StartNewSession() end,
   recap = function() ns.ToggleRecap() end,
   stream = function() ns.StreamMode.Toggle() end,
+  splits = function() ns.Set("showSplitList", not ns.db.showSplitList) end,
   -- /lt compare best | pb | Name: Vergleich für die Splits
   compare = function(argument)
     local Splits = ns.Splits

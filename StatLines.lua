@@ -10,8 +10,6 @@ local DeathCounter = ns.DeathCounter
 
 local NO_VALUE = "-"
 local DEATH_COLOR = "|cffff4040"  -- Tode rot, damit sie (z.B. im Stream) auffallen (Einstellung highlightDeaths)
-local AHEAD_COLOR = "|cff40ff40"   -- Split schneller als die Bestzeit
-local BEHIND_COLOR = "|cffff4040"  -- Split langsamer als die Bestzeit
 local PENDING = "..."  -- noch nicht aussagekräftig (z.B. /played hat noch nicht geantwortet)
 
 local function counter(name)
@@ -50,13 +48,9 @@ local function deaths(scope)
   return text
 end
 
--- Split: "-1m 05s" grün (schneller), "+3m 12s" rot (langsamer), "-" ohne Bestzeit
+-- Split: "-1m 05s" grün (schneller), "+3m 12s" rot (langsamer), "-" ohne Vergleich
 local function splitText(getDelta)
-  return function()
-    local delta = getDelta()
-    if not delta then return NO_VALUE end
-    return (delta < 0 and AHEAD_COLOR or BEHIND_COLOR) .. Format.SignedDuration(delta) .. "|r"
-  end
+  return function() return Format.SplitDelta(getDelta()) end
 end
 
 -- Session-Ziel: "Level 30: 45 %, 1h 20m" bzw. "Level 30 erreicht"

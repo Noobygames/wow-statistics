@@ -46,6 +46,15 @@ function Format.SignedDuration(seconds)
   return sign .. Format.Duration(math.abs(seconds))
 end
 
+local AHEAD_COLOR = "|cff40ff40"   -- schneller als der Vergleich
+local BEHIND_COLOR = "|cffff4040"  -- langsamer als der Vergleich
+
+-- Split-Abweichung farbig: grün schneller, rot langsamer; "-" ohne Vergleichswert
+function Format.SplitDelta(seconds)
+  if not seconds then return "-" end
+  return (seconds < 0 and AHEAD_COLOR or BEHIND_COLOR) .. Format.SignedDuration(seconds) .. "|r"
+end
+
 -- Große Zahlen kürzen: 950, 12.3k, 1.2M
 function Format.Number(value)
   if value >= 1000000 then

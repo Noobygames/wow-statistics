@@ -225,6 +225,19 @@ for i, line in ipairs(ns.STAT_LINES) do
 end
 addToggles(statToggles)
 addSplitComparisonChooser()
+addToggles({
+  { label = "SHOW_SPLIT_LIST", get = function(db) return db.showSplitList end,
+    set = function(checked) ns.Set("showSplitList", checked) end },
+})
+addSlider({
+  label = "SPLIT_LIST_ROWS",
+  min = ns.SplitList.MIN_ROWS,
+  max = ns.SplitList.MAX_ROWS,
+  step = 1,
+  get = function(db) return db.splitListRows end,
+  set = function(value) ns.Set("splitListRows", value) end,
+  format = tostring,
+})
 
 addSection("SECTION_ALERTS")
 addToggles({
