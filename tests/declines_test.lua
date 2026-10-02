@@ -18,3 +18,9 @@ wow.fire("TRADE_REQUEST", "Fremder")
 expect("Handel abgelehnt", wow.declined[#wow.declined], "CancelTrade")
 expectTrue("Handelsdialog zu", hidden("TRADE"))
 expect("Chatzeile", wow.printed[#wow.printed]:find(string.format(L.DECLINED_TRADE, "Fremder"), 1, true) ~= nil, true)
+
+-- Gruppeneinladung
+addon.Set("declineGroupInvites", true)
+wow.fire("PARTY_INVITE_REQUEST", "Einlader")
+expect("Gruppe abgelehnt", wow.declined[#wow.declined], "DeclineGroup")
+expectTrue("Einladungsdialog zu", hidden("PARTY_INVITE"))
