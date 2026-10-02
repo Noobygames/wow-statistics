@@ -1,46 +1,34 @@
 # Roadmap
 
-Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt.
+Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt und unter „Erledigt“ mit Version vermerkt. Nummern laufen über alle Versionen weiter.
 
-## Auswertung und Graphen
+## v2.5: Streaming
 
-- [x] 1. **Prognose bis Max-Level** (M): aus bisherigen Level-Zeiten hochrechnen, z.B. „Level 90 in ca. 14 h /played“.
-- [x] 2. **Alle Charaktere vergleichen** (M): Ansicht „Alle“ mit Summen und einer Rangliste, wer am schnellsten levelt.
-- [x] 3. **Zonen-Auswertung** (M): XP/h, Kills und Tode pro Zone. Zeigt, welche Zone sich lohnt.
-- [x] 4. **Spielzeit pro Tag/Woche** (S): Graph aus den Sessions.
-- [x] 5. **XP-Verlauf in der Session** (M): Linie XP über Zeit, zeigt Pausen und Leerlauf.
-- [x] 6. **Langzeit-Graphen trotz Limit** (M): alte Journal-Einträge vor dem Löschen zu Tageswerten zusammenfassen.
+Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben kein Netzwerk und schreiben keine Dateien, alles muss also im Spiel sichtbar sein.
 
-## Neue Daten
+### Für Zuschauer
 
-- [x] 7. **Quest-Journal** (S): Name der Quest, Zeitpunkt, XP, Gold.
-- [x] 8. **Level-Timeline** (S): wann welches Level erreicht, mit /played. „Level 60 nach 3d 4h“.
-- [x] 9. **Instanzen** (M): Zeit, XP und Kills in Dungeons getrennt von der offenen Welt, Dungeon-Läufe zählen.
-- [x] 10. **Loot-Journal** (M): seltene und epische Beute mit Zeit und Quelle.
-- [x] 11. **Elite- und Rare-Kills** (M): getrennt zählen; Einstufung beim Anvisieren gemerkt, daher in allen Clients.
-- [x] 12. **Beinahe-Tode** (M): Leben unter 10 % ohne zu sterben.
+- [ ] 26. **Splits gegen Bestzeit** (M–L): jede Level-Zeit gegen eine Bestzeit vergleichen (z.B. schnellster eigener Charakter), „+3m 12s“ rot / „−1m 05s“ grün, Gesamtabweichung wie bei LiveSplit. Daten aus `levelHistory` aller Charaktere.
+- [ ] 27. **Stream-Ansicht** (S): große Schrift, kein Rahmen, Hintergrund wahlweise Chroma-Grün oder Magenta zum Freistellen in OBS. Baut auf der horizontalen Leiste auf.
+- [ ] 28. **Session-Ziel** (S–M): z.B. „Level 30 bis Stream-Ende“ mit Fortschrittsbalken und Prognose („Ziel in ca. 1h 20m“), nutzt `Forecast.lua`.
+- [ ] 29. **Große Einblendungen** (S–M): auffällige Meldung bei Level-Up, Rare-/Elite-Kill, epischer Beute und Beinahe-Tod, einzeln abschaltbar. Ereignisse aus `Stats.OnIncrement` und den Journalen.
+- [ ] 30. **Session-Abschlusskarte** (M): `/lt recap` zeigt Zeit, Level, XP/h, Kills, Tode, beste Beute und gefährlichsten Gegner der Session, z.B. als Abspann oder Screenshot für Discord.
+- [ ] 31. **Hardcore-Anzeige** (S): Tode gut sichtbar, „Stunden ohne Tod“ und Beinahe-Tode.
 
-## Bedienung
+### Bedienung
 
-- [x] 13. **Level-Up-Zusammenfassung** (S): Chatzeile beim Level-Up, z.B. „Level 84 in 2h 10m, 312 Kills, 1 Tod“.
-- [x] 14. **XP-Balken im Fenster** (S): Fortschritt mit Rested-Anteil.
-- [x] 15. **Tabellen sortieren und filtern** (M): Klick auf Spaltenkopf sortiert, Suchfeld für Name, Zone, Zeitraum.
-- [x] 16. **Export** (S): Tabelle als CSV in ein Textfeld zum Kopieren.
-- [x] 17. **Daten löschen pro Charakter** (S): z.B. nach Löschen eines Charakters.
-- [x] 18. **Kompaktmodus** (S): Fenster nur mit Zeit und XP/h.
-- [x] 19. **Datentext für Titan Panel und ElvUI** (M): Werte in fremden Leisten anzeigen (LibDataBroker).
-- [x] 25. **Horizontale Leiste** (S): Fenster als Info-Leiste, alle Werte in einer Zeile.
+- [ ] 32. **Neue Session starten** (S): Button im Fenster bzw. in den Einstellungen und `/lt newsession`. Archiviert die laufende Session sofort und startet eine neue, z.B. zu Stream-Beginn, statt auf Logout und Login zu warten.
+- [ ] 33. **Streamer-Datenschutz** (S): Realm und Namen anderer Charaktere in der Historie ausblenden (gegen Stream-Sniping).
+- [ ] 34. **Ansage in Gilde/Gruppe** (S): Level-Up-Zusammenfassung optional nach /gilde oder /gruppe. Vorher in der API-Doku prüfen, wo `SendChatMessage` für Addons erlaubt ist (Retail schränkt das ein).
 
-## Projekt und Verbreitung
+### Projekt und Verbreitung
 
-- [ ] 20. **CurseForge-Upload aktivieren** (S): Projekt-ID und API-Key eintragen.
-- [x] 21. **Wago und WoWInterface** (S): derselbe Packager lädt mit, braucht je einen Token (IDs in der .toc und Secrets noch eintragen).
-- [x] 22. **Tests bei jedem PR** (S): GitHub Action prüft PRs vor dem Merge; Node-20-Warnungen beheben.
-- [x] 23. **Weitere Sprachen** (S–M): Französisch, Spanisch usw.
-- [x] 24. **Todesursache in Retail** (M): prüfen, ob Retails Death Recap eine Ursache liefert.
+- [ ] 20. **Uploads aktivieren** (S): CurseForge-Projekt-ID, Wago- und WoWInterface-ID in die `.toc` eintragen, Secrets `CF_API_KEY`, `WAGO_API_TOKEN`, `WOWI_API_TOKEN` setzen. Workflow ist fertig (21).
 
 ## Erledigt
 
-Nach Erledigen oben abhaken und hier kurz vermerken (Version, Nummer).
-
-- v2.0.0: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25
+- v2.0.0:
+  - Auswertung: 1. Prognose bis Max-Level, 2. alle Charaktere vergleichen, 3. Zonen-Auswertung, 4. Spielzeit pro Tag/Woche, 5. XP-Verlauf der Session, 6. Langzeit-Graphen als Tageswerte
+  - Daten: 7. Quest-Journal, 8. Level-Timeline, 9. Instanzen, 10. Loot-Journal, 11. Elite- und Rare-Kills, 12. Beinahe-Tode, 24. Todesursache aus dem Death Recap (Retail, WoW Forever)
+  - Bedienung: 13. Level-Up-Zusammenfassung, 14. XP-Balken, 15. Tabellen sortieren und filtern, 16. CSV-Export, 17. Daten löschen pro Charakter, 18. Kompaktmodus, 19. LibDataBroker-Datentext, 25. horizontale Leiste
+  - Projekt: 21. Upload-Workflow für Wago und WoWInterface, 22. Tests bei jedem PR, 23. Französisch und Spanisch
