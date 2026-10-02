@@ -41,6 +41,9 @@ wow = {
     questTitles = {},        -- C_QuestLog.GetTitleForQuestID je Quest-ID
     instance = nil,          -- { name, type } wenn in einer Instanz (IsInInstance)
     units = {},              -- weitere Einheiten: units.target = { name, classification, isPlayer }
+    inGuild = false,
+    inGroup = false,         -- Gruppe (IsInGroup)
+    chatLockdown = false,    -- C_ChatInfo.InChatMessagingLockdown
     health = 1000,
     healthMax = 1000,
   },
@@ -272,6 +275,14 @@ function GetRealmName() return state.realm end
 function UnitClass() return state.class, state.class end
 function UnitIsDeadOrGhost() return state.dead end
 function UnitHealth() return state.health end
+function IsInGuild() return state.inGuild end
+function IsInGroup() return state.inGroup end
+-- Gesendete Chat-Nachrichten landen in wow.sentChat als { message, chatType }
+wow.sentChat = {}
+C_ChatInfo = {
+  SendChatMessage = function(message, chatType) table.insert(wow.sentChat, { message = message, chatType = chatType }) end,
+  InChatMessagingLockdown = function() return state.chatLockdown end,
+}
 function UnitHealthMax() return state.healthMax end
 function GetPVPSessionStats() return state.honorableKills end
 function IsShiftKeyDown() return state.shiftDown end

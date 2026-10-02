@@ -125,6 +125,17 @@ local function addLanguageChooser()
 end
 
 -- Hintergrund des Fensters: Standard oder Chroma-Farbe für Streams
+-- Level-Up-Ansage: aus, Gruppe oder Gilde
+local function addAnnounceChooser()
+  local function localized(key) return function() return L[key] end end
+  local Summary = ns.LevelUpSummary
+  addChooser({ label = "LEVEL_UP_ANNOUNCE", setting = "levelUpAnnounce", choices = {
+    { value = Summary.ANNOUNCE_OFF, name = localized("ANNOUNCE_OFF") },
+    { value = Summary.ANNOUNCE_PARTY, name = localized("ANNOUNCE_PARTY") },
+    { value = Summary.ANNOUNCE_GUILD, name = localized("ANNOUNCE_GUILD") },
+  } })
+end
+
 local function addBackgroundChooser()
   local function localized(key) return function() return L[key] end end
   addChooser({ label = "WINDOW_BACKGROUND", setting = "windowBackground", choices = {
@@ -215,6 +226,7 @@ addToggles({
 
 addSection("SECTION_GENERAL")
 addLanguageChooser()
+addAnnounceChooser()
 addToggles({
   { label = "SHOW_MINIMAP", get = function(db) return not db.minimap.hide end,
     set = function(checked) ns.SetMinimapHidden(not checked) end },
