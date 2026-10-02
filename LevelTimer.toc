@@ -20,6 +20,7 @@ LevelTimer.lua
 Client.lua
 Format.lua
 Serializer.lua
+Profiles.lua
 ChatPatterns.lua
 Widgets.lua
 

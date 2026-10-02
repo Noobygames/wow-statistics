@@ -48,7 +48,7 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 - [x] 41. **Einstellungen mit Reitern** (M): Allgemein (Fenster, Kompakt/Horizontal, Sprache, Minimap), Statistiken, Hinweise (Level-Up, Erinnerungen), Stream (Stream-Modus, Hintergrund, Namen, Einblendungen, Splits). Neue Session, Zusammenfassung und Historie unten auf allen Reitern.
 - [x] 42. **Client-spezifische Optionen** (S): `Client.lua` erkennt WoW Forever an der Interface-Version (16xxx); Optionen nur für Forever (Camp-Buff) erscheinen in anderen Clients nicht.
 
-- [ ] 50. **Einstellungs-Profile** (M–L): Einstellungen als benanntes Profil speichern, je Charakter ein Profil wählen und Profile als Text exportieren/importieren (für andere Clients oder Accounts; innerhalb eines Accounts und Clients sind Einstellungen schon für alle Charaktere gleich).
+- [x] 50. **Einstellungs-Profile** (M–L): Einstellungen als benanntes Profil speichern, je Charakter ein Profil wählen und Profile als Text exportieren/importieren (für andere Clients oder Accounts; innerhalb eines Accounts und Clients sind Einstellungen schon für alle Charaktere gleich).
 
 ### Projekt und Verbreitung
 
@@ -56,7 +56,7 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 
 ## Erledigt
 
-- Nächstes Release (v2.5): 32. Neue Session starten, 31. Hardcore-Anzeige, 27. Stream-Ansicht, 33. Streamer-Datenschutz, 28. Session-Ziel, 29. Große Einblendungen, 30. Session-Abschlusskarte, 26. Splits, 34. Ansage in Gilde/Gruppe, 38. Rote Tode abschaltbar, 37. Stream-Modus, 35. Fester Vergleichslauf, 36. Split-Liste, 39. Hinweis bei fehlendem Food-Buff, 40. Hinweis bei fehlendem Camp-Buff, 41. Einstellungen mit Reitern, 42. Client-spezifische Optionen, 43. Level-Up-Ansage in /sagen, 44. Debug-Modus, 45. Split-Liste mit /played, 46. Fester Vergleich bleibt fest, 47. Läufe, 48. Rekorde, 49. Läufe teilen und sichern
+- Nächstes Release (v2.5): 32. Neue Session starten, 31. Hardcore-Anzeige, 27. Stream-Ansicht, 33. Streamer-Datenschutz, 28. Session-Ziel, 29. Große Einblendungen, 30. Session-Abschlusskarte, 26. Splits, 34. Ansage in Gilde/Gruppe, 38. Rote Tode abschaltbar, 37. Stream-Modus, 35. Fester Vergleichslauf, 36. Split-Liste, 39. Hinweis bei fehlendem Food-Buff, 40. Hinweis bei fehlendem Camp-Buff, 41. Einstellungen mit Reitern, 42. Client-spezifische Optionen, 43. Level-Up-Ansage in /sagen, 44. Debug-Modus, 45. Split-Liste mit /played, 46. Fester Vergleich bleibt fest, 47. Läufe, 48. Rekorde, 49. Läufe teilen und sichern, 50. Einstellungs-Profile
 - v2.0.0:
   - Auswertung: 1. Prognose bis Max-Level, 2. alle Charaktere vergleichen, 3. Zonen-Auswertung, 4. Spielzeit pro Tag/Woche, 5. XP-Verlauf der Session, 6. Langzeit-Graphen als Tageswerte
   - Daten: 7. Quest-Journal, 8. Level-Timeline, 9. Instanzen, 10. Loot-Journal, 11. Elite- und Rare-Kills, 12. Beinahe-Tode, 24. Todesursache aus dem Death Recap (Retail, WoW Forever)

@@ -1,4 +1,4 @@
--- Einstellungsfenster mit Reitern: Allgemein (Fenster, Sprache), Statistiken, Hinweise, Stream.
+-- Einstellungsfenster mit Reitern: Allgemein (Fenster, Sprache), Statistiken, Hinweise, Stream, Profile.
 -- Darunter auf allen Reitern: Neue Session, Zusammenfassung, Historie.
 -- Jedes Steuerelement registriert eine refresh(db)-Funktion; nach jeder Änderung
 -- (ns.Set/ns.ApplySettings) zeigen alle den aktuellen Stand und die gewählte Sprache.
@@ -25,6 +25,11 @@ local ROW_HINT = 30
 local SECTION_GAP = 8
 local BUTTON_HEIGHT = 22
 local CHOOSER_TAB_GAP = 10
+local MAX_PROFILE_ROWS = 6     -- so viele Profile listet der Reiter "Profile"
+local ROW_PROFILE = 20
+local PROFILE_NAME_WIDTH = 160
+local PROFILE_SAVE_WIDTH = 120
+local DELETE_PROFILE_POPUP = "LEVELTIMER_DELETE_PROFILE"
 
 local panel = Widgets.CreatePanel("LevelTimerOptions", 0.95)
 panel:SetWidth(MIN_WIDTH)  -- wächst mit den Texten der gewählten Sprache (fitWidth)
@@ -220,6 +225,75 @@ local function addHint(labelKey)
   onRefresh(function() hint:SetText(L[labelKey]) end)
 end
 
+-- Profile: Liste (Klick wechselt, Rechtsklick löscht), Name + Speichern, Export und Import
+StaticPopupDialogs[DELETE_PROFILE_POPUP] = {
+  button1 = YES or "Yes",
+  button2 = NO or "No",
+  OnAccept = function(_, name)
+    ns.Profiles.Delete(name)
+    ns.ApplySettings()
+  end,
+  timeout = 0,
+  whileDead = true,
+  hideOnEscape = true,
+  preferredIndex = 3,
+}
+
+local function addProfileList()
+  local Profiles = ns.Profiles
+  for index = 1, MAX_PROFILE_ROWS do
+    local tab = Widgets.CreateTab(page, "GameFontHighlight", function(self, mouseButton)
+      local name = self.profileName
+      if mouseButton == "RightButton" then
+        StaticPopupDialogs[DELETE_PROFILE_POPUP].text = L.PROFILE_DELETE_CONFIRM
+        StaticPopup_Show(DELETE_PROFILE_POPUP, Profiles.DisplayName(name), nil, name)
+      else
+        Profiles.Switch(name)
+      end
+    end)
+    tab:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+    addRow(tab, ROW_PROFILE)
+    onRefresh(function()
+      local name = Profiles.GetNames()[index]
+      tab.profileName = name
+      tab:SetShown(name ~= nil)
+      if name then
+        tab:SetLabel(Profiles.DisplayName(name))
+        tab:SetActive(name == Profiles.GetActive())
+      end
+    end)
+  end
+end
+
+-- Import-Fenster für Profile (auch /lt profile import); das neue Profil wird nicht sofort aktiv
+function ns.ShowProfileImport()
+  ns.Export.ShowImport(L.PROFILE_IMPORT, function(text)
+    local name = ns.Profiles.Import(text)
+    if not name then return L.PROFILE_IMPORT_INVALID, false end
+    ns.ApplySettings()
+    return string.format(L.PROFILE_IMPORTED, name), true
+  end)
+end
+
+local function addProfileSaver()
+  local nameBox = CreateFrame("EditBox", nil, page, "InputBoxTemplate")
+  nameBox:SetSize(PROFILE_NAME_WIDTH, BUTTON_HEIGHT)
+  nameBox:SetAutoFocus(false)
+  nameBox:SetPoint("TOPLEFT", MARGIN + 6, nextRowY)  -- Vorlage zeichnet ihren Rand links außerhalb
+  local saveButton = Widgets.CreateButton(page, PROFILE_SAVE_WIDTH, BUTTON_HEIGHT, function()
+    if ns.Profiles.SaveAs(nameBox:GetText()) then
+      ns.Print(string.format(L.PROFILE_SAVED, nameBox:GetText()))
+      nameBox:SetText("")
+      ns.ApplySettings()
+    end
+  end)
+  saveButton:SetPoint("LEFT", nameBox, "RIGHT", CHOOSER_TAB_GAP, 0)
+  nameBox:SetScript("OnEnterPressed", function() saveButton:Click() end)
+  nameBox:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+  nextRowY = nextRowY - ROW_BUTTON
+  onRefresh(function() saveButton:SetText(L.PROFILE_SAVE) end)
+end
+
 local function percent(value)
   return value .. "%"
 end
@@ -332,6 +406,19 @@ addSlider({
   set = function(value) ns.Set("splitListRows", value) end,
   format = tostring,
 })
+finishPage()
+
+-- Profile: Einstellungen benannt speichern, je Charakter wählen, als Text teilen
+addPage("OPTIONS_TAB_PROFILES")
+addSection("SECTION_PROFILES")
+addProfileList()
+addProfileSaver()
+addButton("PROFILE_EXPORT", function()
+  local Profiles = ns.Profiles
+  ns.Export.Show(Profiles.DisplayName(Profiles.GetActive()), Profiles.Export(Profiles.GetActive()))
+end)
+addButton("PROFILE_IMPORT", function() ns.ShowProfileImport() end)
+addHint("PROFILE_HINT")
 finishPage()
 
 addFooterButton("HISTORY", function() ns.ToggleHistory() end)

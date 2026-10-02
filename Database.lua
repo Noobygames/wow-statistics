@@ -179,6 +179,11 @@ local function applyDefaults(data, defaults)
   return data
 end
 
+-- Fehlende Einstellungen mit Defaults füllen (z.B. nach dem Laden eines Profils)
+function Database.ApplySettingDefaults(settings)
+  return applyDefaults(settings, SETTINGS_DEFAULTS)
+end
+
 function Database.NewCounters()
   return applyDefaults({}, COUNTER_DEFAULTS)
 end

@@ -75,6 +75,7 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 | `/lt newsession` | Archive the running session and start a new one (also a button in the settings) |
 | `/lt stream` | Stream mode: transparent larger window, alerts on, names hidden; again restores your settings |
 | `/lt splits` | Show or hide the split list (last levels with time and difference) |
+| `/lt profile` | List profiles; `/lt profile Name` switches, `save Name`, `delete Name`, `export`, `import` (also in Settings > Profiles) |
 | `/lt runs backup` / `/lt runs import` | Copy all runs as text, or paste runs shared by others (also buttons in History > Speedrun) |
 | `/lt compare pb` | Splits against your personal best run (`best` = best time per level, or a character name) |
 | `/lt recap` | Session summary card: time, levels, XP, kills, deaths, best loot, most dangerous enemy |

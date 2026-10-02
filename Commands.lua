@@ -21,6 +21,27 @@ local commands = {
   recap = function() ns.ToggleRecap() end,
   stream = function() ns.StreamMode.Toggle() end,
   splits = function() ns.Set("showSplitList", not ns.db.showSplitList) end,
+  -- /lt profile: Liste | <Name> wechseln | save <Name> | delete <Name> | export | import
+  profile = function(argument)
+    local Profiles = ns.Profiles
+    local action, name = argument:match("^(%S*)%s*(.-)$")
+    if argument == "" then
+      local names = {}
+      for i, profileName in ipairs(Profiles.GetNames()) do names[i] = Profiles.DisplayName(profileName) end
+      ns.Print(string.format(L.PROFILE_LIST, Profiles.DisplayName(Profiles.GetActive()), table.concat(names, ", ")))
+    elseif action == "save" and Profiles.SaveAs(name) then
+      ns.Print(string.format(L.PROFILE_SAVED, name))
+      ns.ApplySettings()
+    elseif action == "delete" then
+      ns.Print(Profiles.Delete(name) and string.format(L.PROFILE_DELETED, name) or L.PROFILE_NOT_DELETED)
+    elseif action == "export" then
+      ns.Export.Show(Profiles.DisplayName(Profiles.GetActive()), Profiles.Export(Profiles.GetActive()))
+    elseif action == "import" then
+      ns.ShowProfileImport()
+    elseif not Profiles.Switch(argument) then
+      ns.Print(L.PROFILE_UNKNOWN)
+    end
+  end,
   -- /lt runs import | backup: Läufe einfügen bzw. alle als Text sichern
   runs = function(argument)
     if argument == "import" then
