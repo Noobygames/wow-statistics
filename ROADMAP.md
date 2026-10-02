@@ -29,14 +29,15 @@ Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt.
 - [x] 17. **Daten löschen pro Charakter** (S): z.B. nach Löschen eines Charakters.
 - [x] 18. **Kompaktmodus** (S): Fenster nur mit Zeit und XP/h.
 - [x] 19. **Datentext für Titan Panel und ElvUI** (M): Werte in fremden Leisten anzeigen (LibDataBroker).
+- [x] 25. **Horizontale Leiste** (S): Fenster als Info-Leiste, alle Werte in einer Zeile.
 
 ## Projekt und Verbreitung
 
 - [ ] 20. **CurseForge-Upload aktivieren** (S): Projekt-ID und API-Key eintragen.
-- [ ] 21. **Wago und WoWInterface** (S): derselbe Packager lädt mit, braucht je einen Token.
+- [ ] 21. **Wago und WoWInterface** (S): derselbe Packager lädt mit,+- braucht je einen Token.
 - [x] 22. **Tests bei jedem PR** (S): GitHub Action prüft PRs vor dem Merge; Node-20-Warnungen beheben.
 - [x] 23. **Weitere Sprachen** (S–M): Französisch, Spanisch usw.
-- [ ] 24. **Todesursache in Retail** (M): prüfen, ob Retails Death Recap eine Ursache liefert.
+- [x] 24. **Todesursache in Retail** (M): prüfen, ob Retails Death Recap eine Ursache liefert.
 
 ## Erledigt
 

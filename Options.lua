@@ -155,6 +155,8 @@ addToggles({
     set = function(checked) ns.Set("showXpBar", checked) end },
   { label = "COMPACT_MODE", get = function(db) return db.compactMode end,
     set = function(checked) ns.Set("compactMode", checked) end },
+  { label = "HORIZONTAL_LAYOUT", get = function(db) return db.horizontalLayout end,
+    set = function(checked) ns.Set("horizontalLayout", checked) end },
 })
 addButton("RESET_WINDOW", function() TimerWindow.ResetLayout() end)
 addHint("OPTIONS_HINT")
