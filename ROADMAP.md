@@ -38,7 +38,7 @@ Schwerpunkt: Komfort-Funktionen, die beim Leveln Klicks sparen, und Werte, die z
 
 - [x] 70. **Visuals** (S): Streamer mode soll weder größe noch transparenz von elementen ändern
 - [x] 71. **Elite Kill** (S): Elite Kill alerts sollten NICHT in dungeons passieren
-- [ ] 72. **Epic Loot** (S): Epic loot alerts sollten NICHT in raids passieren
+- [x] 72. **Epic Loot** (S): Epic loot alerts sollten NICHT in raids passieren
 - [x] 77. **Level-Up direkt in /sagen** (S): Ansage geht ohne Button sofort raus; der Klick-Button ist entfernt.
 
 ## v2.5: Streaming

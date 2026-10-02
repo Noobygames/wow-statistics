@@ -47,6 +47,15 @@ expect("seltene Beute ohne Einblendung", shownText(), string.format(L.ALERT_ELIT
 Journal.AddLoot({ link = "[Lila Schwert]", quality = 4 })
 expect("epische Beute", shownText(), string.format(L.ALERT_EPIC_LOOT, "[Lila Schwert]"))
 
+-- Im Raid ist epische Beute normal: keine Einblendung; im Dungeon schon
+wow.state.instance = { name = "Geschmolzener Kern", type = "raid" }
+Journal.AddLoot({ link = "[Raid-Helm]", quality = 4 })
+expect("keine Beute im Raid", shownText(), string.format(L.ALERT_EPIC_LOOT, "[Lila Schwert]"))
+wow.state.instance = { name = "Todesminen", type = "party" }
+Journal.AddLoot({ link = "[Dungeon-Helm]", quality = 4 })
+expect("Beute im Dungeon", shownText(), string.format(L.ALERT_EPIC_LOOT, "[Dungeon-Helm]"))
+wow.state.instance = nil
+
 Journal.AddNearDeath(4, {})
 expect("Beinahe-Tod", shownText(), string.format(L.ALERT_NEAR_DEATH, 4))
 

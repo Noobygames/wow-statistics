@@ -2,6 +2,7 @@
 -- epische Beute, Beinahe-Tod. Jede Art ist einzeln schaltbar (Einstellungen alert*), alle aus.
 -- Quellen: ns.OnLevelStarted und neue Journal-Einträge (Journal.OnAdd), kein eigenes Event-Parsing.
 -- In Dungeons und Raids ist fast jeder Gegner Elite: dort keine Elite-Einblendung (IsInInstance).
+-- In Raids ist epische Beute normal: dort keine Beute-Einblendung.
 local _, ns = ...
 local L = ns.L
 local Journal = ns.Journal
@@ -104,7 +105,9 @@ local handlers = {
     end
   end,
   lootLog = function(entry)
-    if (entry.quality or 0) >= EPIC_QUALITY then alert("loot", entry.link or entry.name or "?") end
+    if (entry.quality or 0) >= EPIC_QUALITY and instanceType() ~= "raid" then
+      alert("loot", entry.link or entry.name or "?")
+    end
   end,
   nearDeathLog = function(entry)
     alert("nearDeath", entry.lowestPercent)
