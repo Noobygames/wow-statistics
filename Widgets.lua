@@ -58,6 +58,18 @@ function Widgets.SetBackgroundAlpha(panel, alpha)
   panel:SetBackdropColor(r, g, b, alpha)
 end
 
+-- Vollfarbiger Hintergrund ohne Rahmen (z.B. Chroma-Key für Streams); color = { r, g, b }
+function Widgets.SetSolidBackground(panel, color)
+  local r, g, b = unpack(color)
+  panel:SetBackdropColor(r, g, b, 1)
+  panel:SetBackdropBorderColor(0, 0, 0, 0)
+end
+
+function Widgets.SetDefaultBackground(panel, alpha)
+  Widgets.SetBackgroundAlpha(panel, alpha)
+  panel:SetBackdropBorderColor(unpack(Widgets.COLORS.border))
+end
+
 -- Checkbox mit eigenem Label, da die Template-Textfelder je nach Client anders heißen
 function Widgets.CreateCheckbox(parent, onToggle)
   local checkbox = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")

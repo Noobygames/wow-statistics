@@ -95,6 +95,8 @@ local frameMethods = {
   GetTop = function() return 500 end,
   SetNormalTexture = function(self, texture) self._normalTexture = texture end,
   GetPoint = function() return "CENTER", nil, "CENTER", 0, 0 end,
+  SetBackdropColor = function(self, r, g, b, a) self._backdropColor = { r, g, b, a } end,
+  SetBackdropBorderColor = function(self, r, g, b, a) self._borderColor = { r, g, b, a } end,
   -- Anker werden nur gemerkt (frame._points), nicht ausgewertet
   SetPoint = function(self, ...) table.insert(self._points, { ... }) end,
   ClearAllPoints = function(self) self._points = {} end,

@@ -11,6 +11,7 @@ local SETTINGS_DEFAULTS = {
   language = ns.DefaultLanguage(),
   scale = 1,  -- Größe des Fensters samt Inhalt (siehe TimerWindow.lua)
   bgAlpha = 0.8,
+  windowBackground = "default",  -- "default", "green" oder "magenta" (Chroma-Key, siehe TimerWindow.lua)
   locked = false,
   showTimer = true,
   showXpBar = true,

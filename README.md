@@ -54,6 +54,7 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 - Resize the window by dragging its bottom right corner; text and everything else scale with it. Right-click the window to open the settings.
 - **Compact mode** (`/lt compact` or settings): only play time, XP bar and XP/h.
 - **Horizontal bar** (`/lt bar` or settings): the window as a slim info bar, all values in one line; combines with compact mode.
+- **Stream view** (settings): solid green or magenta background without border for chroma keying in OBS.
 - Settings, grouped into Window, Statistics and General: size, background opacity, show/lock window, reset position & size, one toggle per statistic, language (English, Deutsch, Français, Español) and the minimap button.
 
 ### Chat commands

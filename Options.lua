@@ -15,11 +15,11 @@ local ROW_SECTION = 24
 local ROW_CHECKBOX = 26
 local ROW_SLIDER = 44
 local ROW_BUTTON = 30
-local ROW_LANGUAGE = 26
+local ROW_CHOOSER = 26
 local ROW_HINT = 30
 local SECTION_GAP = 8
 local BUTTON_HEIGHT = 22
-local LANGUAGE_TAB_GAP = 10
+local CHOOSER_TAB_GAP = 10
 
 local panel = Widgets.CreatePanel("LevelTimerOptions", 0.95)
 panel:SetWidth(MIN_WIDTH)  -- wächst mit den Texten der gewählten Sprache (fitWidth)
@@ -41,7 +41,7 @@ title:SetPoint("TOP", 0, -14)
 local refreshers = {}
 local nextRowY = CONTENT_TOP
 local toggleCells = {}    -- { checkbox, column, y } aller Schalter; Spaltenbreite setzt fitWidth
-local languageRow         -- { label, tabs } der Sprachwahl
+local chooserRows = {}    -- { label, tabs } je Auswahlzeile (Sprache, Hintergrund); Breite prüft fitWidth
 
 local function onRefresh(refresh)
   table.insert(refreshers, refresh)
@@ -92,26 +92,46 @@ local function addButton(labelKey, onClick)
   onRefresh(function() button:SetText(L[labelKey]) end)
 end
 
--- Sprache: Beschriftung und ein Reiter je Sprache
-local function addLanguageChooser()
+-- Auswahl als Zeile von Reitern: chooser = { label = Locale-Key, setting, choices = { { value, name() }, ... } }
+local function addChooser(chooser)
   local label = panel:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
   addRow(label, 0)
-  languageRow = { label = label, tabs = {} }
+  local row = { label = label, tabs = {} }
+  table.insert(chooserRows, row)
   local anchor = label
-  for _, language in ipairs(ns.languages) do
+  for _, choice in ipairs(chooser.choices) do
     local tab = Widgets.CreateTab(panel, "GameFontHighlight", function()
-      ns.Set("language", language.code)
+      ns.Set(chooser.setting, choice.value)
     end)
-    tab:SetPoint("LEFT", anchor, "RIGHT", LANGUAGE_TAB_GAP, 0)
+    tab:SetPoint("LEFT", anchor, "RIGHT", CHOOSER_TAB_GAP, 0)
     anchor = tab
-    table.insert(languageRow.tabs, tab)
+    table.insert(row.tabs, tab)
     onRefresh(function(db)
-      tab:SetLabel(language.name)
-      tab:SetActive(db.language == language.code)
+      tab:SetLabel(choice.name())
+      tab:SetActive(db[chooser.setting] == choice.value)
     end)
   end
-  nextRowY = nextRowY - ROW_LANGUAGE
-  onRefresh(function() label:SetText(L.LANGUAGE) end)
+  nextRowY = nextRowY - ROW_CHOOSER
+  onRefresh(function() label:SetText(L[chooser.label]) end)
+end
+
+-- Sprachnamen stehen immer in der eigenen Sprache
+local function addLanguageChooser()
+  local choices = {}
+  for i, language in ipairs(ns.languages) do
+    choices[i] = { value = language.code, name = function() return language.name end }
+  end
+  addChooser({ label = "LANGUAGE", setting = "language", choices = choices })
+end
+
+-- Hintergrund des Fensters: Standard oder Chroma-Farbe für Streams
+local function addBackgroundChooser()
+  local function localized(key) return function() return L[key] end end
+  addChooser({ label = "WINDOW_BACKGROUND", setting = "windowBackground", choices = {
+    { value = TimerWindow.BACKGROUND_DEFAULT, name = localized("BACKGROUND_DEFAULT") },
+    { value = "green", name = localized("BACKGROUND_GREEN") },
+    { value = "magenta", name = localized("BACKGROUND_MAGENTA") },
+  } })
 end
 
 local function addHint(labelKey)
@@ -151,6 +171,7 @@ addSlider({
   set = function(value) ns.Set("bgAlpha", value / 100) end,
   format = percent,
 })
+addBackgroundChooser()
 addToggles({
   { label = "SHOW_TIMER", get = function(db) return db.showTimer end,
     set = function(checked) ns.Set("showTimer", checked) end },
@@ -206,12 +227,16 @@ local function columnWidth()
   return width
 end
 
-local function languageRowWidth()
-  local width = languageRow.label:GetStringWidth()
-  for _, tab in ipairs(languageRow.tabs) do
-    width = width + LANGUAGE_TAB_GAP + tab:GetWidth()
+local function widestChooserRow()
+  local widest = 0
+  for _, row in ipairs(chooserRows) do
+    local width = row.label:GetStringWidth()
+    for _, tab in ipairs(row.tabs) do
+      width = width + CHOOSER_TAB_GAP + tab:GetWidth()
+    end
+    widest = math.max(widest, width)
   end
-  return width
+  return widest
 end
 
 -- Fensterbreite aus den Texten der gewählten Sprache; Abschnitte, Regler und Buttons strecken sich mit
@@ -221,7 +246,7 @@ local function fitWidth()
     cell.checkbox:ClearAllPoints()
     cell.checkbox:SetPoint("TOPLEFT", MARGIN + cell.column * column, cell.y)
   end
-  local content = math.max(2 * column, languageRowWidth())
+  local content = math.max(2 * column, widestChooserRow())
   panel:SetWidth(math.max(MIN_WIDTH, content + 2 * MARGIN))
 end
 
