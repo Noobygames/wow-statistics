@@ -19,6 +19,7 @@ Database.lua
 LevelTimer.lua
 Client.lua
 Format.lua
+Serializer.lua
 ChatPatterns.lua
 Widgets.lua
 

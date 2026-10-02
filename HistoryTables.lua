@@ -25,6 +25,7 @@ local TOOLBAR_HEIGHT = 22     -- Zeile mit dem Suchfeld über der Tabelle
 local FILTER_WIDTH = 150
 local FILTER_HEIGHT = 18
 local EXPORT_BUTTON_WIDTH = 70
+local EXTRA_BUTTON_WIDTH = 90   -- weitere Buttons der Ansicht (definition.buttons)
 local SORT_DESCENDING = " v"
 local SORT_ASCENDING = " ^"
 
@@ -351,7 +352,8 @@ end
 -- definition = { tab, group (optional), columns, records(characterKey), footer(columns, records),
 --                rowColor(record) (optional, Standard: laufender Eintrag hervorgehoben, sonst weiß) }
 -- definition = { tab, group, columns, records(characterKey), footer(columns, records),
---   rowColor(record) optional, onRowClick(record, mouseButton) optional, hint = Locale-Key optional }
+--   rowColor(record) optional, onRowClick(record, mouseButton) optional, hint = Locale-Key optional,
+--   buttons = { { label = Locale-Key, onClick() }, ... } optional (neben dem Export-Button) }
 local function createTableView(definition)
   local columns = definition.columns
   local rowColor = definition.rowColor or defaultRowColor
@@ -399,9 +401,17 @@ local function createTableView(definition)
       end
     end
 
-    -- Hinweis in der Werkzeugleiste, z.B. was ein Klick bewirkt
+    -- Hinweis unten rechts neben der Summenzeile, z.B. was ein Klick bewirkt
     local hint = frame:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
-    hint:SetPoint("TOPLEFT", EXPORT_BUTTON_WIDTH + CELL_GAP, -6)
+    hint:SetPoint("BOTTOMRIGHT", -SCROLLBAR_GAP, 2)
+
+    -- Weitere Buttons der Ansicht rechts neben dem Export-Button
+    local extraButtons = {}
+    for i, button in ipairs(definition.buttons or {}) do
+      local widget = Widgets.CreateButton(frame, EXTRA_BUTTON_WIDTH, FILTER_HEIGHT + 2, button.onClick)
+      widget:SetPoint("TOPLEFT", EXPORT_BUTTON_WIDTH + CELL_GAP + (i - 1) * (EXTRA_BUTTON_WIDTH + CELL_GAP), -1)
+      extraButtons[i] = { widget = widget, label = button.label }
+    end
 
     local function draw()
       for i, row in ipairs(rows) do
@@ -511,6 +521,7 @@ local function createTableView(definition)
       filterLabel:SetText(L.FILTER)
       exportButton:SetText(L.EXPORT)
       hint:SetText(definition.hint and L[definition.hint] or "")
+      for _, button in ipairs(extraButtons) do button.widget:SetText(L[button.label]) end
       allRecords = definition.records(characterKey)
       if selectionChanged then frame.offset = 0 end
       apply()

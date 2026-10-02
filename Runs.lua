@@ -93,3 +93,84 @@ function Runs.SumOfLevels(times, from, to)
   end
   return sum
 end
+
+---------------------------------------------------------------------------
+-- Teilen und Sichern: Läufe als Text (Serializer) exportieren und importieren
+---------------------------------------------------------------------------
+local Serializer = ns.Serializer
+local KIND_RUN, KIND_RUNS = "run", "runs"
+
+local function shareable(run)
+  return { name = run.name, realm = run.realm, class = run.class, reachedLevel = run.reachedLevel, times = run.times }
+end
+
+function Runs.Export(run)
+  return Serializer.Encode(KIND_RUN, shareable(run))
+end
+
+-- Alle Läufe (eigene und importierte) in einem Text, z.B. als Sicherung oder für einen anderen Client
+function Runs.ExportAll()
+  local list = {}
+  for _, run in ipairs(Runs.GetAll()) do
+    table.insert(list, shareable(run))
+  end
+  return Serializer.Encode(KIND_RUNS, list)
+end
+
+-- Nur Läufe mit Namen und Level-Zeiten aus Zahlen übernehmen (der Text kommt von außen)
+local function sanitize(run)
+  if type(run) ~= "table" or type(run.name) ~= "string" or type(run.times) ~= "table" then return nil end
+  local times = {}
+  for level, seconds in pairs(run.times) do
+    if type(level) ~= "number" or type(seconds) ~= "number" then return nil end
+    times[level] = seconds
+  end
+  return {
+    name = run.name,
+    realm = type(run.realm) == "string" and run.realm or nil,
+    class = type(run.class) == "string" and run.class or nil,
+    reachedLevel = type(run.reachedLevel) == "number" and run.reachedLevel or nil,
+    times = times,
+  }
+end
+
+local function sameTimes(a, b)
+  for level, seconds in pairs(a) do
+    if b[level] ~= seconds then return false end
+  end
+  for level in pairs(b) do
+    if a[level] == nil then return false end
+  end
+  return true
+end
+
+-- Schon vorhanden: eigener Charakter gleichen Namens und Realms oder gleicher importierter Lauf
+local function isKnown(run)
+  for _, existing in ipairs(Runs.GetAll()) do
+    if existing.name == run.name and existing.realm == run.realm
+      and (not existing.imported or sameTimes(existing.times, run.times)) then
+      return true
+    end
+  end
+  return false
+end
+
+-- Text mit einem Lauf oder allen Läufen importieren. Rückgabe: Zahl neuer Läufe, nil bei ungültigem Text
+function Runs.Import(text)
+  local single = Serializer.Decode(KIND_RUN, text)
+  local list = single and { single } or Serializer.Decode(KIND_RUNS, text)
+  if type(list) ~= "table" then return nil end
+  local runs = {}
+  for i, candidate in ipairs(list) do
+    runs[i] = sanitize(candidate)
+    if not runs[i] then return nil end  -- erst alles prüfen, dann übernehmen
+  end
+  local added = 0
+  for _, run in ipairs(runs) do
+    if not isKnown(run) then
+      table.insert(store().importedRuns, run)
+      added = added + 1
+    end
+  end
+  return added
+end

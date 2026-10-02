@@ -1,4 +1,5 @@
 -- Export: Tabellen als CSV in einem Fenster zum Kopieren (Strg+C); Addons dürfen nicht in Dateien schreiben.
+-- Dasselbe Fenster dient zum Import (Text einfügen, Button "Importieren"), z.B. für geteilte Läufe.
 local _, ns = ...
 local L = ns.L
 local Widgets = ns.Widgets
@@ -11,6 +12,8 @@ local HEIGHT = 340
 local MARGIN = 16
 local TEXT_TOP = -44
 local WHEEL_STEP = 40  -- Pixel pro Mausrad-Raste
+local IMPORT_BUTTON_WIDTH = 110
+local IMPORT_BUTTON_HEIGHT = 22
 
 -- Feld für CSV aufbereiten: in Anführungszeichen, wenn es Trennzeichen, Anführungszeichen oder Umbrüche enthält
 local function csvField(value, separator)
@@ -60,7 +63,7 @@ hint:SetPoint("BOTTOMLEFT", MARGIN, MARGIN - 4)
 
 local scrollFrame = CreateFrame("ScrollFrame", nil, panel)
 scrollFrame:SetPoint("TOPLEFT", MARGIN, TEXT_TOP)
-scrollFrame:SetPoint("BOTTOMRIGHT", -MARGIN, MARGIN + 10)
+scrollFrame:SetPoint("BOTTOMRIGHT", -MARGIN, MARGIN + IMPORT_BUTTON_HEIGHT)
 
 local editBox = CreateFrame("EditBox", nil, scrollFrame)
 editBox:SetMultiLine(true)
@@ -76,12 +79,34 @@ scrollFrame:SetScript("OnMouseWheel", function(self, delta)
   self:SetVerticalScroll(math.max(0, math.min(offset, self:GetVerticalScrollRange())))
 end)
 
+-- Import: onImport(text) liefert eine Meldung und ob der Text übernommen wurde
+local onImport
+local importButton = Widgets.CreateButton(panel, IMPORT_BUTTON_WIDTH, IMPORT_BUTTON_HEIGHT, function()
+  local message, imported = onImport(editBox:GetText())
+  ns.Print(message)
+  if imported then panel:Hide() end
+end)
+importButton:SetPoint("BOTTOMRIGHT", -MARGIN, MARGIN - 8)
+
 -- Text anzeigen, markieren und fokussieren, damit Strg+C sofort kopiert
 function Export.Show(heading, text)
   title:SetText(heading)
   hint:SetText(L.EXPORT_HINT)
+  importButton:Hide()
   editBox:SetText(text)
   panel:Show()
   editBox:SetFocus()
   editBox:HighlightText()
+end
+
+-- Leeres Feld zum Einfügen (Strg+V) und Button zum Übernehmen
+function Export.ShowImport(heading, importText)
+  onImport = importText
+  title:SetText(heading)
+  hint:SetText(L.IMPORT_HINT)
+  importButton:SetText(L.IMPORT)
+  importButton:Show()
+  editBox:SetText("")
+  panel:Show()
+  editBox:SetFocus()
 end

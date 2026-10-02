@@ -1,7 +1,7 @@
 -- Speedrun-Ansichten der Historie (Gruppe "Speedrun"): Läufe zum Vergleichen und Rekorde je Level
 -- (schnellste Zeit je Level über die eigenen Charaktere, importierte Läufe zählen nicht).
--- Läufe: Klick wählt den Lauf als festen Vergleich der Splits, Rechtsklick markiert ihn als Favorit;
--- Favoriten stehen oben. Suchfeld filtert nach Name und Klasse (wie jede Tabelle über alle Zellen).
+-- Läufe: Klick wählt den Lauf als festen Vergleich der Splits, Rechtsklick markiert ihn als Favorit,
+-- Shift+Klick zeigt ihn als Text zum Teilen; Favoriten stehen oben. Buttons: alle Läufe sichern, importieren. Suchfeld filtert nach Name und Klasse (wie jede Tabelle über alle Zellen).
 local _, ns = ...
 local L = ns.L
 local Widgets = ns.Widgets
@@ -77,7 +77,9 @@ local function runColor(run)
 end
 
 local function onRunClick(run, mouseButton)
-  if mouseButton == "RightButton" then
+  if IsShiftKeyDown() then
+    ns.Export.Show(runName(run), Runs.Export(run))
+  elseif mouseButton == "RightButton" then
     Runs.ToggleFavorite(run.id)
   elseif not run.isCurrent then
     Splits.SetReferenceRun(run)
@@ -94,7 +96,20 @@ ns.HistoryWindow.AddView(HistoryTables.CreateTableView({
   rowColor = runColor,
   onRowClick = onRunClick,
   hint = "RUNS_HINT",
+  buttons = {
+    { label = "RUNS_BACKUP", onClick = function() ns.Export.Show(L.RUNS_BACKUP, Runs.ExportAll()) end },
+    { label = "IMPORT", onClick = function() ns.ShowRunImport() end },
+  },
 }))
+
+-- Import-Fenster für Läufe (auch /lt runs import)
+function ns.ShowRunImport()
+  ns.Export.ShowImport(L.RUNS_IMPORT_TITLE, function(text)
+    local added = Runs.Import(text)
+    if not added then return L.RUNS_IMPORT_INVALID, false end
+    return string.format(L.RUNS_IMPORTED, added), true
+  end)
+end
 
 ---------------------------------------------------------------------------
 -- Rekorde: schnellste Zeit je Level über alle eigenen Charaktere, dazu die eigene Zeit

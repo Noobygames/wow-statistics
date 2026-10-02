@@ -21,6 +21,16 @@ local commands = {
   recap = function() ns.ToggleRecap() end,
   stream = function() ns.StreamMode.Toggle() end,
   splits = function() ns.Set("showSplitList", not ns.db.showSplitList) end,
+  -- /lt runs import | backup: Läufe einfügen bzw. alle als Text sichern
+  runs = function(argument)
+    if argument == "import" then
+      ns.ShowRunImport()
+    elseif argument == "backup" then
+      ns.Export.Show(L.RUNS_BACKUP, ns.Runs.ExportAll())
+    else
+      ns.Print(L.HELP)
+    end
+  end,
   -- /lt compare best | pb | Name: Vergleich für die Splits
   compare = function(argument)
     local Splits = ns.Splits
