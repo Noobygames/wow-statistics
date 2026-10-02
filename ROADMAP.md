@@ -15,13 +15,13 @@ Schwerpunkt: Komfort-Funktionen, die beim Leveln Klicks sparen, und Werte, die z
 - [x] 59. **Gespräche überspringen** (S–M): `GOSSIP_SHOW`/`QUEST_GREETING`: fertige Quests abgeben, verfügbare öffnen, sonst die einzige Gesprächsoption wählen (`C_GossipInfo`). Nie bei mehreren Optionen oder Optionen mit Bestätigung/Kosten.
 - [ ] 73. **Trades** (S): Handel automatisch ablehnen
 - [ ] 74. **Invites** (S): Gruppen Invite automatisch ablehnen
-- [ ] 74. **Gilde** (S): Gilden Invite automatisch ablehnen
-- [ ] 75. **Duell** (S): Duell Invite automatisch ablehnen
+- [ ] 75. **Gilde** (S): Gilden Invite automatisch ablehnen
+- [ ] 76. **Duell** (S): Duell Invite automatisch ablehnen
 
 ### Statistik: wohin die Zeit geht
 
 - [x] 60. **Zeitaufteilung** (M–L): Spielzeit je Level und Session aufgeteilt in Kampf (`PLAYER_REGEN_DISABLED/ENABLED`), Flugroute (`UnitOnTaxi`), tot, AFK (`UnitIsAFK`) und Rest (Laufen, Questen). Zeilen im Fenster, Spalten in der Historie.
-- [ ] 61. **XP/h ohne AFK** (S): Schalter, ob AFK-Zeit in XP/h und Prognose zählt (baut auf 60 auf).
+- [x] 61. **XP/h ohne AFK** (S): Schalter, ob AFK-Zeit in XP/h und Prognose zählt (baut auf 60 auf).
 - [x] 62. **Aktuelle XP/h** (S): gleitender Wert der letzten 15 min neben dem Durchschnitt, damit Einbrüche (Laufwege, Flugrouten) sofort sichtbar sind.
 - [x] 63. **Kills/Quests bis Level-Up** (S): „noch ~38 Kills oder ~5 Quests“ aus der durchschnittlichen Kill- und Quest-XP des laufenden Levels.
 - [x] 64. **Erholt-Anzeige** (S): verbleibende Erholt-XP in Prozent des Levels (`GetXPExhaustion`) als eigene Zeile.
@@ -39,6 +39,7 @@ Schwerpunkt: Komfort-Funktionen, die beim Leveln Klicks sparen, und Werte, die z
 - [ ] 70. **Visuals** (S): Streamer mode soll weder größe noch transparenz von elementen ändern
 - [ ] 71. **Elite Kill** (S): Elite Kill alerts sollten NICHT in dungeons passieren
 - [ ] 72. **Epic Loot** (S): Epic loot alerts sollten NICHT in raids passieren
+- [x] 77. **Level-Up direkt in /sagen** (S): Ansage geht ohne Button sofort raus; der Klick-Button ist entfernt.
 
 ## v2.5: Streaming
 
