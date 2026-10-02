@@ -24,6 +24,7 @@ Serializer.lua
 Profiles.lua
 ChatPatterns.lua
 Bags.lua
+Items.lua
 Widgets.lua
 
 # Daten (ohne UI)

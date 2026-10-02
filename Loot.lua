@@ -29,8 +29,7 @@ local QUALITY_BY_COLOR = {
 }
 
 function Loot.QualityOf(link)
-  local getItemInfo = (C_Item and C_Item.GetItemInfo) or GetItemInfo
-  local quality = getItemInfo and select(3, getItemInfo(link))
+  local quality = ns.Items.GetQuality(link)
   if quality then return quality end
   local qualityTag = link:match("|cnIQ(%d+):")  -- neueres Linkformat
   if qualityTag then return tonumber(qualityTag) end

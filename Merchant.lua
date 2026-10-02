@@ -15,9 +15,6 @@ ns.Merchant = Merchant
 
 local UNLIMITED_WITHDRAW = -1  -- GetGuildBankWithdrawMoney beim Gildenmeister
 local POOR_QUALITY = 0         -- Enum.ItemQuality.Poor (grau)
-local SELL_PRICE_INDEX = 11    -- Rückgabewert sellPrice von GetItemInfo
-
-local getItemInfo = (C_Item and C_Item.GetItemInfo) or GetItemInfo
 
 -- Was die Gildenbank für Reparaturen hergibt; wie Blizzards Tooltip am Gildenbank-Button:
 -- Abhebelimit, höchstens der Kontostand der Bank
@@ -57,7 +54,7 @@ local function isJunk(info)
 end
 
 local function sellPrice(info)
-  return (select(SELL_PRICE_INDEX, getItemInfo(info.itemID)) or 0) * info.stackCount
+  return (ns.Items.GetSellPrice(info.itemID) or 0) * info.stackCount
 end
 
 -- Alle grauen Gegenstände mit Verkaufswert verkaufen; Anzahl und erwarteter Erlös im Chat

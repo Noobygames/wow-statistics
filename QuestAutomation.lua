@@ -31,9 +31,6 @@ ns.QuestAutomation = QuestAutomation
 local QUEST_ACCEPT_POPUP = "QUEST_ACCEPT"  -- Blizzards Dialog zu QUEST_ACCEPT_CONFIRM
 local NO_CHOICE = 0           -- GetQuestReward ohne Belohnung zur Auswahl
 local OPTION_AVAILABLE = 0    -- Enum.GossipOptionStatus.Available
-local SELL_PRICE_INDEX = 11   -- Rückgabewert sellPrice von GetItemInfo
-
-local getItemInfo = (C_Item and C_Item.GetItemInfo) or GetItemInfo
 
 local function isWorthTaking(quest)
   return not quest.isTrivial and not quest.isIgnored
@@ -95,7 +92,7 @@ end)
 -- Verkaufswert einer Belohnung zur Auswahl; nil, solange der Client das Item nicht kennt
 local function choiceValue(index)
   local link = GetQuestItemLink("choice", index)
-  return link and select(SELL_PRICE_INDEX, getItemInfo(link))
+  return link and ns.Items.GetSellPrice(link)
 end
 
 -- Belohnung mit dem höchsten Verkaufswert; nil, wenn ein Wert noch unbekannt ist
