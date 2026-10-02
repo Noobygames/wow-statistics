@@ -42,6 +42,20 @@ function Experience.GetSecondsToLevel(scope)
   return remainingXp / rate * SECONDS_PER_HOUR
 end
 
+-- Wie viele Kills bzw. Quests noch bis zum Level-Up fehlen, bei der durchschnittlichen XP je
+-- Kill/Quest auf diesem Level (sonst der Session); nil ohne Grundlage
+function Experience.CountToLevel(xpCounter, countCounter)
+  for _, scope in ipairs({ Stats.LEVEL, Stats.SESSION }) do
+    local count = Stats.Get(scope, countCounter)
+    local xp = Stats.Get(scope, xpCounter)
+    if count > 0 and xp > 0 then
+      local remainingXp = UnitXPMax("player") - UnitXP("player")
+      return math.ceil(remainingXp / (xp / count))
+    end
+  end
+  return nil
+end
+
 -- XP-Quellen im Bereich. "Sonstige" ist der Rest (Entdecken, Berufe, ...).
 function Experience.GetSources(scope)
   local fromKills = Stats.Get(scope, Stats.XP_KILLS)

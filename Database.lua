@@ -22,6 +22,7 @@ local SETTINGS_DEFAULTS = {
   showXpRate = true,
   showRecentXpRate = false,  -- XP/h der letzten 15 min (siehe RecentXpRate.lua)
   showLevelEta = true,
+  showCountToLevel = false,  -- Kills und Quests bis zum Level-Up
   showMaxLevelEta = true,
   showSplits = false,  -- Splits gegen einen Vergleich (siehe Splits.lua)
   splitComparison = "best",  -- "best", "pb" oder "run" (db.splitReference, siehe Splits.lua)

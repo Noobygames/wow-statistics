@@ -29,6 +29,15 @@ local function recentXpRate()
   return rate and Format.Number(rate) or PENDING
 end
 
+-- "~38": Kills bzw. Quests bis zum Level-Up beim Durchschnitt des Levels
+local function countToLevel(xpCounter, countCounter)
+  return function()
+    if not Experience.IsLeveling() then return NO_VALUE end
+    local count = Experience.CountToLevel(xpCounter, countCounter)
+    return count and ("~" .. count) or NO_VALUE
+  end
+end
+
 local function timeToLevel(scope)
   if not Experience.IsLeveling() then return NO_VALUE end
   local seconds = Experience.GetSecondsToLevel(scope)
@@ -118,6 +127,10 @@ ns.STAT_LINES = {
   { setting = "showRecentXpRate", label = "STAT_RECENT_XP_RATE",
     rows = { { label = "ROW_RECENT_XP_RATE", value = recentXpRate } } },
   { setting = "showLevelEta", label = "STAT_LEVEL_ETA", rows = { { label = "ROW_LEVEL_ETA", value = timeToLevel } } },
+  { setting = "showCountToLevel", label = "STAT_COUNT_TO_LEVEL", rows = {
+    { label = "ROW_KILLS_TO_LEVEL", value = countToLevel(Stats.XP_KILLS, Stats.PVE_KILLS) },
+    { label = "ROW_QUESTS_TO_LEVEL", value = countToLevel(Stats.XP_QUESTS, Stats.QUESTS) },
+  } },
   { setting = "showMaxLevelEta", label = "STAT_MAX_LEVEL_ETA",
     rows = { { label = "ROW_MAX_LEVEL_ETA", value = timeToMaxLevel } } },
   { setting = "showSplits", label = "STAT_SPLITS", rows = {
