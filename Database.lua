@@ -51,6 +51,7 @@ local SETTINGS_DEFAULTS = {
   autoAcceptShared = false, -- geteilte Quests und Eskorten bestätigen
   autoTurnIn = false,       -- fertige Quests abgeben
   autoChooseReward = false, -- bei mehreren Belohnungen die mit dem höchsten Verkaufswert
+  skipGossip = false,       -- Gespräche mit nur einer Option überspringen
   levelUpSummary = true,
   levelUpAnnounce = "off",  -- Level-Up-Zusammenfassung an "party" oder "guild" (siehe LevelUpSummary.lua)  -- Chatzeile beim Level-Up (siehe LevelUpSummary.lua)
   showPveKills = true,

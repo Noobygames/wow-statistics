@@ -1,6 +1,6 @@
 -- Quests ohne Klicks: annehmen (autoAcceptQuests), geteilte Quests und Eskorten bestätigen
 -- (autoAcceptShared), abgeben (autoTurnIn) und bei mehreren Belohnungen die wertvollste wählen
--- (autoChooseReward).
+-- (autoChooseReward); Gespräche mit nur einer Option überspringen (skipGossip).
 -- Abläufe wie in Blizzards QuestFrame/GossipFrame aller Clients:
 --   QUEST_DETAIL          Quest-Text offen: AcceptQuest, bei Quests, die der Client schon selbst
 --                         angenommen hat (QuestGetAutoAccept), AcknowledgeAutoAcceptQuest.
@@ -15,6 +15,9 @@
 --   QUEST_GREETING        alte Quest-Liste ohne Gespräch: dasselbe mit SelectActiveQuest/
 --                         SelectAvailableQuest(index), fertig laut GetActiveTitle.
 -- Graue (triviale) und ignorierte Quests werden nicht angenommen: beim Leveln Zeitverschwendung.
+-- Gespräch überspringen wie Blizzards GossipFrame bei selectOptionWhenOnlyOption: keine Quests,
+-- genau eine verfügbare Option (GossipOptionStatus Available), kein ForceGossip; gewählt mit
+-- C_GossipInfo.SelectOptionByIndex(orderIndex). Optionen mit Bestätigung fragt das Spiel weiter nach.
 local _, ns = ...
 local Comfort = ns.Comfort
 
@@ -23,6 +26,7 @@ ns.QuestAutomation = QuestAutomation
 
 local QUEST_ACCEPT_POPUP = "QUEST_ACCEPT"  -- Blizzards Dialog zu QUEST_ACCEPT_CONFIRM
 local NO_CHOICE = 0           -- GetQuestReward ohne Belohnung zur Auswahl
+local OPTION_AVAILABLE = 0    -- Enum.GossipOptionStatus.Available
 local SELL_PRICE_INDEX = 11   -- Rückgabewert sellPrice von GetItemInfo
 
 local getItemInfo = (C_Item and C_Item.GetItemInfo) or GetItemInfo
@@ -102,8 +106,17 @@ ns.RegisterEvent("QUEST_COMPLETE", function()
   if choice then GetQuestReward(choice) end
 end)
 
--- Gesprächsfenster: erst fertige Quests abgeben, dann die nächste lohnende öffnen;
--- QUEST_PROGRESS/QUEST_DETAIL übernehmen den Rest
+-- Die einzige Gesprächsoption, wenn es sonst nichts zu tun gibt (z.B. Flugmeister, Händler)
+local function onlyOption()
+  if C_GossipInfo.GetNumAvailableQuests() > 0 or C_GossipInfo.GetNumActiveQuests() > 0 then return nil end
+  if C_GossipInfo.ForceGossip() then return nil end
+  local options = C_GossipInfo.GetOptions()
+  if #options ~= 1 or options[1].status ~= OPTION_AVAILABLE then return nil end
+  return options[1]
+end
+
+-- Gesprächsfenster: erst fertige Quests abgeben, dann die nächste lohnende öffnen
+-- (QUEST_PROGRESS/QUEST_DETAIL übernehmen den Rest), sonst die einzige Option wählen
 function QuestAutomation.HandleGossip()
   if Comfort.IsActive("autoTurnIn") then
     local quest = firstComplete(C_GossipInfo.GetActiveQuests())
@@ -118,6 +131,14 @@ function QuestAutomation.HandleGossip()
     if quest then
       ns.Debug("quests", "gossip: opening quest %s", quest.questID)
       C_GossipInfo.SelectAvailableQuest(quest.questID)
+      return true
+    end
+  end
+  if Comfort.IsActive("skipGossip") then
+    local option = onlyOption()
+    if option then
+      ns.Debug("quests", "gossip: skipping to option %s", option.orderIndex)
+      C_GossipInfo.SelectOptionByIndex(option.orderIndex)
       return true
     end
   end

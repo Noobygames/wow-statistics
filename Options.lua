@@ -433,6 +433,7 @@ addToggles({
   toggle("AUTO_ACCEPT_SHARED", "autoAcceptShared"),
   toggle("AUTO_TURN_IN", "autoTurnIn"),
   toggle("AUTO_CHOOSE_REWARD", "autoChooseReward"),
+  toggle("SKIP_GOSSIP", "skipGossip"),
 })
 addHint("COMFORT_HINT")
 finishPage()

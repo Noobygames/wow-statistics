@@ -127,3 +127,31 @@ expect("dann annehmen", lastAction(), "selectAvailable 21")
 greeting.active = { { title = "Offen", isComplete = false }, { title = "Fertig", isComplete = true } }
 wow.fire("QUEST_GREETING")
 expect("Liste: fertige abgeben", lastAction(), "greetingActive 2")
+
+---------------------------------------------------------------------------
+-- Gespräch überspringen (skipGossip): nur ohne Quests und mit genau einer verfügbaren Option
+---------------------------------------------------------------------------
+reset()
+gossip.available, gossip.active = {}, {}
+gossip.options = { { orderIndex = 0, status = 0, name = "Zeigt mir, wohin ich fliegen kann." } }
+wow.fire("GOSSIP_SHOW")
+expect("überspringen aus", lastAction(), nil)
+
+addon.Set("skipGossip", true)
+wow.fire("GOSSIP_SHOW")
+expect("einzige Option gewählt", lastAction(), "selectOption 0")
+
+reset()
+gossip.options[1].status = 2  -- gesperrt
+wow.fire("GOSSIP_SHOW")
+expect("gesperrte Option nicht", lastAction(), nil)
+
+gossip.options = { { orderIndex = 0, status = 0 }, { orderIndex = 1, status = 0 } }
+wow.fire("GOSSIP_SHOW")
+expect("zwei Optionen: Spieler wählt", lastAction(), nil)
+
+-- Offene (nicht fertige) Quest: Gespräch bleibt offen
+gossip.options = { { orderIndex = 0, status = 0 } }
+gossip.active = { { questID = 30, isComplete = false } }
+wow.fire("GOSSIP_SHOW")
+expect("mit Quest: Spieler wählt", lastAction(), nil)
