@@ -1,4 +1,4 @@
--- Einstellungsfenster mit Reitern: Allgemein (Fenster, Sprache), Statistiken, Hinweise, Stream, Speedrun, Profile.
+-- Einstellungsfenster mit Reitern: Allgemein (Fenster, Sprache), Statistiken, Hinweise, Komfort, Stream, Speedrun, Profile.
 -- Darunter auf allen Reitern: Neue Session, Zusammenfassung, Historie.
 -- Jedes Steuerelement registriert eine refresh(db)-Funktion; nach jeder Änderung
 -- (ns.Set/ns.ApplySettings) zeigen alle den aktuellen Stand und die gewählte Sprache.
@@ -417,6 +417,16 @@ addSlider({
   set = function(value) ns.Set("reminderInterval", value) end,
   format = function(value) return string.format(L.MINUTES, value) end,
 })
+finishPage()
+
+-- Komfort: Automatik bei Händlern, Quests und Gesprächen
+addPage("OPTIONS_TAB_COMFORT")
+addSection("SECTION_MERCHANT")
+addToggles({
+  toggle("AUTO_REPAIR", "autoRepair"),
+  toggle("AUTO_REPAIR_GUILD", "autoRepairGuild", ns.Client.HasGuildBank),
+})
+addHint("COMFORT_HINT")
 finishPage()
 
 -- Stream: alles, was nur für Streams gedacht ist (Speedrun hat einen eigenen Reiter)

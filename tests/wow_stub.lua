@@ -51,6 +51,8 @@ wow = {
     interface = 120100,      -- Interface-Version (GetBuildInfo); 16001 = WoW Forever
     health = 1000,
     healthMax = 1000,
+    -- Händler: Reparatur (CanMerchantRepair, GetRepairAllCost) und Gildenbank
+    merchant = { canRepair = false, repairCost = 0, guildRepair = false, guildWithdraw = 0, guildMoney = 0 },
   },
   printed = {},
   UNKNOWN_EVENT = UNKNOWN_EVENT,
@@ -320,6 +322,24 @@ end
 function GetInstanceInfo() return state.instance and state.instance.name or GetZoneText() end
 C_QuestLog = { GetTitleForQuestID = function(questID) return state.questTitles[questID] end }
 function strtrim(text) return (text:gsub("^%s+", ""):gsub("%s+$", "")) end
+
+-- Händler; RepairAllItems bucht die Kosten ab und merkt sich die Reparatur in wow.repairs
+wow.repairs = {}
+function CanMerchantRepair() return state.merchant.canRepair end
+function GetRepairAllCost() return state.merchant.repairCost, state.merchant.repairCost > 0 end
+function RepairAllItems(useGuildBank)
+  local merchant = state.merchant
+  table.insert(wow.repairs, { cost = merchant.repairCost, guild = useGuildBank and true or false })
+  if useGuildBank then
+    merchant.guildMoney = merchant.guildMoney - merchant.repairCost
+  else
+    state.money = state.money - merchant.repairCost
+  end
+  merchant.repairCost = 0
+end
+function CanGuildBankRepair() return state.merchant.guildRepair end
+function GetGuildBankWithdrawMoney() return state.merchant.guildWithdraw end
+function GetGuildBankMoney() return state.merchant.guildMoney end
 
 ---------------------------------------------------------------------------
 -- Addon laden

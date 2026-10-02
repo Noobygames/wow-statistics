@@ -43,6 +43,9 @@ local SETTINGS_DEFAULTS = {
   remindFood = false,  -- Hinweis, wenn beim Leveln "Satt" fehlt (siehe BuffReminder.lua)
   remindCamp = false,  -- Hinweis, wenn beim Leveln der Camp-Buff fehlt (WoW Forever)
   reminderInterval = 5,  -- Minuten zwischen zwei Hinweisen auf denselben fehlenden Buff
+  -- Komfort beim Leveln (siehe Comfort.lua), alles aus
+  autoRepair = false,       -- beim Händler reparieren (Merchant.lua)
+  autoRepairGuild = false,  -- zuerst aus der Gildenbank
   levelUpSummary = true,
   levelUpAnnounce = "off",  -- Level-Up-Zusammenfassung an "party" oder "guild" (siehe LevelUpSummary.lua)  -- Chatzeile beim Level-Up (siehe LevelUpSummary.lua)
   showPveKills = true,

@@ -17,3 +17,15 @@ function Client.IsForever()
   local version = Client.GetInterfaceVersion()
   return version >= FOREVER_FIRST and version <= FOREVER_LAST
 end
+
+-- Classic Era (1.x ohne WoW Forever): z.B. 11509
+local CLASSIC_ERA_LAST = 19999
+
+function Client.IsClassicEra()
+  return Client.GetInterfaceVersion() <= CLASSIC_ERA_LAST and not Client.IsForever()
+end
+
+-- Gildenbank (Reparatur aus der Gildenkasse); Classic Era hat keine
+function Client.HasGuildBank()
+  return CanGuildBankRepair ~= nil and not Client.IsClassicEra()
+end

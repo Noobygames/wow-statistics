@@ -56,6 +56,8 @@ StatLines.lua
 LevelUpSummary.lua
 Alerts.lua
 BuffReminder.lua
+Comfort.lua
+Merchant.lua
 TimerWindow.lua
 SplitList.lua
 Charts.lua
