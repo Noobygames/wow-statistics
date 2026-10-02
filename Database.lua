@@ -24,6 +24,12 @@ local SETTINGS_DEFAULTS = {
   showMaxLevelEta = true,
   showGoal = false,  -- Session-Ziel (siehe Goal.lua); /lt goal schaltet die Zeile ein
   streamerPrivacy = false,  -- Realm und andere Charaktere in der Historie verbergen (siehe History.DisplayName)
+  -- Große Einblendungen (siehe Alerts.lua), für Streams gedacht und daher aus
+  alertLevelUp = false,
+  alertRareKill = false,
+  alertEliteKill = false,
+  alertEpicLoot = false,
+  alertNearDeath = false,
   levelUpSummary = true,  -- Chatzeile beim Level-Up (siehe LevelUpSummary.lua)
   showPveKills = true,
   showPvpKills = true,

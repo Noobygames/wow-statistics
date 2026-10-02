@@ -46,6 +46,7 @@ Goal.lua
 # Oberfläche
 StatLines.lua
 LevelUpSummary.lua
+Alerts.lua
 TimerWindow.lua
 Charts.lua
 Export.lua

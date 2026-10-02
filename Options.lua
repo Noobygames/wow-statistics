@@ -199,6 +199,20 @@ for i, line in ipairs(ns.STAT_LINES) do
 end
 addToggles(statToggles)
 
+addSection("SECTION_ALERTS")
+addToggles({
+  { label = "ALERT_TOGGLE_LEVEL_UP", get = function(db) return db.alertLevelUp end,
+    set = function(checked) ns.Set("alertLevelUp", checked) end },
+  { label = "ALERT_TOGGLE_RARE", get = function(db) return db.alertRareKill end,
+    set = function(checked) ns.Set("alertRareKill", checked) end },
+  { label = "ALERT_TOGGLE_ELITE", get = function(db) return db.alertEliteKill end,
+    set = function(checked) ns.Set("alertEliteKill", checked) end },
+  { label = "ALERT_TOGGLE_LOOT", get = function(db) return db.alertEpicLoot end,
+    set = function(checked) ns.Set("alertEpicLoot", checked) end },
+  { label = "ALERT_TOGGLE_NEAR_DEATH", get = function(db) return db.alertNearDeath end,
+    set = function(checked) ns.Set("alertNearDeath", checked) end },
+})
+
 addSection("SECTION_GENERAL")
 addLanguageChooser()
 addToggles({
