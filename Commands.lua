@@ -18,6 +18,7 @@ local commands = {
   compact = function() ns.Set("compactMode", not ns.db.compactMode) end,
   bar = function() ns.Set("horizontalLayout", not ns.db.horizontalLayout) end,
   newsession = function() ns.StartNewSession() end,
+  recap = function() ns.ToggleRecap() end,
   -- /lt goal 30 setzt das Ziel-Level, /lt goal ohne Zahl entfernt es
   goal = function(argument)
     if argument == "" then

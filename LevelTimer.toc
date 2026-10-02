@@ -53,6 +53,7 @@ Export.lua
 HistoryWindow.lua
 HistoryTables.lua
 HistoryCharts.lua
+RecapWindow.lua
 MinimapButton.lua
 Broker.lua
 Options.lua

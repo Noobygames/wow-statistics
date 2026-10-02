@@ -225,6 +225,7 @@ addToggles({
 })
 nextRowY = nextRowY - SECTION_GAP
 addButton("NEW_SESSION", function() ns.StartNewSession() end)
+addButton("RECAP_TITLE", function() ns.ToggleRecap() end)
 addButton("HISTORY", function() ns.ToggleHistory() end)
 
 panel:SetHeight(-nextRowY + MARGIN)
