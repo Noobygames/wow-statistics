@@ -187,6 +187,7 @@ addToggles({
     set = function(checked) ns.Set("levelUpSummary", checked) end },
 })
 nextRowY = nextRowY - SECTION_GAP
+addButton("NEW_SESSION", function() ns.StartNewSession() end)
 addButton("HISTORY", function() ns.ToggleHistory() end)
 
 panel:SetHeight(-nextRowY + MARGIN)

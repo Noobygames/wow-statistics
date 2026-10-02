@@ -64,6 +64,7 @@ A session runs from login to logout. A `/reload` or a short break (up to 5 minut
 | `/lt reset` | Reset window position and size |
 | `/lt compact` | Toggle compact mode (play time, XP bar and XP/h only) |
 | `/lt bar` | Toggle horizontal bar layout (everything in one line, like an info bar) |
+| `/lt newsession` | Archive the running session and start a new one (also a button in the settings) |
 | `/lt show` / `/lt hide` | Show or hide the window |
 | `/lt sync` | Re-sync play time with the server |
 | `/lt minimap` | Toggle the minimap button |
