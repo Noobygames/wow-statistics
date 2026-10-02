@@ -22,6 +22,13 @@ local function xpRate(scope)
   return rate and Format.Number(rate) or PENDING
 end
 
+-- Unabhängig vom Bereich: Rate der letzten Minuten
+local function recentXpRate()
+  if not Experience.IsLeveling() then return NO_VALUE end
+  local rate = ns.RecentXpRate.Get()
+  return rate and Format.Number(rate) or PENDING
+end
+
 local function timeToLevel(scope)
   if not Experience.IsLeveling() then return NO_VALUE end
   local seconds = Experience.GetSecondsToLevel(scope)
@@ -108,6 +115,8 @@ end
 
 ns.STAT_LINES = {
   { setting = "showXpRate", label = "STAT_XP_RATE", rows = { { label = "ROW_XP_RATE", value = xpRate } } },
+  { setting = "showRecentXpRate", label = "STAT_RECENT_XP_RATE",
+    rows = { { label = "ROW_RECENT_XP_RATE", value = recentXpRate } } },
   { setting = "showLevelEta", label = "STAT_LEVEL_ETA", rows = { { label = "ROW_LEVEL_ETA", value = timeToLevel } } },
   { setting = "showMaxLevelEta", label = "STAT_MAX_LEVEL_ETA",
     rows = { { label = "ROW_MAX_LEVEL_ETA", value = timeToMaxLevel } } },

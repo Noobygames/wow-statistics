@@ -20,6 +20,7 @@ local SETTINGS_DEFAULTS = {
   windowScope = "level",  -- "level" oder "session" (siehe Stats.lua)
   -- Stat-Zeilen im Fenster (siehe StatLines.lua)
   showXpRate = true,
+  showRecentXpRate = false,  -- XP/h der letzten 15 min (siehe RecentXpRate.lua)
   showLevelEta = true,
   showMaxLevelEta = true,
   showSplits = false,  -- Splits gegen einen Vergleich (siehe Splits.lua)

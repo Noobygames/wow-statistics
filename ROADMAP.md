@@ -13,12 +13,16 @@ Schwerpunkt: Komfort-Funktionen, die beim Leveln Klicks sparen, und Werte, die z
 - [x] 57. **Quests automatisch annehmen** (S): `QUEST_DETAIL` → `AcceptQuest`; geteilte Quests und Eskorten (`QUEST_ACCEPT_CONFIRM`) als eigener Schalter.
 - [x] 58. **Quests automatisch abgeben** (M): `QUEST_PROGRESS` → `CompleteQuest`, wenn `IsQuestCompletable`; `QUEST_COMPLETE` → `GetQuestReward` nur bei höchstens einer Belohnung. Bei Auswahl bleibt das Fenster offen; optional die Belohnung mit dem höchsten Verkaufswert (eigener Schalter).
 - [x] 59. **Gespräche überspringen** (S–M): `GOSSIP_SHOW`/`QUEST_GREETING`: fertige Quests abgeben, verfügbare öffnen, sonst die einzige Gesprächsoption wählen (`C_GossipInfo`). Nie bei mehreren Optionen oder Optionen mit Bestätigung/Kosten.
+- [ ] 73. **Trades** (S): Handel automatisch ablehnen
+- [ ] 74. **Invites** (S): Gruppen Invite automatisch ablehnen
+- [ ] 74. **Gilde** (S): Gilden Invite automatisch ablehnen
+- [ ] 75. **Duell** (S): Duell Invite automatisch ablehnen
 
 ### Statistik: wohin die Zeit geht
 
 - [x] 60. **Zeitaufteilung** (M–L): Spielzeit je Level und Session aufgeteilt in Kampf (`PLAYER_REGEN_DISABLED/ENABLED`), Flugroute (`UnitOnTaxi`), tot, AFK (`UnitIsAFK`) und Rest (Laufen, Questen). Zeilen im Fenster, Spalten in der Historie.
-- [x] 61. **XP/h ohne AFK** (S): Schalter, ob AFK-Zeit in XP/h und Prognose zählt (baut auf 60 auf).
-- [ ] 62. **Aktuelle XP/h** (S): gleitender Wert der letzten 15 min neben dem Durchschnitt, damit Einbrüche (Laufwege, Flugrouten) sofort sichtbar sind.
+- [ ] 61. **XP/h ohne AFK** (S): Schalter, ob AFK-Zeit in XP/h und Prognose zählt (baut auf 60 auf).
+- [x] 62. **Aktuelle XP/h** (S): gleitender Wert der letzten 15 min neben dem Durchschnitt, damit Einbrüche (Laufwege, Flugrouten) sofort sichtbar sind.
 - [ ] 63. **Kills/Quests bis Level-Up** (S): „noch ~38 Kills oder ~5 Quests“ aus der durchschnittlichen Kill- und Quest-XP des laufenden Levels.
 - [ ] 64. **Erholt-Anzeige** (S): verbleibende Erholt-XP in Prozent des Levels (`GetXPExhaustion`) als eigene Zeile.
 - [ ] 65. **Ausgaben** (M): bisher zählen nur Einnahmen. Ausgaben nach Art (Reparatur, Händler, Flugmeister, Lehrer) über das gerade offene Fenster zuordnen; Schrotterlös als eigene Einnahme.
