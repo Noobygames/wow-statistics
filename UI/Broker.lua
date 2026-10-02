@@ -29,7 +29,7 @@ end
 
 local function showTooltip(tooltip)
   local scope = ns.db.windowScope
-  tooltip:AddLine("LevelTimer")
+  tooltip:AddLine(ns.DISPLAY_NAME)
   for _, stat in ipairs(ns.STAT_LINES) do
     if ns.db[stat.setting] then
       for _, row in ipairs(stat.rows) do
@@ -65,7 +65,7 @@ ns.OnLogin(function()
   if not broker or dataObject then return end
   dataObject = broker:NewDataObject("LevelTimer", {
     type = "data source",
-    label = "LevelTimer",
+    label = ns.DISPLAY_NAME,
     icon = ns.Widgets.ICON,
     text = "...",
     OnClick = onClick,

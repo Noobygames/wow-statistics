@@ -16,7 +16,7 @@ local DELETE_PROFILE_POPUP = "LEVELTIMER_DELETE_PROFILE"
 local builder = Builder.New({
   name = "LevelTimerOptions",
   alpha = 0.95,
-  title = function() return "LevelTimer - " .. L.SETTINGS end,
+  title = function() return ns.DISPLAY_NAME .. " - " .. L.SETTINGS end,
 })
 local addPage, finishPage, addSection, addSlider = builder.AddPage, builder.FinishPage, builder.AddSection, builder.AddSlider
 local addToggles, addButton, addFooterButton = builder.AddToggles, builder.AddButton, builder.AddFooterButton

@@ -1,5 +1,5 @@
 ## Interface: 120100, 11509, 20506, 16001
-## Title: LevelTimer
+## Title: Level Time
 ## Version: @project-version@
 ## Author: Nerzal
 ## X-Curse-Project-ID: 1721235

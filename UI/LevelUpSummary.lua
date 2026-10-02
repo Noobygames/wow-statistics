@@ -17,7 +17,7 @@ local LevelUpSummary = {
 }
 ns.LevelUpSummary = LevelUpSummary
 
-local ANNOUNCE_PREFIX = "LevelTimer: "
+local ANNOUNCE_PREFIX = ns.DISPLAY_NAME .. ": "
 
 local function summaryText(completedLevel)
   local seconds = Stats.GetSeconds(Stats.LEVEL)

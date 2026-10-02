@@ -68,7 +68,7 @@ end)
 
 button:SetScript("OnEnter", function(self)
   GameTooltip:SetOwner(self, "ANCHOR_LEFT")
-  GameTooltip:AddLine("LevelTimer")
+  GameTooltip:AddLine(ns.DISPLAY_NAME)
   GameTooltip:AddLine(L.TOOLTIP_LEFT, 1, 1, 1)
   GameTooltip:AddLine(L.TOOLTIP_SHIFT_LEFT, 1, 1, 1)
   GameTooltip:AddLine(L.TOOLTIP_RIGHT, 1, 1, 1)

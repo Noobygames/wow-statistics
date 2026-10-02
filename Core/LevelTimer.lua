@@ -1,7 +1,11 @@
 -- Kern: Einstellungs- und Event-Verteilung, Login-, Logout- und Level-Up-Ablauf. Wird vor allen Modulen geladen.
 local _, ns = ...
 
-local PREFIX = "|cfff4c95dLevelTimer:|r "
+-- Name, den Spieler sehen (CurseForge-Projekt, Addon-Liste, Fenster, Chat). Technische Namen
+-- (Ordner, .toc, SavedVariables, Frame-Namen, /lt) bleiben LevelTimer, sonst gingen Daten verloren.
+ns.DISPLAY_NAME = "Level Time"
+
+local PREFIX = "|cfff4c95d" .. ns.DISPLAY_NAME .. ":|r "
 
 function ns.Print(msg)
   print(PREFIX .. msg)
