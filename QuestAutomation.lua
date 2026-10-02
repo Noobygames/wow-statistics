@@ -5,6 +5,10 @@
 --   QUEST_DETAIL          Quest-Text offen: AcceptQuest, bei Quests, die der Client schon selbst
 --                         angenommen hat (QuestGetAutoAccept), AcknowledgeAutoAcceptQuest.
 --                         PvP-Quests (QuestFlagsPVP) fragen im Spiel nach, die bleiben manuell.
+--                         Von einem Spieler geteilt (die Einheit "questnpc" ist ein Spieler): nur mit
+--                         autoAcceptShared. Grau: C_QuestLog.IsQuestTrivial(GetQuestID()), das gibt es
+--                         nur in Retail und WoW Forever; Classic Era/TBC filtern graue Quests nur in
+--                         den Quest-Listen (Gespräch, QUEST_GREETING).
 --   QUEST_ACCEPT_CONFIRM  Quest eines anderen Spielers (Eskorte): ConfirmAcceptQuest, Dialog schließen.
 --   QUEST_PROGRESS        Abgabe, Gegenstände prüfen: CompleteQuest, wenn IsQuestCompletable.
 --   QUEST_COMPLETE        Belohnung: GetQuestReward(Wahl); Wahl = 1 bei einer Belohnung zur Auswahl,
@@ -42,9 +46,24 @@ local function firstWorthTaking(quests)
   end
 end
 
+local function isShared()
+  return UnitExists("questnpc") and UnitIsPlayer("questnpc")
+end
+
+-- Graue Quest im offenen Quest-Text; false, wo der Client das nicht verrät
+local function isTrivialDetail()
+  if not (C_QuestLog.IsQuestTrivial and GetQuestID) then return false end
+  local questID = GetQuestID()
+  return questID ~= nil and questID ~= 0 and C_QuestLog.IsQuestTrivial(questID)
+end
+
 ns.RegisterEvent("QUEST_DETAIL", function()
-  if not Comfort.IsActive("autoAcceptQuests") then return end
+  if not Comfort.IsActive(isShared() and "autoAcceptShared" or "autoAcceptQuests") then return end
   if QuestFlagsPVP and QuestFlagsPVP() then return end
+  if isTrivialDetail() then
+    ns.Debug("quests", "skipping trivial quest")
+    return
+  end
   if QuestGetAutoAccept and QuestGetAutoAccept() then
     ns.Debug("quests", "acknowledging auto-accepted quest")
     AcknowledgeAutoAcceptQuest()

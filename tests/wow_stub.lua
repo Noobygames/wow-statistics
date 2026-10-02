@@ -66,6 +66,8 @@ wow = {
     gossip = { available = {}, active = {}, options = {} },
     greeting = { available = {}, active = {} },  -- { title, isTrivial } bzw. { title, isComplete }
     questPvp = false,        -- QuestFlagsPVP
+    questID = nil,           -- GetQuestID im offenen Quest-Text
+    trivialQuests = {},      -- C_QuestLog.IsQuestTrivial je Quest-ID
     questAutoAccept = false, -- QuestGetAutoAccept
     questCompletable = true, -- IsQuestCompletable
     questMoney = 0,          -- GetQuestMoneyToGet
@@ -345,7 +347,11 @@ function IsInInstance()
   return false, "none"
 end
 function GetInstanceInfo() return state.instance and state.instance.name or GetZoneText() end
-C_QuestLog = { GetTitleForQuestID = function(questID) return state.questTitles[questID] end }
+C_QuestLog = {
+  GetTitleForQuestID = function(questID) return state.questTitles[questID] end,
+  IsQuestTrivial = function(questID) return state.trivialQuests[questID] or false end,
+}
+function GetQuestID() return state.questID or 0 end
 function strtrim(text) return (text:gsub("^%s+", ""):gsub("%s+$", "")) end
 -- Wie im Client: Funktion ersetzen, Original zuerst, dann der Hook
 function hooksecurefunc(name, hook)

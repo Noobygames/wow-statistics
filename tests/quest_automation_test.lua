@@ -34,6 +34,32 @@ wow.fire("QUEST_DETAIL")
 expect("PvP manuell", lastAction(), nil)
 wow.state.questPvp = false
 
+-- Graue Quest im Quest-Text (Retail/Forever: C_QuestLog.IsQuestTrivial)
+reset()
+wow.state.questID = 77
+wow.state.trivialQuests = { [77] = true }
+wow.fire("QUEST_DETAIL")
+expect("graue Quest manuell", lastAction(), nil)
+wow.state.trivialQuests = {}
+wow.fire("QUEST_DETAIL")
+expect("normale Quest angenommen", lastAction(), "accept")
+
+-- Von einem Spieler geteilt: nur mit autoAcceptShared
+reset()
+wow.state.units.questnpc = { name = "Mitspieler", isPlayer = true }
+wow.fire("QUEST_DETAIL")
+expect("geteilt ohne Schalter: manuell", lastAction(), nil)
+addon.Set("autoAcceptShared", true)
+wow.fire("QUEST_DETAIL")
+expect("geteilt mit Schalter: angenommen", lastAction(), "accept")
+addon.Set("autoAcceptShared", false)
+wow.state.units.questnpc = { name = "Questgeber", isPlayer = false }
+reset()
+wow.fire("QUEST_DETAIL")
+expect("NPC: angenommen", lastAction(), "accept")
+wow.state.units.questnpc = nil
+reset()
+
 -- Umschalttaste setzt aus
 wow.state.shiftDown = true
 wow.fire("QUEST_DETAIL")
