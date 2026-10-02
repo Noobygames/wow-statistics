@@ -23,9 +23,9 @@ local SETTINGS_DEFAULTS = {
   showLevelEta = true,
   showMaxLevelEta = true,
   showSplits = false,  -- Splits gegen einen Vergleich (siehe Splits.lua)
-  splitComparison = "best",
+  splitComparison = "best",  -- "best", "pb" oder "run" (db.splitReference, siehe Splits.lua)
   showSplitList = false,  -- eigene Anzeige mit den letzten Leveln (siehe SplitList.lua)
-  splitListRows = 5,  -- "best", "pb" oder "character" (db.splitCharacter, per /lt compare Name)
+  splitListRows = 5,
   showGoal = false,  -- Session-Ziel (siehe Goal.lua); /lt goal schaltet die Zeile ein
   streamerPrivacy = false,  -- Realm und andere Charaktere in der Historie verbergen (siehe History.DisplayName)
   -- Große Einblendungen (siehe Alerts.lua), für Streams gedacht und daher aus

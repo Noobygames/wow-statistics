@@ -189,7 +189,7 @@ local function addSplitComparisonChooser()
   addChooser({ label = "SPLIT_COMPARISON", setting = "splitComparison", choices = {
     { value = Splits.BEST, name = localized("COMPARE_CHOICE_BEST") },
     { value = Splits.PERSONAL_BEST, name = localized("COMPARE_CHOICE_PB") },
-    { value = Splits.CHARACTER, name = localized("COMPARE_CHOICE_CHARACTER") },
+    { value = Splits.RUN, name = localized("COMPARE_CHOICE_RUN") },
   } })
 end
 

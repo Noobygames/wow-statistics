@@ -3,7 +3,8 @@
 --   "best"       schnellste Zeit je Level über alle anderen Charaktere ("Sum of Best")
 --   "pb"         persönliche Bestzeit: der andere Charakter, der am schnellsten bis zum aktuellen Level kam
 --                (Summe seiner Level-Zeiten ab dem ersten eigenen Level; er braucht alle diese Level)
---   "character"  ein fester Charakter (db.splitCharacter, gesetzt mit /lt compare Name)
+--   "run"        ein gewählter Lauf (db.splitReference = { id, name, times }, /lt compare Name oder
+--                Klick in der Ansicht "Läufe"); die Zeiten werden beim Wählen kopiert und bleiben fest
 -- Abweichung < 0 = schneller als der Vergleich. Ohne Vergleichswert für ein Level gibt es keinen Split.
 local _, ns = ...
 local Stats = ns.Stats
@@ -12,22 +13,14 @@ local History = ns.History
 local Splits = {
   BEST = "best",
   PERSONAL_BEST = "pb",
-  CHARACTER = "character",
+  RUN = "run",
 }
 ns.Splits = Splits
 
 ---------------------------------------------------------------------------
 -- Vergleichszeiten
 ---------------------------------------------------------------------------
-
--- Abgeschlossene Level-Zeiten eines Charakters: level -> Sekunden
-local function levelTimes(characterKey)
-  local times = {}
-  for _, record in ipairs(History.GetLevelRecords(characterKey)) do
-    if not record.isCurrent and record.seconds then times[record.level] = record.seconds end
-  end
-  return times
-end
+local Runs = ns.Runs
 
 local function otherCharacters()
   local keys = {}
@@ -40,7 +33,7 @@ end
 local function bestPerLevel()
   local best = {}
   for _, key in ipairs(otherCharacters()) do
-    for level, seconds in pairs(levelTimes(key)) do
+    for level, seconds in pairs(Runs.LevelTimes(key)) do
       if not best[level] or seconds < best[level] then best[level] = seconds end
     end
   end
@@ -56,38 +49,28 @@ local function firstOwnLevel()
   return first
 end
 
--- Summe der Zeiten von Level from bis to; nil, wenn eines davon fehlt
-local function sumOfLevels(times, from, to)
-  local sum = 0
-  for level = from, to do
-    if not times[level] then return nil end
-    sum = sum + times[level]
-  end
-  return sum
-end
-
 -- Zeiten des schnellsten anderen Charakters bis einschließlich des aktuellen Levels
 local function personalBest()
   local from = firstOwnLevel()
   local bestTimes, bestSum
   for _, key in ipairs(otherCharacters()) do
-    local times = levelTimes(key)
-    local sum = sumOfLevels(times, from, ns.level)
+    local times = Runs.LevelTimes(key)
+    local sum = Runs.SumOfLevels(times, from, ns.level)
     if sum and (not bestSum or sum < bestSum) then bestTimes, bestSum = times, sum end
   end
   return bestTimes or {}
 end
 
-local function fixedCharacter()
-  local key = ns.db.splitCharacter
-  if not key or key == ns.characterKey or not History.GetCharacter(key) then return {} end
-  return levelTimes(key)
+-- Gewählter Lauf: beim Wählen kopierte Zeiten, bleiben fest, auch wenn der Charakter weiterlevelt
+local function chosenRun()
+  local reference = ns.db.splitReference
+  return reference and reference.times or {}
 end
 
 local REFERENCES = {
   [Splits.BEST] = bestPerLevel,
   [Splits.PERSONAL_BEST] = personalBest,
-  [Splits.CHARACTER] = fixedCharacter,
+  [Splits.RUN] = chosenRun,
 }
 
 -- Neu berechnet, wenn sich Vergleich, Level, eingeloggter Charakter oder die Zahl der Charaktere
@@ -98,7 +81,9 @@ local cachedFor
 local function cacheKey()
   local count = 0
   for _ in pairs(ns.Database.GetCharacters()) do count = count + 1 end
-  return table.concat({ ns.characterKey, count, ns.level, ns.db.splitComparison, ns.db.splitCharacter or "" }, ":")
+  local reference = ns.db.splitReference
+  return table.concat({ ns.characterKey, count, ns.level, ns.db.splitComparison,
+    reference and reference.id or "" }, ":")
 end
 
 local function referenceTimes()
@@ -145,16 +130,26 @@ function Splits.GetTotalDelta()
   return total
 end
 
--- Fester Vergleichs-Charakter per Name (erster Treffer, Groß-/Kleinschreibung egal); false ohne Treffer
+-- Lauf als festen Vergleich wählen: Zeiten werden kopiert (siehe chosenRun)
+function Splits.SetReferenceRun(run)
+  local times = {}
+  for level, seconds in pairs(run.times) do times[level] = seconds end
+  ns.db.splitReference = { id = run.id, name = run.name, times = times }
+  ns.Set("splitComparison", Splits.RUN)
+end
+
+-- Lauf per Name wählen; false ohne Treffer
 function Splits.CompareWith(name)
-  local wanted = name:lower()
-  for _, key in ipairs(otherCharacters()) do
-    local character = History.GetCharacter(key)
-    if (character.name or ""):lower() == wanted then
-      ns.db.splitCharacter = key
-      ns.Set("splitComparison", Splits.CHARACTER)
-      return true
-    end
-  end
-  return false
+  local run = Runs.FindByName(name)
+  if not run then return false end
+  Splits.SetReferenceRun(run)
+  return true
+end
+
+-- Anzeigename des gewählten Laufs (eigene Charaktere mit Streamer-Datenschutz)
+function Splits.GetReferenceName()
+  local reference = ns.db.splitReference
+  if not reference then return nil end
+  if History.GetCharacter(reference.id) then return History.DisplayName(reference.id) end
+  return reference.name
 end

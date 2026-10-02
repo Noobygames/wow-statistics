@@ -38,7 +38,7 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 ### Speedrun (wie ForeverSplits)
 
 - [x] 45. **Split-Liste mit /played** (S): Gesamtspielzeit und Zeit auf dem aktuellen Level in der Split-Liste.
-- [ ] 46. **Fester Vergleich bleibt fest** (S): Beim Wählen eines Laufs werden seine Level-Zeiten kopiert; levelt der Charakter weiter, ändert sich der Vergleich nicht, bis ein anderer Lauf gewählt wird.
+- [x] 46. **Fester Vergleich bleibt fest** (S): Beim Wählen eines Laufs werden seine Level-Zeiten kopiert; levelt der Charakter weiter, ändert sich der Vergleich nicht, bis ein anderer Lauf gewählt wird.
 - [ ] 47. **Läufe** (M): neue Ansicht in der Historie: alle Läufe (eigene Charaktere und importierte) mit Klasse, erreichtem Level und Zeit bis zum aktuellen Level; Suche nach Name und Klasse, Favoriten, Klick wählt den Lauf als Vergleich.
 - [ ] 48. **Rekorde** (S–M): Ansicht mit der Bestzeit je Level und dem Lauf, der sie hält.
 - [ ] 49. **Läufe teilen und sichern** (M): einen Lauf oder alle als Text exportieren (Kopierfenster) und wieder importieren, z.B. von anderen Spielern oder aus einem anderen Client.
@@ -56,7 +56,7 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 
 ## Erledigt
 
-- Nächstes Release (v2.5): 32. Neue Session starten, 31. Hardcore-Anzeige, 27. Stream-Ansicht, 33. Streamer-Datenschutz, 28. Session-Ziel, 29. Große Einblendungen, 30. Session-Abschlusskarte, 26. Splits, 34. Ansage in Gilde/Gruppe, 38. Rote Tode abschaltbar, 37. Stream-Modus, 35. Fester Vergleichslauf, 36. Split-Liste, 39. Hinweis bei fehlendem Food-Buff, 40. Hinweis bei fehlendem Camp-Buff, 41. Einstellungen mit Reitern, 42. Client-spezifische Optionen, 43. Level-Up-Ansage in /sagen, 44. Debug-Modus, 45. Split-Liste mit /played
+- Nächstes Release (v2.5): 32. Neue Session starten, 31. Hardcore-Anzeige, 27. Stream-Ansicht, 33. Streamer-Datenschutz, 28. Session-Ziel, 29. Große Einblendungen, 30. Session-Abschlusskarte, 26. Splits, 34. Ansage in Gilde/Gruppe, 38. Rote Tode abschaltbar, 37. Stream-Modus, 35. Fester Vergleichslauf, 36. Split-Liste, 39. Hinweis bei fehlendem Food-Buff, 40. Hinweis bei fehlendem Camp-Buff, 41. Einstellungen mit Reitern, 42. Client-spezifische Optionen, 43. Level-Up-Ansage in /sagen, 44. Debug-Modus, 45. Split-Liste mit /played, 46. Fester Vergleich bleibt fest
 - v2.0.0:
   - Auswertung: 1. Prognose bis Max-Level, 2. alle Charaktere vergleichen, 3. Zonen-Auswertung, 4. Spielzeit pro Tag/Woche, 5. XP-Verlauf der Session, 6. Langzeit-Graphen als Tageswerte
   - Daten: 7. Quest-Journal, 8. Level-Timeline, 9. Instanzen, 10. Loot-Journal, 11. Elite- und Rare-Kills, 12. Beinahe-Tode, 24. Todesursache aus dem Death Recap (Retail, WoW Forever)

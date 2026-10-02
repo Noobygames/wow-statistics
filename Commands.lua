@@ -29,7 +29,7 @@ local commands = {
       ns.Set("splitComparison", mode)
       ns.Print(L["COMPARE_" .. mode:upper()])
     elseif argument ~= "" and Splits.CompareWith(argument) then
-      ns.Print(string.format(L.COMPARE_SET, ns.History.DisplayName(ns.db.splitCharacter)))
+      ns.Print(string.format(L.COMPARE_SET, Splits.GetReferenceName()))
     else
       ns.Print(L.COMPARE_USAGE)
     end

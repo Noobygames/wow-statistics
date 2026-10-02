@@ -62,14 +62,22 @@ expectNear("PB laufend", Splits.GetCurrentDelta(), 2100 - 2000)
 expectNear("PB gesamt", Splits.GetTotalDelta(), (3000 - 3400) + (2100 - 2000))
 
 SlashCmdList.LEVELTIMER("compare schnell")
-expect("Einstellung Charakter", LevelTimerDB.splitComparison, "character")
-expect("Charakter gemerkt", LevelTimerDB.splitCharacter, "Schnell-Testrealm")
+expect("Einstellung Lauf", LevelTimerDB.splitComparison, "run")
+expect("Lauf gemerkt", LevelTimerDB.splitReference.id, "Schnell-Testrealm")
 expect("Charakter Level 10", Splits.GetReference(10), 3200)
 expect("Abweichung einzelnes Level", Splits.GetLevelDelta(10), -200)
 
 SlashCmdList.LEVELTIMER("compare niemand")
 expect("unbekannter Name: Hilfe", wow.printed[#wow.printed]:find(addon.L.COMPARE_USAGE, 1, true) ~= nil, true)
-expect("unbekannter Name ändert nichts", LevelTimerDB.splitCharacter, "Schnell-Testrealm")
+expect("unbekannter Name ändert nichts", LevelTimerDB.splitReference.id, "Schnell-Testrealm")
+
+-- Gewählter Lauf bleibt fest, auch wenn der Charakter weiterlevelt
+SlashCmdList.LEVELTIMER("compare schnell")
+LevelTimerStatsDB.characters["Schnell-Testrealm"].levelHistory[10].seconds = 1
+addon.Set("splitComparison", "best")  -- Zwischenspeicher verwerfen
+addon.Set("splitComparison", "run")
+expect("Vergleich bleibt fest", Splits.GetReference(10), 3200)
+LevelTimerStatsDB.characters["Schnell-Testrealm"].levelHistory[10].seconds = 3200
 
 SlashCmdList.LEVELTIMER("compare best")
 expect("zurück zur Bestzeit je Level", Splits.GetReference(11), 100)
