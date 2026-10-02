@@ -39,6 +39,7 @@ local TOP_LABEL_HEIGHT = 14   -- Platz für den Maximalwert oben
 local GRID_LINES = 4
 local MAX_AXIS_LABELS = 10
 local COLUMN_FILL = 0.7       -- Anteil des Platzes, den eine Säule einnimmt
+local MAX_COLUMN_SLOT = 48     -- breitester Platz je Säule; wenige Säulen füllen nicht die ganze Breite
 
 function Charts.CreateColumnChart(parent, width, height)
   local chart = CreateFrame("Frame", nil, parent)
@@ -86,7 +87,7 @@ function Charts.CreateColumnChart(parent, width, height)
     end
     maxLabel:SetText(formatAxis(maxValue))
 
-    local slot = width / math.max(1, #items)
+    local slot = math.min(MAX_COLUMN_SLOT, width / math.max(1, #items))
     local labelStep = math.ceil(#items / MAX_AXIS_LABELS)
     for i, item in ipairs(items) do
       local column = getColumn(i)

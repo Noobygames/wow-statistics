@@ -36,6 +36,7 @@ local SCROLLBAR_THUMB_HEIGHT = 30
 local WHITE_TEXTURE = "Interface\\Buttons\\WHITE8x8"
 
 local CHECKBOX_SIZE = 26
+Widgets.CHECKBOX_LABEL_GAP = 2  -- Abstand Kästchen zu Beschriftung (Options.lua rechnet damit)
 local SLIDER_HEIGHT = 17
 local SLIDER_LABEL_HEIGHT = 18
 
@@ -62,7 +63,7 @@ function Widgets.CreateCheckbox(parent, onToggle)
   local checkbox = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
   checkbox:SetSize(CHECKBOX_SIZE, CHECKBOX_SIZE)
   checkbox.label = checkbox:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-  checkbox.label:SetPoint("LEFT", checkbox, "RIGHT", 2, 0)
+  checkbox.label:SetPoint("LEFT", checkbox, "RIGHT", Widgets.CHECKBOX_LABEL_GAP, 0)
   checkbox:SetScript("OnClick", function(self)
     onToggle(self:GetChecked() and true or false)
   end)

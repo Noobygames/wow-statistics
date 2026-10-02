@@ -95,6 +95,9 @@ local frameMethods = {
   GetTop = function() return 500 end,
   SetNormalTexture = function(self, texture) self._normalTexture = texture end,
   GetPoint = function() return "CENTER", nil, "CENTER", 0, 0 end,
+  -- Anker werden nur gemerkt (frame._points), nicht ausgewertet
+  SetPoint = function(self, ...) table.insert(self._points, { ... }) end,
+  ClearAllPoints = function(self) self._points = {} end,
   GetCenter = function() return 0, 0 end,
   GetEffectiveScale = function() return 1 end,
   IsShown = function(self) return self._shown end,
@@ -117,7 +120,7 @@ local function noop() end
 local function newFrame()
   local frame = {
     _shown = true, _scripts = {}, _events = {}, _text = "",
-    _width = 200, _height = 100, _scale = 1, _checked = false, _normalTexture = "",
+    _width = 200, _height = 100, _scale = 1, _checked = false, _normalTexture = "", _points = {},
   }
   frame.CreateFontString = function() return newFrame() end
   frame.CreateTexture = function() return newFrame() end

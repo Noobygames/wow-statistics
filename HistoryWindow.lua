@@ -18,7 +18,8 @@ local HEADER_TOP = -14
 local CHARACTER_ROW_TOP = -40
 local TABS_TOP = -66
 local SUBTABS_TOP = -88
-local CONTENT_TOP = -110
+local SUBTAB_ROW_HEIGHT = 18  -- zu viele Unterreiter für eine Zeile brechen in weitere Zeilen um
+local SUBTABS_TO_CONTENT = 22 -- Abstand von der ersten Unterreiter-Zeile zum Inhalt
 local ARROW_SIZE = 22
 local DELETE_BUTTON_WIDTH = 110
 local DELETE_BUTTON_HEIGHT = 20
@@ -27,7 +28,7 @@ local SUBTAB_GAP = 10
 local UPDATE_INTERVAL = 1  -- Sekunden; hält laufende Einträge aktuell
 
 local panel = Widgets.CreatePanel("LevelTimerHistory", 0.95)
-panel:SetSize(HistoryWindow.CONTENT_WIDTH + 2 * MARGIN, -CONTENT_TOP + HistoryWindow.CONTENT_HEIGHT + MARGIN)
+panel:SetWidth(HistoryWindow.CONTENT_WIDTH + 2 * MARGIN)  -- Höhe hängt von den Unterreiter-Zeilen ab (refresh)
 panel:SetPoint("CENTER")
 panel:SetFrameStrata("DIALOG")
 panel:SetScript("OnDragStart", panel.StartMoving)
@@ -41,7 +42,6 @@ local header = panel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 header:SetPoint("TOP", 0, HEADER_TOP)
 
 local content = CreateFrame("Frame", nil, panel)
-content:SetPoint("TOPLEFT", MARGIN, CONTENT_TOP)
 content:SetSize(HistoryWindow.CONTENT_WIDTH, HistoryWindow.CONTENT_HEIGHT)
 
 -- Reiter: entry = { tab = Locale-Key, members = { view, ... }, selected = view, tabButton }
@@ -90,15 +90,10 @@ function HistoryWindow.AddView(view)
     if view.group then entriesByGroup[view.group] = entry end
   end
 
+  -- Position setzt layoutSubtabs, weil die Breite von der Sprache abhängt
   view.subtabButton = Widgets.CreateTab(panel, "GameFontHighlightSmall", function()
     selectView(entry, view)
   end)
-  local previous = entry.members[#entry.members]
-  if previous then
-    view.subtabButton:SetPoint("LEFT", previous.subtabButton, "RIGHT", SUBTAB_GAP, 0)
-  else
-    view.subtabButton:SetPoint("TOPLEFT", MARGIN, SUBTABS_TOP)
-  end
 
   table.insert(entry.members, view)
   entry.selected = entry.selected or view
@@ -167,6 +162,32 @@ end
 ---------------------------------------------------------------------------
 -- Aufbau
 ---------------------------------------------------------------------------
+
+-- Unterreiter einer Gruppe von links nach rechts, bei Platzmangel in die nächste Zeile.
+-- Erwartet gesetzte Beschriftungen (Breite); gibt die Zahl der Zeilen zurück.
+local function layoutSubtabs(entry)
+  local x, row = 0, 0
+  for _, view in ipairs(entry.members) do
+    local width = view.subtabButton:GetWidth()
+    if x > 0 and x + width > HistoryWindow.CONTENT_WIDTH then
+      x, row = 0, row + 1
+    end
+    view.subtabButton:ClearAllPoints()
+    view.subtabButton:SetPoint("TOPLEFT", MARGIN + x, SUBTABS_TOP - row * SUBTAB_ROW_HEIGHT)
+    x = x + width + SUBTAB_GAP
+  end
+  return row + 1
+end
+
+-- Inhalt unter die Unterreiter. Platz für die meisten Zeilen aller Gruppen, damit das Fenster
+-- beim Reiterwechsel nicht springt.
+local function placeContent(subtabRows)
+  local contentTop = SUBTABS_TOP - (subtabRows - 1) * SUBTAB_ROW_HEIGHT - SUBTABS_TO_CONTENT
+  content:ClearAllPoints()
+  content:SetPoint("TOPLEFT", MARGIN, contentTop)
+  panel:SetHeight(-contentTop + HistoryWindow.CONTENT_HEIGHT + MARGIN)
+end
+
 function refresh()
   if not History.GetCharacter(selectedCharacter or "") then
     selectedCharacter = ns.characterKey
@@ -180,6 +201,7 @@ function refresh()
   local selectionChanged = rendered.view ~= selectedView or rendered.character ~= selectedCharacter
   rendered.view, rendered.character = selectedView, selectedCharacter
 
+  local subtabRows = 1
   for _, entry in ipairs(entries) do
     local isSelectedEntry = entry == selectedEntry
     entry.tabButton:SetLabel(L[entry.tab])
@@ -198,7 +220,9 @@ function refresh()
         view.frame:Hide()
       end
     end
+    subtabRows = math.max(subtabRows, layoutSubtabs(entry))
   end
+  placeContent(subtabRows)
 end
 
 local sinceUpdate = 0
