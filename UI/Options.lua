@@ -1,206 +1,27 @@
 -- Einstellungsfenster mit Reitern: Allgemein (Fenster, Sprache), Statistiken, Hinweise, Komfort, Stream, Speedrun, Profile.
 -- Darunter auf allen Reitern: Neue Session, Zusammenfassung, Historie.
--- Jedes Steuerelement registriert eine refresh(db)-Funktion; nach jeder Änderung
--- (ns.Set/ns.ApplySettings) zeigen alle den aktuellen Stand und die gewählte Sprache.
--- Schalter mit available() == false (z.B. nur in WoW Forever) werden gar nicht angelegt.
--- Tooltips: Text aus L["<LABEL>_TIP"] (fehlt er, gibt es keinen Tooltip), Titel = Beschriftung.
+-- Nur der Inhalt; Aufbau, Tooltips, Breite und Aktualisierung übernimmt Lib/OptionsBuilder.lua.
 local _, ns = ...
 local L = ns.L
 local Widgets = ns.Widgets
 local TimerWindow = ns.TimerWindow
+local Builder = ns.OptionsBuilder
 
-local MIN_WIDTH = 320
-local MARGIN = 16
-local TABS_TOP = -42
-local TAB_GAP = 12
-local CONTENT_TOP = -70
-local FOOTER_GAP = 8         -- Abstand zwischen Reiterinhalt und den Buttons unten
-local MIN_COLUMN_WIDTH = 144
-local COLUMN_GAP = 12        -- Mindestabstand zwischen einer Beschriftung und der rechten Spalte
-local ROW_SECTION = 24
-local ROW_CHECKBOX = 26
-local ROW_SLIDER = 44
-local ROW_BUTTON = 30
-local ROW_CHOOSER = 26
-local ROW_HINT = 30
-local SECTION_GAP = 8
-local BUTTON_HEIGHT = 22
-local CHOOSER_TAB_GAP = 10
 local MAX_PROFILE_ROWS = 6     -- so viele Profile listet der Reiter "Profile"
 local ROW_PROFILE = 20
 local PROFILE_NAME_WIDTH = 160
 local PROFILE_SAVE_WIDTH = 120
 local DELETE_PROFILE_POPUP = "LEVELTIMER_DELETE_PROFILE"
 
-local panel = Widgets.CreatePanel("LevelTimerOptions", 0.95)
-panel:SetWidth(MIN_WIDTH)  -- wächst mit den Texten der gewählten Sprache (fitWidth)
-panel:SetPoint("CENTER")
-panel:SetFrameStrata("DIALOG")
-panel:SetScript("OnDragStart", panel.StartMoving)
-panel:SetScript("OnDragStop", panel.StopMovingOrSizing)
-panel:Hide()
-table.insert(UISpecialFrames, "LevelTimerOptions")  -- mit ESC schließen
-
-Widgets.CreateCloseButton(panel)
-
-local title = panel:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-title:SetPoint("TOP", 0, -14)
-
-local refreshers = {}
-local toggleCells = {}    -- { checkbox, column, y } aller Schalter; Spaltenbreite setzt fitWidth
-local chooserRows = {}    -- { label, tabs } je Auswahlzeile (Sprache, Hintergrund, ...); Breite prüft fitWidth
-
-local function onRefresh(refresh)
-  table.insert(refreshers, refresh)
-end
-
----------------------------------------------------------------------------
--- Reiter: je Reiter eine Seite über das ganze Fenster; Steuerelemente hängen an ihrer Seite
----------------------------------------------------------------------------
-local pages = {}          -- { key, tabButton, frame, bottom } in Reihenfolge
-local page                -- Seite, auf der die Bausteine gerade anlegen
-local nextRowY = CONTENT_TOP
-
-local function showPage(selected)
-  for _, entry in ipairs(pages) do
-    entry.frame:SetShown(entry == selected)
-    entry.tabButton:SetActive(entry == selected)
-  end
-end
-
--- Neue Seite beginnen; folgende add*-Aufrufe landen darauf
-local function addPage(labelKey)
-  local entry = { key = labelKey, frame = CreateFrame("Frame", nil, panel) }
-  entry.frame:SetAllPoints(panel)
-  entry.tabButton = Widgets.CreateTab(panel, "GameFontNormal", function() showPage(entry) end)
-  local previous = pages[#pages]
-  if previous then
-    entry.tabButton:SetPoint("LEFT", previous.tabButton, "RIGHT", TAB_GAP, 0)
-  else
-    entry.tabButton:SetPoint("TOPLEFT", MARGIN, TABS_TOP)
-  end
-  table.insert(pages, entry)
-  page = entry.frame
-  nextRowY = CONTENT_TOP
-  onRefresh(function() entry.tabButton:SetLabel(L[labelKey]) end)
-end
-
--- Seite abschließen: wie weit sie nach unten reicht (für die Fensterhöhe)
-local function finishPage()
-  pages[#pages].bottom = nextRowY
-end
-
----------------------------------------------------------------------------
--- Bausteine: legen Steuerelemente auf der aktuellen Seite von oben nach unten an
----------------------------------------------------------------------------
-
--- Tooltip aus L[tipKey]; L liefert bei fehlendem Text den Schlüssel, dann kein Tooltip
-local function addTooltip(frame, tipKey, title)
-  Widgets.AttachTooltip(frame, title, function()
-    local text = L[tipKey]
-    if text == tipKey then return nil end
-    return text
-  end)
-end
-
-local function labelText(labelKey)
-  return function() return L[labelKey] end
-end
-
-local function addRow(widget, height, stretch)
-  widget:SetPoint("TOPLEFT", MARGIN, nextRowY)
-  if stretch then widget:SetPoint("TOPRIGHT", -MARGIN, nextRowY) end
-  nextRowY = nextRowY - height
-end
-
-local function addSection(labelKey)
-  if nextRowY ~= CONTENT_TOP then nextRowY = nextRowY - SECTION_GAP end
-  local header = Widgets.CreateSectionHeader(page)
-  addRow(header, ROW_SECTION, true)
-  onRefresh(function() header:SetText(L[labelKey]) end)
-end
-
--- slider = { label, min, max, step, get(db) -> Wert, set(Wert), format(Wert) -> Anzeigetext }
-local function addSlider(slider)
-  local control = Widgets.CreateSlider(page, slider.min, slider.max, slider.step, slider.set)
-  addRow(control, ROW_SLIDER, true)
-  addTooltip(control.slider, slider.label .. "_TIP", labelText(slider.label))
-  onRefresh(function(db)
-    local value = slider.get(db)
-    control.label:SetText(L[slider.label])
-    control:SetValueSilently(value, slider.format(value))
-  end)
-end
-
--- Checkboxen in zwei Spalten; toggle = { label, get(db) -> bool, set(checked), available() optional,
---   text() optional statt L[label], z.B. für Beschriftungen mit Werten, tip = Locale-Key optional }
-local function addToggles(allToggles)
-  local toggles = {}
-  for _, toggle in ipairs(allToggles) do
-    if not toggle.available or toggle.available() then table.insert(toggles, toggle) end
-  end
-  for i, toggle in ipairs(toggles) do
-    local column = (i - 1) % 2
-    local row = math.floor((i - 1) / 2)
-    local checkbox = Widgets.CreateCheckbox(page, toggle.set)
-    table.insert(toggleCells, { checkbox = checkbox, column = column, y = nextRowY - row * ROW_CHECKBOX })
-    addTooltip(checkbox, toggle.tip or (toggle.label .. "_TIP"), function() return checkbox.label:GetText() end)
-    onRefresh(function(db)
-      checkbox.label:SetText(toggle.text and toggle.text() or L[toggle.label])
-      checkbox:SetChecked(toggle.get(db))
-      -- Beschriftung gehört zur Klick- und Tooltip-Fläche
-      checkbox:SetHitRectInsets(0, -(Widgets.CHECKBOX_LABEL_GAP + checkbox.label:GetStringWidth()), 0, 0)
-    end)
-  end
-  nextRowY = nextRowY - math.ceil(#toggles / 2) * ROW_CHECKBOX
-end
-
-local function addButton(labelKey, onClick)
-  local button = Widgets.CreateButton(page, MIN_WIDTH - 2 * MARGIN, BUTTON_HEIGHT, onClick)
-  addRow(button, ROW_BUTTON, true)
-  addTooltip(button, labelKey .. "_TIP", labelText(labelKey))
-  onRefresh(function() button:SetText(L[labelKey]) end)
-end
-
--- Buttons unten auf allen Reitern, von unten nach oben
-local footerButtons = 0
-local function addFooterButton(labelKey, onClick)
-  local button = Widgets.CreateButton(panel, MIN_WIDTH - 2 * MARGIN, BUTTON_HEIGHT, onClick)
-  local y = MARGIN + footerButtons * ROW_BUTTON
-  button:SetPoint("BOTTOMLEFT", MARGIN, y)
-  button:SetPoint("BOTTOMRIGHT", -MARGIN, y)
-  footerButtons = footerButtons + 1
-  addTooltip(button, labelKey .. "_TIP", labelText(labelKey))
-  onRefresh(function() button:SetText(L[labelKey]) end)
-end
-
--- Auswahl als Zeile von Reitern: chooser = { label = Locale-Key, setting, choices = { { value, name() }, ... } }
-local function addChooser(chooser)
-  local label = page:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-  addRow(label, 0)
-  local row = { label = label, tabs = {} }
-  table.insert(chooserRows, row)
-  local anchor = label
-  for _, choice in ipairs(chooser.choices) do
-    local tab = Widgets.CreateTab(page, "GameFontHighlight", function()
-      ns.Set(chooser.setting, choice.value)
-    end)
-    tab:SetPoint("LEFT", anchor, "RIGHT", CHOOSER_TAB_GAP, 0)
-    anchor = tab
-    table.insert(row.tabs, tab)
-    addTooltip(tab, chooser.label .. "_TIP", labelText(chooser.label))
-    onRefresh(function(db)
-      tab:SetLabel(choice.name())
-      tab:SetActive(db[chooser.setting] == choice.value)
-    end)
-  end
-  nextRowY = nextRowY - ROW_CHOOSER
-  onRefresh(function() label:SetText(L[chooser.label]) end)
-end
-
-local function localized(key)
-  return function() return L[key] end
-end
+local builder = Builder.New({
+  name = "LevelTimerOptions",
+  alpha = 0.95,
+  title = function() return "LevelTimer - " .. L.SETTINGS end,
+})
+local addPage, finishPage, addSection, addSlider = builder.AddPage, builder.FinishPage, builder.AddSection, builder.AddSlider
+local addToggles, addButton, addFooterButton = builder.AddToggles, builder.AddButton, builder.AddFooterButton
+local addChooser, addHint = builder.AddChooser, builder.AddHint
+local toggle, localized = Builder.Toggle, Builder.Localized
 
 -- Sprachnamen stehen immer in der eigenen Sprache
 local function addLanguageChooser()
@@ -249,13 +70,6 @@ local function addBackgroundChooser()
   } })
 end
 
-local function addHint(labelKey)
-  local hint = page:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
-  hint:SetJustifyH("LEFT")
-  addRow(hint, ROW_HINT, true)
-  onRefresh(function() hint:SetText(L[labelKey]) end)
-end
-
 -- Profile: Liste (Klick wechselt, Rechtsklick löscht), Name + Speichern, Export und Import
 StaticPopupDialogs[DELETE_PROFILE_POPUP] = {
   button1 = YES or "Yes",
@@ -273,7 +87,7 @@ StaticPopupDialogs[DELETE_PROFILE_POPUP] = {
 local function addProfileList()
   local Profiles = ns.Profiles
   for index = 1, MAX_PROFILE_ROWS do
-    local tab = Widgets.CreateTab(page, "GameFontHighlight", function(self, mouseButton)
+    local tab = Widgets.CreateTab(builder.Page(), "GameFontHighlight", function(self, mouseButton)
       local name = self.profileName
       if mouseButton == "RightButton" then
         StaticPopupDialogs[DELETE_PROFILE_POPUP].text = L.PROFILE_DELETE_CONFIRM
@@ -283,9 +97,9 @@ local function addProfileList()
       end
     end)
     tab:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-    addRow(tab, ROW_PROFILE)
-    addTooltip(tab, "PROFILE_LIST_TIP", function() return Profiles.DisplayName(tab.profileName) end)
-    onRefresh(function()
+    builder.AddRow(tab, ROW_PROFILE)
+    builder.AddTooltip(tab, "PROFILE_LIST_TIP", function() return Profiles.DisplayName(tab.profileName) end)
+    builder.OnRefresh(function()
       local name = Profiles.GetNames()[index]
       tab.profileName = name
       tab:SetShown(name ~= nil)
@@ -308,23 +122,24 @@ function ns.ShowProfileImport()
 end
 
 local function addProfileSaver()
+  local page = builder.Page()
   local nameBox = CreateFrame("EditBox", nil, page, "InputBoxTemplate")
-  nameBox:SetSize(PROFILE_NAME_WIDTH, BUTTON_HEIGHT)
+  nameBox:SetSize(PROFILE_NAME_WIDTH, Builder.BUTTON_HEIGHT)
   nameBox:SetAutoFocus(false)
-  nameBox:SetPoint("TOPLEFT", MARGIN + 6, nextRowY)  -- Vorlage zeichnet ihren Rand links außerhalb
-  local saveButton = Widgets.CreateButton(page, PROFILE_SAVE_WIDTH, BUTTON_HEIGHT, function()
+  nameBox:SetPoint("TOPLEFT", Builder.MARGIN + 6, builder.RowY())  -- Vorlage zeichnet ihren Rand links außerhalb
+  local saveButton = Widgets.CreateButton(page, PROFILE_SAVE_WIDTH, Builder.BUTTON_HEIGHT, function()
     if ns.Profiles.SaveAs(nameBox:GetText()) then
       ns.Print(string.format(L.PROFILE_SAVED, nameBox:GetText()))
       nameBox:SetText("")
       ns.ApplySettings()
     end
   end)
-  saveButton:SetPoint("LEFT", nameBox, "RIGHT", CHOOSER_TAB_GAP, 0)
-  addTooltip(saveButton, "PROFILE_SAVE_TIP", labelText("PROFILE_SAVE"))
+  saveButton:SetPoint("LEFT", nameBox, "RIGHT", Builder.CHOOSER_TAB_GAP, 0)
+  builder.AddTooltip(saveButton, "PROFILE_SAVE_TIP", localized("PROFILE_SAVE"))
   nameBox:SetScript("OnEnterPressed", function() saveButton:Click() end)
   nameBox:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
-  nextRowY = nextRowY - ROW_BUTTON
-  onRefresh(function() saveButton:SetText(L.PROFILE_SAVE) end)
+  builder.Advance(Builder.ROW_BUTTON)
+  builder.OnRefresh(function() saveButton:SetText(L.PROFILE_SAVE) end)
 end
 
 local function percent(value)
@@ -333,16 +148,6 @@ end
 
 local function toPercent(fraction)
   return math.floor(fraction * 100 + 0.5)
-end
-
--- Schalter für eine Einstellung in ns.db; available() optional (z.B. nur in WoW Forever)
-local function toggle(label, key, available)
-  return {
-    label = label,
-    get = function(db) return db[key] end,
-    set = function(checked) ns.Set(key, checked) end,
-    available = available,
-  }
 end
 
 ---------------------------------------------------------------------------
@@ -538,75 +343,16 @@ addFooterButton("HISTORY", function() ns.ToggleHistory() end)
 addFooterButton("RECAP_TITLE", function() ns.ToggleRecap() end)
 addFooterButton("NEW_SESSION", function() ns.StartNewSession() end)
 
--- Höhe für die längste Seite, damit das Fenster beim Reiterwechsel nicht springt
-local lowestBottom = CONTENT_TOP
-for _, entry in ipairs(pages) do
-  lowestBottom = math.min(lowestBottom, entry.bottom)
-end
-panel:SetHeight(-lowestBottom + FOOTER_GAP + footerButtons * ROW_BUTTON + MARGIN)
-showPage(pages[1])
-
----------------------------------------------------------------------------
--- Aktualisierung
----------------------------------------------------------------------------
-
--- Zwei Schalter-Spalten so breit wie die längste Beschriftung, damit sich nichts überlappt
-local function columnWidth()
-  local width = MIN_COLUMN_WIDTH
-  for _, cell in ipairs(toggleCells) do
-    local checkbox = cell.checkbox
-    width = math.max(width, checkbox:GetWidth() + Widgets.CHECKBOX_LABEL_GAP + checkbox.label:GetStringWidth() + COLUMN_GAP)
-  end
-  return width
-end
-
-local function widestChooserRow()
-  local widest = 0
-  for _, row in ipairs(chooserRows) do
-    local width = row.label:GetStringWidth()
-    for _, tab in ipairs(row.tabs) do
-      width = width + CHOOSER_TAB_GAP + tab:GetWidth()
-    end
-    widest = math.max(widest, width)
-  end
-  return widest
-end
-
-local function tabRowWidth()
-  local width = 0
-  for i, entry in ipairs(pages) do
-    width = width + entry.tabButton:GetWidth() + (i > 1 and TAB_GAP or 0)
-  end
-  return width
-end
-
--- Fensterbreite aus den Texten der gewählten Sprache; Abschnitte, Regler und Buttons strecken sich mit
-local function fitWidth()
-  local column = columnWidth()
-  for _, cell in ipairs(toggleCells) do
-    cell.checkbox:ClearAllPoints()
-    cell.checkbox:SetPoint("TOPLEFT", MARGIN + cell.column * column, cell.y)
-  end
-  local content = math.max(2 * column, widestChooserRow(), tabRowWidth())
-  panel:SetWidth(math.max(MIN_WIDTH, content + 2 * MARGIN))
-end
-
-local function refresh(db)
-  title:SetText("LevelTimer - " .. L.SETTINGS)
-  for _, refreshControl in ipairs(refreshers) do
-    refreshControl(db)
-  end
-  fitWidth()
-end
-
-ns.RegisterApply(refresh)
+builder.Finish()
+ns.RegisterApply(builder.Refresh)
 
 function ns.ToggleOptions()
   if not ns.db then return end
+  local panel = builder.panel
   if panel:IsShown() then
     panel:Hide()
   else
-    refresh(ns.db)
+    builder.Refresh(ns.db)
     panel:Show()
   end
 end
