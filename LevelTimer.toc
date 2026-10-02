@@ -29,6 +29,7 @@ PlayedTime.lua
 Session.lua
 Experience.lua
 KillCounter.lua
+DeathRecap.lua
 DeathCounter.lua
 NearDeath.lua
 QuestCounter.lua

@@ -1,15 +1,17 @@
 -- Zählt eigene Tode, die Zeit tot bzw. als Geist und schreibt jeden Tod mit Ursache ins Journal.
 -- Ursache = letzter Treffer vor dem Tod aus dem Kampflog. Wo der Client das Kampflog
--- nicht an Addons gibt (Retail), bleibt sie unbekannt.
+-- nicht an Addons gibt (Retail, WoW Forever), kommt sie aus dem Death Recap (DeathRecap.lua).
 -- Totstellen (Jäger) löst PLAYER_DEAD nicht aus.
 local _, ns = ...
 local Stats = ns.Stats
 local Journal = ns.Journal
+local DeathRecap = ns.DeathRecap
 
 local DeathCounter = {}
 ns.DeathCounter = DeathCounter
 
 local LAST_HIT_MAX_AGE = 10  -- Sekunden; ältere Treffer gelten nicht mehr als Todesursache
+local RECAP_RETRY_DELAY = 1  -- Sekunden; der Recap kann beim Tod noch fehlen
 
 local deadSince   -- GetTime() beim Tod, nil solange lebendig
 local lastHit     -- { killer, spell, environment, at } des letzten Schadens am Spieler
@@ -79,6 +81,25 @@ local function takeDeathCause()
   return cause
 end
 
+local function isKnown(cause)
+  return cause.killer ~= nil or cause.spell ~= nil or cause.environment ~= nil
+end
+
+-- Ohne Kampflog-Ursache den Death Recap fragen, einmal verzögert, falls er noch nicht bereit ist
+local function fillCauseFromRecap(entry)
+  local cause = DeathRecap.GetLastCause()
+  if cause then
+    Journal.SetDeathCause(entry, cause)
+    return
+  end
+  C_Timer.After(RECAP_RETRY_DELAY, function()
+    local delayed = DeathRecap.GetLastCause()
+    if delayed and not isKnown(entry) then
+      Journal.SetDeathCause(entry, delayed)
+    end
+  end)
+end
+
 ---------------------------------------------------------------------------
 -- Tod und Wiederbelebung
 ---------------------------------------------------------------------------
@@ -91,7 +112,11 @@ end
 ns.RegisterEvent("PLAYER_DEAD", function()
   if deadSince then return end  -- schon tot (z.B. Login als Geist), nicht doppelt zählen
   Stats.Increment(Stats.DEATHS)
-  Journal.AddDeath(takeDeathCause())
+  local cause = takeDeathCause()
+  local entry = Journal.AddDeath(cause)
+  if not isKnown(cause) and DeathRecap.IsAvailable() then
+    fillCauseFromRecap(entry)
+  end
   deadSince = GetTime()
 end)
 

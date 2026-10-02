@@ -88,11 +88,17 @@ function Journal.AddInstanceRun(run)
   }, Journal.MAX_INSTANCE_RUNS)
 end
 
--- cause = { killer, spell, environment }, Felder dürfen fehlen
+-- cause = { killer, spell, environment }, Felder dürfen fehlen.
+-- Gibt den Eintrag zurück, damit eine später bekannte Ursache nachgetragen werden kann.
 function Journal.AddDeath(cause)
   local entry = baseEntry()
+  Journal.SetDeathCause(entry, cause)
+  append(ns.character.deathLog, entry, Journal.MAX_DEATHS)
+  return entry
+end
+
+function Journal.SetDeathCause(entry, cause)
   entry.killer = cause.killer
   entry.spell = cause.spell
   entry.environment = cause.environment
-  append(ns.character.deathLog, entry, Journal.MAX_DEATHS)
 end

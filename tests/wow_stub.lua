@@ -9,6 +9,7 @@
 --   wow.levelUp(level, xpMax)  Level-Up wie im Client
 --   wow.fire(event, ...)   Event an alle registrierten Frames senden
 --   wow.advance(seconds)   Spielzeit (GetTime) und Uhrzeit (time) vorstellen
+--   wow.runTimers()        geplante C_Timer.After-Callbacks ausführen
 --   wow.printed            alle Chat-Ausgaben (print)
 --   expect, expectNear, expectTrue   Prüfungen; Fehlschläge landen in TEST_FAILURES
 
@@ -183,6 +184,13 @@ function wow.shownTable()
   end)
 end
 
+-- Alle bisher mit C_Timer.After geplanten Callbacks ausführen (Verzögerung egal)
+function wow.runTimers()
+  local due = wow.timers
+  wow.timers = {}
+  for _, callback in ipairs(due) do callback() end
+end
+
 function wow.logout()
   wow.fire("PLAYER_LOGOUT")
 end
@@ -218,7 +226,9 @@ COMBATLOG_HONORGAIN = "%s stirbt, ehrenhafter Sieg Rang: %s (Geschätzte Ehrenpu
 LOOT_ITEM_SELF = "Ihr erhaltet Beute: %s."
 LOOT_ITEM_SELF_MULTIPLE = "Ihr erhaltet Beute: %sx%d."
 LOOT_ITEM_PUSHED_SELF = "Ihr erhaltet einen Gegenstand: %s."
-C_Timer = { After = noop }
+-- Timer laufen nicht von selbst; Tests starten sie mit wow.runTimers()
+wow.timers = {}
+C_Timer = { After = function(_, callback) table.insert(wow.timers, callback) end }
 ChatFrame_DisplayTimePlayed = noop
 date = os.date
 
