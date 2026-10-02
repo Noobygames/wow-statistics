@@ -29,3 +29,13 @@ for _ = 1, 10 do
   RecentXpRate.Sample()
 end
 expectNear("Erholung sichtbar", RecentXpRate.Get(), 1000 / 900 * 3600, 50)
+
+-- Neue Session setzt den XP-Zähler auf 0: Rate bleibt richtig, nie negativ
+wow.advance(1)
+addon.StartNewSession()
+expectTrue("nach neuer Session nicht negativ", RecentXpRate.Get() >= 0)
+expectNear("Zuwächse bleiben", RecentXpRate.Get(), 1000 / 900 * 3600, 50)
+wow.advance(30)
+Stats.Increment(Stats.XP_GAINED, 100)
+RecentXpRate.Sample()
+expectTrue("neue XP zählen", RecentXpRate.Get() > 1000 / 900 * 3600)
