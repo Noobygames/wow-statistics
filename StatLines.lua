@@ -89,6 +89,19 @@ local function restedXp(scope)
   return string.format("%s (%s)", Format.Number(rested), Format.Percent(rested, Stats.GetXp(scope)))
 end
 
+-- Zeitaufteilung: "1h 20m (35%)" bezogen auf die Spielzeit des Bereichs
+local function timeShare(getSeconds)
+  return function(scope)
+    local seconds = getSeconds(scope)
+    if not seconds then return PENDING end
+    return string.format("%s (%s)", Format.Duration(seconds), Format.Percent(seconds, Stats.GetSeconds(scope) or 0))
+  end
+end
+
+local function timePart(counter)
+  return timeShare(function(scope) return ns.TimeBreakdown.GetSeconds(scope, counter) end)
+end
+
 local function income(scope)
   return Format.Money(Stats.Get(scope, Stats.MONEY_EARNED))
 end
@@ -124,6 +137,12 @@ ns.STAT_LINES = {
     { label = "ROW_XP_OTHER", value = xpShare(3) },
   } },
   { setting = "showRested", label = "STAT_RESTED", rows = { { label = "ROW_RESTED", value = restedXp } } },
+  { setting = "showTimeBreakdown", label = "STAT_TIME_BREAKDOWN", rows = {
+    { label = "ROW_TIME_COMBAT", value = timePart(Stats.COMBAT_SECONDS) },
+    { label = "ROW_TIME_TAXI", value = timePart(Stats.TAXI_SECONDS) },
+    { label = "ROW_TIME_AFK", value = timePart(Stats.AFK_SECONDS) },
+    { label = "ROW_TIME_REST", value = timeShare(function(scope) return ns.TimeBreakdown.GetRestSeconds(scope) end) },
+  } },
   { setting = "showQuests", label = "STAT_QUESTS", rows = { { label = "ROW_QUESTS", value = counter(Stats.QUESTS) } } },
   { setting = "showMoney", label = "STAT_MONEY", rows = { { label = "ROW_MONEY", value = income } } },
 }

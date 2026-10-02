@@ -24,6 +24,9 @@ Stats.MONEY_EARNED = "moneyEarned"
 Stats.ELITE_KILLS = "eliteKills"
 Stats.RARE_KILLS = "rareKills"
 Stats.NEAR_DEATHS = "nearDeaths"
+Stats.COMBAT_SECONDS = "combatSeconds"  -- Zeitaufteilung (TimeBreakdown.lua)
+Stats.TAXI_SECONDS = "taxiSeconds"
+Stats.AFK_SECONDS = "afkSeconds"
 
 local function countersOf(scope)
   if scope == Stats.SESSION then

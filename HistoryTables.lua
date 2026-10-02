@@ -99,6 +99,30 @@ local LEVEL_COLUMNS = {
   goldColumn(56),
 }
 
+-- Zeitaufteilung je Level (TimeBreakdown.lua); Rest = Spielzeit minus aller Anteile
+local function timePartColumn(header, name, width)
+  return { header = header, width = width, value = function(r)
+    return Format.Duration(counter(r, name))
+  end, sort = function(r) return counter(r, name) end }
+end
+
+local function restSeconds(r)
+  return ns.TimeBreakdown.RestOf(r.seconds, function(name) return counter(r, name) end)
+end
+
+local TIME_COLUMNS = {
+  levelColumn(44),
+  durationColumn(62),
+  timePartColumn("HISTORY_COMBAT", Stats.COMBAT_SECONDS, 62),
+  timePartColumn("HISTORY_TAXI", Stats.TAXI_SECONDS, 62),
+  timePartColumn("HISTORY_AFK", Stats.AFK_SECONDS, 62),
+  timePartColumn("HISTORY_DEAD", Stats.DEAD_SECONDS, 62),
+  { header = "HISTORY_REST", width = 62, value = function(r)
+    local rest = restSeconds(r)
+    return rest and Format.Duration(rest) or "?"
+  end, sort = restSeconds },
+}
+
 local SESSION_COLUMNS = {
   { header = "HISTORY_START", width = 80, value = function(r) return dateTime(L.DATE_FORMAT, r.startedAt) end,
     sort = function(r) return r.startedAt end },
@@ -550,6 +574,7 @@ local LEVELS, JOURNAL = "HISTORY_GROUP_LEVELS", "HISTORY_GROUP_JOURNAL"
 
 addTable("HISTORY_TAB_LEVELS", LEVELS, LEVEL_COLUMNS, History.GetLevelRecords, summaryCells)
 addTable("HISTORY_TAB_TIMELINE", LEVELS, MILESTONE_COLUMNS, History.GetMilestones, countCells)
+addTable("HISTORY_TAB_TIME_SPLIT", LEVELS, TIME_COLUMNS, History.GetLevelRecords, summaryCells)
 addTable("HISTORY_TAB_SESSIONS", nil, SESSION_COLUMNS, History.GetSessionRecords, summaryCells)
 addTable("HISTORY_TAB_KILLS", JOURNAL, KILL_COLUMNS, History.GetKillLog, countCells)
 addTable("HISTORY_TAB_DEATHS", JOURNAL, DEATH_COLUMNS, History.GetDeathLog, countCells)

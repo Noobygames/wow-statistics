@@ -36,6 +36,7 @@ KillCounter.lua
 DeathRecap.lua
 DeathCounter.lua
 NearDeath.lua
+TimeBreakdown.lua
 QuestCounter.lua
 Loot.lua
 MoneyCounter.lua

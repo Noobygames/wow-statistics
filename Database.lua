@@ -64,6 +64,7 @@ local SETTINGS_DEFAULTS = {
   highlightDeaths = true,  -- Tode im Fenster rot (siehe StatLines.lua)  -- Hardcore: Zeit seit dem letzten Tod
   showXpSources = false,
   showRested = false,
+  showTimeBreakdown = false,  -- Zeit in Kampf, Flug, AFK und Rest (siehe TimeBreakdown.lua)
   showQuests = true,
   showMoney = true,
   minimap = { hide = false, angle = 225 },
@@ -84,6 +85,9 @@ local COUNTER_DEFAULTS = {
   eliteKills = 0,
   rareKills = 0,
   nearDeaths = 0,
+  combatSeconds = 0,
+  taxiSeconds = 0,
+  afkSeconds = 0,
 }
 
 local CHARACTER_DEFAULTS = {

@@ -45,6 +45,8 @@ wow = {
     inGroup = false,         -- Gruppe (IsInGroup)
     chatLockdown = false,    -- C_ChatInfo.InChatMessagingLockdown
     inCombat = false,
+    onTaxi = false,          -- UnitOnTaxi
+    afk = false,             -- UnitIsAFK
     resting = false,
     buffs = {},              -- aktive Buffs: Name oder { name, spellId } (C_UnitAuras.GetAuraDataByIndex)
     spellNames = { [19705] = "Satt", [1229741] = "Lagervorteile" },  -- C_Spell.GetSpellName
@@ -305,6 +307,8 @@ function UnitHealth() return state.health end
 function IsInGuild() return state.inGuild end
 function GetBuildInfo() return "12.1.0", "1", "2026-01-01", state.interface end
 function UnitAffectingCombat() return state.inCombat end
+function UnitOnTaxi() return state.onTaxi end
+function UnitIsAFK() return state.afk end
 function IsResting() return state.resting end
 C_Spell = { GetSpellName = function(spellID) return state.spellNames[spellID] end }
 C_UnitAuras = {
