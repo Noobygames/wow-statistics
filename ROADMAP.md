@@ -26,6 +26,11 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 - [x] 33. **Streamer-Datenschutz** (S): Realm und Namen anderer Charaktere in der Historie ausblenden (gegen Stream-Sniping).
 - [x] 34. **Ansage in Gilde/Gruppe** (S): Level-Up-Zusammenfassung optional an Gruppe (bzw. Instanz-Chat) oder Gilde; keine Hardware-Eingabe nötig, bei Retails Chat-Sperre (`C_ChatInfo.InChatMessagingLockdown`, z.B. Bosskampf) wird nichts gesendet.
 
+### Leveln: Buff-Hinweise
+
+- [ ] 39. **Hinweis bei fehlendem Food-Buff** (S–M): an/aus schaltbar. Fehlt „Satt“ (Well Fed) beim Leveln, erscheint ein Hinweis (Fenster-Zeile und/oder Einblendung, außerhalb des Kampfes, mit Wiederholungspause). In WoW Forever gibt Satt 5 % mehr XP aus Kills, nicht aus Quests. Erkennung über Aura-Spell-IDs statt Namen (Namen sind übersetzt); IDs und Aura-API je Client vorher in der Doku bzw. im Spiel prüfen.
+- [ ] 40. **Hinweis bei fehlendem Camp-Buff** (S–M): an/aus schaltbar, wie 39. WoW Forever: Lagerfeuer-Camp mit Berufs-Objekten, Buffs halten ca. 1 h nach einer Minute Sitzen oder Herstellen am Feuer. Nur in Clients mit Camp-System; welche Auren als Camp-Buff zählen (Spell-IDs), vorher im Spiel per `/dump` ermitteln, da die Guides keine IDs nennen.
+
 ### Projekt und Verbreitung
 
 - [ ] 20. **Uploads aktivieren** (S): CurseForge-Projekt-ID, Wago- und WoWInterface-ID in die `.toc` eintragen, Secrets `CF_API_KEY`, `WAGO_API_TOKEN`, `WOWI_API_TOKEN` setzen. Workflow ist fertig (21).
