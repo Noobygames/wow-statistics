@@ -67,3 +67,63 @@ addon.Set("autoAcceptShared", true)
 wow.fire("QUEST_ACCEPT_CONFIRM", "Mitspieler", "Eskorte")
 expect("bestätigt", wow.questActions[1][1], "confirm")
 expect("Dialog zu", lastAction(), "hidePopup QUEST_ACCEPT")
+
+---------------------------------------------------------------------------
+-- Abgeben (autoTurnIn): Fortschritt, Belohnung, Gespräch, alte Quest-Liste
+---------------------------------------------------------------------------
+reset()
+wow.fire("QUEST_PROGRESS")
+wow.fire("QUEST_COMPLETE")
+expect("Abgabe aus", lastAction(), nil)
+
+addon.Set("autoTurnIn", true)
+wow.state.questCompletable = false
+wow.fire("QUEST_PROGRESS")
+expect("nicht fertig: nichts", lastAction(), nil)
+wow.state.questCompletable = true
+wow.fire("QUEST_PROGRESS")
+expect("abschließen", lastAction(), "complete")
+
+-- Belohnung: keine Auswahl = 0, eine = 1
+wow.fire("QUEST_COMPLETE")
+expect("ohne Auswahl", lastAction(), "reward 0")
+wow.state.questChoices = { "Schwert" }
+wow.fire("QUEST_COMPLETE")
+expect("eine Belohnung", lastAction(), "reward 1")
+
+-- Mehrere: ohne Schalter wählt der Spieler, mit Schalter die wertvollste
+reset()
+wow.state.questChoices = { "Schwert", "Schild", "Stab" }
+wow.state.sellPrices = { Schwert = 100, Schild = 300, Stab = 200 }
+wow.fire("QUEST_COMPLETE")
+expect("Auswahl: Spieler wählt", lastAction(), nil)
+addon.Set("autoChooseReward", true)
+wow.fire("QUEST_COMPLETE")
+expect("wertvollste", lastAction(), "reward 2")
+
+-- Unbekannter Verkaufswert: lieber nicht raten
+reset()
+wow.state.sellPrices = { Schwert = 100, Schild = 300 }
+wow.fire("QUEST_COMPLETE")
+expect("Wert unbekannt: Spieler wählt", lastAction(), nil)
+wow.state.questChoices = {}
+
+-- Quest kostet Geld: im Spiel bestätigen
+wow.state.questMoney = 500
+wow.fire("QUEST_COMPLETE")
+expect("kostet Geld: manuell", lastAction(), nil)
+wow.state.questMoney = 0
+
+-- Gespräch: fertige Quest vor neuer
+gossip.available = { { questID = 21, isTrivial = false, isIgnored = false } }
+gossip.active = { { questID = 30, isComplete = false }, { questID = 31, isComplete = true } }
+wow.fire("GOSSIP_SHOW")
+expect("Gespräch: erst abgeben", lastAction(), "selectActive 31")
+gossip.active = { { questID = 30, isComplete = false } }
+wow.fire("GOSSIP_SHOW")
+expect("dann annehmen", lastAction(), "selectAvailable 21")
+
+-- Alte Quest-Liste
+greeting.active = { { title = "Offen", isComplete = false }, { title = "Fertig", isComplete = true } }
+wow.fire("QUEST_GREETING")
+expect("Liste: fertige abgeben", lastAction(), "greetingActive 2")

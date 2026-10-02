@@ -62,6 +62,9 @@ wow = {
     greeting = { available = {}, active = {} },  -- { title, isTrivial } bzw. { title, isComplete }
     questPvp = false,        -- QuestFlagsPVP
     questAutoAccept = false, -- QuestGetAutoAccept
+    questCompletable = true, -- IsQuestCompletable
+    questMoney = 0,          -- GetQuestMoneyToGet
+    questChoices = {},       -- Belohnungen zur Auswahl: Item-Links (GetQuestItemLink("choice", i))
   },
   printed = {},
   UNKNOWN_EVENT = UNKNOWN_EVENT,
@@ -389,8 +392,15 @@ function GetActiveTitle(index)
   return quest.title, quest.isComplete
 end
 function SelectActiveQuest(index) questAction("greetingActive", index) end
+function IsQuestCompletable() return state.questCompletable end
+function CompleteQuest() questAction("complete") end
+function GetQuestMoneyToGet() return state.questMoney end
+function GetNumQuestChoices() return #state.questChoices end
+function GetQuestItemLink(kind, index) return kind == "choice" and state.questChoices[index] or nil end
+function GetQuestReward(choice) questAction("reward", choice) end
 
 C_Item = {
+  -- itemID oder Link; Verkaufspreis aus state.sellPrices
   GetItemInfo = function(itemID)
     return "Item " .. itemID, nil, nil, nil, nil, nil, nil, nil, nil, nil, state.sellPrices[itemID]
   end,

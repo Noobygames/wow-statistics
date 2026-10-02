@@ -431,6 +431,8 @@ addSection("SECTION_QUESTS")
 addToggles({
   toggle("AUTO_ACCEPT_QUESTS", "autoAcceptQuests"),
   toggle("AUTO_ACCEPT_SHARED", "autoAcceptShared"),
+  toggle("AUTO_TURN_IN", "autoTurnIn"),
+  toggle("AUTO_CHOOSE_REWARD", "autoChooseReward"),
 })
 addHint("COMFORT_HINT")
 finishPage()
