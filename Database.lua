@@ -48,6 +48,7 @@ local SETTINGS_DEFAULTS = {
   warnBagsFull = false,  -- Hinweis bei fast vollen Taschen (siehe GearWarnings.lua)
   warnDurability = false,  -- Hinweis bei niedriger Haltbarkeit
   remindTrainer = false,   -- Hinweis auf neue Zauber beim Lehrer (TrainerReminder.lua, nicht Retail)
+  warnAmmo = false,        -- Jäger: Munition knapp (GearWarnings.lua, nicht Retail)
   -- Komfort beim Leveln (siehe Comfort.lua), alles aus
   autoRepair = false,       -- beim Händler reparieren (Merchant.lua)
   autoRepairGuild = false,  -- zuerst aus der Gildenbank

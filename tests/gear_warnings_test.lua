@@ -73,3 +73,25 @@ expect("mit Level", LevelTimerAlert.text:GetText(), string.format(L.REMIND_TRAIN
 
 wow.state.interface = 16001
 expect("Forever: verfügbar", addon.TrainerReminder.IsAvailable(), true)
+
+---------------------------------------------------------------------------
+-- Munition knapp: nur Jäger, nicht in Retail
+---------------------------------------------------------------------------
+addon.Set("warnAmmo", true)
+wow.state.inventoryCounts = { [0] = 150 }
+wow.state.interface = 120100
+GearWarnings.Check()
+expect("Retail: still", count(L.WARN_AMMO), 0)
+
+wow.state.interface = 11509
+GearWarnings.Check()
+expect("Krieger: still", count(L.WARN_AMMO), 0)
+
+wow.state.class = "HUNTER"
+GearWarnings.Check()
+expect("Jäger: Warnung", count(L.WARN_AMMO), 1)
+wow.state.inventoryCounts = { [0] = 1000 }
+GearWarnings.Check()
+wow.state.inventoryCounts = { [0] = 199 }
+GearWarnings.Check()
+expect("nach Auffüllen wieder", count(L.WARN_AMMO), 2)
