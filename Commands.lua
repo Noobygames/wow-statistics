@@ -18,6 +18,18 @@ local commands = {
   compact = function() ns.Set("compactMode", not ns.db.compactMode) end,
   bar = function() ns.Set("horizontalLayout", not ns.db.horizontalLayout) end,
   newsession = function() ns.StartNewSession() end,
+  -- /lt goal 30 setzt das Ziel-Level, /lt goal ohne Zahl entfernt es
+  goal = function(argument)
+    if argument == "" then
+      ns.Goal.Clear()
+      ns.Print(L.GOAL_CLEARED)
+    elseif ns.Goal.Set(tonumber(argument)) then
+      ns.Set("showGoal", true)
+      ns.Print(string.format(L.GOAL_SET, ns.Goal.Get().level))
+    else
+      ns.Print(L.GOAL_INVALID)
+    end
+  end,
   debug = function()
     ns.debug = not ns.debug  -- bewusst nicht gespeichert, gilt bis /reload
     ns.Print(ns.debug and L.DEBUG_ON or L.DEBUG_OFF)
@@ -30,10 +42,12 @@ local commands = {
 
 SLASH_LEVELTIMER1 = "/leveltimer"
 SLASH_LEVELTIMER2 = "/lt"
+-- Erstes Wort = Befehl, der Rest wird als Argument übergeben (z.B. "goal 30")
 SlashCmdList.LEVELTIMER = function(input)
-  local command = commands[strtrim(input or ""):lower()]
+  local name, argument = strtrim(input or ""):match("^(%S*)%s*(.-)$")
+  local command = commands[name:lower()]
   if command then
-    command()
+    command(argument)
   else
     ns.Print(L.HELP)
   end

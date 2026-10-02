@@ -41,6 +41,7 @@ Daily.lua
 Instances.lua
 Analysis.lua
 Forecast.lua
+Goal.lua
 
 # Oberfläche
 StatLines.lua

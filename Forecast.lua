@@ -24,15 +24,21 @@ local function averageRecentLevelSeconds()
   return sum / count
 end
 
--- Geschätzte Spielzeit bis zum Max-Level; nil, solange keine Schätzung möglich ist
-function Forecast.SecondsToMaxLevel()
-  if not GetMaxPlayerLevel or not Experience.IsLeveling() then return nil end
+-- Geschätzte Spielzeit bis zum Erreichen von targetLevel; nil, solange keine Schätzung möglich ist
+function Forecast.SecondsToLevel(targetLevel)
+  if not Experience.IsLeveling() then return nil end
+  if targetLevel <= ns.level then return 0 end
   local remaining = Experience.GetSecondsToLevel(Stats.LEVEL)
   if not remaining then return nil end
 
-  local levelsAfterThis = GetMaxPlayerLevel() - ns.level - 1
+  local levelsAfterThis = targetLevel - ns.level - 1
   if levelsAfterThis <= 0 then return remaining end
 
   local perLevel = averageRecentLevelSeconds() or (Stats.GetSeconds(Stats.LEVEL) + remaining)
   return remaining + levelsAfterThis * perLevel
+end
+
+function Forecast.SecondsToMaxLevel()
+  if not GetMaxPlayerLevel then return nil end
+  return Forecast.SecondsToLevel(GetMaxPlayerLevel())
 end

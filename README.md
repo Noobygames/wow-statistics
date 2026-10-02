@@ -69,6 +69,7 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 | `/lt compact` | Toggle compact mode (play time, XP bar and XP/h only) |
 | `/lt bar` | Toggle horizontal bar layout (everything in one line, like an info bar) |
 | `/lt newsession` | Archive the running session and start a new one (also a button in the settings) |
+| `/lt goal 30` | Set a goal level with progress and forecast in the window; `/lt goal` removes it |
 | `/lt show` / `/lt hide` | Show or hide the window |
 | `/lt sync` | Re-sync play time with the server |
 | `/lt minimap` | Toggle the minimap button |

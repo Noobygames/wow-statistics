@@ -48,6 +48,16 @@ local function deaths(scope)
   return text
 end
 
+-- Session-Ziel: "Level 30: 45 %, 1h 20m" bzw. "Level 30 erreicht"
+local function goalText()
+  local goal = ns.Goal.Get()
+  if not goal then return NO_VALUE end
+  if goal.reached then return string.format(ns.L.GOAL_DONE, goal.level) end
+  local seconds = ns.Goal.GetSecondsLeft()
+  return string.format(ns.L.GOAL_PROGRESS, goal.level, Format.Percent(ns.Goal.GetProgress(), 1),
+    seconds and Format.Duration(seconds) or PENDING)
+end
+
 -- Unabhängig vom Bereich: seit dem letzten Tod des Charakters
 local function timeWithoutDeath()
   local seconds = DeathCounter.GetSecondsSinceDeath()
@@ -83,6 +93,7 @@ ns.STAT_LINES = {
   { setting = "showLevelEta", label = "STAT_LEVEL_ETA", rows = { { label = "ROW_LEVEL_ETA", value = timeToLevel } } },
   { setting = "showMaxLevelEta", label = "STAT_MAX_LEVEL_ETA",
     rows = { { label = "ROW_MAX_LEVEL_ETA", value = timeToMaxLevel } } },
+  { setting = "showGoal", label = "STAT_GOAL", rows = { { label = "ROW_GOAL", value = goalText } } },
   { setting = "showPveKills", label = "STAT_PVE_KILLS",
     rows = { { label = "ROW_PVE_KILLS", value = counter(Stats.PVE_KILLS) } } },
   { setting = "showPvpKills", label = "STAT_PVP_KILLS",
