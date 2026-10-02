@@ -82,7 +82,8 @@ ns.locales = {
 
     -- Historie
     HISTORY = "Historie",
-    HISTORY_CHARACTER = "%s - %s (Level %d)",
+    HISTORY_CHARACTER = "%s (Level %d)",
+    HIDDEN_CHARACTER = "Charakter %d",
     HISTORY_TAB_LEVELS = "Übersicht",
     HISTORY_TAB_SESSIONS = "Sessions",
     HISTORY_START = "Start",
@@ -127,6 +128,7 @@ ns.locales = {
     DELETE_CHARACTER_CONFIRM = "Alle Statistiken von %s löschen? Das lässt sich nicht rückgängig machen.",
     LEVEL_UP_SUMMARY = "Level %d erreicht! Level %d: %s, %d Kills, %d Tode, %s XP/h",
     LEVEL_UP_SUMMARY_TOGGLE = "Level-Up im Chat",
+    STREAMER_PRIVACY = "Namen verbergen (Stream)",
     CHART_LEVEL_TIME = "Zeit/Level",
     CHART_LEVEL_XP_RATE = "XP/h/Level",
     CHART_KILLS_PER_DAY = "Kills/Tag",
@@ -244,7 +246,8 @@ ns.locales = {
 
     -- History
     HISTORY = "History",
-    HISTORY_CHARACTER = "%s - %s (level %d)",
+    HISTORY_CHARACTER = "%s (level %d)",
+    HIDDEN_CHARACTER = "Character %d",
     HISTORY_TAB_LEVELS = "Overview",
     HISTORY_TAB_SESSIONS = "Sessions",
     HISTORY_START = "Start",
@@ -289,6 +292,7 @@ ns.locales = {
     DELETE_CHARACTER_CONFIRM = "Delete all statistics of %s? This cannot be undone.",
     LEVEL_UP_SUMMARY = "Reached level %d! Level %d took %s, %d kills, %d deaths, %s XP/h",
     LEVEL_UP_SUMMARY_TOGGLE = "Level up in chat",
+    STREAMER_PRIVACY = "Hide names (stream)",
     CHART_LEVEL_TIME = "Time/level",
     CHART_LEVEL_XP_RATE = "XP/h/level",
     CHART_KILLS_PER_DAY = "Kills/day",
@@ -406,7 +410,8 @@ ns.locales = {
 
     -- Historique
     HISTORY = "Historique",
-    HISTORY_CHARACTER = "%s - %s (niveau %d)",
+    HISTORY_CHARACTER = "%s (niveau %d)",
+    HIDDEN_CHARACTER = "Personnage %d",
     HISTORY_GROUP_LEVELS = "Niveaux",
     HISTORY_GROUP_JOURNAL = "Journal",
     HISTORY_TAB_LEVELS = "Aperçu",
@@ -460,6 +465,7 @@ ns.locales = {
     DELETE_CHARACTER_CONFIRM = "Effacer toutes les statistiques de %s ? Cette action est irréversible.",
     LEVEL_UP_SUMMARY = "Niveau %d atteint ! Le niveau %d a duré %s, %d victimes, %d morts, %s XP/h",
     LEVEL_UP_SUMMARY_TOGGLE = "Niveau dans le chat",
+    STREAMER_PRIVACY = "Masquer les noms (stream)",
     CHART_LEVEL_TIME = "Tps/niveau",
     CHART_LEVEL_XP_RATE = "XP/h/niv.",
     CHART_KILLS_PER_DAY = "Vict./jour",
@@ -568,7 +574,8 @@ ns.locales = {
 
     -- Historial
     HISTORY = "Historial",
-    HISTORY_CHARACTER = "%s - %s (nivel %d)",
+    HISTORY_CHARACTER = "%s (nivel %d)",
+    HIDDEN_CHARACTER = "Personaje %d",
     HISTORY_GROUP_LEVELS = "Niveles",
     HISTORY_GROUP_JOURNAL = "Diario",
     HISTORY_TAB_LEVELS = "Resumen",
@@ -622,6 +629,7 @@ ns.locales = {
     DELETE_CHARACTER_CONFIRM = "¿Borrar todas las estadísticas de %s? No se puede deshacer.",
     LEVEL_UP_SUMMARY = "¡Nivel %d alcanzado! El nivel %d duró %s, %d abatidos, %d muertes, %s PX/h",
     LEVEL_UP_SUMMARY_TOGGLE = "Subida de nivel en el chat",
+    STREAMER_PRIVACY = "Ocultar nombres (stream)",
     CHART_LEVEL_TIME = "Tiempo/niv.",
     CHART_LEVEL_XP_RATE = "PX/h/nivel",
     CHART_KILLS_PER_DAY = "Abat./día",

@@ -199,9 +199,7 @@ local ZONE_COLUMNS = {
 }
 
 local COMPARE_COLUMNS = {
-  { header = "HISTORY_CHARACTER_NAME", width = 140, value = function(r)
-      return (r.name or "?") .. " - " .. (r.realm or "?")
-    end },
+  { header = "HISTORY_CHARACTER_NAME", width = 140, value = function(r) return History.DisplayName(r.key) end },
   levelColumn(40),
   { header = "HISTORY_LEVELS_DONE", width = 56, value = function(r) return r.levelsCompleted end },
   { header = "HISTORY_AVERAGE_LEVEL_TIME", width = 84, value = function(r)

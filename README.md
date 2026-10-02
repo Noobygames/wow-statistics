@@ -55,6 +55,7 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 - **Compact mode** (`/lt compact` or settings): only play time, XP bar and XP/h.
 - **Horizontal bar** (`/lt bar` or settings): the window as a slim info bar, all values in one line; combines with compact mode.
 - **Stream view** (settings): solid green or magenta background without border for chroma keying in OBS.
+- **Hide names** (settings): history shows no realm and lists other characters only as "Character 2, 3, ...".
 - Settings, grouped into Window, Statistics and General: size, background opacity, show/lock window, reset position & size, one toggle per statistic, language (English, Deutsch, Français, Español) and the minimap button.
 
 ### Chat commands

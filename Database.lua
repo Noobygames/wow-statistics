@@ -22,6 +22,7 @@ local SETTINGS_DEFAULTS = {
   showXpRate = true,
   showLevelEta = true,
   showMaxLevelEta = true,
+  streamerPrivacy = false,  -- Realm und andere Charaktere in der Historie verbergen (siehe History.DisplayName)
   levelUpSummary = true,  -- Chatzeile beim Level-Up (siehe LevelUpSummary.lua)
   showPveKills = true,
   showPvpKills = true,

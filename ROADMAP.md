@@ -18,7 +18,7 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 ### Bedienung
 
 - [x] 32. **Neue Session starten** (S): Button in den Einstellungen und `/lt newsession`. Archiviert die laufende Session sofort und startet eine neue, z.B. zu Stream-Beginn, statt auf Logout und Login zu warten.
-- [ ] 33. **Streamer-Datenschutz** (S): Realm und Namen anderer Charaktere in der Historie ausblenden (gegen Stream-Sniping).
+- [x] 33. **Streamer-Datenschutz** (S): Realm und Namen anderer Charaktere in der Historie ausblenden (gegen Stream-Sniping).
 - [ ] 34. **Ansage in Gilde/Gruppe** (S): Level-Up-Zusammenfassung optional nach /gilde oder /gruppe. Vorher in der API-Doku prüfen, wo `SendChatMessage` für Addons erlaubt ist (Retail schränkt das ein).
 
 ### Projekt und Verbreitung
@@ -27,7 +27,7 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 
 ## Erledigt
 
-- Nächstes Release (v2.5): 32. Neue Session starten, 31. Hardcore-Anzeige, 27. Stream-Ansicht
+- Nächstes Release (v2.5): 32. Neue Session starten, 31. Hardcore-Anzeige, 27. Stream-Ansicht, 33. Streamer-Datenschutz
 - v2.0.0:
   - Auswertung: 1. Prognose bis Max-Level, 2. alle Charaktere vergleichen, 3. Zonen-Auswertung, 4. Spielzeit pro Tag/Woche, 5. XP-Verlauf der Session, 6. Langzeit-Graphen als Tageswerte
   - Daten: 7. Quest-Journal, 8. Level-Timeline, 9. Instanzen, 10. Loot-Journal, 11. Elite- und Rare-Kills, 12. Beinahe-Tode, 24. Todesursache aus dem Death Recap (Retail, WoW Forever)

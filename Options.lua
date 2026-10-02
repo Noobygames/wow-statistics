@@ -206,6 +206,8 @@ addToggles({
     set = function(checked) ns.SetMinimapHidden(not checked) end },
   { label = "LEVEL_UP_SUMMARY_TOGGLE", get = function(db) return db.levelUpSummary end,
     set = function(checked) ns.Set("levelUpSummary", checked) end },
+  { label = "STREAMER_PRIVACY", get = function(db) return db.streamerPrivacy end,
+    set = function(checked) ns.Set("streamerPrivacy", checked) end },
 })
 nextRowY = nextRowY - SECTION_GAP
 addButton("NEW_SESSION", function() ns.StartNewSession() end)
