@@ -219,7 +219,7 @@ function wow.combatLog(subevent, sourceName, destGUID, ...)
   wow.fire("COMBAT_LOG_EVENT_UNFILTERED")
 end
 
--- Die gerade sichtbare Tabellen-Ansicht der Historie (HistoryTables.lua)
+-- Die gerade sichtbare Tabellen-Ansicht der Historie (TableView.lua)
 function wow.shownTable()
   return wow.findFrame(function(frame)
     return rawget(frame, "GetVisibleRecords") ~= nil and frame:IsShown()

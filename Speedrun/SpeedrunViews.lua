@@ -88,7 +88,7 @@ local function onRunClick(run, mouseButton)
   end
 end
 
-ns.HistoryWindow.AddView(HistoryTables.CreateTableView({
+ns.HistoryWindow.AddView(ns.TableView.Create({
   tab = "HISTORY_TAB_RUNS",
   group = GROUP,
   columns = RUN_COLUMNS,
@@ -154,7 +154,7 @@ local RECORD_COLUMNS = {
     end, sort = function(r) return r.ownSeconds and r.ownSeconds - r.seconds end },
 }
 
-ns.HistoryWindow.AddView(HistoryTables.CreateTableView({
+ns.HistoryWindow.AddView(ns.TableView.Create({
   tab = "HISTORY_TAB_RECORDS",
   group = GROUP,
   columns = RECORD_COLUMNS,
@@ -208,7 +208,7 @@ local function worldRecordHint()
   return string.format(L.WORLD_RECORDS_HINT, fetched or "?")
 end
 
-ns.HistoryWindow.AddView(HistoryTables.CreateTableView({
+ns.HistoryWindow.AddView(ns.TableView.Create({
   tab = "HISTORY_TAB_WORLD_RECORDS",
   group = GROUP,
   columns = WORLD_RECORD_COLUMNS,

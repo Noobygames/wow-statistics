@@ -74,6 +74,7 @@ UI\TimerWindow.lua
 Speedrun\SplitList.lua
 Lib\Charts.lua
 Lib\Export.lua
+Lib\TableView.lua
 UI\HistoryWindow.lua
 UI\HistoryTables.lua
 UI\HistoryCharts.lua

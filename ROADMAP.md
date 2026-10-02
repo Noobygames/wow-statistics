@@ -15,7 +15,7 @@ Schwerpunkt: Struktur und Wartbarkeit nach dem Code- und Architektur-Review, ohn
 
 ### Große Dateien teilen
 
-- [ ] 82. **TableView** (M): allgemeine Tabelle (Lazy Load, Sortieren, Filtern, CSV) aus `HistoryTables.lua` in `TableView.lua`; HistoryTables behält nur die Spalten.
+- [x] 82. **TableView** (M): allgemeine Tabelle (Lazy Load, Sortieren, Filtern, CSV) aus `HistoryTables.lua` in `TableView.lua`; HistoryTables behält nur die Spalten.
 - [ ] 83. **OptionsBuilder** (M): Baukasten (`addPage`, `addToggles`, `addChooser`, Breitenberechnung) aus `Options.lua` in `OptionsBuilder.lua`; Options behält nur den Inhalt.
 
 ### Struktur
