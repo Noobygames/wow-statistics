@@ -54,7 +54,7 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 
 ### Projekt und Verbreitung
 
-- [ ] 20. **Uploads aktivieren** (S): CurseForge-Projekt-ID, Wago- und WoWInterface-ID in die `.toc` eintragen, Secrets `CF_API_KEY`, `WAGO_API_TOKEN`, `WOWI_API_TOKEN` setzen. Workflow ist fertig (21).
+- [ ] 20. **Uploads aktivieren** (S): CurseForge aktiv (Projekt 1721235, Secret `CF_API_KEY`). Offen: Wago- und WoWInterface-ID in die `.toc`, Secrets `WAGO_API_TOKEN` und `WOWI_API_TOKEN`.
 
 ## Erledigt
 
