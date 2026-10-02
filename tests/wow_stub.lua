@@ -272,6 +272,7 @@ function StaticPopup_Show(name, textArg1, textArg2, data)
 end
 COMBATLOG_XPGAIN_FIRSTPERSON = "%s stirbt, Ihr bekommt %d Erfahrung."
 COMBATLOG_HONORGAIN = "%s stirbt, ehrenhafter Sieg Rang: %s (Geschätzte Ehrenpunkte: %d)"
+INSTANCE_RESET_SUCCESS = "%s wurde zurückgesetzt."
 LOOT_ITEM_SELF = "Ihr erhaltet Beute: %s."
 LOOT_ITEM_SELF_MULTIPLE = "Ihr erhaltet Beute: %sx%d."
 LOOT_ITEM_PUSHED_SELF = "Ihr erhaltet einen Gegenstand: %s."

@@ -131,6 +131,19 @@ end
 
 local income = money(Stats.MONEY_EARNED)
 
+-- Unabhängig vom Bereich: Instanzlimit "3/5, nächste in 14m" (siehe InstanceLimit.lua)
+local function instanceLimit()
+  local InstanceLimit = ns.InstanceLimit
+  local count, limit = InstanceLimit.GetHourCount(), InstanceLimit.GetLimit()
+  local wait = InstanceLimit.GetSecondsUntilNextFree()
+  if not wait then return string.format(ns.L.INSTANCE_LIMIT_VALUE, count, limit) end
+  return string.format(ns.L.INSTANCE_LIMIT_NEXT, count, limit, Format.Duration(wait))
+end
+
+local function instancesToday()
+  return tostring(ns.InstanceLimit.GetTodayCount())
+end
+
 -- Unabhängig vom Bereich: laufender Instanz-Lauf "12m 30s, 5.000 XP"
 local function instanceRun()
   local run = ns.Instances.GetCurrentRun()
@@ -184,6 +197,10 @@ ns.STAT_LINES = {
   } },
   { setting = "showInstanceRun", label = "STAT_INSTANCE_RUN",
     rows = { { label = "ROW_INSTANCE_RUN", value = instanceRun } } },
+  { setting = "showInstanceLimit", label = "STAT_INSTANCE_LIMIT",
+    rows = { { label = "ROW_INSTANCE_LIMIT", value = instanceLimit } } },
+  { setting = "showInstancesToday", label = "STAT_INSTANCES_TODAY",
+    rows = { { label = "ROW_INSTANCES_TODAY", value = instancesToday } } },
   { setting = "showQuests", label = "STAT_QUESTS", rows = { { label = "ROW_QUESTS", value = counter(Stats.QUESTS) } } },
   { setting = "showMoney", label = "STAT_MONEY", rows = { { label = "ROW_MONEY", value = income } } },
   { setting = "showSpending", label = "STAT_SPENDING", rows = {

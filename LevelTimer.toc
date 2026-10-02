@@ -49,6 +49,7 @@ History\History.lua
 History\Zones.lua
 History\Daily.lua
 History\Instances.lua
+History\InstanceLimit.lua
 History\Analysis.lua
 History\Forecast.lua
 History\Goal.lua
