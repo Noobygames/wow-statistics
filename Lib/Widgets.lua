@@ -53,6 +53,18 @@ function Widgets.CreatePanel(name, backgroundAlpha)
   return panel
 end
 
+-- Skaliert einen Frame und hält dabei seine linke obere Ecke auf dem Bildschirm fest.
+-- Ankerabstände werden in der Skalierung des Frames gemessen und müssen umgerechnet werden.
+function Widgets.SetScaleKeepingTopLeft(frame, scale)
+  local oldScale = frame:GetScale()
+  local left, top = frame:GetLeft(), frame:GetTop()
+  frame:SetScale(scale)
+  if left and top then
+    frame:ClearAllPoints()
+    frame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", left * oldScale / scale, top * oldScale / scale)
+  end
+end
+
 function Widgets.SetBackgroundAlpha(panel, alpha)
   local r, g, b = unpack(Widgets.COLORS.background)
   panel:SetBackdropColor(r, g, b, alpha)

@@ -150,10 +150,20 @@ end
 panel:SetScript("OnDragStart", function(self)
   if not ns.db.locked then self:StartMoving() end
 end)
+-- Zuletzt angewendete bzw. gespeicherte Positionstabelle (wie beim Hauptfenster: ein Profilwechsel
+-- bringt eine neue Tabelle mit)
+local appliedPos
+local positioned = false  -- schon einmal positioniert (Login)
+
+local function savePosition()
+  local point, _, relativePoint, x, y = panel:GetPoint()
+  ns.db.splitListPos = { point, relativePoint, x, y }
+  appliedPos = ns.db.splitListPos
+end
+
 panel:SetScript("OnDragStop", function(self)
   self:StopMovingOrSizing()
-  local point, _, relativePoint, x, y = self:GetPoint()
-  ns.db.splitListPos = { point, relativePoint, x, y }
+  savePosition()
 end)
 panel:SetScript("OnMouseUp", function(_, mouseButton)
   if mouseButton == "RightButton" then ns.ToggleOptions() end
@@ -174,14 +184,27 @@ function SplitList.GetScale(db)
 end
 
 local function restorePosition(db)
+  appliedPos, positioned = db.splitListPos, true
   local pos = db.splitListPos or DEFAULT_POSITION
   panel:SetScale(SplitList.GetScale(db))
   panel:ClearAllPoints()
   panel:SetPoint(pos[1], UIParent, pos[2], pos[3], pos[4])
 end
 
+-- Neue Position (Login, Profil, Zurücksetzen): dorthin. Nur andere Größe: um die linke obere Ecke
+-- skalieren, sonst würde die Liste mit den alten Abständen in neuer Skalierung springen.
+local function applyPosition(db)
+  local scale = SplitList.GetScale(db)
+  if not positioned or db.splitListPos ~= appliedPos then
+    restorePosition(db)
+  elseif math.abs(panel:GetScale() - scale) > 0.001 then
+    Widgets.SetScaleKeepingTopLeft(panel, scale)
+    savePosition()
+  end
+end
+
 ns.RegisterApply(function(db)
-  restorePosition(db)
+  applyPosition(db)
   TimerWindow.ApplyBackground(panel, db)
   panel:SetShown(db.showSplitList)
   if db.showSplitList then render() end

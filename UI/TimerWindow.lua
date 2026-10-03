@@ -308,16 +308,8 @@ local function restorePosition()
   window:SetPoint(pos[1], UIParent, pos[2], pos[3], pos[4])
 end
 
--- Skaliert das Fenster und hält dabei die linke obere Ecke auf dem Bildschirm fest.
--- Ankerabstände werden in der Skalierung des Fensters gemessen und müssen umgerechnet werden.
 local function setScaleKeepingTopLeft(scale)
-  local oldScale = window:GetScale()
-  local left, top = window:GetLeft(), window:GetTop()
-  window:SetScale(scale)
-  if left and top then
-    window:ClearAllPoints()
-    window:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", left * oldScale / scale, top * oldScale / scale)
-  end
+  Widgets.SetScaleKeepingTopLeft(window, scale)
 end
 
 function TimerWindow.ResetLayout()
