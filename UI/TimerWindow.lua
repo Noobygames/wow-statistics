@@ -23,7 +23,6 @@ local PADDING_Y = 8
 local LINE_GAP = 3
 local TAB_GAP = 10                    -- Abstand zwischen den Reitern
 local MIN_WIDTH = 160
-local GRIP_SIZE = 14
 local COLUMN_GAP = 16                 -- Mindestabstand zwischen Bezeichnung und Wert
 local TABLE_GAP = 4                   -- Abstand zwischen Zeitanzeige und Tabelle
 local WIDEST_TIME_SUFFIX = "d 00h 00m 00s" -- breiteste Zeit (nach den Tagesziffern), für die Fensterbreite
@@ -346,50 +345,10 @@ window:SetScript("OnMouseUp", function(_, mouseButton)
   if mouseButton == "RightButton" then ns.ToggleOptions() end
 end)
 
----------------------------------------------------------------------------
--- Ziehgriff: Abstand der Maus zum Start bestimmt die neue Skalierung
----------------------------------------------------------------------------
-local grip = CreateFrame("Button", nil, window)
-grip:SetSize(GRIP_SIZE, GRIP_SIZE)
-grip:SetPoint("BOTTOMRIGHT", -3, 3)
-grip:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
-grip:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
-grip:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
-
-local resizeStart  -- Zustand beim Drücken: Mausposition, Fenstergröße auf dem Bildschirm, Skalierung
-
-local function cursorPosition()
-  local x, y = GetCursorPosition()
-  local uiScale = UIParent:GetEffectiveScale()
-  return x / uiScale, y / uiScale
-end
-
--- Mittel aus horizontaler und vertikaler Vergrößerung, damit diagonales Ziehen natürlich wirkt
-local function onResizeUpdate()
-  local x, y = cursorPosition()
-  local widthFactor = (resizeStart.width + x - resizeStart.x) / resizeStart.width
-  local heightFactor = (resizeStart.height + resizeStart.y - y) / resizeStart.height
-  setScaleKeepingTopLeft(clampScale(resizeStart.scale * (widthFactor + heightFactor) / 2))
-end
-
-grip:SetScript("OnMouseDown", function(self)
-  local x, y = cursorPosition()
-  local scale = window:GetScale()
-  resizeStart = {
-    x = x,
-    y = y,
-    width = window:GetWidth() * scale,
-    height = window:GetHeight() * scale,
-    scale = scale,
-  }
-  self:SetScript("OnUpdate", onResizeUpdate)
-end)
-
-grip:SetScript("OnMouseUp", function(self)
-  self:SetScript("OnUpdate", nil)
-  resizeStart = nil
+-- Ziehgriff unten rechts ändert die Größe (Einstellung scale)
+local grip = Widgets.CreateResizeGrip(window, clampScale, function(scale)
   savePosition()
-  ns.Set("scale", window:GetScale())
+  ns.Set("scale", scale)
 end)
 
 ---------------------------------------------------------------------------
@@ -402,7 +361,7 @@ window:SetScript("OnUpdate", function(_, elapsed)
   sinceUpdate = 0
   refreshTexts()
   -- Ziehgriff nur zeigen, wenn die Maus über dem Fenster ist (oder gerade gezogen wird)
-  grip:SetAlpha((window:IsMouseOver() or resizeStart) and 1 or 0)
+  grip:UpdateAlpha()
 end)
 
 ns.OnLogin(restorePosition)

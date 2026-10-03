@@ -56,3 +56,20 @@ local anchor = LevelTimerSplits._points[1]
 expect("an der linken oberen Ecke skaliert", anchor[1] .. " " .. anchor[3], "TOPLEFT BOTTOMLEFT")
 expect("Abstand umgerechnet", anchor[4], 50)  -- linke Kante 100 bei Größe 1
 expectTrue("Position gespeichert", LevelTimerDB.splitListPos ~= nil)
+
+-- Ziehgriff an der Split-Liste: Loslassen speichert die eigene Größe
+local grips = {}
+wow.findFrame(function(frame)
+  if rawget(frame, "UpdateAlpha") then table.insert(grips, frame) end
+  return false
+end)
+expect("Ziehgriffe an Hauptfenster und Split-Liste", #grips, 2)
+addon.Set("scale", 1)
+local savedSplitScale
+for _, grip in ipairs(grips) do
+  LevelTimerSplits:SetScale(1.4)               -- wie nach dem Ziehen am Griff der Split-Liste
+  grip._scripts.OnMouseUp(grip)
+  if math.abs(LevelTimerDB.splitListScale - 1.4) < 0.001 then savedSplitScale = true end
+end
+expectTrue("Größe der Split-Liste gespeichert", savedSplitScale)
+expectNear("Hauptfenster unverändert", LevelTimerDB.scale, 1)
