@@ -32,6 +32,7 @@ SlashCmdList.LEVELTIMER("profile Stream")
 -- Jeder Charakter merkt sich sein Profil
 wow.logout()
 wow.login({ name = "Zweiter" })
+expect("neuer Charakter ohne Wahl: Standardprofil", Profiles.GetActive(), "Default")
 SlashCmdList.LEVELTIMER("profile Default")
 expect("zweiter Charakter: Standard", LevelTimerDB.scale, 1.2)
 wow.logout()

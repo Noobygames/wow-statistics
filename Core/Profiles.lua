@@ -149,10 +149,13 @@ function Profiles.Import(text)
   return name
 end
 
--- Login: Profil des Charakters laden (vor dem ersten ApplySettings, also vor allen Fenstern)
+-- Login: Profil des Charakters laden (vor dem ersten ApplySettings, also vor allen Fenstern).
+-- Ohne eigene Wahl (oder wenn sein Profil gelöscht ist) gilt das Standardprofil, sonst würden
+-- Änderungen eines neuen Charakters das zuletzt aktive Profil eines anderen überschreiben.
 ns.OnLogin(function()
   local all = profiles()
   local assigned = ns.db.characterProfiles[ns.characterKey]
+  if not (assigned and all[assigned]) then assigned = Profiles.DEFAULT end
   if assigned and assigned ~= ns.db.activeProfile and all[assigned] then
     storeActive()
     load(all[assigned])
