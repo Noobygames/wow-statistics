@@ -101,8 +101,15 @@ end
 local Serializer = ns.Serializer
 local KIND_RUN, KIND_RUNS = "run", "runs"
 
+-- Mit Streamer-Datenschutz ohne Realm und mit dem Anzeigenamen der Historie (andere Charaktere als
+-- "Charakter N"), wie überall sonst im Addon
 local function shareable(run)
-  return { name = run.name, realm = run.realm, class = run.class, reachedLevel = run.reachedLevel, times = run.times }
+  local name, realm = run.name, run.realm
+  if ns.db.streamerPrivacy then
+    realm = nil
+    if not run.imported then name = History.DisplayName(run.id) end
+  end
+  return { name = name, realm = realm, class = run.class, reachedLevel = run.reachedLevel, times = run.times }
 end
 
 function Runs.Export(run)

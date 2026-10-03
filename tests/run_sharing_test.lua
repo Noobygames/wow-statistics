@@ -48,3 +48,14 @@ editBox:SetText(text)
 expectTrue("Button Importieren", wow.click(L.IMPORT))
 expect("über Fenster importiert", #LevelTimerStatsDB.importedRuns, 1)
 expect("Fenster zu", LevelTimerExport:IsShown(), false)
+
+-- Streamer-Datenschutz: Export ohne Realm, andere Charaktere ohne echten Namen
+addon.Set("streamerPrivacy", true)
+LevelTimerStatsDB.characters["Geheim-Testrealm"] = {
+  schemaVersion = addon.Database.CHARACTER_SCHEMA_VERSION, name = "Geheim", realm = "Testrealm", class = "MAGE",
+  currentLevel = { level = 30, counters = {} }, levelHistory = { [10] = { level = 10, seconds = 100 } }, sessionHistory = {},
+}
+local private = Runs.Export(Runs.Get("Geheim-Testrealm"))
+expectTrue("kein echter Name", not private:find("Geheim", 1, true))
+expectTrue("kein Realm", not private:find("Testrealm", 1, true))
+addon.Set("streamerPrivacy", false)
