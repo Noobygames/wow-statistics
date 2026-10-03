@@ -39,3 +39,11 @@ wow.logout()
 wow.login({ level = 13 })
 expect("Offline-Level-Up setzt zurück", Stats.Get(Stats.LEVEL, Stats.PVE_KILLS), 0)
 expect("kein Eintrag für übersprungenes Level", addon.character.levelHistory[12], nil)
+
+-- Summe: XP von Einträgen ohne Dauer (/played fehlte) zählt nicht in die XP/h
+local summary = addon.History.Summarize({
+  { seconds = 3600, xp = 1000, counters = {} },
+  { xp = 5000, counters = {} },
+})
+expect("Gesamt-XP", summary.xp, 6000)
+expectNear("XP/h nur aus Einträgen mit Dauer", addon.Experience.RecordRate(summary), 1000)

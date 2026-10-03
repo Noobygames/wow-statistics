@@ -41,9 +41,10 @@ end
 
 -- XP/h eines gespeicherten Eintrags ({ xp, seconds, counters }: Level, Session, Instanz-Lauf, Summe),
 -- nach denselben Regeln wie die Live-Werte. Einträge ohne AFK-Zähler (Zonen) zählen die volle Zeit.
+-- Summen (History.Summarize) bringen ratedXp/ratedAfkSeconds mit: nur Einträge mit bekannter Dauer.
 function Experience.RecordRate(record)
-  local afkSeconds = record.counters and record.counters[Stats.AFK_SECONDS]
-  return Experience.CalculateRate(record.xp, Experience.RateSeconds(record.seconds, afkSeconds))
+  local afkSeconds = record.ratedAfkSeconds or (record.counters and record.counters[Stats.AFK_SECONDS])
+  return Experience.CalculateRate(record.ratedXp or record.xp, Experience.RateSeconds(record.seconds, afkSeconds))
 end
 
 function Experience.GetRatePerHour(scope)
