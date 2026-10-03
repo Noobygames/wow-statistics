@@ -24,8 +24,9 @@ local FILTER_WIDTH = 150
 local FILTER_HEIGHT = 18
 local EXPORT_BUTTON_WIDTH = 70
 local EXTRA_BUTTON_WIDTH = 90   -- weitere Buttons der Ansicht (definition.buttons)
-local SORT_DESCENDING = " v"
-local SORT_ASCENDING = " ^"
+-- Vor dem Text: bei schmalen Spalten wird das Ende abgeschnitten, die Richtung bleibt so sichtbar
+local SORT_DESCENDING = "v "
+local SORT_ASCENDING = "^ "
 
 ---------------------------------------------------------------------------
 -- Tabelle mit fester Zeilenzahl (Lazy Load)
@@ -233,7 +234,7 @@ function TableView.Create(definition)
         if sort and sort.index == i then
           marker = sort.descending and SORT_DESCENDING or SORT_ASCENDING
         end
-        headerRow.cells[i]:SetText(L[column.header] .. marker)
+        headerRow.cells[i]:SetText(marker .. L[column.header])
       end
     end
 

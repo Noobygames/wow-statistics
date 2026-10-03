@@ -139,7 +139,7 @@ local function addProfileSaver()
   nameBox:SetScript("OnEnterPressed", function() saveButton:Click() end)
   nameBox:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
   builder.Advance(Builder.ROW_BUTTON)
-  builder.OnRefresh(function() saveButton:SetText(L.PROFILE_SAVE) end)
+  builder.OnRefresh(function() Widgets.SetButtonText(saveButton, L.PROFILE_SAVE, PROFILE_SAVE_WIDTH) end)
 end
 
 local function percent(value)

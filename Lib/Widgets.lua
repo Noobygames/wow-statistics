@@ -179,6 +179,15 @@ function Widgets.CreateButton(parent, width, height, onClick)
   return button
 end
 
+local BUTTON_TEXT_PADDING = 24  -- Rand der Button-Vorlage links und rechts zusammen
+
+-- Text setzen und den Button mindestens so breit machen, dass er hineinpasst (übersetzte Texte sind
+-- unterschiedlich lang); minWidth bleibt die kleinste Breite
+function Widgets.SetButtonText(button, text, minWidth)
+  button:SetText(text)
+  button:SetWidth(math.max(minWidth, math.ceil(button:GetTextWidth()) + BUTTON_TEXT_PADDING))
+end
+
 -- Abschnitts-Überschrift: Text mit feiner Linie bis zum rechten Rand
 function Widgets.CreateSectionHeader(parent)
   local header = CreateFrame("Frame", nil, parent)

@@ -113,6 +113,7 @@ local frames = {}
 local frameMethods = {
   GetFont = function() return "Fonts\\FRIZQT__.TTF", 12, "" end,
   GetStringWidth = function(self) return #self._text * 6 end,
+  GetTextWidth = function(self) return #self._text * 6 end,
   GetWidth = function(self) return self._width end,
   SetWidth = function(self, width) self._width = width end,
   SetSize = function(self, width, height) self._width, self._height = width, height or self._height end,

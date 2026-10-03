@@ -85,3 +85,14 @@ for _, subtab in ipairs(subtabs) do
 end
 expectTrue("Unterreiter brechen in eine zweite Zeile um", wrapped)
 expectTrue("Fenster wächst mit den Zeilen", history:GetHeight() > SINGLE_ROW_HEIGHT)
+
+-- Buttons mit übersetztem Text werden so breit wie ihr Text (Historie: Daten löschen, Profil speichern)
+for _, language in ipairs({ "frFR", "esES", "deDE", "enUS" }) do
+  addon.Set("language", language)
+  SlashCmdList.LEVELTIMER("history")
+  local deleteButton = wow.findFrame(function(frame) return frame._text == addon.L.DELETE_CHARACTER end)
+  expectTrue(language .. ": Löschen-Button passt", deleteButton and deleteButton:GetWidth() >= deleteButton:GetTextWidth())
+  SlashCmdList.LEVELTIMER("config")
+  local saveButton = wow.findFrame(function(frame) return frame._text == addon.L.PROFILE_SAVE end)
+  expectTrue(language .. ": Speichern-Button passt", saveButton and saveButton:GetWidth() >= saveButton:GetTextWidth())
+end
