@@ -138,12 +138,13 @@ end
 -- Profil aus Text anlegen (nicht aktivieren). Rückgabe: Name des neuen Profils oder nil
 function Profiles.Import(text)
   local data = Serializer.Decode(KIND, text)
-  if type(data) ~= "table" or type(data.name) ~= "string" or type(data.settings) ~= "table" then return nil end
+  if type(data) ~= "table" or type(data.name) ~= "string" or data.name == ""
+    or type(data.settings) ~= "table" then return nil end
   local name = freeName(data.name)
-  local settings = {}
-  for key, value in pairs(data.settings) do
-    if type(key) == "string" and not META_KEYS[key] then settings[key] = value end
-  end
+  -- Nur bekannte Einstellungen mit passendem Typ: ein falscher Wert würde sonst bei jedem Login
+  -- das Anwenden der Einstellungen abbrechen
+  local settings = ns.Database.SanitizeSettings(data.settings)
+  for key in pairs(META_KEYS) do settings[key] = nil end
   profiles()[name] = settings
   return name
 end

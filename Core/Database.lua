@@ -233,6 +233,63 @@ local function applyDefaults(data, defaults)
   return data
 end
 
+-- Einstellungen ohne Default, mit Prüfung ihrer Form
+local function isPosition(value)
+  return type(value) == "table" and type(value[1]) == "string" and type(value[2]) == "string"
+    and type(value[3]) == "number" and type(value[4]) == "number"
+end
+
+local function isLevelTimes(value)
+  if type(value) ~= "table" then return false end
+  for level, seconds in pairs(value) do
+    if type(level) ~= "number" or type(seconds) ~= "number" then return false end
+  end
+  return true
+end
+
+local OPTIONAL_SETTINGS = {
+  pos = isPosition,           -- Hauptfenster (TimerWindow.lua)
+  splitListPos = isPosition,  -- Split-Liste (SplitList.lua)
+  splitReference = function(value)  -- fester Vergleichslauf (Splits.lua)
+    return type(value) == "table" and type(value.name) == "string" and isLevelTimes(value.times)
+  end,
+}
+
+local sanitizeSettings
+
+-- Ein Wert passt, wenn er den Typ des Defaults hat (verschachtelt geprüft) bzw. die Form einer
+-- optionalen Einstellung
+local function sanitizeValue(key, value)
+  local default = SETTINGS_DEFAULTS[key]
+  if default == nil then
+    if key == "streamBackup" then  -- frühere Werte der Stream-Einstellungen (StreamMode.lua)
+      return type(value) == "table" and sanitizeSettings(value) or nil
+    end
+    local check = OPTIONAL_SETTINGS[key]
+    return check and check(value) and value or nil
+  end
+  if type(value) ~= type(default) then return nil end
+  if type(default) == "table" and next(default) ~= nil then
+    local copy = {}
+    for innerKey, innerDefault in pairs(default) do
+      local inner = value[innerKey]
+      if type(inner) == type(innerDefault) then copy[innerKey] = inner end
+    end
+    return copy
+  end
+  return value
+end
+
+-- Nur bekannte Einstellungen mit passendem Typ, z.B. aus einem importierten Profil
+function sanitizeSettings(settings)
+  local clean = {}
+  for key, value in pairs(settings) do
+    if type(key) == "string" then clean[key] = sanitizeValue(key, value) end
+  end
+  return clean
+end
+Database.SanitizeSettings = sanitizeSettings
+
 -- Fehlende Einstellungen mit Defaults füllen (z.B. nach dem Laden eines Profils)
 function Database.ApplySettingDefaults(settings)
   return applyDefaults(settings, SETTINGS_DEFAULTS)

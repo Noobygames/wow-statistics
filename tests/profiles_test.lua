@@ -75,3 +75,21 @@ streamEntry._scripts.OnClick(streamEntry, "RightButton")
 expect("Rückfrage", wow.popup.data, "Stream 2")
 StaticPopupDialogs[wow.popup.name].OnAccept(nil, wow.popup.data)
 expect("per Rechtsklick gelöscht", LevelTimerDB.profiles["Stream 2"], nil)
+
+-- Import prüft Werte: falsche Typen und unbekannte Schlüssel fallen weg
+local bad = addon.Serializer.Encode("profile", { name = "Kaputt", settings = {
+  scale = "riesig", bgAlpha = 0.5, unknownKey = 1, minimap = { hide = "ja", angle = 90 },
+  pos = { "CENTER", "CENTER", "x", 0 }, splitListPos = { "TOPLEFT", "TOPLEFT", 10, -10 },
+} })
+local badName = Profiles.Import(bad)
+local badSettings = LevelTimerDB.profiles[badName]
+expect("falscher Typ entfernt", badSettings.scale, nil)
+expect("gültiger Wert bleibt", badSettings.bgAlpha, 0.5)
+expect("unbekannter Schlüssel entfernt", badSettings.unknownKey, nil)
+expect("verschachtelt geprüft", badSettings.minimap.hide, nil)
+expect("verschachtelt gültig", badSettings.minimap.angle, 90)
+expect("kaputte Position entfernt", badSettings.pos, nil)
+expect("gültige Position bleibt", badSettings.splitListPos[3], 10)
+Profiles.Switch(badName)
+expect("Profil lädt mit Defaults", LevelTimerDB.scale, 1)
+expect("leerer Name abgelehnt", Profiles.Import(addon.Serializer.Encode("profile", { name = "", settings = {} })), nil)
