@@ -47,3 +47,9 @@ addon.Set("declineDuels", true)
 wow.fire("DUEL_REQUESTED", "Raufbold")
 expect("Duell abgelehnt", wow.declined[#wow.declined], "CancelDuel")
 expectTrue("Dueldialog zu", hidden("DUEL_REQUESTED"))
+
+-- Duell bis zum Tod (Hardcore): gleicher Schalter
+addon.Set("declineDuels", true)
+wow.fire("DUEL_TO_THE_DEATH_REQUESTED", "Hardcore")
+expect("Todesduell abgelehnt", wow.declined[#wow.declined], "CancelDuel")
+expectTrue("Todesduell-Dialog zu", hidden("DUEL_TO_THE_DEATH_REQUESTED"))

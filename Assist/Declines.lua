@@ -26,6 +26,9 @@ Declines.KINDS = {
     hide = function() if GuildInviteFrame then GuildInviteFrame:Hide() end end },
   { setting = "declineDuels", event = "DUEL_REQUESTED", decline = function() CancelDuel() end,
     popup = "DUEL_REQUESTED", message = "DECLINED_DUEL" },
+  -- Duell bis zum Tod (Hardcore-Realms; Event fehlt in anderen Clients, dann bleibt es unregistriert)
+  { setting = "declineDuels", event = "DUEL_TO_THE_DEATH_REQUESTED", decline = function() CancelDuel() end,
+    popup = "DUEL_TO_THE_DEATH_REQUESTED", message = "DECLINED_DUEL" },
 }
 
 for _, kind in ipairs(Declines.KINDS) do
