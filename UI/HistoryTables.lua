@@ -112,7 +112,9 @@ local SESSION_COLUMNS = {
   { header = "HISTORY_START", width = 80, value = function(r) return dateTime(L.DATE_FORMAT, r.startedAt) end,
     sort = function(r) return r.startedAt end },
   durationColumn(56),
-  { header = "HISTORY_LEVEL", width = 44, value = levelRange },
+  -- Angezeigt "5-6", sortiert nach Start- und dann End-Level als Zahl
+  { header = "HISTORY_LEVEL", width = 44, value = levelRange,
+    sort = function(r) return r.startLevel and (r.startLevel + (r.endLevel or r.startLevel) / 1000) end },
   xpRateColumn(48),
   counterColumn("HISTORY_PVE", Stats.PVE_KILLS, 36),
   counterColumn("HISTORY_PVP", Stats.PVP_KILLS, 36),

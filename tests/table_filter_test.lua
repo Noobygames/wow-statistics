@@ -45,3 +45,23 @@ expect("leerer Filter zeigt alles", #killTable:GetVisibleRecords(), 3)
 
 -- Formatierter Text wird für Suche bereinigt
 expect("Item-Link ohne Markup", addon.Format.PlainText("|cff0070dd|Hitem:1::|h[Klinge]|h|r"), "[Klinge]")
+
+-- Sessions nach Level: numerisch, auch bei Spannen wie "9-10"
+local sessions = addon.character.sessionHistory
+for _, levels in ipairs({ { 10, 10 }, { 9, 10 }, { 2, 3 } }) do
+  table.insert(sessions, { startedAt = 1000, endedAt = 2000, seconds = 600, startLevel = levels[1],
+    endLevel = levels[2], xp = 0, counters = {} })
+end
+wow.click("Sessions")
+local sessionTable = wow.shownTable()
+local function sessionLevels()
+  local levels = {}
+  for _, record in ipairs(sessionTable:GetVisibleRecords()) do
+    if record.startLevel and not record.isCurrent then table.insert(levels, record.startLevel) end
+  end
+  return table.concat(levels, ",")
+end
+sessionTable:SortBy(3)
+expect("absteigend nach Start-Level", sessionLevels(), "10,9,2")
+sessionTable:SortBy(3)
+expect("aufsteigend nach Start-Level", sessionLevels(), "2,9,10")
