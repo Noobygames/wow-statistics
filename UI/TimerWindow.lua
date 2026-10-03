@@ -79,6 +79,7 @@ local rows = {}
 for _, stat in ipairs(ns.STAT_LINES) do
   for _, rowDefinition in ipairs(stat.rows) do
     table.insert(rows, {
+      stat = stat,
       setting = stat.setting,
       definition = rowDefinition,
       label = window:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall"),
@@ -174,7 +175,7 @@ local function updateVisibility(db)
   end
 
   for _, row in ipairs(rows) do
-    local visible = db[row.setting]
+    local visible = ns.IsStatShown(row.stat, db)
     if compact then
       visible = row.setting == COMPACT_ROW_SETTING
     end

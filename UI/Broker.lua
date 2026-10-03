@@ -31,7 +31,7 @@ local function showTooltip(tooltip)
   local scope = ns.db.windowScope
   tooltip:AddLine(ns.DISPLAY_NAME)
   for _, stat in ipairs(ns.STAT_LINES) do
-    if ns.db[stat.setting] then
+    if ns.IsStatShown(stat, ns.db) then
       for _, row in ipairs(stat.rows) do
         tooltip:AddDoubleLine(L[row.label], row.value(scope), 1, 0.82, 0, 1, 1, 1)
       end

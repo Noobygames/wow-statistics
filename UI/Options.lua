@@ -197,7 +197,7 @@ addPage("STATISTICS")
 addSection("STATISTICS")
 local statToggles = {}
 for i, line in ipairs(ns.STAT_LINES) do
-  statToggles[i] = toggle(line.label, line.setting)
+  statToggles[i] = toggle(line.label, line.setting, line.available)
 end
 addToggles(statToggles)
 addSection("SECTION_CALCULATION")
@@ -275,7 +275,7 @@ addToggles({
   toggle("ALERT_TOGGLE_RARE", "alertRareKill"),
   toggle("ALERT_TOGGLE_ELITE", "alertEliteKill"),
   toggle("ALERT_TOGGLE_LOOT", "alertEpicLoot"),
-  toggle("ALERT_TOGGLE_NEAR_DEATH", "alertNearDeath"),
+  toggle("ALERT_TOGGLE_NEAR_DEATH", "alertNearDeath", ns.NearDeath.IsAvailable),
 })
 finishPage()
 

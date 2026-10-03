@@ -11,6 +11,16 @@ local RECOVERED_HEALTH = 0.30
 
 local episode  -- { lowest, cause } solange das Leben kritisch ist
 
+local NearDeath = {}
+ns.NearDeath = NearDeath
+
+-- In Retail und WoW Forever liefert UnitHealth laut generierter Doku immer geheime Werte
+-- (SecretReturns = true, ohne Bedingung); Beinahe-Tode lassen sich dort nicht erkennen, Zeile,
+-- Schalter und Einblendung entfallen. Classic Era und TBC kennen das nicht.
+function NearDeath.IsAvailable()
+  return not (ns.Client.IsRetail() or ns.Client.IsForever())
+end
+
 -- Anteil des Lebens oder nil, wenn der Client den Wert verbirgt
 local function healthFraction()
   local health, maxHealth = UnitHealth("player"), UnitHealthMax("player")

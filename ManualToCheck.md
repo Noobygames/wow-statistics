@@ -39,7 +39,7 @@ Nach dem jeweiligen Fix prüfen; Nummern = Roadmap.
 - [ ] **100. Session-XP über Level-Up:** große Quest-Belohnung, die ein Level überspringt; Session-XP muss um die volle Belohnung steigen.
 - [ ] **101. /played-Unterdrückung:** nach Login darf keine „Gesamtspielzeit“-Zeile im Chat erscheinen (alle Chatfenster), eigenes `/played` muss weiter erscheinen; kein Taint (BugSack).
 - [ ] **102. Erholt-XP:** `/dump GetXPExhaustion()` vor und nach einem Kill mit Erholt-Bonus; Abnahme = Grund- plus Bonus-XP?
-- [ ] **103. Beinahe-Tod in Retail/Forever:** `/dump issecretvalue(UnitHealth("player"))` im und außerhalb des Kampfs.
+- [ ] **103. Beinahe-Tod in Retail/Forever:** `/dump issecretvalue(UnitHealth("player"))` im und außerhalb des Kampfs. Die Funktion ist dort jetzt ausgeblendet (Doku: immer geheim); ist der Wert außerhalb des Kampfs doch lesbar, `NearDeath.IsAvailable` lockern.
 - [ ] **107. Gildenreparatur:** ohne vorher die Gildenbank zu öffnen beim Händler reparieren lassen (TBC, Retail, Forever); zahlt die Gilde?
 - [ ] **108. Wiederholbare Quests:** mit Auto-Annehmen/-Abgeben eine wiederholbare Abgabe-Quest (z.B. Runenstoff) besuchen: darf nicht automatisch laufen.
 - [ ] **118. Levelcap der Erweiterung (Retail):** Charakter am Cap des Accounts: XP/h, Prognose, XP-Balken aus? `/dump UnitXPMax("player")` dort.

@@ -2,6 +2,8 @@
 -- TimerWindow zeigt die Zeilen (rows) als Tabelle an, Options baut aus setting/label die Schalter.
 -- Eintrag: setting = Schalter in ns.db (Default in Database.lua), label = Locale-Key des Schalters,
 -- rows = feste Liste von Zeilen mit label (Locale-Key) und value(scope) -> Text für den Bereich.
+-- available (optional) = Funktion; false, wenn der Client den Wert nicht liefern kann (Zeile und
+-- Schalter entfallen dann).
 local _, ns = ...
 local Format = ns.Format
 local Stats = ns.Stats
@@ -178,7 +180,7 @@ ns.STAT_LINES = {
   { setting = "showDeaths", label = "STAT_DEATHS", rows = { { label = "ROW_DEATHS", value = deaths } } },
   { setting = "showKillsPerDeath", label = "STAT_KILLS_PER_DEATH",
     rows = { { label = "ROW_KILLS_PER_DEATH", value = killsPerDeath } } },
-  { setting = "showNearDeaths", label = "STAT_NEAR_DEATHS",
+  { setting = "showNearDeaths", label = "STAT_NEAR_DEATHS", available = ns.NearDeath.IsAvailable,
     rows = { { label = "ROW_NEAR_DEATHS", value = counter(Stats.NEAR_DEATHS) } } },
   { setting = "showDeathless", label = "STAT_DEATHLESS",
     rows = { { label = "ROW_DEATHLESS", value = timeWithoutDeath } } },
@@ -212,3 +214,8 @@ ns.STAT_LINES = {
     { label = "ROW_JUNK_INCOME", value = money(Stats.MONEY_JUNK) },
   } },
 }
+
+-- Zeile eingeschaltet und im Client verfügbar
+function ns.IsStatShown(stat, db)
+  return db[stat.setting] and (not stat.available or stat.available()) or false
+end
