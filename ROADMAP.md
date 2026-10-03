@@ -66,7 +66,7 @@ Aus dem Deep Review aller Funktionen (10 Prüfer je Bereich plus API-Abgleich ge
 - [x] 141. **Summenzeile in schmaler Spalte** (S): „Gesamt: N“ steht in Spalte 1, in den Speedrun-Tabellen nur 18–46 px breit und unlesbar. Über mehrere Spalten setzen. `UI/HistoryTables.lua:252`
 - [x] 142. **Feste Breiten in der Historie** (M): Feste Button- und Spaltenbreiten im Historienfenster schneiden fr/es/de-Texte ab bzw. lassen sie überlaufen. Breiten aus Textbreite berechnen. `UI/HistoryWindow.lua:24`
 - [x] 143. **Nur 6 Profile in der Liste** (M): Die Profilliste in den Einstellungen zeigt höchstens 6 Profile; weitere lassen sich dort nicht wählen oder löschen. Scrollbar oder Auswahlmenü. `UI/Options.lua:89`
-- [ ] 144. **Munitionshinweis in Forever** (S): Hinweis nimmt an, jeder Jäger außerhalb Retail braucht Munition; Forever hat `C_PaperDollInfo.AmmoNeeded`/`UnitUsesAmmo`. Diese nutzen, wo vorhanden. `Assist/GearWarnings.lua:39` — betrifft: WoW Forever
+- [x] 144. **Munitionshinweis in Forever** (S): Hinweis nimmt an, jeder Jäger außerhalb Retail braucht Munition; Forever hat `C_PaperDollInfo.AmmoNeeded`/`UnitUsesAmmo`. Diese nutzen, wo vorhanden. `Assist/GearWarnings.lua:39` — betrifft: WoW Forever
 
 ## v2.8: Dungeons
 
