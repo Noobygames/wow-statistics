@@ -55,9 +55,8 @@ addon.Set("showXpBar", false)
 local withoutBar = window:GetHeight()
 expectTrue("Balken vergrößert das Fenster", withBar > withoutBar)
 addon.Set("showXpBar", true)
-wow.state.level, addon.level = 60, 60
-addon.ApplySettings()
-expect("auf Max-Level kein Balken", window:GetHeight(), withoutBar)
+wow.levelUp(60)
+expect("Max-Level erreicht: Balken weg ohne neues Anwenden", window:GetHeight(), withoutBar)
 
 -- Kompaktmodus: ohne Reiter und ohne weitere Zeilen deutlich kleiner
 wow.state.level, addon.level = 30, 30

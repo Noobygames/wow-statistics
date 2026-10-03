@@ -393,6 +393,17 @@ end)
 
 ns.OnLogin(restorePosition)
 
+-- Ob gelevelt wird (XP-Balken, Zeilen), ändert sich auch ohne Einstellung: Max-Level erreicht oder
+-- XP beim Erfahrungsverwalter ab-/angeschaltet
+local function relayout()
+  if not ns.db then return end
+  updateLayout(ns.db)
+  refreshTexts()
+end
+ns.OnLevelStarted(relayout)
+ns.RegisterEvent("ENABLE_XP_GAIN", relayout)
+ns.RegisterEvent("DISABLE_XP_GAIN", relayout)
+
 ns.RegisterApply(function(db)
   updateLayout(db)
   refreshTexts()
