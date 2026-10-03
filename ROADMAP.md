@@ -7,6 +7,7 @@ Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt 
 - [x] 145. **Chat kopieren** (S): `/lt copy` öffnet die Zeilen des aktuellen Chatfensters im Kopierfenster (ohne Farben, Links und Texturen; geheime Zeilen gezählt). Optional (Reiter Komfort, aus) ein Button „C“ oben rechts an jedem Chatfenster.
 - [x] 146. **Ziehgriff an der Split-Liste** (S): Größe der Split-Liste wie beim Hauptfenster mit dem Griff unten rechts ändern (`Widgets.CreateResizeGrip`, gemeinsam für beide Fenster).
 - [x] 147. **Einfügen im Import-Fenster** (S): Klick irgendwo in den Textbereich fokussiert das Eingabefeld; ein leeres mehrzeiliges Feld ist nur eine Zeile hoch, Strg+V ging sonst ins Leere (im Spiel gemeldet).
+- [x] 148. **Buff-Hinweis im Bosskampf** (S): In Retail und WoW Forever bricht `C_UnitAuras.GetAuraDataByIndex` bei gesperrten Auren (Kampf, Bosskampf, Mythisch+, PvP) mit Fehler ab; der Food-/Camp-Hinweis fragt nur noch, wenn `C_Secrets.ShouldAurasBeSecret()` false ist, und fängt den Fehler sonst ab (im Spiel gemeldet).
 
 ## v2.8.1: Stabilität
 

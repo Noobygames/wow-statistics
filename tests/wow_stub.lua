@@ -363,8 +363,13 @@ end
 function UnitIsAFK() return state.afk end
 function IsResting() return state.resting end
 C_Spell = { GetSpellName = function(spellID) return state.spellNames[spellID] end }
+-- Beschränkte Auren (Retail/Forever, z.B. Bosskampf): wie im Client bricht die Abfrage mit Fehler ab
+C_Secrets = { ShouldAurasBeSecret = function() return state.aurasSecret == true end }
 C_UnitAuras = {
   GetAuraDataByIndex = function(_, index)
+    if state.aurasSecret then
+      error("GetAuraDataByIndex(): Auras cannot be accessed when secret while tainted by 'LevelTimer'")
+    end
     local buff = state.buffs[index]
     if type(buff) == "string" then return { name = buff } end
     return buff
