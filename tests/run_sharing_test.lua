@@ -59,3 +59,9 @@ local private = Runs.Export(Runs.Get("Geheim-Testrealm"))
 expectTrue("kein echter Name", not private:find("Geheim", 1, true))
 expectTrue("kein Realm", not private:find("Testrealm", 1, true))
 addon.Set("streamerPrivacy", false)
+
+-- Escape-Sequenzen in importierten Namen werden entfernt
+local escaped = addon.Serializer.Encode("run", { name = "|cffff0000Böse|r|Hitem:1|h", times = { [10] = 1 } })
+Runs.Import(escaped)
+local last = LevelTimerStatsDB.importedRuns[#LevelTimerStatsDB.importedRuns]
+expect("ohne Escape-Sequenzen", last.name, "cffff0000BöserHitem:1h")

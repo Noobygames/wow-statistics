@@ -125,6 +125,11 @@ function Runs.ExportAll()
   return Serializer.Encode(KIND_RUNS, list)
 end
 
+-- Text von außen ohne "|": sonst würden Escape-Sequenzen (|c Farbe, |H Link, |T Textur) angezeigt
+local function plain(text)
+  return type(text) == "string" and (text:gsub("|", "")) or nil
+end
+
 -- Nur Läufe mit Namen und Level-Zeiten aus Zahlen übernehmen (der Text kommt von außen)
 local function sanitize(run)
   if type(run) ~= "table" or type(run.name) ~= "string" or type(run.times) ~= "table" then return nil end
@@ -134,9 +139,9 @@ local function sanitize(run)
     times[level] = seconds
   end
   return {
-    name = run.name,
-    realm = type(run.realm) == "string" and run.realm or nil,
-    class = type(run.class) == "string" and run.class or nil,
+    name = plain(run.name),
+    realm = plain(run.realm),
+    class = plain(run.class),
     reachedLevel = type(run.reachedLevel) == "number" and run.reachedLevel or nil,
     times = times,
   }
