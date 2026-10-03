@@ -13,7 +13,6 @@ ns.Analysis = Analysis
 
 local MAX_LEVEL_BARS = 30  -- neueste Level; mehr Balken werden zu schmal
 local TOP_COUNT = 10
-local SECONDS_PER_DAY = 86400
 
 -- Level aufsteigend, höchstens die neuesten MAX_LEVEL_BARS
 local function levelRecordsAscending(characterKey)
@@ -65,7 +64,7 @@ local DAYS_PER_WEEK = 7
 local function sumDays(dailyStats, field, firstDay, dayCount)
   local sum = 0
   for offset = 0, dayCount - 1 do
-    local entry = dailyStats[ns.Daily.DayKey(firstDay + offset * SECONDS_PER_DAY)]
+    local entry = dailyStats[ns.Daily.DayKey(ns.Daily.AddDays(firstDay, offset))]
     sum = sum + (entry and entry[field] or 0)
   end
   return sum
@@ -77,7 +76,7 @@ local function perDay(characterKey, field, dayCount, formatValue)
   local today = ns.Daily.StartOfDay(time())
   local items = {}
   for index = 1, dayCount do
-    local day = today - (dayCount - index) * SECONDS_PER_DAY
+    local day = ns.Daily.AddDays(today, index - dayCount)
     local value = sumDays(dailyStats, field, day, 1)
     table.insert(items, {
       label = date(L.DAY_FORMAT, day),
@@ -102,10 +101,10 @@ function Analysis.PlayTimePerWeek(characterKey)
   local dailyStats = ns.Daily.GetStats(characterKey)
   local today = ns.Daily.StartOfDay(time())
   local daysSinceMonday = (date("*t", today).wday + 5) % DAYS_PER_WEEK  -- wday: 1 = Sonntag
-  local thisWeek = today - daysSinceMonday * SECONDS_PER_DAY
+  local thisWeek = ns.Daily.AddDays(today, -daysSinceMonday)
   local items = {}
   for index = 1, PLAYTIME_WEEKS do
-    local week = thisWeek - (PLAYTIME_WEEKS - index) * DAYS_PER_WEEK * SECONDS_PER_DAY
+    local week = ns.Daily.AddDays(thisWeek, (index - PLAYTIME_WEEKS) * DAYS_PER_WEEK)
     local seconds = sumDays(dailyStats, "seconds", week, DAYS_PER_WEEK)
     table.insert(items, {
       label = date(L.DAY_FORMAT, week),

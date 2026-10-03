@@ -48,3 +48,15 @@ local endOfDay = nextMidnight - os.time({ year = 2026, month = 10, day = 25, hou
 expect("Rest des 25. Oktober", stats["2026-10-25"].seconds - before25, endOfDay)
 expect("Rest am 26. Oktober", stats["2026-10-26"].seconds, 2 * 3600 - endOfDay)
 expect("AddDays über den Kalender", addon.Daily.AddDays(nextMidnight - 3600, 1), nextMidnight)
+
+-- Graphen über die Frühjahrs-Umstellung (23-Stunden-Tag): jeder Tag genau einmal, Wochen ab Montag
+wow.state.clock = os.time({ year = 2026, month = 4, day = 2, hour = 12 })  -- Donnerstag nach dem 29. März
+local days = Analysis.PlayTimePerDay(addon.characterKey)
+local seen = {}
+for _, item in ipairs(days) do
+  expectTrue("Tag nur einmal: " .. item.label, not seen[item.label])
+  seen[item.label] = true
+end
+expect("29.03. dabei", seen["29.03."], true)
+local weeks = Analysis.PlayTimePerWeek(addon.characterKey)
+expect("Woche vor der Umstellung beginnt Montag", weeks[7].label, "23.03.")
