@@ -55,7 +55,7 @@ Aus dem Deep Review aller Funktionen (10 Prüfer je Bereich plus API-Abgleich ge
 - [x] 130. **Import verweigert alten Lauf nach Neustart** (S): Ein exportierter alter Versuch desselben Charakters wird beim Import als vorhanden abgelehnt, obwohl die Daten zurückgesetzt wurden. `Speedrun/Runs.lua:148`
 - [x] 131. **Export ignoriert Streamer-Datenschutz** (S): Lauf-Export und Sicherung zeigen echten Namen und Realm trotz `streamerPrivacy`. `Speedrun/Runs.lua:103`
 - [x] 132. **Escape-Sequenzen in importierten Namen** (S): Importierte Laufnamen mit `|H`, `|T`, `|c` werden ungefiltert angezeigt. Beim Import `|` entfernen bzw. verdoppeln. `Speedrun/Runs.lua:121`
-- [ ] 133. **Gesprächsoption doppelt gewählt** (S): `skipGossip` wählt die einzige Option, obwohl Blizzards GossipFrame sie per `selectOptionWhenOnlyOption` schon gewählt hat. `Assist/QuestAutomation.lua:126`
+- [x] 133. **Gesprächsoption doppelt gewählt** (S): `skipGossip` wählt die einzige Option, obwohl Blizzards GossipFrame sie per `selectOptionWhenOnlyOption` schon gewählt hat. `Assist/QuestAutomation.lua:126`
 - [ ] 134. **Gruppeneinladung mit Rollenwahl bleibt offen** (S): `declineGroupInvites` schließt in Retail/Forever das Rollen-Popup (`LFGInvitePopup`) bzw. die Quest-Session-Bestätigung nicht. `Assist/Declines.lua:212` — betrifft: Retail, WoW Forever
 - [ ] 135. **Duell bis zum Tod nicht abgelehnt** (S): `declineDuels` kennt `DUEL_TO_THE_DEATH_REQUESTED` (Hardcore, TBC Anniversary) nicht. `Assist/Declines.lua:217` — betrifft: Classic Era
 - [ ] 136. **Reparatur meldet zu wenig Gold** (S): Automatische Reparatur läuft vor dem Schrottverkauf und meldet „nicht genug Gold“, obwohl der Erlös gereicht hätte. Erst verkaufen, dann reparieren. `Assist/Merchant.lua:81`

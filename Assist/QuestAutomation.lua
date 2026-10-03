@@ -130,6 +130,8 @@ local function onlyOption()
   if C_GossipInfo.ForceGossip() then return nil end
   local options = C_GossipInfo.GetOptions()
   if #options ~= 1 or options[1].status ~= OPTION_AVAILABLE then return nil end
+  -- Solche Optionen wählt Blizzards GossipFrame schon selbst (HandleShow), sonst doppelt gewählt
+  if options[1].selectOptionWhenOnlyOption then return nil end
   return options[1]
 end
 

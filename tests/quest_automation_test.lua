@@ -181,6 +181,12 @@ wow.fire("GOSSIP_SHOW")
 expect("einzige Option gewählt", lastAction(), "selectOption 0")
 
 reset()
+gossip.options[1].selectOptionWhenOnlyOption = true  -- wählt Blizzards GossipFrame schon selbst
+wow.fire("GOSSIP_SHOW")
+expect("von Blizzard gewählt: nicht doppelt", lastAction(), nil)
+gossip.options[1].selectOptionWhenOnlyOption = false
+
+reset()
 gossip.options[1].status = 2  -- gesperrt
 wow.fire("GOSSIP_SHOW")
 expect("gesperrte Option nicht", lastAction(), nil)
