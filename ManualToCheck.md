@@ -31,7 +31,7 @@ Vorher: Client neu starten (neue Dateien in der `.toc`), `/console scriptErrors 
 - [ ] **Zähler stimmt mit dem Server:** abgewiesen, obwohl das Addon Platz zeigt = zählt zu wenig; reingekommen, obwohl das Addon 5/5 zeigt = zählt zu viel.
 - [ ] **Hinweis bei 4/5 und 5/5:** Einblendung und Chatzeile mit Wartezeit (Schalter im Reiter Hinweise).
 
-## Stabilität (v2.9, aus dem Deep Review)
+## Stabilität (v2.8.1, aus dem Deep Review)
 
 Nach dem jeweiligen Fix prüfen; Nummern = Roadmap.
 

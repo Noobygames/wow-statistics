@@ -2,7 +2,7 @@
 
 Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt und unter „Erledigt“ mit Version vermerkt. Nummern laufen über alle Versionen weiter.
 
-## v2.9: Stabilität
+## v2.8.1: Stabilität
 
 Aus dem Deep Review aller Funktionen (10 Prüfer je Bereich plus API-Abgleich gegen Blizzards UI-Quellen für Retail 12.1, Classic Era 1.15.9, TBC Anniversary 2.5.6 und WoW Forever 1.60.1; jeder Fund von zwei Gegenprüfern bestätigt). Sortiert nach Schwere.
 
@@ -204,6 +204,7 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 
 ## Erledigt
 
+- v2.8.1: 95.–144. Stabilität aus dem Deep Review (Endlosschleife bei Zeitumstellung, Lua-Fehler durch geheime Werte, Beute in Retail, Session- und Erholt-XP, /played im Chat, alte Twinks, wiederholbare Quests, Gildenreparatur, Instanz-Kopien, Profile, Speedrun, Darstellung)
 - v2.8.0: 78. Gedrosselter Ticker, 79. Taschen-Helfer, 80. Item-Helfer, 81. Hinweis-Helfer, 82. TableView, 83. OptionsBuilder, 84. Unterordner, 90. XP/h überall gleich, 91. Dungeon-Läufe, 92. Instanzlimit, 93. Instanz-Kopien erkennen, 94. Prognose mit XP-Tabelle; Anzeigename „Level Time“
 - v2.6.0: 55. Automatisch reparieren, 56. Schrott verkaufen, 57. Quests annehmen, 58. Quests abgeben, 59. Gespräche überspringen, 60. Zeitaufteilung, 61. XP/h ohne AFK, 62. Aktuelle XP/h, 63. Kills/Quests bis Level-Up, 64. Erholt-Anzeige, 65. Ausgaben, 66. Taschen fast voll, 67. Haltbarkeit niedrig, 68. Lehrer besuchen, 69. Munition knapp, 70. Stream-Modus ohne Größe/Transparenz, 71. Keine Elite-Einblendung in Instanzen, 72. Keine Beute-Einblendung in Raids, 73.–76. Handel, Gruppen-, Gilden- und Duellanfragen ablehnen, 77. Level-Up-Ansage ohne /sagen
 - v2.5.2: Fix der Zeile /played in der Split-Liste, 52. Erinnerungs-Abstand einstellbar, 53. Speedrun-Reiter, 54. Tooltips in den Einstellungen
