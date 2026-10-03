@@ -179,6 +179,57 @@ function Widgets.CreateButton(parent, width, height, onClick)
   return button
 end
 
+---------------------------------------------------------------------------
+-- Ziehgriff unten rechts: der Abstand der Maus zum Start bestimmt die neue Skalierung des Frames
+-- (linke obere Ecke bleibt stehen). clamp(scale) begrenzt, onDone(scale) speichert beim Loslassen.
+-- Sichtbar nur bei Mauskontakt mit dem Frame oder während des Ziehens (grip:UpdateAlpha im OnUpdate).
+---------------------------------------------------------------------------
+local GRIP_SIZE = 14
+
+local function cursorPosition()
+  local x, y = GetCursorPosition()
+  local uiScale = UIParent:GetEffectiveScale()
+  return x / uiScale, y / uiScale
+end
+
+function Widgets.CreateResizeGrip(frame, clamp, onDone)
+  local grip = CreateFrame("Button", nil, frame)
+  grip:SetSize(GRIP_SIZE, GRIP_SIZE)
+  grip:SetPoint("BOTTOMRIGHT", -3, 3)
+  grip:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
+  grip:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight")
+  grip:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down")
+
+  local start  -- beim Drücken: Mausposition, Größe auf dem Bildschirm, Skalierung
+
+  -- Mittel aus horizontaler und vertikaler Vergrößerung, damit diagonales Ziehen natürlich wirkt
+  local function onUpdate()
+    local x, y = cursorPosition()
+    local widthFactor = (start.width + x - start.x) / start.width
+    local heightFactor = (start.height + start.y - y) / start.height
+    Widgets.SetScaleKeepingTopLeft(frame, clamp(start.scale * (widthFactor + heightFactor) / 2))
+  end
+
+  grip:SetScript("OnMouseDown", function(self)
+    local x, y = cursorPosition()
+    local scale = frame:GetScale()
+    start = { x = x, y = y, width = frame:GetWidth() * scale, height = frame:GetHeight() * scale, scale = scale }
+    self:SetScript("OnUpdate", onUpdate)
+  end)
+
+  grip:SetScript("OnMouseUp", function(self)
+    self:SetScript("OnUpdate", nil)
+    start = nil
+    onDone(frame:GetScale())
+  end)
+
+  function grip:UpdateAlpha()
+    self:SetAlpha((frame:IsMouseOver() or start) and 1 or 0)
+  end
+
+  return grip
+end
+
 local BUTTON_TEXT_PADDING = 24  -- Rand der Button-Vorlage links und rechts zusammen
 
 -- Text setzen und den Button mindestens so breit machen, dass er hineinpasst (übersetzte Texte sind

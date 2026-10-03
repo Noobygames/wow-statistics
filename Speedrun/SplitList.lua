@@ -169,12 +169,21 @@ panel:SetScript("OnMouseUp", function(_, mouseButton)
   if mouseButton == "RightButton" then ns.ToggleOptions() end
 end)
 
+-- Ziehgriff unten rechts ändert die eigene Größe (splitListScale), wie beim Hauptfenster
+local grip = Widgets.CreateResizeGrip(panel, function(scale)
+  return math.max(TimerWindow.MIN_SCALE, math.min(TimerWindow.MAX_SCALE, scale))
+end, function(scale)
+  savePosition()
+  ns.Set("splitListScale", scale)
+end)
+
 local sinceUpdate = 0
 panel:SetScript("OnUpdate", function(_, elapsed)
   sinceUpdate = sinceUpdate + elapsed
   if sinceUpdate < UPDATE_INTERVAL then return end
   sinceUpdate = 0
   render()
+  grip:UpdateAlpha()  -- nur bei Mauskontakt sichtbar
 end)
 
 -- Abstände gelten in der Skalierung der Anzeige, daher vor dem Positionieren skalieren
@@ -205,6 +214,7 @@ end
 
 ns.RegisterApply(function(db)
   applyPosition(db)
+  grip:SetShown(not db.locked)
   TimerWindow.ApplyBackground(panel, db)
   panel:SetShown(db.showSplitList)
   if db.showSplitList then render() end

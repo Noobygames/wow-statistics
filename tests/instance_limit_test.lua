@@ -44,7 +44,7 @@ expect("kurz draußen: gleiche Instanz", InstanceLimit.GetHourCount(), 1)
 
 -- Reset-Meldung: nächstes Betreten ist eine neue Instanz
 enter(nil)
-wow.fire("CHAT_MSG_SYSTEM", "Die Todesminen wurde zurückgesetzt.")
+wow.fire("CHAT_MSG_SYSTEM", "'Die Todesminen' wurde zurückgesetzt.")
 enter("Die Todesminen")
 expect("nach Reset neu", InstanceLimit.GetHourCount(), 2)
 

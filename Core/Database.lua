@@ -63,6 +63,7 @@ local SETTINGS_DEFAULTS = {
   declineGroupInvites = false,
   declineGuildInvites = false,
   declineDuels = false,
+  chatCopyButton = false,   -- Button zum Kopieren an jedem Chatfenster (ChatCopy.lua)
   levelUpSummary = true,
   levelUpAnnounce = "off",  -- Level-Up-Zusammenfassung an "party" oder "guild" (siehe LevelUpSummary.lua)  -- Chatzeile beim Level-Up (siehe LevelUpSummary.lua)
   showPveKills = true,

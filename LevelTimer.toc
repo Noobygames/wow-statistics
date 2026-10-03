@@ -73,6 +73,7 @@ Assist\Comfort.lua
 Assist\Merchant.lua
 Assist\QuestAutomation.lua
 Assist\Declines.lua
+Assist\ChatCopy.lua
 UI\TimerWindow.lua
 Speedrun\SplitList.lua
 Lib\Charts.lua

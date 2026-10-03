@@ -73,6 +73,11 @@ editBox:SetWidth(WIDTH - 2 * MARGIN)
 editBox:SetScript("OnEscapePressed", function() panel:Hide() end)
 scrollFrame:SetScrollChild(editBox)
 
+-- Ein leeres mehrzeiliges Eingabefeld ist nur eine Zeile hoch: ein Klick in den freien Bereich darunter
+-- würde es nicht treffen, und Strg+V ginge ins Leere. Daher fokussiert jeder Klick in den Textbereich.
+scrollFrame:EnableMouse(true)
+scrollFrame:SetScript("OnMouseDown", function() editBox:SetFocus() end)
+
 scrollFrame:EnableMouseWheel(true)
 scrollFrame:SetScript("OnMouseWheel", function(self, delta)
   local offset = self:GetVerticalScroll() - delta * WHEEL_STEP

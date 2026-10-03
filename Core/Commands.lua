@@ -19,6 +19,8 @@ local commands = {
   bar = function() ns.Set("horizontalLayout", not ns.db.horizontalLayout) end,
   newsession = function() ns.StartNewSession() end,
   recap = function() ns.ToggleRecap() end,
+  -- /lt copy: Zeilen des aktuellen Chatfensters zum Kopieren (ChatCopy.lua)
+  copy = function() ns.ChatCopy.ShowCurrent() end,
   stream = function() ns.StreamMode.Toggle() end,
   splits = function() ns.Set("showSplitList", not ns.db.showSplitList) end,
   -- /lt profile: Liste | <Name> wechseln | save <Name> | delete <Name> | export | import

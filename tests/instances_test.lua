@@ -91,7 +91,7 @@ expectNear("Dauer ohne Händlergang", current.seconds, 1200)
 -- Reset beendet den Lauf endgültig
 ---------------------------------------------------------------------------
 enter(nil)
-wow.fire("CHAT_MSG_SYSTEM", "Die Todesminen wurde zurückgesetzt.")
+wow.fire("CHAT_MSG_SYSTEM", "'Die Todesminen' wurde zurückgesetzt.")
 expect("Reset: Lauf beendet", run(), nil)
 local finished = log()[1]
 expect("Name", finished.name, "Die Todesminen")
@@ -106,7 +106,7 @@ expect("zoneUID gespeichert", finished.zoneUID, 111)
 enter("Die Todesminen")
 seeCopy(222)
 enter(nil)
-wow.fire("CHAT_MSG_SYSTEM", "Die Todesminen kann nicht zurückgesetzt werden. Es befinden sich noch Spieler in der Instanz.")
+wow.fire("CHAT_MSG_SYSTEM", "'Die Todesminen' kann nicht zurückgesetzt werden. Es halten sich noch Spieler in der Instanz auf.")
 expect("gescheiterter Reset beendet auch", #log(), 2)
 
 ---------------------------------------------------------------------------
@@ -157,7 +157,7 @@ expectTrue("Reiter Instanzen", wow.click("Instanzen"))
 enter(nil)
 enter("Burg Schattenfang")
 local runsBefore = #log()
-wow.fire("CHAT_MSG_SYSTEM", "Burg Schattenfang wurde zurückgesetzt.")
+wow.fire("CHAT_MSG_SYSTEM", "'Burg Schattenfang' wurde zurückgesetzt.")
 expect("Lauf läuft weiter", run() ~= nil and run().name, "Burg Schattenfang")
 seeCopy(555)
 expect("Bestätigung ohne Fehler", run().zoneUID, 555)

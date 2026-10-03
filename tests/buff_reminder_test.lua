@@ -106,3 +106,10 @@ expect("nach 2 min wieder", reminders(), count + 2)
 wow.advance(120)
 BuffReminder.Check()
 expect("und wieder", reminders(), count + 3)
+
+-- Bosskampf in Retail/Forever: Auren gesperrt, keine Abfrage und kein Fehler
+wow.state.aurasSecret = true
+expect("gesperrt: unbekannt", addon.BuffReminder.IsFoodMissing(), nil)
+wow.update(60)
+expect("keine Fehler", #wow.errors, 0)
+wow.state.aurasSecret = false
