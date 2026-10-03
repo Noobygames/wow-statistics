@@ -90,3 +90,11 @@ expectNear("Graph ohne AFK", items[#items].value, 1000, 1)
 addon.Set("xpRateWithoutAfk", false)
 expectTrue("Vergleich mit AFK langsamer", compareRate() < withoutAfk)
 expectNear("Vergleich mit AFK wie Summenzeile", compareRate(), summaryRate(), 0.01)
+
+-- Geheimer AFK-Wert (Chat-Sperre in Retail/Forever) zählt nicht als AFK und wird nicht getestet
+local afkBefore = TimeBreakdown.GetSeconds(Stats.LEVEL, Stats.AFK_SECONDS)
+wow.state.afk = wow.SECRET
+for _ = 1, 30 do TimeBreakdown.Update(1) end
+wow.state.afk = false
+TimeBreakdown.Update(1)
+expect("geheimer AFK-Wert zählt nicht", TimeBreakdown.GetSeconds(Stats.LEVEL, Stats.AFK_SECONDS), afkBefore)

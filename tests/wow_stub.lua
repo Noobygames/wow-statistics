@@ -300,6 +300,9 @@ function GetMaxPlayerLevel() return state.maxLevel end
 function GetXPExhaustion() return state.rested > 0 and state.rested or nil end
 function GetMoney() return state.money end
 function GetTime() return state.now end
+-- Geheime Werte (Retail/Forever): Tests setzen wow.SECRET als Rückgabe einer API
+wow.SECRET = setmetatable({}, { __tostring = function() return "<secret>" end })
+function issecretvalue(value) return value == wow.SECRET end
 -- Fehler-Handler des Clients: merkt sich Fehler, statt sie anzuzeigen
 wow.errors = {}
 function geterrorhandler() return function(message) table.insert(wow.errors, message) end end
