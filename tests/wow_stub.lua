@@ -36,7 +36,7 @@ wow = {
     cursorY = 0,
     guid = "Player-1-0001",
     zone = "Wald von Elwynn",
-    combatLog = {},          -- Rückgabewerte von CombatLogGetCurrentEventInfo
+    combatLog = {},          -- Rückgabewerte von C_CombatLog.GetCurrentEventInfo
     questTitle = nil,        -- Titel im offenen Quest-Abgabe-Dialog (GetTitleText)
     questTitles = {},        -- C_QuestLog.GetTitleForQuestID je Quest-ID
     instance = nil,          -- { name, type } wenn in einer Instanz (IsInInstance)
@@ -214,7 +214,7 @@ function wow.findFrame(predicate)
   end
 end
 
--- Kampflog-Event in der Feldreihenfolge von CombatLogGetCurrentEventInfo senden
+-- Kampflog-Event in der Feldreihenfolge von C_CombatLog.GetCurrentEventInfo senden
 -- (Zeit, Event, hideCaster, Quelle GUID/Name/Flags/RaidFlags, Ziel GUID/Name/Flags/RaidFlags, Zusatzfelder)
 function wow.combatLog(subevent, sourceName, destGUID, ...)
   wow.state.combatLog = { wow.state.now, subevent, false, "Creature-1", sourceName, 0, 0, destGUID, "Ziel", 0, 0, ... }
@@ -322,7 +322,9 @@ function UnitGUID(unit)
   return state.guid
 end
 function GetZoneText() return state.zone end
-function CombatLogGetCurrentEventInfo() return unpack(state.combatLog) end
+-- Nur die C_CombatLog-Variante: das globale CombatLogGetCurrentEventInfo ist im Client ein
+-- Kompatibilitäts-Alias, der ohne CVar loadDeprecationFallbacks fehlt
+C_CombatLog = { GetCurrentEventInfo = function() return unpack(state.combatLog) end }
 function time(dateTable)
   if dateTable then return os.time(dateTable) end
   return state.clock

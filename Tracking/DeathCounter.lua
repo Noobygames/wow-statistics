@@ -58,9 +58,13 @@ end
 
 -- Feldreihenfolge von CombatLogGetCurrentEventInfo: 2 = Event, 5 = Verursacher, 8 = Ziel-GUID,
 -- ab 12 je nach Event (Zauber: 12 = ID, 13 = Name; Umgebung: 12 = Art)
+-- C_CombatLog.GetCurrentEventInfo in allen Clients; das globale CombatLogGetCurrentEventInfo gibt es nur
+-- als Kompatibilitäts-Alias (Blizzard_DeprecatedCombatLog, nur mit CVar loadDeprecationFallbacks)
+local getCombatLogEventInfo = (C_CombatLog and C_CombatLog.GetCurrentEventInfo) or CombatLogGetCurrentEventInfo
+
 local function onCombatLogEvent()
   local ok, _, subevent, _, _, sourceName, _, _, destGUID, _, _, _, extra1, extra2 =
-    pcall(CombatLogGetCurrentEventInfo)
+    pcall(getCombatLogEventInfo)
   if not ok or not playerGUID or readable(destGUID) ~= playerGUID then return end
 
   if subevent == "ENVIRONMENTAL_DAMAGE" then
@@ -75,7 +79,7 @@ local function onCombatLogEvent()
   lastHit.at = GetTime()
 end
 
-if CombatLogGetCurrentEventInfo then
+if getCombatLogEventInfo then
   ns.RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED", onCombatLogEvent)
 end
 
