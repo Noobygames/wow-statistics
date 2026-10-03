@@ -249,9 +249,19 @@ local function summaryCells(columns, records)
   return cells
 end
 
--- Summenzeile für Kills und Tode: nur die Anzahl
-local function countCells(_, records)
-  return { string.format(L.HISTORY_COUNT, #records) }
+-- Summenzeile für Kills und Tode: nur die Anzahl, in der ersten Spalte, die breit genug ist
+-- (in den Speedrun-Tabellen ist die erste Spalte nur ein Favoriten-Stern)
+local COUNT_MIN_WIDTH = 80
+
+local function countCells(columns, records)
+  local cells = {}
+  local target = 1
+  for index, column in ipairs(columns) do
+    if column.width >= COUNT_MIN_WIDTH then target = index break end
+  end
+  for index = 1, target - 1 do cells[index] = "" end
+  cells[target] = string.format(L.HISTORY_COUNT, #records)
+  return cells
 end
 
 HistoryTables.ClassColor = classColor
