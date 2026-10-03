@@ -18,6 +18,7 @@ ns.Merchant = Merchant
 
 local POOR_QUALITY = 0               -- Enum.ItemQuality.Poor (grau)
 local GUILD_REPAIR_CHECK_DELAY = 1   -- Sekunden, bis der Server die Gildenreparatur verbucht hat
+local JUNK_SETTLE_DELAY = 1          -- Sekunden, bis der Server den Schrotterlös gutgeschrieben hat
 
 local function wantsGuildRepair()
   return ns.db.autoRepairGuild and ns.Client.HasGuildBank() and CanGuildBankRepair()
@@ -64,6 +65,16 @@ local function sellPrice(info)
   return (ns.Items.GetSellPrice(info.itemID) or 0) * info.stackCount
 end
 
+-- Erwarteter Erlös des Schrotts in den Taschen (0, wenn nicht verkauft wird)
+local function junkValue()
+  if not Comfort.IsActive("autoSellJunk") then return 0 end
+  local total = 0
+  ns.Bags.ForEachItem(function(_, _, info)
+    if isJunk(info) then total = total + sellPrice(info) end
+  end)
+  return total
+end
+
 -- Alle grauen Gegenstände mit Verkaufswert verkaufen; Anzahl und erwarteter Erlös im Chat
 function Merchant.SellJunk()
   if not Comfort.IsActive("autoSellJunk") then return end
@@ -82,9 +93,21 @@ function Merchant.SellJunk()
   end
 end
 
--- Erst reparieren, dann verkaufen: so kommt die Abbuchung vor den Erlösen (MoneyCounter ordnet
--- Ausgaben der Reparatur zu)
+-- Reicht das Gold erst mit dem Schrotterlös, zuerst verkaufen und nach der Gutschrift reparieren.
+-- Sonst erst reparieren, dann verkaufen: so kommt die Abbuchung getrennt von den Erlösen
+-- (MoneyCounter ordnet Abbuchungen der Reparatur zu).
+local function needsJunkMoney()
+  if not Comfort.IsActive("autoRepair") or not CanMerchantRepair() then return false end
+  local cost = GetRepairAllCost()
+  return cost > GetMoney() and cost <= GetMoney() + junkValue()
+end
+
 ns.RegisterEvent("MERCHANT_SHOW", function()
+  if needsJunkMoney() then
+    Merchant.SellJunk()
+    C_Timer.After(JUNK_SETTLE_DELAY, Merchant.Repair)
+    return
+  end
   Merchant.Repair()
   Merchant.SellJunk()
 end)

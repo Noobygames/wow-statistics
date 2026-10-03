@@ -41,3 +41,16 @@ local printed = #wow.printed
 wow.fire("MERCHANT_SHOW")
 wow.runTimers()
 expect("ohne Schrott still", #wow.printed, printed)
+
+-- Reparatur nur mit dem Schrotterlös bezahlbar: erst verkaufen, dann reparieren
+fill()
+wow.state.money = 20
+wow.state.merchant.canRepair = true
+wow.state.merchant.repairCost = 60     -- 20 eigenes Gold + 55 Schrott
+addon.Set("autoRepair", true)
+wow.fire("MERCHANT_SHOW")
+wow.runTimers()                          -- Erlös gutgeschrieben, Reparatur angestoßen
+wow.runTimers()                          -- Abbuchung der Reparatur
+expect("repariert mit Schrotterlös", wow.repairs[#wow.repairs].cost, 60)
+expect("Gold danach", wow.state.money, 20 + 55 - 60)
+wow.state.merchant.canRepair = false
