@@ -24,8 +24,10 @@ function Goal.Get()
 end
 
 -- false, wenn das Level nicht über dem aktuellen oder über dem Max-Level liegt
+-- Nur ganze Level über dem aktuellen bis zum Max-Level
 function Goal.Set(level)
-  if not level or level <= ns.level or level > maxLevel() then return false end
+  if type(level) ~= "number" or level ~= math.floor(level) then return false end
+  if level <= ns.level or level > maxLevel() then return false end
   ns.character.goal = { level = level, startProgress = levelProgress() }
   return true
 end

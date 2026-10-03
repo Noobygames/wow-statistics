@@ -47,3 +47,6 @@ SlashCmdList.LEVELTIMER("newsession")
 expect("übersteht neue Session", Goal.Get().level, 12)
 SlashCmdList.LEVELTIMER("goal")
 expect("entfernt", Goal.Get(), nil)
+
+-- Kommazahlen sind kein Level
+expect("Kommazahl abgelehnt", addon.Goal.Set(addon.level + 1.5), false)
