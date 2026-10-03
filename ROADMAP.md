@@ -13,7 +13,7 @@ Aus dem Deep Review aller Funktionen (10 Prüfer je Bereich plus API-Abgleich ge
 ### Schwere: hoch
 
 - [x] 96. **AFK-Prüfung mit geheimem Wert** (S): `TimeBreakdown`: `UnitIsAFK` ist in Retail/Forever während der Chat-Sperre geheim; `isTrue` testet den Wert vor `IsSecret` und wirft jede Sekunde einen Lua-Fehler. Erst `IsSecret`, dann `== true`. `Tracking/TimeBreakdown.lua:25` — betrifft: Retail, WoW Forever
-- [ ] 97. **Beute ohne Punkt am Formatende** (S): `ChatPatterns.Compile`: endet ein Format mit `%s` (Retail, vermutlich Forever: „Ihr erhaltet Beute: %s“), fängt `(.-)` einen leeren Text; Einzel-Beute wird nie erfasst (Journal, Epic-Einblendung). Letzten Platzhalter als `(.+)` bzw. Link explizit fangen. `Lib/ChatPatterns.lua:16` — betrifft: Retail, vermutlich WoW Forever
+- [x] 97. **Beute ohne Punkt am Formatende** (S): `ChatPatterns.Compile`: endet ein Format mit `%s` (Retail, vermutlich Forever: „Ihr erhaltet Beute: %s“), fängt `(.-)` einen leeren Text; Einzel-Beute wird nie erfasst (Journal, Epic-Einblendung). Letzten Platzhalter als `(.+)` bzw. Link explizit fangen. `Lib/ChatPatterns.lua:16` — betrifft: Retail, vermutlich WoW Forever
 
 ### Schwere: mittel
 

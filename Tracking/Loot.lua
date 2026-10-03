@@ -17,7 +17,7 @@ local lootFormats = ChatPatterns.CompileGlobals({
   "LOOT_ITEM_SELF",
   "LOOT_ITEM_PUSHED_SELF_MULTIPLE",
   "LOOT_ITEM_PUSHED_SELF",
-})
+}, ChatPatterns.LINK)
 
 -- Qualität aus der Farbe des Links, falls der Client das Item noch nicht kennt
 local QUALITY_BY_COLOR = {

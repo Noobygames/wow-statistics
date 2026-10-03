@@ -43,3 +43,16 @@ expect("keine Quelle", loot[3].source, nil)
 
 SlashCmdList.LEVELTIMER("history")
 expectTrue("Reiter Beute", wow.click("Beute"))
+
+-- Retail-Formate ohne Punkt am Ende und Punkte im Gegenstandsnamen
+local DOTTED = link("0070dd", "Gürtel d. Wächters")
+local formatsBefore = LOOT_ITEM_SELF
+LOOT_ITEM_SELF = "Ihr erhaltet Beute: %s"
+local retailFormat = addon.ChatPatterns.Compile(LOOT_ITEM_SELF, addon.ChatPatterns.LINK)
+expect("Link ohne Punkt am Ende", addon.ChatPatterns.Match("Ihr erhaltet Beute: " .. RARE, retailFormat)[1], RARE)
+expect("Rest der Zeile ohne Link-Option", addon.ChatPatterns.Match("Ihr erhaltet Beute: " .. RARE,
+  addon.ChatPatterns.Compile(LOOT_ITEM_SELF))[1], RARE)
+LOOT_ITEM_SELF = formatsBefore
+local count = #addon.character.lootLog
+wow.fire("CHAT_MSG_LOOT", "Ihr erhaltet Beute: " .. DOTTED .. ".")
+expect("Punkt im Namen", addon.character.lootLog[count + 1].name, "Gürtel d. Wächters")
