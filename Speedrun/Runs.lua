@@ -86,6 +86,7 @@ end
 
 -- Summe der Zeiten von Level from bis to; nil, wenn eines davon fehlt
 function Runs.SumOfLevels(times, from, to)
+  if from > to then return nil end  -- leere Spanne (z.B. noch kein eigenes Level abgeschlossen)
   local sum = 0
   for level = from, to do
     if not times[level] then return nil end

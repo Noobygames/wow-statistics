@@ -70,3 +70,6 @@ expect("hält der eingeloggte", records[1].run.name, "Neu")
 expect("Rekord Level 10", records[2].seconds, 2500)
 expect("hält Rekord", records[2].run.name, "Rekord")
 expect("eigene Zeit", records[2].ownSeconds, 3000)
+
+-- Noch kein eigenes Level abgeschlossen: keine Zeit bis zum aktuellen Level statt "0s"
+expect("leere Spanne", addon.Runs.SumOfLevels({ [10] = 100 }, 12, 11), nil)
