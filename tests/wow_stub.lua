@@ -463,7 +463,10 @@ C_GossipInfo = {
   SelectOptionByIndex = function(index) questAction("selectOption", index) end,
 }
 function GetNumAvailableQuests() return #state.greeting.available end
-function GetAvailableQuestInfo(index) return state.greeting.available[index].isTrivial end
+function GetAvailableQuestInfo(index)
+  local quest = state.greeting.available[index]
+  return quest.isTrivial, quest.frequency, quest.isRepeatable
+end
 function SelectAvailableQuest(index) questAction("greetingAvailable", index) end
 function GetNumActiveQuests() return #state.greeting.active end
 function GetActiveTitle(index)

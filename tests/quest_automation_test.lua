@@ -154,6 +154,19 @@ greeting.active = { { title = "Offen", isComplete = false }, { title = "Fertig",
 wow.fire("QUEST_GREETING")
 expect("Liste: fertige abgeben", lastAction(), "greetingActive 2")
 
+-- Wiederholbare Abgaben (z.B. Runenstoff) bleiben manuell, sonst wären alle Gegenstände weg
+reset()
+greeting.active = {}
+gossip.active = { { questID = 40, isComplete = true, repeatable = true } }
+gossip.available = { { questID = 41, isTrivial = false, isIgnored = false, repeatable = true } }
+wow.fire("GOSSIP_SHOW")
+expect("Gespräch: wiederholbare nicht", lastAction(), nil)
+gossip.active, gossip.available = {}, {}
+greeting.available = { { title = "Runenstoff", isTrivial = false, isRepeatable = true } }
+wow.fire("QUEST_GREETING")
+expect("Liste: wiederholbare nicht", lastAction(), nil)
+greeting.available = {}
+
 ---------------------------------------------------------------------------
 -- Gespräch überspringen (skipGossip): nur ohne Quests und mit genau einer verfügbaren Option
 ---------------------------------------------------------------------------
