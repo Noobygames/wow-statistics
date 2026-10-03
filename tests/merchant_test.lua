@@ -6,7 +6,8 @@ local function openMerchant(cost)
   merchant.canRepair = true
   merchant.repairCost = cost
   wow.fire("MERCHANT_SHOW")
-  wow.runTimers()
+  wow.runTimers()  -- Gildenreparatur prüfen
+  wow.runTimers()  -- Geldbuchung des Servers
 end
 
 wow.login({ money = 10000 })
@@ -41,29 +42,22 @@ openMerchant(300)
 expect("zu wenig Geld", #wow.repairs, 1)
 expectTrue("Hinweis zu wenig Geld", wow.printed[#wow.printed]:find(string.format(L.REPAIR_NO_MONEY, "300c"), 1, true) ~= nil)
 
--- Gildenbank: nur wenn eingeschaltet und das Limit die ganze Reparatur deckt
+-- Gildenbank: erst versuchen (Kontostand der Bank ist vorher nicht bekannt), Rest selbst bezahlen
 wow.state.money = 10000
 addon.Set("autoRepairGuild", true)
 merchant.guildRepair = true
-merchant.guildWithdraw = 200
-merchant.guildMoney = 5000
+merchant.guildFunds = 200
 openMerchant(300)
-expect("Limit reicht nicht: selbst bezahlt", wow.repairs[#wow.repairs].guild, false)
+expect("Gilde zahlt nicht: selbst bezahlt", wow.repairs[#wow.repairs].guild, false)
+expect("selbst bezahlt: Geld", wow.state.money, 9700)
+expectTrue("keine Gildenmeldung", not wow.printed[#wow.printed]:find(string.format(L.REPAIRED_GUILD, "300c"), 1, true))
 
-merchant.guildWithdraw = 1000
+merchant.guildFunds = 1000
 openMerchant(300)
 expect("aus der Gildenbank", wow.repairs[#wow.repairs].guild, true)
-expect("Gildenbank belastet", merchant.guildMoney, 4700)
+expect("Gildenbank belastet", merchant.guildFunds, 700)
+expect("eigenes Geld unberührt", wow.state.money, 9700)
 expectTrue("Gildenbank im Chat", wow.printed[#wow.printed]:find(string.format(L.REPAIRED_GUILD, "300c"), 1, true) ~= nil)
-
--- Gildenmeister: unbegrenztes Limit (-1), aber höchstens der Bankstand
-merchant.guildWithdraw = -1
-merchant.guildMoney = 100
-openMerchant(300)
-expect("Bank zu leer: selbst bezahlt", wow.repairs[#wow.repairs].guild, false)
-merchant.guildMoney = 1000
-openMerchant(300)
-expect("Gildenmeister: Gildenbank", wow.repairs[#wow.repairs].guild, true)
 
 -- Classic Era hat keine Gildenbank
 wow.state.interface = 11509

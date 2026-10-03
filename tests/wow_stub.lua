@@ -54,7 +54,7 @@ wow = {
     health = 1000,
     healthMax = 1000,
     -- Händler: Reparatur (CanMerchantRepair, GetRepairAllCost) und Gildenbank
-    merchant = { canRepair = false, repairCost = 0, guildRepair = false, guildWithdraw = 0, guildMoney = 0 },
+    merchant = { canRepair = false, repairCost = 0, guildRepair = false, guildFunds = 0 },
     -- Taschen: bags[bag][slot] = { itemID, quality, stackCount, hasNoValue, isLocked } (C_Container)
     bags = { [0] = {} },
     bagSlots = 16,
@@ -404,19 +404,23 @@ end
 wow.repairs = {}
 function CanMerchantRepair() return state.merchant.canRepair end
 function GetRepairAllCost() return state.merchant.repairCost, state.merchant.repairCost > 0 end
+-- Gildenreparatur gelingt nur, wenn das, was die Gilde dem Charakter zahlt (merchant.guildFunds:
+-- Abhebelimit bzw. Bankstand), die Kosten deckt; sonst bleibt alles kaputt wie im Client
 function RepairAllItems(useGuildBank)
   local merchant = state.merchant
-  table.insert(wow.repairs, { cost = merchant.repairCost, guild = useGuildBank and true or false })
+  local cost = merchant.repairCost
   if useGuildBank then
-    merchant.guildMoney = merchant.guildMoney - merchant.repairCost
+    if merchant.guildFunds < cost then return end
+    merchant.guildFunds = merchant.guildFunds - cost
   else
-    serverMoneyUpdate(-merchant.repairCost)
+    serverMoneyUpdate(-cost)
   end
+  table.insert(wow.repairs, { cost = cost, guild = useGuildBank and true or false })
   merchant.repairCost = 0
 end
 function CanGuildBankRepair() return state.merchant.guildRepair end
-function GetGuildBankWithdrawMoney() return state.merchant.guildWithdraw end
-function GetGuildBankMoney() return state.merchant.guildMoney end
+-- Nur bekannt, wenn die Gildenbank in dieser Sitzung offen war; das Addon verlässt sich nicht darauf
+function GetGuildBankMoney() return 0 end
 
 -- Taschen; UseContainerItem verkauft (Händler offen angenommen): Gegenstand weg, Geld dazu (PLAYER_MONEY)
 C_Container = {
