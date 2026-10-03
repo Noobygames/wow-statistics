@@ -152,6 +152,8 @@ local frameMethods = {
     if event == UNKNOWN_EVENT then error("Attempt to register unknown event") end
     self._events[event] = true
   end,
+  UnregisterEvent = function(self, event) self._events[event] = nil end,
+  IsEventRegistered = function(self, event) return self._events[event] == true end,
 }
 
 local function noop() end
@@ -281,7 +283,15 @@ LOOT_ITEM_PUSHED_SELF = "Ihr erhaltet einen Gegenstand: %s."
 -- Timer laufen nicht von selbst; Tests starten sie mit wow.runTimers()
 wow.timers = {}
 C_Timer = { After = function(_, callback) table.insert(wow.timers, callback) end }
-ChatFrame_DisplayTimePlayed = noop
+-- Chatfenster wie im Client: schreiben /played in ihrem TIME_PLAYED_MSG-Handler (wow.playedLines)
+NUM_CHAT_WINDOWS = 2
+wow.playedLines = 0
+for index = 1, NUM_CHAT_WINDOWS do
+  local chatFrame = newFrame()
+  chatFrame._events.TIME_PLAYED_MSG = true
+  chatFrame._scripts.OnEvent = function() wow.playedLines = wow.playedLines + 1 end
+  _G["ChatFrame" .. index] = chatFrame
+end
 date = os.date
 
 function print(...)
