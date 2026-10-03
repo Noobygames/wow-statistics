@@ -274,6 +274,12 @@ function Database.Load()
   migrate(LevelTimerDB, settingsMigrations, SETTINGS_SCHEMA_VERSION)
   applyDefaults(LevelTimerDB, SETTINGS_DEFAULTS)
   LevelTimerStatsDB = applyDefaults(LevelTimerStatsDB or {}, { characters = {} })
+  -- Auch andere Charaktere auf den aktuellen Stand bringen: die Historie zeigt sie, und Daten aus
+  -- älteren Versionen haben sonst Lücken (z.B. fehlende Journale)
+  for _, data in pairs(LevelTimerStatsDB.characters) do
+    migrate(data, characterMigrations, Database.CHARACTER_SCHEMA_VERSION)
+    applyDefaults(data, CHARACTER_DEFAULTS)
+  end
   local characterKey, character = loadCharacter(LevelTimerStatsDB)
   return LevelTimerDB, characterKey, character
 end
