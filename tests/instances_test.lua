@@ -162,3 +162,15 @@ expect("Lauf läuft weiter", run() ~= nil and run().name, "Burg Schattenfang")
 seeCopy(555)
 expect("Bestätigung ohne Fehler", run().zoneUID, 555)
 expect("kein Lauf beendet", #log(), runsBefore)
+
+-- Geschätzt neu, vor der Bestätigung /reload: die Schätzung bleibt, die alte Kopie wird noch erkannt
+enter(nil)
+wow.advance(31 * 60)
+local logBefore = #log()
+enter("Burg Schattenfang")               -- geschätzt neu: Lauf beendet
+expect("geschätzt neu", #log(), logBefore + 1)
+wow.logout()
+wow.login()
+enter("Burg Schattenfang")
+seeCopy(555)                              -- doch die alte Kopie
+expect("nach Reload zusammengeführt", #log(), logBefore)

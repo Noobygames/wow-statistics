@@ -11,7 +11,7 @@
 -- es bei der Schätzung.
 -- Reset: INSTANCE_RESET_SUCCESS oder INSTANCE_RESET_FAILED im Systemchat. Beide bekommt nur der
 -- Gruppenleiter; FAILED ("noch Spieler drin") setzt die Instanz für alle draußen trotzdem zurück.
--- Je Charakter gemerkt: character.instanceVisits[Name] = { zoneUID, leftAt }.
+-- Je Charakter gemerkt: character.instanceVisits[Name] = { zoneUID, leftAt, pending }.
 --
 -- Abonnenten (Instances.lua, InstanceLimit.lua):
 --   OnEnter(fn(name, instanceType, isNew))                     isNew = Schätzung
@@ -70,20 +70,33 @@ local function isNewCopy(visit, now)
   return not visit or (visit.leftAt ~= nil and now - visit.leftAt > REUSE_SECONDS)
 end
 
+local function stay(name, instanceType, enteredAt, guessNew, expectedZoneUID)
+  return { name = name, instanceType = instanceType, enteredAt = enteredAt, guessNew = guessNew,
+    expectedZoneUID = expectedZoneUID, sightings = 0 }
+end
+
+-- Bis zur Bestätigung merkt sich der Besuch die Schätzung (pending = { guessNew, expected, enteredAt }),
+-- damit /reload oder kurzes Rausgehen sie nicht verlieren: sonst fehlte später der Vergleichswert.
 local function enter(name, instanceType)
   local now = time()
   local visit = visits()[name]
+  local pending = visit and visit.pending
   local guessNew = isNewCopy(visit, now)
-  inside = {
-    name = name,
-    instanceType = instanceType,
-    enteredAt = now,
-    guessNew = guessNew,
-    expectedZoneUID = visit and visit.zoneUID,
-    sightings = 0,
-  }
+  if pending and not guessNew then
+    -- Dieselbe, noch unbestätigte Kopie wie beim letzten Aufenthalt: deren Schätzung gilt weiter
+    inside = stay(name, instanceType, pending.enteredAt, pending.guessNew, pending.expected)
+    visit.leftAt = nil
+    ns.Debug("instances", "back in unconfirmed %s", name)
+    notify("enter", name, instanceType, false)
+    return
+  end
+  local expected = visit and (visit.zoneUID or (pending and pending.expected))
+  inside = stay(name, instanceType, now, guessNew, expected)
   -- Bis zur Bestätigung gilt die gemerkte zoneUID nur, wenn es dieselbe Kopie sein dürfte
-  visits()[name] = { zoneUID = not guessNew and visit and visit.zoneUID or nil }
+  visits()[name] = {
+    zoneUID = not guessNew and visit and visit.zoneUID or nil,
+    pending = { guessNew = guessNew, expected = expected, enteredAt = now },
+  }
   ns.Debug("instances", "enter %s, new copy guessed: %s", name, guessNew)
   notify("enter", name, instanceType, guessNew)
 end
@@ -100,6 +113,7 @@ local function confirm(zoneUID)
   inside.confirmed = true
   visits()[inside.name] = visits()[inside.name] or {}
   visits()[inside.name].zoneUID = zoneUID
+  visits()[inside.name].pending = nil
   local expected = inside.expectedZoneUID
   if expected then
     local isNew = zoneUID ~= expected
