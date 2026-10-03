@@ -65,6 +65,13 @@ function Profiles.DisplayName(name)
   return name == Profiles.DEFAULT and L.PROFILE_DEFAULT or name
 end
 
+-- Eingegebener Name -> gespeicherter Name: der angezeigte Name des Standardprofils ("Standard",
+-- "Par défaut", ...) meint das Standardprofil, ohne Groß-/Kleinschreibung
+local function storedName(name)
+  if name and name:lower() == L.PROFILE_DEFAULT:lower() then return Profiles.DEFAULT end
+  return name
+end
+
 -- Namen aller Profile, Standard zuerst, sonst alphabetisch
 function Profiles.GetNames()
   storeActive()
@@ -84,6 +91,7 @@ end
 
 -- Zu einem anderen Profil wechseln; false, wenn es das Profil nicht gibt
 function Profiles.Switch(name)
+  name = storedName(name)
   local all = profiles()
   if not all[name] then return false end
   if name ~= ns.db.activeProfile then
@@ -99,7 +107,7 @@ end
 
 -- Aktuelle Einstellungen als (neues oder vorhandenes) Profil speichern und dieses aktivieren
 function Profiles.SaveAs(name)
-  name = name and strtrim(name) or ""
+  name = storedName(name and strtrim(name) or "")
   if name == "" then return false end
   storeActive()
   profiles()[name] = snapshot()
@@ -110,6 +118,7 @@ end
 
 -- Löschen; das Standard- und das aktive Profil bleiben. Charaktere damit nutzen wieder Standard.
 function Profiles.Delete(name)
+  name = storedName(name)
   if name == Profiles.DEFAULT or name == Profiles.GetActive() or not profiles()[name] then return false end
   profiles()[name] = nil
   for characterKey, assigned in pairs(ns.db.characterProfiles) do
