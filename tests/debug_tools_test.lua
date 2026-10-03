@@ -44,6 +44,8 @@ expect("Einblendung Level-Up", LevelTimerAlert.text:GetText(), string.format(L.A
 
 SlashCmdList.LEVELTIMER("debug alert rare")
 expect("Einblendung Rare, obwohl aus", LevelTimerAlert.text:GetText(), string.format(L.ALERT_RARE_KILL, "Hogger"))
+SlashCmdList.LEVELTIMER("debug alert levelUp")
+expect("Einblendung Level-Up per Befehl", LevelTimerAlert.text:GetText(), string.format(L.ALERT_LEVEL_UP, addon.level + 1))
 before = #wow.printed
 SlashCmdList.LEVELTIMER("debug alert quatsch")
 expectTrue("unbekannte Art: Liste", printedSince(before, "kinds: elite, levelUp, loot, nearDeath, rare"))

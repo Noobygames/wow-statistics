@@ -35,7 +35,7 @@ Aus dem Deep Review aller Funktionen (10 Prüfer je Bereich plus API-Abgleich ge
 - [x] 110. **Profil-Import ohne Wertprüfung** (S): `Profiles.Import` prüft nur Schlüssel; ein Wert falschen Typs bricht `ApplySettings` bei jedem Login. Werte gegen Typ der Defaults prüfen. `Core/Profiles.lua:139`
 - [x] 111. **Charakter ohne Profil überschreibt fremdes Profil** (S): Ohne zugewiesenes Profil übernimmt ein Charakter das zuletzt aktive, seine Änderungen landen in diesem Profil. Standardprofil zuweisen. `Core/Profiles.lua:152`
 - [x] 112. **Migration läuft nach Downgrade erneut** (S): `migrate` setzt `schemaVersion` nach einem Downgrade herunter; nicht idempotente Migrationen (Tageswerte) laufen beim Upgrade doppelt. Version nie senken. `Core/Database.lua:220`
-- [ ] 113. **/lt debug alert für levelUp und nearDeath** (S): Argument wird kleingeschrieben, die Schlüssel `levelUp`/`nearDeath` sind gemischt geschrieben und nie auslösbar. `Core/DebugTools.lua:101`
+- [x] 113. **/lt debug alert für levelUp und nearDeath** (S): Argument wird kleingeschrieben, die Schlüssel `levelUp`/`nearDeath` sind gemischt geschrieben und nie auslösbar. `Core/DebugTools.lua:101`
 - [ ] 114. **Standardprofil-Name in deDE/frFR/esES** (S): Der in der Liste angezeigte (übersetzte) Name des Standardprofils funktioniert nicht mit `/lt profile`. `Core/Commands.lua:41`
 - [ ] 115. **Serializer: Stack Overflow bei tiefer Verschachtelung** (S): `Serializer.Decode` wirft bei sehr tief verschachteltem Text statt `nil` zu liefern. Tiefe begrenzen. `Lib/Serializer.lua:54`
 - [ ] 116. **Veralteter PB-Vergleich nach Löschen** (S): Löschen des eingeloggten Charakters lässt den zwischengespeicherten `pb`-Vergleich bis zum nächsten Level-Up stehen; Cache leeren. `Core/LevelTimer.lua:144`

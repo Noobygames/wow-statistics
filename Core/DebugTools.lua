@@ -51,8 +51,11 @@ function actions.levelup()
 end
 
 -- /lt debug alert <art>: Beispiel-Einblendung, auch wenn die Art ausgeschaltet ist
+-- Arten ohne Groß-/Kleinschreibung (die Eingabe kommt kleingeschrieben an, die Schlüssel sind z.B. levelUp)
 function actions.alert(kind)
-  if ns.Alerts.ShowSample(kind) then return end
+  for name in pairs(ns.Alerts.KINDS) do
+    if name:lower() == kind and ns.Alerts.ShowSample(name) then return end
+  end
   local kinds = {}
   for name in pairs(ns.Alerts.KINDS) do table.insert(kinds, name) end
   table.sort(kinds)
