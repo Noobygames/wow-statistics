@@ -155,6 +155,20 @@ local function isKnown(run)
   return false
 end
 
+-- Alter Versuch eines neu erstellten Charakters gleichen Namens: bleibt als importierter Lauf zum
+-- Vergleichen erhalten (Database.OnCharacterReplaced, vor dem Neubeginn der Daten)
+ns.Database.OnCharacterReplaced(function(data)
+  local times = {}
+  for level, record in pairs(data.levelHistory or {}) do
+    if record.seconds then times[level] = record.seconds end
+  end
+  if not next(times) then return end
+  table.insert(store().importedRuns, {
+    name = data.name, realm = data.realm, class = data.class,
+    times = times, reachedLevel = data.currentLevel.level,
+  })
+end)
+
 -- Text mit einem Lauf oder allen Läufen importieren. Rückgabe: Zahl neuer Läufe, nil bei ungültigem Text
 function Runs.Import(text)
   local single = Serializer.Decode(KIND_RUN, text)

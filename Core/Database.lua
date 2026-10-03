@@ -246,6 +246,19 @@ function Database.CharacterKey(name, realm)
   return name .. "-" .. realm
 end
 
+-- Neu erstellter Charakter mit dem Namen eines gelöschten: gespeichertes Level höher als das aktuelle
+-- (Level sinken nie). Zuhörer (Runs.lua) sichern den alten Versuch, dann beginnen die Daten neu.
+local replacedListeners = {}
+
+function Database.OnCharacterReplaced(listener)
+  table.insert(replacedListeners, listener)
+end
+
+local function isReplacedCharacter(data)
+  local savedLevel = data.currentLevel and data.currentLevel.level
+  return savedLevel ~= nil and savedLevel > UnitLevel("player")
+end
+
 -- Daten des eingeloggten Charakters holen oder anlegen. Alte Daten aus
 -- LevelTimerCharDB werden dabei einmalig übernommen und durchlaufen dieselben Migrationen.
 local function loadCharacter(stats)
@@ -253,6 +266,12 @@ local function loadCharacter(stats)
   local key = Database.CharacterKey(name, realm)
 
   local data = stats.characters[key]
+  if data and isReplacedCharacter(data) then
+    for _, listener in ipairs(replacedListeners) do
+      ns.SafeCall(listener, data)
+    end
+    data = nil
+  end
   if not data then
     data = LevelTimerCharDB or {}
     stats.characters[key] = data

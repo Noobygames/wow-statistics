@@ -44,7 +44,7 @@ end
 local function firstOwnLevel()
   local first = ns.level
   for level in pairs(ns.character.levelHistory) do
-    first = math.min(first, level)
+    if level < ns.level then first = math.min(first, level) end
   end
   return first
 end
@@ -127,7 +127,7 @@ end
 function Splits.GetTotalDelta()
   local total
   for level in pairs(ns.character.levelHistory) do
-    local delta = Splits.GetLevelDelta(level)
+    local delta = level < ns.level and Splits.GetLevelDelta(level)
     if delta then total = (total or 0) + delta end
   end
   local current = Splits.GetCurrentDelta()
