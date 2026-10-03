@@ -152,3 +152,13 @@ expect("Raid erfasst", run().instanceType, "raid")
 
 SlashCmdList.LEVELTIMER("history")
 expectTrue("Reiter Instanzen", wow.click("Instanzen"))
+
+-- Reset-Meldung, während man selbst noch drin ist (Leiter setzt zurück): Lauf und Kopie bleiben
+enter(nil)
+enter("Burg Schattenfang")
+local runsBefore = #log()
+wow.fire("CHAT_MSG_SYSTEM", "Burg Schattenfang wurde zurückgesetzt.")
+expect("Lauf läuft weiter", run() ~= nil and run().name, "Burg Schattenfang")
+seeCopy(555)
+expect("Bestätigung ohne Fehler", run().zoneUID, 555)
+expect("kein Lauf beendet", #log(), runsBefore)

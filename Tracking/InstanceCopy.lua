@@ -98,6 +98,7 @@ end
 
 local function confirm(zoneUID)
   inside.confirmed = true
+  visits()[inside.name] = visits()[inside.name] or {}
   visits()[inside.name].zoneUID = zoneUID
   local expected = inside.expectedZoneUID
   if expected then
@@ -149,6 +150,8 @@ local function onSystemMessage(message)
   local args = ChatPatterns.MatchAny(message, resetPatterns)
   if not args then return end
   local name = args[1]
+  -- Die Kopie, in der man steht, wird nicht zurückgesetzt (der Reset trifft nur Leere bzw. die draußen)
+  if name == InstanceCopy.GetInsideName() then return end
   ns.Debug("instances", "reset %s", name)
   visits()[name] = nil
   notify("reset", name)
