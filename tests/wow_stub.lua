@@ -377,7 +377,10 @@ function IsInInstance()
   if state.instance then return true, state.instance.type end
   return false, "none"
 end
-function GetInstanceInfo() return state.instance and state.instance.name or GetZoneText() end
+function GetInstanceInfo()
+  if not state.instance then return GetZoneText() end
+  return state.instance.name, state.instance.type, state.instance.difficulty or 1
+end
 C_QuestLog = {
   GetTitleForQuestID = function(questID) return state.questTitles[questID] end,
   IsQuestTrivial = function(questID) return state.trivialQuests[questID] or false end,

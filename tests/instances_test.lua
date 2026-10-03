@@ -174,3 +174,10 @@ wow.login()
 enter("Burg Schattenfang")
 seeCopy(555)                              -- doch die alte Kopie
 expect("nach Reload zusammengeführt", #log(), logBefore)
+
+-- Normal und Heroisch gleichen Namens sind verschiedene Kopien
+enter(nil)
+local beforeHeroic = #log()
+wow.state.instance = { name = "Burg Schattenfang", type = "party", difficulty = 2 }
+wow.fire("PLAYER_ENTERING_WORLD")
+expect("Heroisch: neuer Lauf", #log(), beforeHeroic + 1)
