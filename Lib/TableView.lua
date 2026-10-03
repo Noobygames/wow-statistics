@@ -24,8 +24,9 @@ local FILTER_WIDTH = 150
 local FILTER_HEIGHT = 18
 local EXPORT_BUTTON_WIDTH = 70
 local EXTRA_BUTTON_WIDTH = 90   -- weitere Buttons der Ansicht (definition.buttons)
-local SORT_DESCENDING = " v"
-local SORT_ASCENDING = " ^"
+-- Vor dem Text: bei schmalen Spalten wird das Ende abgeschnitten, die Richtung bleibt so sichtbar
+local SORT_DESCENDING = "v "
+local SORT_ASCENDING = "^ "
 
 ---------------------------------------------------------------------------
 -- Tabelle mit fester Zeilenzahl (Lazy Load)
@@ -81,20 +82,21 @@ end
 
 local plainText = Format.PlainText
 
+-- Sortierschlüssel einmal je Zeile aufbereiten (nicht in jedem Vergleich): Zahlen bleiben Zahlen,
+-- Text ohne Farbcodes und Groß-/Kleinschreibung, leere Werte = nil
 local function sortKey(column, record)
-  if column.sort then return column.sort(record) end
-  return column.value(record)
+  local key
+  if column.sort then key = column.sort(record) else key = column.value(record) end
+  if key == nil or key == "" or type(key) == "number" then return key ~= "" and key or nil end
+  return plainText(key):lower()
 end
 
--- Zahlen numerisch, Text ohne Groß-/Kleinschreibung; fehlende Werte immer ans Ende
+-- Fehlende Werte immer ans Ende; Zahlen vor Text, damit gemischte Spalten eine feste Ordnung haben
 local function compareKeys(a, b, descending)
-  if a == nil or a == "" then return false end
-  if b == nil or b == "" then return true end
-  if type(a) == "number" and type(b) == "number" then
-    if descending then return a > b end
-    return a < b
-  end
-  a, b = plainText(a):lower(), plainText(b):lower()
+  if a == nil then return false end
+  if b == nil then return true end
+  local aIsNumber, bIsNumber = type(a) == "number", type(b) == "number"
+  if aIsNumber ~= bIsNumber then return aIsNumber end
   if descending then return a > b end
   return a < b
 end
@@ -232,7 +234,7 @@ function TableView.Create(definition)
         if sort and sort.index == i then
           marker = sort.descending and SORT_DESCENDING or SORT_ASCENDING
         end
-        headerRow.cells[i]:SetText(L[column.header] .. marker)
+        headerRow.cells[i]:SetText(marker .. L[column.header])
       end
     end
 

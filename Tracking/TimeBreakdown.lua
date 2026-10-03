@@ -22,8 +22,12 @@ local activity       -- Zähler der laufenden Tätigkeit, nil = Rest oder tot
 local pending = 0    -- Sekunden der laufenden Tätigkeit, noch nicht gebucht
 local sinceFlush = 0
 
+-- Geheime Werte (Retail/Forever, z.B. UnitIsAFK während der Chat-Sperre) zuerst ausschließen:
+-- schon ein Wahrheitstest auf einen geheimen Wert ist für Addons ein Fehler. Danach nur auf
+-- Wahrheit prüfen, nicht auf == true: in Classic sind diese Funktionen nicht dokumentiert (evtl. 1/nil).
 local function isTrue(value)
-  return value and not ns.IsSecret(value)
+  if ns.IsSecret(value) then return false end
+  return value and true or false
 end
 
 local function currentActivity()

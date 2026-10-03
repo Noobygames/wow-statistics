@@ -32,3 +32,24 @@ wow.advance(60)
 gainXp(20)
 items = Analysis.SessionXpTimeline(addon.characterKey)
 expect("nach Reload weiter im Abschnitt 5", items[5].value, 50)
+
+-- Level-Up, bei dem die XP auf dem neuen Level über der alten liegt (große Quest-Belohnung)
+local Stats = addon.Stats
+local function sessionXp() return Stats.Get(Stats.SESSION, Stats.XP_GAINED) end
+wow.state.xp = 9000
+wow.fire("PLAYER_XP_UPDATE", "player")
+local before = sessionXp()
+wow.levelUp(addon.level + 1, 12000)
+wow.state.xp = 9500                      -- 1000 Rest + 9500 auf dem neuen Level
+wow.fire("PLAYER_XP_UPDATE", "player")
+expect("XP über die Levelgrenze", sessionXp() - before, 10500)
+
+-- XP-Meldung vor dem Level-Up-Event: nichts doppelt
+before = sessionXp()
+wow.state.xpMax = 15000
+wow.state.xp = 2500                      -- 2500 Rest + 2500
+wow.fire("PLAYER_XP_UPDATE", "player")
+wow.fire("PLAYER_LEVEL_UP", addon.level + 1)
+wow.state.level = addon.level
+wow.fire("PLAYER_XP_UPDATE", "player")
+expect("XP zuerst, dann Level-Up", sessionXp() - before, 5000)

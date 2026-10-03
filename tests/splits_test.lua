@@ -12,7 +12,7 @@ end
 -- Vergleichs-Charaktere: Bestzeit Level 10 = 1 h (Rekord), Level 11 = 30 min
 local function otherCharacter(name, levels)
   LevelTimerStatsDB.characters[name .. "-Testrealm"] = {
-    name = name, realm = "Testrealm", currentLevel = { level = 30, counters = {} },
+    schemaVersion = addon.Database.CHARACTER_SCHEMA_VERSION, name = name, realm = "Testrealm", currentLevel = { level = 30, counters = {} },
     levelHistory = levels, sessionHistory = {}, killLog = {}, deathLog = {},
   }
 end
@@ -81,3 +81,17 @@ LevelTimerStatsDB.characters["Schnell-Testrealm"].levelHistory[10].seconds = 320
 
 SlashCmdList.LEVELTIMER("compare best")
 expect("zurück zur Bestzeit je Level", Splits.GetReference(11), 100)
+
+-- Eingeloggten Charakter löschen: PB-Vergleich wird neu berechnet (gleiche Zahl der Charaktere)
+LevelTimerStatsDB.characters["Kurz-Testrealm"] = nil
+otherCharacter("Kurz", { [11] = { level = 11, seconds = 100 } })
+SlashCmdList.LEVELTIMER("compare pb")
+expect("PB vor dem Löschen", Splits.GetReference(11), 2000)
+addon.DeleteCharacter(addon.characterKey)
+expect("PB nach dem Löschen ab Level 11", Splits.GetReference(11), 100)
+
+-- Der gewählte Vergleichslauf ist der eingeloggte Charakter selbst: Bestzeit je Level statt sich selbst
+LevelTimerDB.splitReference = { id = addon.characterKey, name = "Neu", times = { [11] = 1 } }
+addon.Set("splitComparison", "best")
+addon.Set("splitComparison", "run")
+expect("eigener Lauf: Bestzeit statt eigener Kopie", Splits.GetReference(11), 100)

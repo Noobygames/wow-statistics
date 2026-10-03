@@ -15,13 +15,20 @@ ns.Declines = Declines
 Declines.KINDS = {
   { setting = "declineTrades", event = "TRADE_REQUEST", decline = function() CancelTrade() end,
     popup = "TRADE", message = "DECLINED_TRADE" },
+  -- Einladungen mit Rollenwahl zeigen in Retail/Forever statt des Dialogs LFGInvitePopup
   { setting = "declineGroupInvites", event = "PARTY_INVITE_REQUEST", decline = function() DeclineGroup() end,
-    popup = "PARTY_INVITE", message = "DECLINED_GROUP" },
+    popup = "PARTY_INVITE", message = "DECLINED_GROUP",
+    hide = function()
+      if LFGInvitePopup and StaticPopupSpecial_Hide then StaticPopupSpecial_Hide(LFGInvitePopup) end
+    end },
   { setting = "declineGuildInvites", event = "GUILD_INVITE_REQUEST", decline = function() DeclineGuild() end,
     popup = "GUILD_INVITE", message = "DECLINED_GUILD",
     hide = function() if GuildInviteFrame then GuildInviteFrame:Hide() end end },
   { setting = "declineDuels", event = "DUEL_REQUESTED", decline = function() CancelDuel() end,
     popup = "DUEL_REQUESTED", message = "DECLINED_DUEL" },
+  -- Duell bis zum Tod (Hardcore-Realms; Event fehlt in anderen Clients, dann bleibt es unregistriert)
+  { setting = "declineDuels", event = "DUEL_TO_THE_DEATH_REQUESTED", decline = function() CancelDuel() end,
+    popup = "DUEL_TO_THE_DEATH_REQUESTED", message = "DECLINED_DUEL" },
 }
 
 for _, kind in ipairs(Declines.KINDS) do

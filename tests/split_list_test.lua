@@ -47,3 +47,12 @@ local playedRow = wow.findFrame(function(frame) return frame._text == addon.L.SP
 expectTrue("Zeile /played", playedRow ~= nil and playedRow:IsShown())
 local found = wow.findFrame(function(frame) return frame._text == addon.Format.Duration(100000) end)
 expectTrue("Wert /played", found ~= nil)
+
+-- Größe ändern: die Liste bleibt mit ihrer linken oberen Ecke stehen
+addon.Set("showSplitList", true)
+addon.Set("splitListScale", 1)
+addon.Set("splitListScale", 2)
+local anchor = LevelTimerSplits._points[1]
+expect("an der linken oberen Ecke skaliert", anchor[1] .. " " .. anchor[3], "TOPLEFT BOTTOMLEFT")
+expect("Abstand umgerechnet", anchor[4], 50)  -- linke Kante 100 bei Größe 1
+expectTrue("Position gespeichert", LevelTimerDB.splitListPos ~= nil)

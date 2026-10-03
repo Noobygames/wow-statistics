@@ -53,4 +53,14 @@ func runScenario(t *testing.T, root, scenario string) {
 	failures.ForEach(func(_, failure lua.LValue) {
 		t.Error(failure.String())
 	})
+
+	// Fehler, die das Addon geschützt abgefangen hat (ns.SafeCall -> geterrorhandler), zählen als
+	// Fehlschlag; Szenarien, die absichtlich Fehler auslösen, leeren wow.errors danach.
+	if wow, ok := L.GetGlobal("wow").(*lua.LTable); ok {
+		if caught, ok := wow.RawGetString("errors").(*lua.LTable); ok {
+			caught.ForEach(func(_, message lua.LValue) {
+				t.Errorf("abgefangener Lua-Fehler: %s", message.String())
+			})
+		}
+	}
 }

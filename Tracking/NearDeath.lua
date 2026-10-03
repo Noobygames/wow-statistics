@@ -8,8 +8,20 @@ local DeathCounter = ns.DeathCounter
 
 local LOW_HEALTH = 0.10
 local RECOVERED_HEALTH = 0.30
+local RESURRECT_GRACE = 15  -- Sekunden nach einer Wiederbelebung (Geistheiler, Seelenstein: wenig Leben)
 
 local episode  -- { lowest, cause } solange das Leben kritisch ist
+local resurrectedAt  -- GetTime() der letzten Wiederbelebung
+
+local NearDeath = {}
+ns.NearDeath = NearDeath
+
+-- In Retail und WoW Forever liefert UnitHealth laut generierter Doku immer geheime Werte
+-- (SecretReturns = true, ohne Bedingung); Beinahe-Tode lassen sich dort nicht erkennen, Zeile,
+-- Schalter und Einblendung entfallen. Classic Era und TBC kennen das nicht.
+function NearDeath.IsAvailable()
+  return not (ns.Client.IsRetail() or ns.Client.IsForever())
+end
 
 -- Anteil des Lebens oder nil, wenn der Client den Wert verbirgt
 local function healthFraction()
@@ -28,7 +40,8 @@ local function onHealthChanged(unit)
   if not fraction then return end
 
   if not episode then
-    if fraction <= LOW_HEALTH then
+    local justResurrected = resurrectedAt and GetTime() - resurrectedAt < RESURRECT_GRACE
+    if fraction <= LOW_HEALTH and not justResurrected then
       episode = { lowest = fraction, cause = DeathCounter.PeekLastHit() }
     end
     return
@@ -45,3 +58,10 @@ end
 ns.RegisterEvent("UNIT_HEALTH", onHealthChanged)
 ns.RegisterEvent("UNIT_HEALTH_FREQUENT", onHealthChanged)  -- ältere Clients melden Änderungen hierüber
 ns.RegisterEvent("PLAYER_DEAD", function() episode = nil end)
+
+-- Wiederbelebt mit wenig Leben ist kein Beinahe-Tod. PLAYER_ALIVE kommt auch beim Freilassen des Geistes.
+local function onPossiblyResurrected()
+  if not UnitIsDeadOrGhost("player") then resurrectedAt = GetTime() end
+end
+ns.RegisterEvent("PLAYER_ALIVE", onPossiblyResurrected)
+ns.RegisterEvent("PLAYER_UNGHOST", onPossiblyResurrected)

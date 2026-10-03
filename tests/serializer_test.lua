@@ -35,3 +35,7 @@ expect("Müll dahinter", Serializer.Decode("test", text .. "x"), nil)
 expect("leer", Serializer.Decode("test", ""), nil)
 expect("nil", Serializer.Decode("test", nil), nil)
 expect("Code wird nicht ausgeführt", Serializer.Decode("test", "LT1:test:os.exit()"), nil)
+
+-- Sehr tief verschachtelter Text: nil statt Stapelüberlauf
+local deep = "LT1:run:" .. string.rep("{s1=", 5000) .. "n1" .. string.rep("}", 5000)
+expect("zu tief verschachtelt", addon.Serializer.Decode("run", deep), nil)

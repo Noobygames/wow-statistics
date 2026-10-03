@@ -12,6 +12,11 @@ LevelTimerStatsDB.characters["Rekord-Testrealm"] = {
 local text = Runs.Export(Runs.Get("Rekord-Testrealm"))
 expect("eigener Charakter ist schon bekannt", Runs.Import(text), 0)
 
+-- Alter Versuch desselben Charakters (Zeiten anders, z.B. nach Zurücksetzen): wird importiert
+local oldAttempt = addon.Serializer.Encode("run", { name = "Rekord", realm = "Testrealm", times = { [10] = 9999 } })
+expect("alter Versuch importiert", Runs.Import(oldAttempt), 1)
+LevelTimerStatsDB.importedRuns = {}
+
 -- In einem anderen Client: Charakter gibt es nicht, Lauf wird importiert
 LevelTimerStatsDB.characters["Rekord-Testrealm"] = nil
 expect("ein Lauf importiert", Runs.Import(text), 1)
@@ -43,3 +48,20 @@ editBox:SetText(text)
 expectTrue("Button Importieren", wow.click(L.IMPORT))
 expect("über Fenster importiert", #LevelTimerStatsDB.importedRuns, 1)
 expect("Fenster zu", LevelTimerExport:IsShown(), false)
+
+-- Streamer-Datenschutz: Export ohne Realm, andere Charaktere ohne echten Namen
+addon.Set("streamerPrivacy", true)
+LevelTimerStatsDB.characters["Geheim-Testrealm"] = {
+  schemaVersion = addon.Database.CHARACTER_SCHEMA_VERSION, name = "Geheim", realm = "Testrealm", class = "MAGE",
+  currentLevel = { level = 30, counters = {} }, levelHistory = { [10] = { level = 10, seconds = 100 } }, sessionHistory = {},
+}
+local private = Runs.Export(Runs.Get("Geheim-Testrealm"))
+expectTrue("kein echter Name", not private:find("Geheim", 1, true))
+expectTrue("kein Realm", not private:find("Testrealm", 1, true))
+addon.Set("streamerPrivacy", false)
+
+-- Escape-Sequenzen in importierten Namen werden entfernt
+local escaped = addon.Serializer.Encode("run", { name = "|cffff0000Böse|r|Hitem:1|h", times = { [10] = 1 } })
+Runs.Import(escaped)
+local last = LevelTimerStatsDB.importedRuns[#LevelTimerStatsDB.importedRuns]
+expect("ohne Escape-Sequenzen", last.name, "cffff0000BöserHitem:1h")

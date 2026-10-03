@@ -44,7 +44,7 @@ end
 local function firstOwnLevel()
   local first = ns.level
   for level in pairs(ns.character.levelHistory) do
-    first = math.min(first, level)
+    if level < ns.level then first = math.min(first, level) end
   end
   return first
 end
@@ -66,9 +66,12 @@ local function personalBest()
   return bestTimes or {}
 end
 
--- Gewählter Lauf: beim Wählen kopierte Zeiten, bleiben fest, auch wenn der Charakter weiterlevelt
+-- Gewählter Lauf: beim Wählen kopierte Zeiten, bleiben fest, auch wenn der Charakter weiterlevelt.
+-- Der Vergleich ist accountweit; spielt man den gewählten Charakter selbst, wäre er sein eigener
+-- Vergleich, dann gilt die Bestzeit je Level.
 local function chosenRun()
   local reference = ns.db.splitReference
+  if reference and reference.id == ns.characterKey then return bestPerLevel() end
   return reference and reference.times or {}
 end
 
@@ -90,6 +93,12 @@ local function cacheKey()
   return table.concat({ ns.characterKey, count, ns.level, ns.db.splitComparison,
     reference and reference.id or "" }, ":")
 end
+
+-- Login (auch der Neustart nach dem Löschen des eingeloggten Charakters, bei gleicher Zahl der
+-- Charaktere) baut den Vergleich neu
+ns.OnLogin(function()
+  cachedTimes = nil
+end)
 
 local function referenceTimes()
   local key = cacheKey()
@@ -127,7 +136,7 @@ end
 function Splits.GetTotalDelta()
   local total
   for level in pairs(ns.character.levelHistory) do
-    local delta = Splits.GetLevelDelta(level)
+    local delta = level < ns.level and Splits.GetLevelDelta(level)
     if delta then total = (total or 0) + delta end
   end
   local current = Splits.GetCurrentDelta()

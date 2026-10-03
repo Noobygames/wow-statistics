@@ -210,8 +210,11 @@ local settingsMigrations = {
   end,
 }
 
+-- Die Version wird nie gesenkt: nach einem Downgrade (ältere Addon-Version) liefen nicht wiederholbare
+-- Migrationen beim nächsten Upgrade sonst ein zweites Mal
 local function migrate(data, migrations, targetVersion)
   local version = data.schemaVersion or 1
+  if version >= targetVersion then return end
   for nextVersion = version + 1, targetVersion do
     if migrations[nextVersion] then
       migrations[nextVersion](data)
@@ -233,6 +236,63 @@ local function applyDefaults(data, defaults)
   return data
 end
 
+-- Einstellungen ohne Default, mit Prüfung ihrer Form
+local function isPosition(value)
+  return type(value) == "table" and type(value[1]) == "string" and type(value[2]) == "string"
+    and type(value[3]) == "number" and type(value[4]) == "number"
+end
+
+local function isLevelTimes(value)
+  if type(value) ~= "table" then return false end
+  for level, seconds in pairs(value) do
+    if type(level) ~= "number" or type(seconds) ~= "number" then return false end
+  end
+  return true
+end
+
+local OPTIONAL_SETTINGS = {
+  pos = isPosition,           -- Hauptfenster (TimerWindow.lua)
+  splitListPos = isPosition,  -- Split-Liste (SplitList.lua)
+  splitReference = function(value)  -- fester Vergleichslauf (Splits.lua)
+    return type(value) == "table" and type(value.name) == "string" and isLevelTimes(value.times)
+  end,
+}
+
+local sanitizeSettings
+
+-- Ein Wert passt, wenn er den Typ des Defaults hat (verschachtelt geprüft) bzw. die Form einer
+-- optionalen Einstellung
+local function sanitizeValue(key, value)
+  local default = SETTINGS_DEFAULTS[key]
+  if default == nil then
+    if key == "streamBackup" then  -- frühere Werte der Stream-Einstellungen (StreamMode.lua)
+      return type(value) == "table" and sanitizeSettings(value) or nil
+    end
+    local check = OPTIONAL_SETTINGS[key]
+    return check and check(value) and value or nil
+  end
+  if type(value) ~= type(default) then return nil end
+  if type(default) == "table" and next(default) ~= nil then
+    local copy = {}
+    for innerKey, innerDefault in pairs(default) do
+      local inner = value[innerKey]
+      if type(inner) == type(innerDefault) then copy[innerKey] = inner end
+    end
+    return copy
+  end
+  return value
+end
+
+-- Nur bekannte Einstellungen mit passendem Typ, z.B. aus einem importierten Profil
+function sanitizeSettings(settings)
+  local clean = {}
+  for key, value in pairs(settings) do
+    if type(key) == "string" then clean[key] = sanitizeValue(key, value) end
+  end
+  return clean
+end
+Database.SanitizeSettings = sanitizeSettings
+
 -- Fehlende Einstellungen mit Defaults füllen (z.B. nach dem Laden eines Profils)
 function Database.ApplySettingDefaults(settings)
   return applyDefaults(settings, SETTINGS_DEFAULTS)
@@ -246,6 +306,19 @@ function Database.CharacterKey(name, realm)
   return name .. "-" .. realm
 end
 
+-- Neu erstellter Charakter mit dem Namen eines gelöschten: gespeichertes Level höher als das aktuelle
+-- (Level sinken nie). Zuhörer (Runs.lua) sichern den alten Versuch, dann beginnen die Daten neu.
+local replacedListeners = {}
+
+function Database.OnCharacterReplaced(listener)
+  table.insert(replacedListeners, listener)
+end
+
+local function isReplacedCharacter(data)
+  local savedLevel = data.currentLevel and data.currentLevel.level
+  return savedLevel ~= nil and savedLevel > UnitLevel("player")
+end
+
 -- Daten des eingeloggten Charakters holen oder anlegen. Alte Daten aus
 -- LevelTimerCharDB werden dabei einmalig übernommen und durchlaufen dieselben Migrationen.
 local function loadCharacter(stats)
@@ -253,6 +326,12 @@ local function loadCharacter(stats)
   local key = Database.CharacterKey(name, realm)
 
   local data = stats.characters[key]
+  if data and isReplacedCharacter(data) then
+    for _, listener in ipairs(replacedListeners) do
+      ns.SafeCall(listener, data)
+    end
+    data = nil
+  end
   if not data then
     data = LevelTimerCharDB or {}
     stats.characters[key] = data
@@ -274,6 +353,12 @@ function Database.Load()
   migrate(LevelTimerDB, settingsMigrations, SETTINGS_SCHEMA_VERSION)
   applyDefaults(LevelTimerDB, SETTINGS_DEFAULTS)
   LevelTimerStatsDB = applyDefaults(LevelTimerStatsDB or {}, { characters = {} })
+  -- Auch andere Charaktere auf den aktuellen Stand bringen: die Historie zeigt sie, und Daten aus
+  -- älteren Versionen haben sonst Lücken (z.B. fehlende Journale)
+  for _, data in pairs(LevelTimerStatsDB.characters) do
+    migrate(data, characterMigrations, Database.CHARACTER_SCHEMA_VERSION)
+    applyDefaults(data, CHARACTER_DEFAULTS)
+  end
   local characterKey, character = loadCharacter(LevelTimerStatsDB)
   return LevelTimerDB, characterKey, character
 end

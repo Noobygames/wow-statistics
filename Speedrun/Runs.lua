@@ -86,6 +86,7 @@ end
 
 -- Summe der Zeiten von Level from bis to; nil, wenn eines davon fehlt
 function Runs.SumOfLevels(times, from, to)
+  if from > to then return nil end  -- leere Spanne (z.B. noch kein eigenes Level abgeschlossen)
   local sum = 0
   for level = from, to do
     if not times[level] then return nil end
@@ -100,8 +101,15 @@ end
 local Serializer = ns.Serializer
 local KIND_RUN, KIND_RUNS = "run", "runs"
 
+-- Mit Streamer-Datenschutz ohne Realm und mit dem Anzeigenamen der Historie (andere Charaktere als
+-- "Charakter N"), wie überall sonst im Addon
 local function shareable(run)
-  return { name = run.name, realm = run.realm, class = run.class, reachedLevel = run.reachedLevel, times = run.times }
+  local name, realm = run.name, run.realm
+  if ns.db.streamerPrivacy then
+    realm = nil
+    if not run.imported then name = History.DisplayName(run.id) end
+  end
+  return { name = name, realm = realm, class = run.class, reachedLevel = run.reachedLevel, times = run.times }
 end
 
 function Runs.Export(run)
@@ -117,6 +125,11 @@ function Runs.ExportAll()
   return Serializer.Encode(KIND_RUNS, list)
 end
 
+-- Text von außen ohne "|": sonst würden Escape-Sequenzen (|c Farbe, |H Link, |T Textur) angezeigt
+local function plain(text)
+  return type(text) == "string" and (text:gsub("|", "")) or nil
+end
+
 -- Nur Läufe mit Namen und Level-Zeiten aus Zahlen übernehmen (der Text kommt von außen)
 local function sanitize(run)
   if type(run) ~= "table" or type(run.name) ~= "string" or type(run.times) ~= "table" then return nil end
@@ -126,9 +139,9 @@ local function sanitize(run)
     times[level] = seconds
   end
   return {
-    name = run.name,
-    realm = type(run.realm) == "string" and run.realm or nil,
-    class = type(run.class) == "string" and run.class or nil,
+    name = plain(run.name),
+    realm = plain(run.realm),
+    class = plain(run.class),
     reachedLevel = type(run.reachedLevel) == "number" and run.reachedLevel or nil,
     times = times,
   }
@@ -144,16 +157,30 @@ local function sameTimes(a, b)
   return true
 end
 
--- Schon vorhanden: eigener Charakter gleichen Namens und Realms oder gleicher importierter Lauf
+-- Schon vorhanden: Lauf gleichen Namens und Realms mit denselben Zeiten (eigener Charakter oder
+-- importiert). Ein alter Versuch eines zurückgesetzten oder neu erstellten Charakters ist neu.
 local function isKnown(run)
   for _, existing in ipairs(Runs.GetAll()) do
-    if existing.name == run.name and existing.realm == run.realm
-      and (not existing.imported or sameTimes(existing.times, run.times)) then
+    if existing.name == run.name and existing.realm == run.realm and sameTimes(existing.times, run.times) then
       return true
     end
   end
   return false
 end
+
+-- Alter Versuch eines neu erstellten Charakters gleichen Namens: bleibt als importierter Lauf zum
+-- Vergleichen erhalten (Database.OnCharacterReplaced, vor dem Neubeginn der Daten)
+ns.Database.OnCharacterReplaced(function(data)
+  local times = {}
+  for level, record in pairs(data.levelHistory or {}) do
+    if record.seconds then times[level] = record.seconds end
+  end
+  if not next(times) then return end
+  table.insert(store().importedRuns, {
+    name = data.name, realm = data.realm, class = data.class,
+    times = times, reachedLevel = data.currentLevel.level,
+  })
+end)
 
 -- Text mit einem Lauf oder allen Läufen importieren. Rückgabe: Zahl neuer Läufe, nil bei ungültigem Text
 function Runs.Import(text)

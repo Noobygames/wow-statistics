@@ -194,7 +194,7 @@ function refresh()
   end
 
   header:SetText(L.HISTORY)
-  deleteButton:SetText(L.DELETE_CHARACTER)
+  Widgets.SetButtonText(deleteButton, L.DELETE_CHARACTER, DELETE_BUTTON_WIDTH)
   showCharacterName(selectedCharacter)
 
   local selectedView = selectedEntry.selected

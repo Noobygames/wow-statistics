@@ -31,6 +31,33 @@ Vorher: Client neu starten (neue Dateien in der `.toc`), `/console scriptErrors 
 - [ ] **Zähler stimmt mit dem Server:** abgewiesen, obwohl das Addon Platz zeigt = zählt zu wenig; reingekommen, obwohl das Addon 5/5 zeigt = zählt zu viel.
 - [ ] **Hinweis bei 4/5 und 5/5:** Einblendung und Chatzeile mit Wartezeit (Schalter im Reiter Hinweise).
 
+## Stabilität (v2.8.1, aus dem Deep Review)
+
+Nach dem jeweiligen Fix prüfen; Nummern = Roadmap.
+
+- [ ] **97. Beute-Format:** `/dump LOOT_ITEM_SELF, LOOT_ITEM_PUSHED_SELF` in Retail und Forever: endet der Text mit `%s` ohne Punkt? Danach Einzel-Beute (selten+) im Journal prüfen.
+- [ ] **100. Session-XP über Level-Up:** große Quest-Belohnung, die ein Level überspringt; Session-XP muss um die volle Belohnung steigen.
+- [ ] **101. /played-Unterdrückung:** nach Login darf keine „Gesamtspielzeit“-Zeile im Chat erscheinen (alle Chatfenster), eigenes `/played` muss weiter erscheinen; kein Taint (BugSack).
+- [ ] **102. Erholt-XP:** `/dump GetXPExhaustion()` vor und nach einem Kill mit Erholt-Bonus; Abnahme = Grund- plus Bonus-XP?
+- [ ] **103. Beinahe-Tod in Retail/Forever:** `/dump issecretvalue(UnitHealth("player"))` im und außerhalb des Kampfs. Die Funktion ist dort jetzt ausgeblendet (Doku: immer geheim); ist der Wert außerhalb des Kampfs doch lesbar, `NearDeath.IsAvailable` lockern.
+- [ ] **107. Gildenreparatur:** ohne vorher die Gildenbank zu öffnen beim Händler reparieren lassen (TBC, Retail, Forever); zahlt die Gilde?
+- [ ] **108. Wiederholbare Quests:** mit Auto-Annehmen/-Abgeben eine wiederholbare Abgabe-Quest (z.B. Runenstoff) besuchen: darf nicht automatisch laufen.
+- [ ] **118. Levelcap der Erweiterung (Retail):** Charakter am Cap des Accounts: XP/h, Prognose, XP-Balken aus? `/dump UnitXPMax("player")` dort.
+- [ ] **119. Todesursache (Classic Era/TBC):** `/dump CombatLogGetCurrentEventInfo, C_CombatLog and C_CombatLog.GetCurrentEventInfo` mit CVar `loadDeprecationFallbacks` an und aus.
+- [ ] **120. Beinahe-Tod nach Wiederbelebung:** Wiederbelebung mit wenig Gesundheit (Geistheiler, Seelenstein) darf keinen Beinahe-Tod zählen.
+- [ ] **121. Reset von innen:** Gruppenleiter setzt zurück, während man selbst noch drin ist: kein Lua-Fehler, Lauf läuft weiter.
+- [ ] **123. Normal/Heroisch:** Normal betreten, raus, Heroisch derselben Instanz: neue Kopie und neuer Lauf?
+- [ ] **124. Abweisung wegen Tageslimit:** gibt es in Classic/Forever ein Tageslimit, und wie lautet dann die Meldung?
+- [ ] **128. Split-Liste skalieren:** Größe der Split-Liste und des Hauptfensters ändern; Liste bleibt oben links an ihrer Stelle.
+- [ ] **132. Importierte Laufnamen:** Lauf mit `|cffff0000Name|r` im Namen importieren; Anzeige darf keine Farbe/Links ausführen.
+- [ ] **133. Gespräch mit einer Option:** mit `skipGossip` NPC mit genau einer Option (z.B. Flugmeister) ansprechen; nur eine Auswahl, kein Fehler.
+- [ ] **138. Goldsymbole:** Einnahmen im Fenster in Forever und mit CVar `loadDeprecationFallbacks` aus: Symbole statt Text?
+- [ ] **139. Zeit ab 100 Tagen:** Max-Level-Charakter mit langer Level-Zeit: Zeitanzeige vollständig?
+- [ ] **141. Summenzeile Speedrun:** Historie → Speedrun → Läufe/Rekorde: „Gesamt: N“ lesbar?
+- [ ] **142. Texte in der Historie:** Historienfenster in fr/es/de: Buttons und Spaltenköpfe abgeschnitten oder übergelaufen?
+- [ ] **144. Munition in Forever:** `/dump C_PaperDollInfo and C_PaperDollInfo.AmmoNeeded and C_PaperDollInfo.AmmoNeeded(), UnitUsesAmmo and UnitUsesAmmo("player")` als Jäger.
+- [ ] **95. Zeitumstellung:** nach dem Fix am letzten Oktobersonntag zwischen 23 und 24 Uhr ausloggen bzw. Tagesgraph öffnen: kein Hänger.
+
 ## Darstellung
 
 - [ ] **Neue Fensterzeilen:** „Instanz“, „Instanzen/h“, „Instanzen heute“ in allen vier Sprachen, auch in der horizontalen Leiste.

@@ -21,9 +21,18 @@ SlashCmdList.LEVELTIMER("profile Stream")
 expect("Stream: Größe", LevelTimerDB.scale, 1.5)
 expect("Stream: Hintergrund", LevelTimerDB.windowBackground, "green")
 
+-- Profilwechsel setzt das Fenster an die Stelle des Profils, eine Größenänderung danach behält sie
+LevelTimerDB.profiles.Default.pos = { "TOPLEFT", "TOPLEFT", 120, -80 }
+SlashCmdList.LEVELTIMER("profile Default")
+local anchor = LevelTimerFrame._points[1]
+expect("Position des Profils", anchor[1] .. " " .. anchor[4] .. " " .. anchor[5], "TOPLEFT 120 -80")
+expect("Position bleibt im Profil", LevelTimerDB.pos[3], 120)
+SlashCmdList.LEVELTIMER("profile Stream")
+
 -- Jeder Charakter merkt sich sein Profil
 wow.logout()
 wow.login({ name = "Zweiter" })
+expect("neuer Charakter ohne Wahl: Standardprofil", Profiles.GetActive(), "Default")
 SlashCmdList.LEVELTIMER("profile Default")
 expect("zweiter Charakter: Standard", LevelTimerDB.scale, 1.2)
 wow.logout()
@@ -67,3 +76,39 @@ streamEntry._scripts.OnClick(streamEntry, "RightButton")
 expect("Rückfrage", wow.popup.data, "Stream 2")
 StaticPopupDialogs[wow.popup.name].OnAccept(nil, wow.popup.data)
 expect("per Rechtsklick gelöscht", LevelTimerDB.profiles["Stream 2"], nil)
+
+-- Import prüft Werte: falsche Typen und unbekannte Schlüssel fallen weg
+local bad = addon.Serializer.Encode("profile", { name = "Kaputt", settings = {
+  scale = "riesig", bgAlpha = 0.5, unknownKey = 1, minimap = { hide = "ja", angle = 90 },
+  pos = { "CENTER", "CENTER", "x", 0 }, splitListPos = { "TOPLEFT", "TOPLEFT", 10, -10 },
+} })
+local badName = Profiles.Import(bad)
+local badSettings = LevelTimerDB.profiles[badName]
+expect("falscher Typ entfernt", badSettings.scale, nil)
+expect("gültiger Wert bleibt", badSettings.bgAlpha, 0.5)
+expect("unbekannter Schlüssel entfernt", badSettings.unknownKey, nil)
+expect("verschachtelt geprüft", badSettings.minimap.hide, nil)
+expect("verschachtelt gültig", badSettings.minimap.angle, 90)
+expect("kaputte Position entfernt", badSettings.pos, nil)
+expect("gültige Position bleibt", badSettings.splitListPos[3], 10)
+Profiles.Switch(badName)
+expect("Profil lädt mit Defaults", LevelTimerDB.scale, 1)
+expect("leerer Name abgelehnt", Profiles.Import(addon.Serializer.Encode("profile", { name = "", settings = {} })), nil)
+
+-- Der angezeigte Name des Standardprofils funktioniert auch als Befehl (deDE: "Standard")
+SlashCmdList.LEVELTIMER("profile Stream")
+SlashCmdList.LEVELTIMER("profile standard")
+expect("übersetzter Standardname", Profiles.GetActive(), "Default")
+expect("kein zweites Standardprofil", LevelTimerDB.profiles.Standard, nil)
+
+-- Mehr Profile als Zeilen: per Mausrad erreichbar
+for index = 1, 8 do LevelTimerDB.profiles["Zusatz " .. index] = {} end
+SlashCmdList.LEVELTIMER("config")
+wow.click(L.OPTIONS_TAB_PROFILES)
+local function listed(name)
+  return wow.findFrame(function(frame) return rawget(frame, "profileName") == name and frame:IsShown() end) ~= nil
+end
+expect("Zusatz 8 erst nicht sichtbar", listed("Zusatz 8"), false)
+local firstRow = wow.findFrame(function(frame) return rawget(frame, "profileName") == "Default" end)
+for _ = 1, 10 do firstRow._scripts.OnMouseWheel(firstRow, -1) end
+expect("nach dem Scrollen sichtbar", listed("Zusatz 8"), true)

@@ -70,3 +70,11 @@ expect("hält der eingeloggte", records[1].run.name, "Neu")
 expect("Rekord Level 10", records[2].seconds, 2500)
 expect("hält Rekord", records[2].run.name, "Rekord")
 expect("eigene Zeit", records[2].ownSeconds, 3000)
+
+-- Noch kein eigenes Level abgeschlossen: keine Zeit bis zum aktuellen Level statt "0s"
+expect("leere Spanne", addon.Runs.SumOfLevels({ [10] = 100 }, 12, 11), nil)
+
+-- Summenzeile "Anzahl" steht in einer breiten Spalte, nicht in der schmalen Favoriten-Spalte
+local cells = addon.HistoryTables.CountCells({ { width = 18 }, { width = 140 } }, { 1, 2, 3 })
+expect("Favoriten-Spalte leer", cells[1], "")
+expect("Anzahl in der Namensspalte", cells[2], string.format(L.HISTORY_COUNT, 3))

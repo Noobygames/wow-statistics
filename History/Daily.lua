@@ -5,14 +5,19 @@ local _, ns = ...
 local Daily = {}
 ns.Daily = Daily
 
-local SECONDS_PER_DAY = 86400
-
 local bookedUntil  -- time() bis zu dem die Spielzeit verbucht ist (nil = nicht eingeloggt)
 
 -- Mitternacht des Tages, in dem timestamp liegt
 function Daily.StartOfDay(timestamp)
   local day = date("*t", timestamp)
   return time({ year = day.year, month = day.month, day = day.day, hour = 0 })
+end
+
+-- Mitternacht dayOffset Tage nach dem Tag von timestamp. Über den Kalender statt + 86400 s,
+-- weil Tage bei der Zeitumstellung 23 oder 25 Stunden haben (time() normalisiert den Tagesüberlauf).
+function Daily.AddDays(timestamp, dayOffset)
+  local day = date("*t", timestamp)
+  return time({ year = day.year, month = day.month, day = day.day + dayOffset, hour = 0 })
 end
 
 function Daily.DayKey(timestamp)
@@ -40,7 +45,8 @@ function Daily.BookPlayTime()
   local now = time()
   local from = bookedUntil
   while from < now do
-    local untilTime = math.min(now, Daily.StartOfDay(from) + SECONDS_PER_DAY)
+    local untilTime = math.min(now, Daily.AddDays(from, 1))
+    if untilTime <= from then break end  -- Schutz: nie auf der Stelle treten
     local entry = Daily.Entry(ns.character.dailyStats, from)
     entry.seconds = entry.seconds + (untilTime - from)
     from = untilTime

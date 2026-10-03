@@ -71,11 +71,13 @@ function Format.Percent(part, total)
   return string.format("%d%%", math.floor(part / total * 100 + 0.5))
 end
 
--- Geld mit Münzsymbolen
+-- Geld mit Münzsymbolen: C_CurrencyInfo.GetCoinTextureString in allen Clients; das globale
+-- GetCoinTextureString ist nur ein Kompatibilitäts-Alias (CVar loadDeprecationFallbacks, in Forever nie)
 function Format.Money(copper)
   copper = math.floor(copper)
-  if GetCoinTextureString then
-    return GetCoinTextureString(copper)
+  local coinString = (C_CurrencyInfo and C_CurrencyInfo.GetCoinTextureString) or GetCoinTextureString
+  if coinString then
+    return coinString(copper)
   end
   return string.format("%dg %ds %dc",
     math.floor(copper / COPPER_PER_GOLD),

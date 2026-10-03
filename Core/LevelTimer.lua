@@ -35,9 +35,18 @@ function ns.IsSecret(value)
   return issecretvalue ~= nil and issecretvalue(value)
 end
 
+-- Ruft fn geschützt auf: ein Fehler landet beim Fehler-Handler des Clients (BugSack, Fehlerfenster),
+-- der Aufrufer läuft weiter. xpcall reicht in Lua 5.1 keine Argumente durch, daher die Closure.
+function ns.SafeCall(fn, ...)
+  local args, count = { ... }, select("#", ...)
+  return xpcall(function() return fn(unpack(args, 1, count)) end, geterrorhandler())
+end
+
+-- Alle Callbacks einer Liste, jeder für sich geschützt: ein fehlerhaftes Modul hält die anderen
+-- (z.B. beim Level-Up oder Logout) nicht auf
 local function runAll(callbacks, ...)
   for _, callback in ipairs(callbacks) do
-    callback(...)
+    ns.SafeCall(callback, ...)
   end
 end
 
@@ -87,8 +96,8 @@ end)
 ---------------------------------------------------------------------------
 -- Wiederkehrende Aufgaben: fn(elapsed) etwa alle seconds Sekunden, erst nach dem Login (vorher
 -- gibt es weder ns.db noch ns.character). elapsed = tatsächlich vergangene Zeit seit dem letzten Lauf.
--- Ein gemeinsamer Frame statt eines OnUpdate-Frames je Modul. Jede Aufgabe läuft geschützt (xpcall):
--- ein Fehler landet beim Fehler-Handler des Clients (BugSack, Fehlerfenster), die übrigen laufen weiter.
+-- Ein gemeinsamer Frame statt eines OnUpdate-Frames je Modul. Jede Aufgabe läuft geschützt
+-- (ns.SafeCall), die übrigen laufen bei einem Fehler weiter.
 ---------------------------------------------------------------------------
 local repeatingTasks = {}
 local taskFrame = CreateFrame("Frame")
@@ -104,8 +113,7 @@ taskFrame:SetScript("OnUpdate", function(_, elapsed)
     if task.elapsed >= task.interval then
       local due = task.elapsed
       task.elapsed = 0
-      -- Closure statt Zusatzargumenten: xpcall in Lua 5.1 reicht keine Argumente durch
-      xpcall(function() task.fn(due) end, geterrorhandler())
+      ns.SafeCall(task.fn, due)
     end
   end
 end)

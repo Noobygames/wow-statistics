@@ -25,6 +25,14 @@ wow.fire("PARTY_INVITE_REQUEST", "Einlader")
 expect("Gruppe abgelehnt", wow.declined[#wow.declined], "DeclineGroup")
 expectTrue("Einladungsdialog zu", hidden("PARTY_INVITE"))
 
+-- Einladung mit Rollenwahl (Retail/Forever): eigenes Fenster
+LFGInvitePopup = CreateFrame("Frame")
+LFGInvitePopup:Show()
+StaticPopupSpecial_Hide = function(frame) frame:Hide() end
+wow.fire("PARTY_INVITE_REQUEST", "Einlader")
+expect("Rollenwahl-Fenster zu", LFGInvitePopup:IsShown(), false)
+LFGInvitePopup, StaticPopupSpecial_Hide = nil, nil
+
 -- Gildeneinladung (Retail: eigenes Fenster)
 GuildInviteFrame = CreateFrame("Frame")
 GuildInviteFrame:Show()
@@ -39,3 +47,9 @@ addon.Set("declineDuels", true)
 wow.fire("DUEL_REQUESTED", "Raufbold")
 expect("Duell abgelehnt", wow.declined[#wow.declined], "CancelDuel")
 expectTrue("Dueldialog zu", hidden("DUEL_REQUESTED"))
+
+-- Duell bis zum Tod (Hardcore): gleicher Schalter
+addon.Set("declineDuels", true)
+wow.fire("DUEL_TO_THE_DEATH_REQUESTED", "Hardcore")
+expect("Todesduell abgelehnt", wow.declined[#wow.declined], "CancelDuel")
+expectTrue("Todesduell-Dialog zu", hidden("DUEL_TO_THE_DEATH_REQUESTED"))

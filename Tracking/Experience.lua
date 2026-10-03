@@ -9,10 +9,20 @@ ns.Experience = Experience
 local SECONDS_PER_HOUR = 3600
 local MIN_SECONDS_FOR_RATE = 60  -- darunter schwankt die Rate zu stark
 
+-- Wirksames Max-Level wie in Blizzards XP-Balken: Retail/Forever GameRulesUtil, Classic global;
+-- berücksichtigt das Levelcap der Erweiterung des Accounts. Ältere Clients: GetMaxPlayerLevel.
+local function isAtMaxLevel()
+  if GameRulesUtil and GameRulesUtil.IsPlayerAtEffectiveMaxLevel then
+    return GameRulesUtil.IsPlayerAtEffectiveMaxLevel()
+  end
+  if IsPlayerAtEffectiveMaxLevel then return IsPlayerAtEffectiveMaxLevel() end
+  return GetMaxPlayerLevel ~= nil and ns.level >= GetMaxPlayerLevel()
+end
+
 -- false auf Max-Level oder bei abgeschalteter XP
 function Experience.IsLeveling()
   if IsXPUserDisabled and IsXPUserDisabled() then return false end
-  if GetMaxPlayerLevel and ns.level >= GetMaxPlayerLevel() then return false end
+  if isAtMaxLevel() then return false end
   return UnitXPMax("player") > 0
 end
 
@@ -31,9 +41,10 @@ end
 
 -- XP/h eines gespeicherten Eintrags ({ xp, seconds, counters }: Level, Session, Instanz-Lauf, Summe),
 -- nach denselben Regeln wie die Live-Werte. Einträge ohne AFK-Zähler (Zonen) zählen die volle Zeit.
+-- Summen (History.Summarize) bringen ratedXp/ratedAfkSeconds mit: nur Einträge mit bekannter Dauer.
 function Experience.RecordRate(record)
-  local afkSeconds = record.counters and record.counters[Stats.AFK_SECONDS]
-  return Experience.CalculateRate(record.xp, Experience.RateSeconds(record.seconds, afkSeconds))
+  local afkSeconds = record.ratedAfkSeconds or (record.counters and record.counters[Stats.AFK_SECONDS])
+  return Experience.CalculateRate(record.ratedXp or record.xp, Experience.RateSeconds(record.seconds, afkSeconds))
 end
 
 function Experience.GetRatePerHour(scope)
@@ -72,17 +83,29 @@ function Experience.GetSources(scope)
 end
 
 ---------------------------------------------------------------------------
--- Gewonnene XP: Differenz zum letzten Stand. Liegt ein Level-Up dazwischen,
--- zählt der Rest des alten Levels plus die XP auf dem neuen.
+-- Gewonnene XP: Differenz zum letzten Stand. Liegt ein Level-Up dazwischen, zählt der Rest des
+-- alten Levels, ganze übersprungene Level (aus der XP-Tabelle, sofern bekannt) und die XP auf dem neuen.
+-- Ein Level-Up ist erkennbar an einem anderen XP-Bedarf (UnitXPMax), sinkender XP oder einem
+-- höheren ns.level. Die Reihenfolge von PLAYER_XP_UPDATE und PLAYER_LEVEL_UP spielt keine Rolle:
+-- kam die XP zuerst, gilt das nächste Level schon als erreicht und der Level-Up bucht nichts doppelt.
 ---------------------------------------------------------------------------
-local lastXp, lastXpMax
+local lastXp, lastXpMax, lastLevel
+
+local function skippedLevelsXp(fromLevel, toLevel)
+  if toLevel <= fromLevel then return 0 end
+  return ns.XpTable and ns.XpTable.XpBetween(fromLevel, toLevel) or 0
+end
 
 local function trackXpGained()
   local xp, xpMax = UnitXP("player"), UnitXPMax("player")
   if lastXp then
-    local gained = xp - lastXp
-    if gained < 0 then
-      gained = (lastXpMax - lastXp) + xp
+    local gained
+    if xpMax ~= lastXpMax or xp < lastXp or ns.level > lastLevel then
+      local newLevel = math.max(ns.level, lastLevel + 1)
+      gained = (lastXpMax - lastXp) + skippedLevelsXp(lastLevel + 1, newLevel) + xp
+      lastLevel = newLevel
+    else
+      gained = xp - lastXp
     end
     if gained > 0 then
       Stats.Increment(Stats.XP_GAINED, gained)
@@ -92,8 +115,9 @@ local function trackXpGained()
 end
 
 ---------------------------------------------------------------------------
--- Erholungs-XP: Der Bonus wird aus dem Erholungs-Pool bezahlt. Jede Abnahme
--- des Pools entspricht verbrauchtem Bonus; Zunahmen (Ausruhen) setzen nur die Basis neu.
+-- Erholungs-XP: GetXPExhaustion ist die XP-Spanne, die doppelt zählt; jeder Gewinn darin senkt sie um
+-- Grund- plus Bonus-XP (warcraft.wiki.gg, API_GetXPExhaustion). Der Bonus ist also die halbe Abnahme;
+-- Zunahmen (Ausruhen) setzen nur die Basis neu.
 ---------------------------------------------------------------------------
 local lastRestedPool
 
@@ -104,13 +128,13 @@ end
 local function trackRestedXp()
   local current = restedPool()
   if lastRestedPool and current < lastRestedPool then
-    Stats.Increment(Stats.XP_RESTED, lastRestedPool - current)
+    Stats.Increment(Stats.XP_RESTED, math.floor((lastRestedPool - current) / 2 + 0.5))
   end
   lastRestedPool = current
 end
 
 ns.OnLogin(function()
-  lastXp, lastXpMax = UnitXP("player"), UnitXPMax("player")
+  lastXp, lastXpMax, lastLevel = UnitXP("player"), UnitXPMax("player"), ns.level
   lastRestedPool = restedPool()
 end)
 

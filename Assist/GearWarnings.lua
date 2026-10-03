@@ -39,8 +39,15 @@ function GearWarnings.HasAmmo()
   return not ns.Client.IsRetail()
 end
 
+-- WoW Forever sagt selbst, ob der Charakter Munition nutzt (UnitUsesAmmo, wie Blizzards Munitionsplatz
+-- im Charakterfenster); sonst alle Jäger
+local function usesAmmo()
+  if UnitUsesAmmo then return UnitUsesAmmo("player") end
+  return select(2, UnitClass("player")) == HUNTER
+end
+
 local function isAmmoLow()
-  if not GearWarnings.HasAmmo() or select(2, UnitClass("player")) ~= HUNTER then return false end
+  if not GearWarnings.HasAmmo() or not usesAmmo() then return false end
   return GetInventoryItemCount("player", AMMO_SLOT) < AMMO_LOW
 end
 

@@ -53,6 +53,18 @@ function Widgets.CreatePanel(name, backgroundAlpha)
   return panel
 end
 
+-- Skaliert einen Frame und hält dabei seine linke obere Ecke auf dem Bildschirm fest.
+-- Ankerabstände werden in der Skalierung des Frames gemessen und müssen umgerechnet werden.
+function Widgets.SetScaleKeepingTopLeft(frame, scale)
+  local oldScale = frame:GetScale()
+  local left, top = frame:GetLeft(), frame:GetTop()
+  frame:SetScale(scale)
+  if left and top then
+    frame:ClearAllPoints()
+    frame:SetPoint("TOPLEFT", UIParent, "BOTTOMLEFT", left * oldScale / scale, top * oldScale / scale)
+  end
+end
+
 function Widgets.SetBackgroundAlpha(panel, alpha)
   local r, g, b = unpack(Widgets.COLORS.background)
   panel:SetBackdropColor(r, g, b, alpha)
@@ -165,6 +177,15 @@ function Widgets.CreateButton(parent, width, height, onClick)
   button:SetSize(width, height)
   button:SetScript("OnClick", onClick)
   return button
+end
+
+local BUTTON_TEXT_PADDING = 24  -- Rand der Button-Vorlage links und rechts zusammen
+
+-- Text setzen und den Button mindestens so breit machen, dass er hineinpasst (übersetzte Texte sind
+-- unterschiedlich lang); minWidth bleibt die kleinste Breite
+function Widgets.SetButtonText(button, text, minWidth)
+  button:SetText(text)
+  button:SetWidth(math.max(minWidth, math.ceil(button:GetTextWidth()) + BUTTON_TEXT_PADDING))
 end
 
 -- Abschnitts-Überschrift: Text mit feiner Linie bis zum rechten Rand

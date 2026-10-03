@@ -112,7 +112,9 @@ local SESSION_COLUMNS = {
   { header = "HISTORY_START", width = 80, value = function(r) return dateTime(L.DATE_FORMAT, r.startedAt) end,
     sort = function(r) return r.startedAt end },
   durationColumn(56),
-  { header = "HISTORY_LEVEL", width = 44, value = levelRange },
+  -- Angezeigt "5-6", sortiert nach Start- und dann End-Level als Zahl
+  { header = "HISTORY_LEVEL", width = 44, value = levelRange,
+    sort = function(r) return r.startLevel and (r.startLevel + (r.endLevel or r.startLevel) / 1000) end },
   xpRateColumn(48),
   counterColumn("HISTORY_PVE", Stats.PVE_KILLS, 36),
   counterColumn("HISTORY_PVP", Stats.PVP_KILLS, 36),
@@ -247,9 +249,19 @@ local function summaryCells(columns, records)
   return cells
 end
 
--- Summenzeile für Kills und Tode: nur die Anzahl
-local function countCells(_, records)
-  return { string.format(L.HISTORY_COUNT, #records) }
+-- Summenzeile für Kills und Tode: nur die Anzahl, in der ersten Spalte, die breit genug ist
+-- (in den Speedrun-Tabellen ist die erste Spalte nur ein Favoriten-Stern)
+local COUNT_MIN_WIDTH = 80
+
+local function countCells(columns, records)
+  local cells = {}
+  local target = 1
+  for index, column in ipairs(columns) do
+    if column.width >= COUNT_MIN_WIDTH then target = index break end
+  end
+  for index = 1, target - 1 do cells[index] = "" end
+  cells[target] = string.format(L.HISTORY_COUNT, #records)
+  return cells
 end
 
 HistoryTables.ClassColor = classColor

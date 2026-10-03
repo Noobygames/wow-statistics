@@ -23,3 +23,19 @@ expect("Aufgabe nach dem Fehler läuft", after, 1)
 expect("Fehler an den Handler", #wow.errors, 1)
 wow.update(1)
 expect("auch beim nächsten Tick", after, 2)
+
+-- Login, Level-Up und Events: ein fehlerhafter Callback hält die übrigen nicht auf
+local errorsBefore = #wow.errors
+addon.OnLevelCompleted(function() error("kaputt beim Level-Up") end)
+local started
+addon.OnLevelStarted(function(level) started = level end)
+wow.levelUp(addon.level + 1)
+expect("neues Level trotz Fehler", started, addon.level)
+expect("Level-Bereich neu begonnen", addon.character.currentLevel.level, addon.level)
+expect("Fehler gemeldet", #wow.errors, errorsBefore + 1)
+local handled
+addon.RegisterEvent("PLAYER_REGEN_ENABLED", function() error("kaputt im Event") end)
+addon.RegisterEvent("PLAYER_REGEN_ENABLED", function() handled = true end)
+wow.fire("PLAYER_REGEN_ENABLED")
+expect("zweiter Handler läuft", handled, true)
+wow.errors = {}  -- absichtlich ausgelöste Fehler

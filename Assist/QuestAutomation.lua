@@ -32,8 +32,10 @@ local QUEST_ACCEPT_POPUP = "QUEST_ACCEPT"  -- Blizzards Dialog zu QUEST_ACCEPT_C
 local NO_CHOICE = 0           -- GetQuestReward ohne Belohnung zur Auswahl
 local OPTION_AVAILABLE = 0    -- Enum.GossipOptionStatus.Available
 
+-- Wiederholbare Quests (Abgaben wie Runenstoff, Dunkelmond, Argentumdämmerung) bleiben manuell:
+-- nach jeder Abgabe öffnet sich das Gespräch wieder, die Automatik würde alle Gegenstände abgeben.
 local function isWorthTaking(quest)
-  return not quest.isTrivial and not quest.isIgnored
+  return not quest.isTrivial and not quest.isIgnored and not quest.repeatable
 end
 
 -- Erste lohnende Quest aus einer Liste von C_GossipInfo (GossipQuestUIInfo)
@@ -79,7 +81,7 @@ end)
 
 local function firstComplete(quests)
   for _, quest in ipairs(quests) do
-    if quest.isComplete then return quest end
+    if quest.isComplete and not quest.repeatable then return quest end
   end
 end
 
@@ -128,6 +130,8 @@ local function onlyOption()
   if C_GossipInfo.ForceGossip() then return nil end
   local options = C_GossipInfo.GetOptions()
   if #options ~= 1 or options[1].status ~= OPTION_AVAILABLE then return nil end
+  -- Solche Optionen wählt Blizzards GossipFrame schon selbst (HandleShow), sonst doppelt gewählt
+  if options[1].selectOptionWhenOnlyOption then return nil end
   return options[1]
 end
 
@@ -174,8 +178,9 @@ function QuestAutomation.HandleGreeting()
   end
   if Comfort.IsActive("autoAcceptQuests") then
     for index = 1, GetNumAvailableQuests() do
-      local isTrivial = GetAvailableQuestInfo(index)
-      if not isTrivial then
+      -- 3. Rückgabe in allen Clients: isRepeatable (2. ist in Classic isDaily, sonst frequency)
+      local isTrivial, _, isRepeatable = GetAvailableQuestInfo(index)
+      if not isTrivial and not isRepeatable then
         ns.Debug("quests", "greeting: opening quest %s", index)
         SelectAvailableQuest(index)
         return true

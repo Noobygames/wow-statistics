@@ -36,7 +36,7 @@ wow = {
     cursorY = 0,
     guid = "Player-1-0001",
     zone = "Wald von Elwynn",
-    combatLog = {},          -- Rückgabewerte von CombatLogGetCurrentEventInfo
+    combatLog = {},          -- Rückgabewerte von C_CombatLog.GetCurrentEventInfo
     questTitle = nil,        -- Titel im offenen Quest-Abgabe-Dialog (GetTitleText)
     questTitles = {},        -- C_QuestLog.GetTitleForQuestID je Quest-ID
     instance = nil,          -- { name, type } wenn in einer Instanz (IsInInstance)
@@ -54,7 +54,7 @@ wow = {
     health = 1000,
     healthMax = 1000,
     -- Händler: Reparatur (CanMerchantRepair, GetRepairAllCost) und Gildenbank
-    merchant = { canRepair = false, repairCost = 0, guildRepair = false, guildWithdraw = 0, guildMoney = 0 },
+    merchant = { canRepair = false, repairCost = 0, guildRepair = false, guildFunds = 0 },
     -- Taschen: bags[bag][slot] = { itemID, quality, stackCount, hasNoValue, isLocked } (C_Container)
     bags = { [0] = {} },
     bagSlots = 16,
@@ -113,6 +113,7 @@ local frames = {}
 local frameMethods = {
   GetFont = function() return "Fonts\\FRIZQT__.TTF", 12, "" end,
   GetStringWidth = function(self) return #self._text * 6 end,
+  GetTextWidth = function(self) return #self._text * 6 end,
   GetWidth = function(self) return self._width end,
   SetWidth = function(self, width) self._width = width end,
   SetSize = function(self, width, height) self._width, self._height = width, height or self._height end,
@@ -152,6 +153,8 @@ local frameMethods = {
     if event == UNKNOWN_EVENT then error("Attempt to register unknown event") end
     self._events[event] = true
   end,
+  UnregisterEvent = function(self, event) self._events[event] = nil end,
+  IsEventRegistered = function(self, event) return self._events[event] == true end,
 }
 
 local function noop() end
@@ -212,7 +215,7 @@ function wow.findFrame(predicate)
   end
 end
 
--- Kampflog-Event in der Feldreihenfolge von CombatLogGetCurrentEventInfo senden
+-- Kampflog-Event in der Feldreihenfolge von C_CombatLog.GetCurrentEventInfo senden
 -- (Zeit, Event, hideCaster, Quelle GUID/Name/Flags/RaidFlags, Ziel GUID/Name/Flags/RaidFlags, Zusatzfelder)
 function wow.combatLog(subevent, sourceName, destGUID, ...)
   wow.state.combatLog = { wow.state.now, subevent, false, "Creature-1", sourceName, 0, 0, destGUID, "Ziel", 0, 0, ... }
@@ -281,7 +284,15 @@ LOOT_ITEM_PUSHED_SELF = "Ihr erhaltet einen Gegenstand: %s."
 -- Timer laufen nicht von selbst; Tests starten sie mit wow.runTimers()
 wow.timers = {}
 C_Timer = { After = function(_, callback) table.insert(wow.timers, callback) end }
-ChatFrame_DisplayTimePlayed = noop
+-- Chatfenster wie im Client: schreiben /played in ihrem TIME_PLAYED_MSG-Handler (wow.playedLines)
+NUM_CHAT_WINDOWS = 2
+wow.playedLines = 0
+for index = 1, NUM_CHAT_WINDOWS do
+  local chatFrame = newFrame()
+  chatFrame._events.TIME_PLAYED_MSG = true
+  chatFrame._scripts.OnEvent = function() wow.playedLines = wow.playedLines + 1 end
+  _G["ChatFrame" .. index] = chatFrame
+end
 date = os.date
 
 function print(...)
@@ -300,6 +311,9 @@ function GetMaxPlayerLevel() return state.maxLevel end
 function GetXPExhaustion() return state.rested > 0 and state.rested or nil end
 function GetMoney() return state.money end
 function GetTime() return state.now end
+-- Geheime Werte (Retail/Forever): Tests setzen wow.SECRET als Rückgabe einer API
+wow.SECRET = setmetatable({}, { __tostring = function() return "<secret>" end })
+function issecretvalue(value) return value == wow.SECRET end
 -- Fehler-Handler des Clients: merkt sich Fehler, statt sie anzuzeigen
 wow.errors = {}
 function geterrorhandler() return function(message) table.insert(wow.errors, message) end end
@@ -309,7 +323,9 @@ function UnitGUID(unit)
   return state.guid
 end
 function GetZoneText() return state.zone end
-function CombatLogGetCurrentEventInfo() return unpack(state.combatLog) end
+-- Nur die C_CombatLog-Variante: das globale CombatLogGetCurrentEventInfo ist im Client ein
+-- Kompatibilitäts-Alias, der ohne CVar loadDeprecationFallbacks fehlt
+C_CombatLog = { GetCurrentEventInfo = function() return unpack(state.combatLog) end }
 function time(dateTable)
   if dateTable then return os.time(dateTable) end
   return state.clock
@@ -356,13 +372,17 @@ function UnitHealthMax() return state.healthMax end
 function GetPVPSessionStats() return state.honorableKills end
 function IsShiftKeyDown() return state.shiftDown end
 function RequestTimePlayed() end
-function GetCoinTextureString(copper) return copper .. "c" end
+-- Nur C_CurrencyInfo: das globale GetCoinTextureString ist im Client ein Kompatibilitäts-Alias
+C_CurrencyInfo = { GetCoinTextureString = function(copper) return copper .. "c" end }
 function GetTitleText() return state.questTitle end
 function IsInInstance()
   if state.instance then return true, state.instance.type end
   return false, "none"
 end
-function GetInstanceInfo() return state.instance and state.instance.name or GetZoneText() end
+function GetInstanceInfo()
+  if not state.instance then return GetZoneText() end
+  return state.instance.name, state.instance.type, state.instance.difficulty or 1
+end
 C_QuestLog = {
   GetTitleForQuestID = function(questID) return state.questTitles[questID] end,
   IsQuestTrivial = function(questID) return state.trivialQuests[questID] or false end,
@@ -391,19 +411,23 @@ end
 wow.repairs = {}
 function CanMerchantRepair() return state.merchant.canRepair end
 function GetRepairAllCost() return state.merchant.repairCost, state.merchant.repairCost > 0 end
+-- Gildenreparatur gelingt nur, wenn das, was die Gilde dem Charakter zahlt (merchant.guildFunds:
+-- Abhebelimit bzw. Bankstand), die Kosten deckt; sonst bleibt alles kaputt wie im Client
 function RepairAllItems(useGuildBank)
   local merchant = state.merchant
-  table.insert(wow.repairs, { cost = merchant.repairCost, guild = useGuildBank and true or false })
+  local cost = merchant.repairCost
   if useGuildBank then
-    merchant.guildMoney = merchant.guildMoney - merchant.repairCost
+    if merchant.guildFunds < cost then return end
+    merchant.guildFunds = merchant.guildFunds - cost
   else
-    serverMoneyUpdate(-merchant.repairCost)
+    serverMoneyUpdate(-cost)
   end
+  table.insert(wow.repairs, { cost = cost, guild = useGuildBank and true or false })
   merchant.repairCost = 0
 end
 function CanGuildBankRepair() return state.merchant.guildRepair end
-function GetGuildBankWithdrawMoney() return state.merchant.guildWithdraw end
-function GetGuildBankMoney() return state.merchant.guildMoney end
+-- Nur bekannt, wenn die Gildenbank in dieser Sitzung offen war; das Addon verlässt sich nicht darauf
+function GetGuildBankMoney() return 0 end
 
 -- Taschen; UseContainerItem verkauft (Händler offen angenommen): Gegenstand weg, Geld dazu (PLAYER_MONEY)
 C_Container = {
@@ -446,7 +470,10 @@ C_GossipInfo = {
   SelectOptionByIndex = function(index) questAction("selectOption", index) end,
 }
 function GetNumAvailableQuests() return #state.greeting.available end
-function GetAvailableQuestInfo(index) return state.greeting.available[index].isTrivial end
+function GetAvailableQuestInfo(index)
+  local quest = state.greeting.available[index]
+  return quest.isTrivial, quest.frequency, quest.isRepeatable
+end
 function SelectAvailableQuest(index) questAction("greetingAvailable", index) end
 function GetNumActiveQuests() return #state.greeting.active end
 function GetActiveTitle(index)

@@ -66,10 +66,11 @@ function InstanceLimit.GetTodayCount()
   return #entriesSince(ns.Daily.StartOfDay(time()) - 1)
 end
 
-local function notifyCount(format)
+-- Stand laut Addon; extra = weitere Werte für das Format (z.B. Instanzen heute)
+local function notifyCount(format, ...)
   local count, limit = InstanceLimit.GetHourCount(), InstanceLimit.GetLimit()
   local wait = InstanceLimit.GetSecondsUntilNextFree() or 0
-  ns.Alerts.Notify(string.format(format, count, limit, Format.Duration(wait)), ns.Alerts.WARNING_COLOR)
+  ns.Alerts.Notify(string.format(format, count, limit, Format.Duration(wait), ...), ns.Alerts.WARNING_COLOR)
 end
 
 local function warn()
@@ -117,7 +118,9 @@ end)
 local function onSystemMessage(message)
   if not ns.db.warnInstanceLimit or not TRANSFER_ABORT_TOO_MANY_INSTANCES or ns.IsSecret(message) then return end
   if message:find(TRANSFER_ABORT_TOO_MANY_INSTANCES, 1, true) then
-    notifyCount(L.INSTANCE_LIMIT_BLOCKED)
+    -- Abgewiesen trotz Platz laut Addon: geschätzt zu wenig gezählt oder ein anderes Limit des
+    -- Servers (z.B. pro Tag, nicht offiziell belegt); daher auch die Zahl von heute
+    notifyCount(L.INSTANCE_LIMIT_BLOCKED, InstanceLimit.GetTodayCount())
   end
 end
 

@@ -50,16 +50,18 @@ end
 -- Lesen: rekursiv über den Text; jeder Fehler ergibt nil
 ---------------------------------------------------------------------------
 local decodeValue
+local MAX_DEPTH = 20  -- tiefer verschachtelt ist kein gültiger Text; schützt vor Stapelüberlauf
 
-local function decodeTable(text, position)
+local function decodeTable(text, position, depth)
+  if depth > MAX_DEPTH then return nil end
   local result = {}
   position = position + 1  -- "{"
   if text:sub(position, position) == "}" then return result, position + 1 end
   while true do
     local key, value
-    key, position = decodeValue(text, position)
+    key, position = decodeValue(text, position, depth)
     if key == nil or text:sub(position, position) ~= "=" then return nil end
-    value, position = decodeValue(text, position + 1)
+    value, position = decodeValue(text, position + 1, depth)
     if value == nil then return nil end
     result[key] = value
     local separator = text:sub(position, position)
@@ -69,9 +71,9 @@ local function decodeTable(text, position)
   end
 end
 
-function decodeValue(text, position)
+function decodeValue(text, position, depth)
   local tag = text:sub(position, position)
-  if tag == "{" then return decodeTable(text, position) end
+  if tag == "{" then return decodeTable(text, position, depth + 1) end
   if tag == "s" then
     local raw = text:match("^[%w_%.%-%%]*", position + 1)
     local decoded = raw:gsub("%%(%x%x)", function(hex) return string.char(tonumber(hex, 16)) end)
@@ -96,7 +98,7 @@ function Serializer.Decode(kind, text)
   text = (text or ""):gsub("%s", "")  -- Umbrüche aus dem Kopieren ignorieren
   local prefix = VERSION_PREFIX .. ":" .. kind .. ":"
   if text:sub(1, #prefix) ~= prefix then return nil end
-  local value, position = decodeValue(text, #prefix + 1)
+  local value, position = decodeValue(text, #prefix + 1, 0)
   if value == nil or position ~= #text + 1 then return nil end
   return value
 end

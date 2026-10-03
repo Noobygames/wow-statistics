@@ -95,3 +95,16 @@ GearWarnings.Check()
 wow.state.inventoryCounts = { [0] = 199 }
 GearWarnings.Check()
 expect("nach Auffüllen wieder", count(L.WARN_AMMO), 2)
+
+-- WoW Forever: UnitUsesAmmo entscheidet (z.B. Jäger mit Waffe ohne Munition)
+wow.state.interface = 16001
+wow.state.inventoryCounts = { [0] = 1000 }
+GearWarnings.Check()
+UnitUsesAmmo = function() return false end
+wow.state.inventoryCounts = { [0] = 0 }
+GearWarnings.Check()
+expect("Forever ohne Munitionsbedarf: still", count(L.WARN_AMMO), 2)
+UnitUsesAmmo = function() return true end
+GearWarnings.Check()
+expect("Forever mit Munitionsbedarf: Warnung", count(L.WARN_AMMO), 3)
+UnitUsesAmmo = nil

@@ -5,8 +5,8 @@ local Experience = addon.Experience
 wow.login({ xp = 0, xpMax = 1000, rested = 500, playedSeconds = 30 })
 expect("Rate unter 60 s noch nicht aussagekräftig", Experience.GetRatePerHour(Stats.LEVEL), nil)
 
--- Kill mit 100 XP, davon 50 Erholungsbonus
-wow.state.xp, wow.state.rested = 100, 450
+-- Kill mit 100 XP, davon 50 Erholungsbonus: der Pool sinkt um Grund- plus Bonus-XP
+wow.state.xp, wow.state.rested = 100, 400
 wow.fire("CHAT_MSG_COMBAT_XP_GAIN", "Wolf stirbt, Ihr bekommt 100 Erfahrung. (+50 Erholt-Bonus)")
 wow.fire("PLAYER_XP_UPDATE", "player")
 expect("Erholungs-XP aus Pool-Abnahme", Stats.Get(Stats.LEVEL, Stats.XP_RESTED), 50)
@@ -36,3 +36,8 @@ expectTrue("levelt", Experience.IsLeveling())
 wow.state.level = 60
 addon.level = 60
 expect("Max-Level: levelt nicht", Experience.IsLeveling(), false)
+
+-- Levelcap der Erweiterung (Retail): Blizzards wirksames Max-Level zählt
+GameRulesUtil = { IsPlayerAtEffectiveMaxLevel = function() return true end }
+expect("am Levelcap kein Leveln", Experience.IsLeveling(), false)
+GameRulesUtil = nil

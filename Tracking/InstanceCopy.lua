@@ -11,7 +11,9 @@
 -- es bei der Schätzung.
 -- Reset: INSTANCE_RESET_SUCCESS oder INSTANCE_RESET_FAILED im Systemchat. Beide bekommt nur der
 -- Gruppenleiter; FAILED ("noch Spieler drin") setzt die Instanz für alle draußen trotzdem zurück.
--- Je Charakter gemerkt: character.instanceVisits[Name] = { zoneUID, leftAt }.
+-- Je Charakter gemerkt: character.instanceVisits[Schlüssel] = { zoneUID, leftAt, pending }. Schlüssel =
+-- Name und Schwierigkeit ("Name#difficultyID"): Normal und Heroisch sind verschiedene Kopien gleichen
+-- Namens. Abonnenten bekommen den Namen; ob es eine neue Kopie ist, sagt ihnen isNew.
 --
 -- Abonnenten (Instances.lua, InstanceLimit.lua):
 --   OnEnter(fn(name, instanceType, isNew))                     isNew = Schätzung
@@ -66,31 +68,57 @@ local function visits()
   return ns.character.instanceVisits
 end
 
+local function copyKey(name, difficultyID)
+  return name .. "#" .. (difficultyID or 0)
+end
+
+-- Besuch zu einem Schlüssel; Besuche aus v2.8 hießen nur nach der Instanz und werden übernommen
+local function visitOf(key, name)
+  local all = visits()
+  if not all[key] and all[name] then
+    all[key], all[name] = all[name], nil
+  end
+  return all[key]
+end
+
 local function isNewCopy(visit, now)
   return not visit or (visit.leftAt ~= nil and now - visit.leftAt > REUSE_SECONDS)
 end
 
-local function enter(name, instanceType)
+local function stay(key, name, instanceType, enteredAt, guessNew, expectedZoneUID)
+  return { key = key, name = name, instanceType = instanceType, enteredAt = enteredAt, guessNew = guessNew,
+    expectedZoneUID = expectedZoneUID, sightings = 0 }
+end
+
+-- Bis zur Bestätigung merkt sich der Besuch die Schätzung (pending = { guessNew, expected, enteredAt }),
+-- damit /reload oder kurzes Rausgehen sie nicht verlieren: sonst fehlte später der Vergleichswert.
+local function enter(key, name, instanceType)
   local now = time()
-  local visit = visits()[name]
+  local visit = visitOf(key, name)
+  local pending = visit and visit.pending
   local guessNew = isNewCopy(visit, now)
-  inside = {
-    name = name,
-    instanceType = instanceType,
-    enteredAt = now,
-    guessNew = guessNew,
-    expectedZoneUID = visit and visit.zoneUID,
-    sightings = 0,
-  }
+  if pending and not guessNew then
+    -- Dieselbe, noch unbestätigte Kopie wie beim letzten Aufenthalt: deren Schätzung gilt weiter
+    inside = stay(key, name, instanceType, pending.enteredAt, pending.guessNew, pending.expected)
+    visit.leftAt = nil
+    ns.Debug("instances", "back in unconfirmed %s", name)
+    notify("enter", name, instanceType, false)
+    return
+  end
+  local expected = visit and (visit.zoneUID or (pending and pending.expected))
+  inside = stay(key, name, instanceType, now, guessNew, expected)
   -- Bis zur Bestätigung gilt die gemerkte zoneUID nur, wenn es dieselbe Kopie sein dürfte
-  visits()[name] = { zoneUID = not guessNew and visit and visit.zoneUID or nil }
+  visits()[key] = {
+    zoneUID = not guessNew and visit and visit.zoneUID or nil,
+    pending = { guessNew = guessNew, expected = expected, enteredAt = now },
+  }
   ns.Debug("instances", "enter %s, new copy guessed: %s", name, guessNew)
   notify("enter", name, instanceType, guessNew)
 end
 
 local function leave()
   local name = inside.name
-  local visit = visits()[name]
+  local visit = visits()[inside.key]
   if visit then visit.leftAt = time() end
   inside = nil
   notify("leave", name)
@@ -98,7 +126,10 @@ end
 
 local function confirm(zoneUID)
   inside.confirmed = true
-  visits()[inside.name].zoneUID = zoneUID
+  local visit = visits()[inside.key] or {}
+  visits()[inside.key] = visit
+  visit.zoneUID = zoneUID
+  visit.pending = nil
   local expected = inside.expectedZoneUID
   if expected then
     local isNew = zoneUID ~= expected
@@ -127,20 +158,21 @@ local function sighted(unit)
   end
 end
 
--- Name und Art der verfolgten Instanz, in der man gerade ist; nil in der offenen Welt
+-- Schlüssel, Name und Art der verfolgten Instanz, in der man gerade ist; nil in der offenen Welt.
+-- difficultyID = 3. Rückgabe von GetInstanceInfo in allen Clients.
 local function trackedInstance()
   local inInstance, instanceType = IsInInstance()
   if not inInstance or not TRACKED_TYPES[instanceType] then return nil end
-  local name = GetInstanceInfo()
-  if ns.IsSecret(name) then return nil end
-  return name, instanceType
+  local name, _, difficultyID = GetInstanceInfo()
+  if ns.IsSecret(name) or ns.IsSecret(difficultyID) then return nil end
+  return copyKey(name, difficultyID), name, instanceType
 end
 
 local function onWorldChanged()
-  local name, instanceType = trackedInstance()
-  if name == InstanceCopy.GetInsideName() then return end
+  local key, name, instanceType = trackedInstance()
+  if key == (inside and inside.key) then return end
   if inside then leave() end
-  if name then enter(name, instanceType) end
+  if key then enter(key, name, instanceType) end
 end
 
 -- "Die Todesminen wurde zurückgesetzt.": die alte Kopie gibt es nicht mehr
@@ -149,13 +181,23 @@ local function onSystemMessage(message)
   local args = ChatPatterns.MatchAny(message, resetPatterns)
   if not args then return end
   local name = args[1]
+  -- Die Kopie, in der man steht, wird nicht zurückgesetzt (der Reset trifft nur Leere bzw. die draußen)
+  if name == InstanceCopy.GetInsideName() then return end
   ns.Debug("instances", "reset %s", name)
-  visits()[name] = nil
+  -- Alle Schwierigkeiten dieses Namens (und ein Besuch im Format aus v2.8)
+  local prefix = name .. "#"
+  for key in pairs(visits()) do
+    if key == name or key:sub(1, #prefix) == prefix then visits()[key] = nil end
+  end
   notify("reset", name)
 end
 
+-- Nach dem Login die aktuelle Instanz einlesen. Normal kommt danach ohnehin PLAYER_ENTERING_WORLD;
+-- nötig ist es beim Neustart nach dem Löschen des eingeloggten Charakters mitten in einer Instanz.
+-- Verzögert, damit alle Login-Callbacks (z.B. Instances) vorher gelaufen sind.
 ns.OnLogin(function()
   inside = nil
+  C_Timer.After(0, onWorldChanged)
 end)
 
 -- Logout in der Instanz gilt als Verlassen, damit der nächste Login die Pause sieht

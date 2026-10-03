@@ -65,6 +65,13 @@ function Profiles.DisplayName(name)
   return name == Profiles.DEFAULT and L.PROFILE_DEFAULT or name
 end
 
+-- Eingegebener Name -> gespeicherter Name: der angezeigte Name des Standardprofils ("Standard",
+-- "Par défaut", ...) meint das Standardprofil, ohne Groß-/Kleinschreibung
+local function storedName(name)
+  if name and name:lower() == L.PROFILE_DEFAULT:lower() then return Profiles.DEFAULT end
+  return name
+end
+
 -- Namen aller Profile, Standard zuerst, sonst alphabetisch
 function Profiles.GetNames()
   storeActive()
@@ -84,6 +91,7 @@ end
 
 -- Zu einem anderen Profil wechseln; false, wenn es das Profil nicht gibt
 function Profiles.Switch(name)
+  name = storedName(name)
   local all = profiles()
   if not all[name] then return false end
   if name ~= ns.db.activeProfile then
@@ -99,7 +107,7 @@ end
 
 -- Aktuelle Einstellungen als (neues oder vorhandenes) Profil speichern und dieses aktivieren
 function Profiles.SaveAs(name)
-  name = name and strtrim(name) or ""
+  name = storedName(name and strtrim(name) or "")
   if name == "" then return false end
   storeActive()
   profiles()[name] = snapshot()
@@ -110,6 +118,7 @@ end
 
 -- Löschen; das Standard- und das aktive Profil bleiben. Charaktere damit nutzen wieder Standard.
 function Profiles.Delete(name)
+  name = storedName(name)
   if name == Profiles.DEFAULT or name == Profiles.GetActive() or not profiles()[name] then return false end
   profiles()[name] = nil
   for characterKey, assigned in pairs(ns.db.characterProfiles) do
@@ -138,20 +147,24 @@ end
 -- Profil aus Text anlegen (nicht aktivieren). Rückgabe: Name des neuen Profils oder nil
 function Profiles.Import(text)
   local data = Serializer.Decode(KIND, text)
-  if type(data) ~= "table" or type(data.name) ~= "string" or type(data.settings) ~= "table" then return nil end
+  if type(data) ~= "table" or type(data.name) ~= "string" or data.name == ""
+    or type(data.settings) ~= "table" then return nil end
   local name = freeName(data.name)
-  local settings = {}
-  for key, value in pairs(data.settings) do
-    if type(key) == "string" and not META_KEYS[key] then settings[key] = value end
-  end
+  -- Nur bekannte Einstellungen mit passendem Typ: ein falscher Wert würde sonst bei jedem Login
+  -- das Anwenden der Einstellungen abbrechen
+  local settings = ns.Database.SanitizeSettings(data.settings)
+  for key in pairs(META_KEYS) do settings[key] = nil end
   profiles()[name] = settings
   return name
 end
 
--- Login: Profil des Charakters laden (vor dem ersten ApplySettings, also vor allen Fenstern)
+-- Login: Profil des Charakters laden (vor dem ersten ApplySettings, also vor allen Fenstern).
+-- Ohne eigene Wahl (oder wenn sein Profil gelöscht ist) gilt das Standardprofil, sonst würden
+-- Änderungen eines neuen Charakters das zuletzt aktive Profil eines anderen überschreiben.
 ns.OnLogin(function()
   local all = profiles()
   local assigned = ns.db.characterProfiles[ns.characterKey]
+  if not (assigned and all[assigned]) then assigned = Profiles.DEFAULT end
   if assigned and assigned ~= ns.db.activeProfile and all[assigned] then
     storeActive()
     load(all[assigned])

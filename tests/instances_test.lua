@@ -152,3 +152,37 @@ expect("Raid erfasst", run().instanceType, "raid")
 
 SlashCmdList.LEVELTIMER("history")
 expectTrue("Reiter Instanzen", wow.click("Instanzen"))
+
+-- Reset-Meldung, während man selbst noch drin ist (Leiter setzt zurück): Lauf und Kopie bleiben
+enter(nil)
+enter("Burg Schattenfang")
+local runsBefore = #log()
+wow.fire("CHAT_MSG_SYSTEM", "Burg Schattenfang wurde zurückgesetzt.")
+expect("Lauf läuft weiter", run() ~= nil and run().name, "Burg Schattenfang")
+seeCopy(555)
+expect("Bestätigung ohne Fehler", run().zoneUID, 555)
+expect("kein Lauf beendet", #log(), runsBefore)
+
+-- Geschätzt neu, vor der Bestätigung /reload: die Schätzung bleibt, die alte Kopie wird noch erkannt
+enter(nil)
+wow.advance(31 * 60)
+local logBefore = #log()
+enter("Burg Schattenfang")               -- geschätzt neu: Lauf beendet
+expect("geschätzt neu", #log(), logBefore + 1)
+wow.logout()
+wow.login()
+enter("Burg Schattenfang")
+seeCopy(555)                              -- doch die alte Kopie
+expect("nach Reload zusammengeführt", #log(), logBefore)
+
+-- Normal und Heroisch gleichen Namens sind verschiedene Kopien
+enter(nil)
+local beforeHeroic = #log()
+wow.state.instance = { name = "Burg Schattenfang", type = "party", difficulty = 2 }
+wow.fire("PLAYER_ENTERING_WORLD")
+expect("Heroisch: neuer Lauf", #log(), beforeHeroic + 1)
+
+-- Statistiken löschen, während man in einer Instanz ist: die Erfassung läuft gleich weiter
+addon.DeleteCharacter(addon.characterKey)
+wow.runTimers()
+expect("Lauf nach dem Löschen", run() and run().name, "Burg Schattenfang")
