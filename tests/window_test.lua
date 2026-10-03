@@ -117,3 +117,10 @@ expect("Magenta: Blau", window._backdropColor[3], 1)
 expectTrue("Auswahl Standard", wow.click(addon.L.BACKGROUND_DEFAULT))
 expect("zurück: Deckkraft", window._backdropColor[4], 0.5)
 expectTrue("zurück: Rahmen", window._borderColor[4] ~= 0)
+
+-- 100 Tage und mehr auf einem Level: die Zeitanzeige wird breiter statt abgeschnitten
+wow.fire("TIME_PLAYED_MSG", 200 * 86400, 120 * 86400)
+wow.update(1)
+local clock = wow.findFrame(function(frame) return frame._text and frame._text:match("^120d ") end)
+expectTrue("Zeit mit 120 Tagen angezeigt", clock ~= nil)
+expectTrue("Platz für drei Tagesziffern", clock and clock:GetWidth() >= clock:GetStringWidth())

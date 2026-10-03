@@ -26,7 +26,9 @@ local MIN_WIDTH = 160
 local GRIP_SIZE = 14
 local COLUMN_GAP = 16                 -- Mindestabstand zwischen Bezeichnung und Wert
 local TABLE_GAP = 4                   -- Abstand zwischen Zeitanzeige und Tabelle
-local WIDEST_TIME = "00d 00h 00m 00s" -- für die Fensterbreite
+local WIDEST_TIME_SUFFIX = "d 00h 00m 00s" -- breiteste Zeit (nach den Tagesziffern), für die Fensterbreite
+local MIN_DAY_DIGITS = 2
+local SECONDS_PER_DAY = 86400
 local TIME_WIDTH_SLACK = 2            -- Reserve, damit die Zeit nicht wegen Rundung abgeschnitten wird
 local DEFAULT_POSITION = { "TOP", "TOP", 0, -120 }
 local DEFAULT_SCALE = 1
@@ -139,6 +141,14 @@ local function refreshXpBar()
   xpBarRested:SetWidth(math.max(1, barWidth * withRested / xpMax))
 end
 
+-- Ziffern der Tage, für die die Zeitanzeige Platz hat; wächst bei 100 Tagen und mehr
+local dayDigits = MIN_DAY_DIGITS
+local updateLayout
+
+local function digitsOfDays(seconds)
+  return #tostring(math.floor((seconds or 0) / SECONDS_PER_DAY))
+end
+
 local function refreshTexts()
   local scope = ns.db.windowScope
   levelTab:SetLabel(string.format(L.TAB_LEVEL, ns.level))
@@ -147,6 +157,10 @@ local function refreshTexts()
   sessionTab:SetActive(scope == Stats.SESSION)
 
   local seconds = Stats.GetSeconds(scope)
+  if digitsOfDays(seconds) > dayDigits then
+    dayDigits = digitsOfDays(seconds)
+    updateLayout(ns.db)
+  end
   timeText:SetText(seconds and Format.Clock(seconds) or "...")
   for _, row in ipairs(rows) do
     if row.label:IsShown() then
@@ -260,9 +274,9 @@ end
 
 -- Fenstergröße aus Schriftgrößen berechnen. Alle Maße gelten bei Skalierung 1;
 -- SetScale vergrößert das Ergebnis gleichmäßig.
-local function updateLayout(db)
+function updateLayout(db)
   -- Feste Breite der Zeit, damit nichts springt, wenn sich die Ziffern ändern
-  timeText:SetText(WIDEST_TIME)
+  timeText:SetText(string.rep("0", dayDigits) .. WIDEST_TIME_SUFFIX)
   timeText:SetWidth(math.ceil(timeText:GetStringWidth()) + TIME_WIDTH_SLACK)
   updateVisibility(db)
   if db.horizontalLayout then
