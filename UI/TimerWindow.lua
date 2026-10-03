@@ -288,13 +288,19 @@ local function clampScale(scale)
   return math.max(TimerWindow.MIN_SCALE, math.min(TimerWindow.MAX_SCALE, scale))
 end
 
+-- Zuletzt angewendete bzw. gespeicherte Positionstabelle. Ein Profilwechsel kopiert db.pos als neue
+-- Tabelle; daran erkennt das Apply, dass das Fenster an die Stelle des Profils muss.
+local appliedPos
+
 local function savePosition()
   local point, _, relativePoint, x, y = window:GetPoint()
   ns.db.pos = { point, relativePoint, x, y }
+  appliedPos = ns.db.pos
 end
 
 -- Gespeicherte Abstände gelten in der Skalierung des Fensters, daher zuerst skalieren
 local function restorePosition()
+  appliedPos = ns.db.pos
   local pos = ns.db.pos or DEFAULT_POSITION
   window:SetScale(clampScale(ns.db.scale))
   window:ClearAllPoints()
@@ -399,9 +405,12 @@ ns.RegisterApply(function(db)
   refreshTexts()
   TimerWindow.ApplyBackground(window, db)
 
-  -- Größe aus den Einstellungen (Regler); beim Login ist sie schon gesetzt
+  -- Anderes Profil: dessen Position und Größe. Sonst Größe aus den Einstellungen (Regler);
+  -- beim Login ist sie schon gesetzt
   local scale = clampScale(db.scale)
-  if math.abs(window:GetScale() - scale) > 0.001 then
+  if db.pos ~= appliedPos then
+    restorePosition()
+  elseif math.abs(window:GetScale() - scale) > 0.001 then
     setScaleKeepingTopLeft(scale)
     savePosition()
   end

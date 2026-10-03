@@ -21,6 +21,14 @@ SlashCmdList.LEVELTIMER("profile Stream")
 expect("Stream: Größe", LevelTimerDB.scale, 1.5)
 expect("Stream: Hintergrund", LevelTimerDB.windowBackground, "green")
 
+-- Profilwechsel setzt das Fenster an die Stelle des Profils, eine Größenänderung danach behält sie
+LevelTimerDB.profiles.Default.pos = { "TOPLEFT", "TOPLEFT", 120, -80 }
+SlashCmdList.LEVELTIMER("profile Default")
+local anchor = LevelTimerFrame._points[1]
+expect("Position des Profils", anchor[1] .. " " .. anchor[4] .. " " .. anchor[5], "TOPLEFT 120 -80")
+expect("Position bleibt im Profil", LevelTimerDB.pos[3], 120)
+SlashCmdList.LEVELTIMER("profile Stream")
+
 -- Jeder Charakter merkt sich sein Profil
 wow.logout()
 wow.login({ name = "Zweiter" })
