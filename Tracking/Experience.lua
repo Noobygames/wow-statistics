@@ -72,17 +72,29 @@ function Experience.GetSources(scope)
 end
 
 ---------------------------------------------------------------------------
--- Gewonnene XP: Differenz zum letzten Stand. Liegt ein Level-Up dazwischen,
--- zählt der Rest des alten Levels plus die XP auf dem neuen.
+-- Gewonnene XP: Differenz zum letzten Stand. Liegt ein Level-Up dazwischen, zählt der Rest des
+-- alten Levels, ganze übersprungene Level (aus der XP-Tabelle, sofern bekannt) und die XP auf dem neuen.
+-- Ein Level-Up ist erkennbar an einem anderen XP-Bedarf (UnitXPMax), sinkender XP oder einem
+-- höheren ns.level. Die Reihenfolge von PLAYER_XP_UPDATE und PLAYER_LEVEL_UP spielt keine Rolle:
+-- kam die XP zuerst, gilt das nächste Level schon als erreicht und der Level-Up bucht nichts doppelt.
 ---------------------------------------------------------------------------
-local lastXp, lastXpMax
+local lastXp, lastXpMax, lastLevel
+
+local function skippedLevelsXp(fromLevel, toLevel)
+  if toLevel <= fromLevel then return 0 end
+  return ns.XpTable and ns.XpTable.XpBetween(fromLevel, toLevel) or 0
+end
 
 local function trackXpGained()
   local xp, xpMax = UnitXP("player"), UnitXPMax("player")
   if lastXp then
-    local gained = xp - lastXp
-    if gained < 0 then
-      gained = (lastXpMax - lastXp) + xp
+    local gained
+    if xpMax ~= lastXpMax or xp < lastXp or ns.level > lastLevel then
+      local newLevel = math.max(ns.level, lastLevel + 1)
+      gained = (lastXpMax - lastXp) + skippedLevelsXp(lastLevel + 1, newLevel) + xp
+      lastLevel = newLevel
+    else
+      gained = xp - lastXp
     end
     if gained > 0 then
       Stats.Increment(Stats.XP_GAINED, gained)
@@ -110,7 +122,7 @@ local function trackRestedXp()
 end
 
 ns.OnLogin(function()
-  lastXp, lastXpMax = UnitXP("player"), UnitXPMax("player")
+  lastXp, lastXpMax, lastLevel = UnitXP("player"), UnitXPMax("player"), ns.level
   lastRestedPool = restedPool()
 end)
 
