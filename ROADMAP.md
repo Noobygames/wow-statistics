@@ -5,6 +5,8 @@ Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt 
 ## v2.9: Komfort
 
 - [x] 145. **Chat kopieren** (S): `/lt copy` öffnet die Zeilen des aktuellen Chatfensters im Kopierfenster (ohne Farben, Links und Texturen; geheime Zeilen gezählt). Optional (Reiter Komfort, aus) ein Button „C“ oben rechts an jedem Chatfenster.
+- [x] 146. **Ziehgriff an der Split-Liste** (S): Größe der Split-Liste wie beim Hauptfenster mit dem Griff unten rechts ändern (`Widgets.CreateResizeGrip`, gemeinsam für beide Fenster).
+- [x] 147. **Einfügen im Import-Fenster** (S): Klick irgendwo in den Textbereich fokussiert das Eingabefeld; ein leeres mehrzeiliges Feld ist nur eine Zeile hoch, Strg+V ging sonst ins Leere (im Spiel gemeldet).
 
 ## v2.8.1: Stabilität
 
