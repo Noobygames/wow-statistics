@@ -84,8 +84,31 @@ StaticPopupDialogs[DELETE_PROFILE_POPUP] = {
   preferredIndex = 3,
 }
 
+-- Liste der Profile: MAX_PROFILE_ROWS Zeilen; mehr Profile per Mausrad oder Scrollleiste erreichbar
 local function addProfileList()
   local Profiles = ns.Profiles
+  local page = builder.Page()
+  local listOffset = 0
+  local scrollBar
+
+  local function maxOffset()
+    return math.max(0, #Profiles.GetNames() - MAX_PROFILE_ROWS)
+  end
+
+  local function scrollTo(offset)
+    listOffset = math.max(0, math.min(maxOffset(), offset))
+    builder.Refresh(ns.db)
+  end
+
+  scrollBar = Widgets.CreateScrollBar(page, scrollTo)
+  scrollBar:SetPoint("TOPRIGHT", page, "TOPRIGHT", -Builder.MARGIN, builder.RowY())
+  scrollBar:SetHeight(MAX_PROFILE_ROWS * ROW_PROFILE)
+  builder.OnRefresh(function()
+    listOffset = math.min(listOffset, maxOffset())
+    scrollBar:SetRange(maxOffset())
+    scrollBar:SetOffsetSilently(listOffset)
+  end)
+
   for index = 1, MAX_PROFILE_ROWS do
     local tab = Widgets.CreateTab(builder.Page(), "GameFontHighlight", function(self, mouseButton)
       local name = self.profileName
@@ -97,10 +120,12 @@ local function addProfileList()
       end
     end)
     tab:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+    tab:EnableMouseWheel(true)
+    tab:SetScript("OnMouseWheel", function(_, delta) scrollTo(listOffset - delta) end)
     builder.AddRow(tab, ROW_PROFILE)
     builder.AddTooltip(tab, "PROFILE_LIST_TIP", function() return Profiles.DisplayName(tab.profileName) end)
     builder.OnRefresh(function()
-      local name = Profiles.GetNames()[index]
+      local name = Profiles.GetNames()[listOffset + index]
       tab.profileName = name
       tab:SetShown(name ~= nil)
       if name then

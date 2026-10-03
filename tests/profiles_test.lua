@@ -100,3 +100,15 @@ SlashCmdList.LEVELTIMER("profile Stream")
 SlashCmdList.LEVELTIMER("profile standard")
 expect("übersetzter Standardname", Profiles.GetActive(), "Default")
 expect("kein zweites Standardprofil", LevelTimerDB.profiles.Standard, nil)
+
+-- Mehr Profile als Zeilen: per Mausrad erreichbar
+for index = 1, 8 do LevelTimerDB.profiles["Zusatz " .. index] = {} end
+SlashCmdList.LEVELTIMER("config")
+wow.click(L.OPTIONS_TAB_PROFILES)
+local function listed(name)
+  return wow.findFrame(function(frame) return rawget(frame, "profileName") == name and frame:IsShown() end) ~= nil
+end
+expect("Zusatz 8 erst nicht sichtbar", listed("Zusatz 8"), false)
+local firstRow = wow.findFrame(function(frame) return rawget(frame, "profileName") == "Default" end)
+for _ = 1, 10 do firstRow._scripts.OnMouseWheel(firstRow, -1) end
+expect("nach dem Scrollen sichtbar", listed("Zusatz 8"), true)
