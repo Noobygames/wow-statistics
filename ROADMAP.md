@@ -2,6 +2,72 @@
 
 Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt und unter „Erledigt“ mit Version vermerkt. Nummern laufen über alle Versionen weiter.
 
+## v2.9: Stabilität
+
+Aus dem Deep Review aller Funktionen (10 Prüfer je Bereich plus API-Abgleich gegen Blizzards UI-Quellen für Retail 12.1, Classic Era 1.15.9, TBC Anniversary 2.5.6 und WoW Forever 1.60.1; jeder Fund von zwei Gegenprüfern bestätigt). Sortiert nach Schwere.
+
+### Schwere: kritisch
+
+- [ ] 95. **Endlosschleife am Tag der Zeitumstellung** (S): `Daily.BookPlayTime` rechnet Mitternacht + 86400 s; am 25-Stunden-Tag (Ende Sommerzeit) kommt `from` nicht weiter, der Client hängt bei Logout, /reload oder beim Öffnen der Tagesgraphen. Nächste Mitternacht per Kalender (`time({ day = d.day + 1 })`) plus Schutz `untilTime <= from`. `History/Daily.lua:43`
+
+### Schwere: hoch
+
+- [ ] 96. **AFK-Prüfung mit geheimem Wert** (S): `TimeBreakdown`: `UnitIsAFK` ist in Retail/Forever während der Chat-Sperre geheim; `isTrue` testet den Wert vor `IsSecret` und wirft jede Sekunde einen Lua-Fehler. Erst `IsSecret`, dann `== true`. `Tracking/TimeBreakdown.lua:25` — betrifft: Retail, WoW Forever
+- [ ] 97. **Beute ohne Punkt am Formatende** (S): `ChatPatterns.Compile`: endet ein Format mit `%s` (Retail, vermutlich Forever: „Ihr erhaltet Beute: %s“), fängt `(.-)` einen leeren Text; Einzel-Beute wird nie erfasst (Journal, Epic-Einblendung). Letzten Platzhalter als `(.+)` bzw. Link explizit fangen. `Lib/ChatPatterns.lua:16` — betrifft: Retail, vermutlich WoW Forever
+
+### Schwere: mittel
+
+- [ ] 98. **Fehler eines Moduls stoppt alle anderen** (S): `runAll` (Events, Login, Logout, Level-Up, Apply) ohne `xpcall`: ein Fehler beim Level-Up überspringt `ns.level = newLevel` und alle Resets, beim Logout gehen Session-Zeit und `lastSeen` verloren. Wie `ns.Every` je Callback schützen. `Core/LevelTimer.lua:38`
+- [ ] 99. **Profilwechsel verschiebt das Fenster nicht** (S): `TimerWindow`: beim Profilwechsel bleibt das Fenster an der alten Stelle, eine Größenänderung überschreibt danach die Position des Profils. `UI/TimerWindow.lua:403`
+- [ ] 100. **Session-XP nach Level-Up zu niedrig** (M): `Experience.trackXpGained` erkennt Level-Ups nur an sinkender XP; ist die XP auf dem neuen Level ≥ der alten oder überspringt ein Gewinn zwei Level, fehlt XP (Session-XP/h, Recap, Tages-, Zonen- und Instanz-XP). Level-Up über `OnLevelCompleted` verbuchen. `Tracking/Experience.lua:84`
+- [ ] 101. **/played im Chat nicht unterdrückt** (S): Blizzard ruft in allen Clients `ChatFrameUtil.DisplayTimePlayed` auf, nicht den ersetzten Alias `ChatFrame_DisplayTimePlayed`; jede Addon-Abfrage schreibt in den Chat, und das Flag deckt nur ein Chatfenster ab. Richtige Funktion wrappen, alle Fenster bis zur Antwort unterdrücken, Stub korrigieren. `Tracking/PlayedTime.lua:39`
+- [ ] 102. **Erholt-XP doppelt gezählt** (S): `GetXPExhaustion` sinkt um Grund- plus Bonus-XP, gebucht wird die ganze Abnahme als Bonus (laut warcraft.wiki.gg zählt die Hälfte). Halbe Abnahme buchen, Test korrigieren. `Tracking/Experience.lua:106`
+- [ ] 103. **Beinahe-Tode in Retail und Forever nie gezählt** (S): `UnitHealth` ist dort laut Doku immer geheim (`SecretReturns = true`), `NearDeath` steigt nie ein. Im Spiel prüfen; dann Zeile und Optionen dort ausblenden statt dauerhaft 0. `Tracking/NearDeath.lua:17` — betrifft: Retail, WoW Forever
+- [ ] 104. **Historie stürzt bei alten Twinks ab** (S): Migrationen und Defaults laufen nur für den eingeloggten Charakter; Twinks aus v1.x haben kein `zoneStats`, `dailyStats`, `questLog`, `lootLog`, `nearDeathLog`, `instanceLog` → Lua-Fehler in Historie und Graphen. Alle Charaktere beim Laden migrieren. `History/History.lua:22`
+- [ ] 105. **Tages- und Wochengraph bei Zeitumstellung** (S): `Analysis`: Tage per 86400 s gezählt, der Frühlings-Umstellungstag fehlt und ältere Wochen verschieben sich auf So–Sa. Kalenderarithmetik nutzen. `History/Analysis.lua:80`
+- [ ] 106. **Neu erstellter Charakter erbt alten Lauf** (M): Gleicher Name nach Löschen und Neuerstellen: `levelHistory` des alten Charakters bleibt; Gesamt-Split, PB, Läufe und Export mischen zwei Versuche. Neustart beim Login erkennen (gespeichertes Level > aktuelles, /played kleiner) und alten Lauf archivieren. `Speedrun/Splits.lua:305`
+- [ ] 107. **Gildenreparatur greift fast nie** (M): `GetGuildBankMoney()` ist 0, bis die Gildenbank in dieser Sitzung geöffnet war (oder veraltet); die Gilde zahlt fast nie bzw. die Meldung lügt. Wie Blizzard `RepairAllItems(true)` versuchen, Kosten danach prüfen, sonst selbst zahlen. `Assist/Merchant.lua:21` — betrifft: TBC Anniversary, Retail, WoW Forever
+- [ ] 108. **Wiederholbare Quests leeren die Taschen** (S): Auto-Annehmen/-Abgeben ignoriert `repeatable`/`frequency`; bei wiederholbaren Abgaben (Runenstoff, Dunkelmond, Argentumdämmerung) läuft die Schleife, bis alle Gegenstände weg sind. Wiederholbare Quests manuell lassen. `Assist/QuestAutomation.lua:136`
+- [ ] 109. **Historie sortiert jede Sekunde neu** (M): `TableView` filtert und sortiert die ganze Liste (bis 5000 Kills) jede Sekunde, Textvergleich mit 5 `gsub` je Vergleich: Ruckler. Sortierschlüssel einmal normalisieren, nur bei Änderung neu sortieren. `Lib/TableView.lua:346`
+
+### Schwere: niedrig
+
+- [ ] 110. **Profil-Import ohne Wertprüfung** (S): `Profiles.Import` prüft nur Schlüssel; ein Wert falschen Typs bricht `ApplySettings` bei jedem Login. Werte gegen Typ der Defaults prüfen. `Core/Profiles.lua:139`
+- [ ] 111. **Charakter ohne Profil überschreibt fremdes Profil** (S): Ohne zugewiesenes Profil übernimmt ein Charakter das zuletzt aktive, seine Änderungen landen in diesem Profil. Standardprofil zuweisen. `Core/Profiles.lua:152`
+- [ ] 112. **Migration läuft nach Downgrade erneut** (S): `migrate` setzt `schemaVersion` nach einem Downgrade herunter; nicht idempotente Migrationen (Tageswerte) laufen beim Upgrade doppelt. Version nie senken. `Core/Database.lua:220`
+- [ ] 113. **/lt debug alert für levelUp und nearDeath** (S): Argument wird kleingeschrieben, die Schlüssel `levelUp`/`nearDeath` sind gemischt geschrieben und nie auslösbar. `Core/DebugTools.lua:101`
+- [ ] 114. **Standardprofil-Name in deDE/frFR/esES** (S): Der in der Liste angezeigte (übersetzte) Name des Standardprofils funktioniert nicht mit `/lt profile`. `Core/Commands.lua:41`
+- [ ] 115. **Serializer: Stack Overflow bei tiefer Verschachtelung** (S): `Serializer.Decode` wirft bei sehr tief verschachteltem Text statt `nil` zu liefern. Tiefe begrenzen. `Lib/Serializer.lua:54`
+- [ ] 116. **Veralteter PB-Vergleich nach Löschen** (S): Löschen des eingeloggten Charakters lässt den zwischengespeicherten `pb`-Vergleich bis zum nächsten Level-Up stehen; Cache leeren. `Core/LevelTimer.lua:144`
+- [ ] 117. **/lt goal mit Kommazahl** (S): `/lt goal 30.5` wird angenommen; Bestätigung und Erreichen nennen verschiedene Level. Nur ganze Zahlen. `Core/Commands.lua:73`
+- [ ] 118. **Leveln am Erweiterungs-Levelcap (Retail)** (S): `IsLeveling` kennt nur `GetMaxPlayerLevel`; am Levelcap des Accounts bleiben XP/h, Prognose, XP-Balken und Food-Hinweis an. `IsPlayerAtEffectiveMaxLevel` nutzen, wo vorhanden. `Tracking/Experience.lua:15` — betrifft: Retail
+- [ ] 119. **Todesursache hängt an Kompatibilitäts-Global** (S): `DeathCounter` nutzt in Classic Era/TBC ein Global, das nur mit CVar `loadDeprecationFallbacks` existiert; `CombatLogGetCurrentEventInfo` aus `C_CombatLog` verwenden. `Tracking/DeathCounter.lua:78` — betrifft: Classic Era, TBC Anniversary
+- [ ] 120. **Beinahe-Tod nach Wiederbelebung** (S): Niedrige Gesundheit direkt nach Wiederbelebung oder Seelenstein zählt als Beinahe-Tod. Kurze Sperre nach `PLAYER_ALIVE`/`PLAYER_UNGHOST`. `Tracking/NearDeath.lua:30`
+- [ ] 121. **Reset während man drin ist** (S): `InstanceCopy`: Reset-Meldung für die Instanz, in der man steht, löscht den Besuch; die nächste Bestätigung wirft einen Lua-Fehler und der Lauf endet mitten im Dungeon. Resets der eigenen Instanz ignorieren, Besuch notfalls anlegen. `Tracking/InstanceCopy.lua:101`
+- [ ] 122. **Erwartete zoneUID geht vor der Bestätigung verloren** (S): Bei „neu geschätzt“ steht die alte zoneUID nur im Speicher; /reload oder kurzes Rausgehen vor der Bestätigung macht Überzählung und getrennte Läufe dauerhaft. Erwartung im Besuch speichern. `Tracking/InstanceCopy.lua:86`
+- [ ] 123. **Normal und Heroisch als dieselbe Kopie** (M): Kopien nur am Namen erkannt; Wechsel Normal/Heroisch (TBC, Retail, Forever) innerhalb 30 min zählt nicht und mischt Läufe. Name plus `difficultyID` als Schlüssel. `Tracking/InstanceCopy.lua:134` — betrifft: TBC Anniversary, Retail, WoW Forever
+- [ ] 124. **Abweisung wegen Tageslimit** (S): Weist der Server wegen eines Tageslimits ab, meldet das Addon z.B. „2/5“. Meldung neutral formulieren bzw. Tageszahl nennen. `History/InstanceLimit.lua:117` — betrifft: Classic Era, TBC Anniversary, WoW Forever
+- [ ] 125. **Löschen des Charakters in der Instanz** (S): `ns.DeleteCharacter` in einer Instanz setzt `inside = nil`; bis zum nächsten Zonenwechsel wird nichts erfasst. Nach dem Login-Neustart aktuelle Instanz neu einlesen. `Tracking/InstanceCopy.lua:157`
+- [ ] 126. **Summe zählt XP von Leveln ohne Dauer** (S): `History.Summarize` addiert XP auch ohne `seconds` (/played fehlte), Gesamt-XP/h und Vergleich sind zu hoch. Nur Einträge mit Dauer in die Rate. `History/History.lua:226`
+- [ ] 127. **Vergleichslauf mit sich selbst** (S): Der gewählte Vergleichslauf ist accountweit; der Charakter, dessen Lauf gewählt ist, vergleicht sich mit seiner eigenen Kopie. Je Charakter speichern oder dort ausblenden. `Speedrun/Splits.lua:246`
+- [ ] 128. **Split-Liste springt beim Skalieren** (S): Größenänderung der Split-Liste (oder des Hauptfensters) verschiebt sie; wie beim Hauptfenster oben links festhalten. `Speedrun/SplitList.lua:278`
+- [ ] 129. **Läufe-Ansicht zeigt 0s** (S): Ohne abgeschlossenes Level des eingeloggten Charakters zeigt jede Zeile „0s“ bis zum aktuellen Level. Dann „-“ bzw. Gesamtzeit zeigen. `Speedrun/SpeedrunViews.lua:50`
+- [ ] 130. **Import verweigert alten Lauf nach Neustart** (S): Ein exportierter alter Versuch desselben Charakters wird beim Import als vorhanden abgelehnt, obwohl die Daten zurückgesetzt wurden. `Speedrun/Runs.lua:148`
+- [ ] 131. **Export ignoriert Streamer-Datenschutz** (S): Lauf-Export und Sicherung zeigen echten Namen und Realm trotz `streamerPrivacy`. `Speedrun/Runs.lua:103`
+- [ ] 132. **Escape-Sequenzen in importierten Namen** (S): Importierte Laufnamen mit `|H`, `|T`, `|c` werden ungefiltert angezeigt. Beim Import `|` entfernen bzw. verdoppeln. `Speedrun/Runs.lua:121`
+- [ ] 133. **Gesprächsoption doppelt gewählt** (S): `skipGossip` wählt die einzige Option, obwohl Blizzards GossipFrame sie per `selectOptionWhenOnlyOption` schon gewählt hat. `Assist/QuestAutomation.lua:126`
+- [ ] 134. **Gruppeneinladung mit Rollenwahl bleibt offen** (S): `declineGroupInvites` schließt in Retail/Forever das Rollen-Popup (`LFGInvitePopup`) bzw. die Quest-Session-Bestätigung nicht. `Assist/Declines.lua:212` — betrifft: Retail, WoW Forever
+- [ ] 135. **Duell bis zum Tod nicht abgelehnt** (S): `declineDuels` kennt `DUEL_TO_THE_DEATH_REQUESTED` (Hardcore, TBC Anniversary) nicht. `Assist/Declines.lua:217` — betrifft: Classic Era
+- [ ] 136. **Reparatur meldet zu wenig Gold** (S): Automatische Reparatur läuft vor dem Schrottverkauf und meldet „nicht genug Gold“, obwohl der Erlös gereicht hätte. Erst verkaufen, dann reparieren. `Assist/Merchant.lua:81`
+- [ ] 137. **XP-Balken bleibt am Max-Level** (S): Sichtbarkeit des XP-Balkens wird nur beim Anwenden der Einstellungen berechnet; nach dem Max-Level oder abgeschalteter XP bleibt er sichtbar. Bei `PLAYER_LEVEL_UP`/`ENABLE_XP_GAIN` neu prüfen. `UI/TimerWindow.lua:171`
+- [ ] 138. **Goldsymbole fehlen in Forever** (S): `Format.Money` nutzt das veraltete `GetCoinTextureString` (nur mit Kompatibilitäts-CVar, in Forever nie). `C_CurrencyInfo.GetCoinTextureString` bzw. eigene Formatierung. `Lib/Format.lua:77` — betrifft: WoW Forever
+- [ ] 139. **Zeitanzeige ab 100 Tagen abgeschnitten** (S): Breite der Zeitanzeige reicht für zweistellige Tage; bei 100+ Tagen wird abgeschnitten bzw. umgebrochen. `UI/TimerWindow.lua:29`
+- [ ] 140. **Sessions nach Level sortieren** (S): Spalte Level sortiert nach formatiertem Text mit gemischten Zahlen/Texten; Reihenfolge falsch. Numerischen Sortierschlüssel liefern. `UI/HistoryTables.lua:115`
+- [ ] 141. **Summenzeile in schmaler Spalte** (S): „Gesamt: N“ steht in Spalte 1, in den Speedrun-Tabellen nur 18–46 px breit und unlesbar. Über mehrere Spalten setzen. `UI/HistoryTables.lua:252`
+- [ ] 142. **Feste Breiten in der Historie** (M): Feste Button- und Spaltenbreiten im Historienfenster schneiden fr/es/de-Texte ab bzw. lassen sie überlaufen. Breiten aus Textbreite berechnen. `UI/HistoryWindow.lua:24`
+- [ ] 143. **Nur 6 Profile in der Liste** (M): Die Profilliste in den Einstellungen zeigt höchstens 6 Profile; weitere lassen sich dort nicht wählen oder löschen. Scrollbar oder Auswahlmenü. `UI/Options.lua:89`
+- [ ] 144. **Munitionshinweis in Forever** (S): Hinweis nimmt an, jeder Jäger außerhalb Retail braucht Munition; Forever hat `C_PaperDollInfo.AmmoNeeded`/`UnitUsesAmmo`. Diese nutzen, wo vorhanden. `Assist/GearWarnings.lua:39` — betrifft: WoW Forever
+
 ## v2.8: Dungeons
 
 Schwerpunkt: Leveln in Dungeons auswerten und das Instanzlimit im Blick behalten.
