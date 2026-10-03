@@ -145,11 +145,11 @@ local function sameTimes(a, b)
   return true
 end
 
--- Schon vorhanden: eigener Charakter gleichen Namens und Realms oder gleicher importierter Lauf
+-- Schon vorhanden: Lauf gleichen Namens und Realms mit denselben Zeiten (eigener Charakter oder
+-- importiert). Ein alter Versuch eines zurückgesetzten oder neu erstellten Charakters ist neu.
 local function isKnown(run)
   for _, existing in ipairs(Runs.GetAll()) do
-    if existing.name == run.name and existing.realm == run.realm
-      and (not existing.imported or sameTimes(existing.times, run.times)) then
+    if existing.name == run.name and existing.realm == run.realm and sameTimes(existing.times, run.times) then
       return true
     end
   end

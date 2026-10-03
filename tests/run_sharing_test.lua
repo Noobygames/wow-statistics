@@ -12,6 +12,11 @@ LevelTimerStatsDB.characters["Rekord-Testrealm"] = {
 local text = Runs.Export(Runs.Get("Rekord-Testrealm"))
 expect("eigener Charakter ist schon bekannt", Runs.Import(text), 0)
 
+-- Alter Versuch desselben Charakters (Zeiten anders, z.B. nach Zurücksetzen): wird importiert
+local oldAttempt = addon.Serializer.Encode("run", { name = "Rekord", realm = "Testrealm", times = { [10] = 9999 } })
+expect("alter Versuch importiert", Runs.Import(oldAttempt), 1)
+LevelTimerStatsDB.importedRuns = {}
+
 -- In einem anderen Client: Charakter gibt es nicht, Lauf wird importiert
 LevelTimerStatsDB.characters["Rekord-Testrealm"] = nil
 expect("ein Lauf importiert", Runs.Import(text), 1)

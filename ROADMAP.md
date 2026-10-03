@@ -52,7 +52,7 @@ Aus dem Deep Review aller Funktionen (10 Prüfer je Bereich plus API-Abgleich ge
 - [x] 127. **Vergleichslauf mit sich selbst** (S): Der gewählte Vergleichslauf ist accountweit; der Charakter, dessen Lauf gewählt ist, vergleicht sich mit seiner eigenen Kopie. Je Charakter speichern oder dort ausblenden. `Speedrun/Splits.lua:246`
 - [x] 128. **Split-Liste springt beim Skalieren** (S): Größenänderung der Split-Liste (oder des Hauptfensters) verschiebt sie; wie beim Hauptfenster oben links festhalten. `Speedrun/SplitList.lua:278`
 - [x] 129. **Läufe-Ansicht zeigt 0s** (S): Ohne abgeschlossenes Level des eingeloggten Charakters zeigt jede Zeile „0s“ bis zum aktuellen Level. Dann „-“ bzw. Gesamtzeit zeigen. `Speedrun/SpeedrunViews.lua:50`
-- [ ] 130. **Import verweigert alten Lauf nach Neustart** (S): Ein exportierter alter Versuch desselben Charakters wird beim Import als vorhanden abgelehnt, obwohl die Daten zurückgesetzt wurden. `Speedrun/Runs.lua:148`
+- [x] 130. **Import verweigert alten Lauf nach Neustart** (S): Ein exportierter alter Versuch desselben Charakters wird beim Import als vorhanden abgelehnt, obwohl die Daten zurückgesetzt wurden. `Speedrun/Runs.lua:148`
 - [ ] 131. **Export ignoriert Streamer-Datenschutz** (S): Lauf-Export und Sicherung zeigen echten Namen und Realm trotz `streamerPrivacy`. `Speedrun/Runs.lua:103`
 - [ ] 132. **Escape-Sequenzen in importierten Namen** (S): Importierte Laufnamen mit `|H`, `|T`, `|c` werden ungefiltert angezeigt. Beim Import `|` entfernen bzw. verdoppeln. `Speedrun/Runs.lua:121`
 - [ ] 133. **Gesprächsoption doppelt gewählt** (S): `skipGossip` wählt die einzige Option, obwohl Blizzards GossipFrame sie per `selectOptionWhenOnlyOption` schon gewählt hat. `Assist/QuestAutomation.lua:126`
