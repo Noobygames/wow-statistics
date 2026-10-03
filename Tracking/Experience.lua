@@ -104,8 +104,9 @@ local function trackXpGained()
 end
 
 ---------------------------------------------------------------------------
--- Erholungs-XP: Der Bonus wird aus dem Erholungs-Pool bezahlt. Jede Abnahme
--- des Pools entspricht verbrauchtem Bonus; Zunahmen (Ausruhen) setzen nur die Basis neu.
+-- Erholungs-XP: GetXPExhaustion ist die XP-Spanne, die doppelt zählt; jeder Gewinn darin senkt sie um
+-- Grund- plus Bonus-XP (warcraft.wiki.gg, API_GetXPExhaustion). Der Bonus ist also die halbe Abnahme;
+-- Zunahmen (Ausruhen) setzen nur die Basis neu.
 ---------------------------------------------------------------------------
 local lastRestedPool
 
@@ -116,7 +117,7 @@ end
 local function trackRestedXp()
   local current = restedPool()
   if lastRestedPool and current < lastRestedPool then
-    Stats.Increment(Stats.XP_RESTED, lastRestedPool - current)
+    Stats.Increment(Stats.XP_RESTED, math.floor((lastRestedPool - current) / 2 + 0.5))
   end
   lastRestedPool = current
 end
