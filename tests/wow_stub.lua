@@ -371,7 +371,8 @@ function UnitHealthMax() return state.healthMax end
 function GetPVPSessionStats() return state.honorableKills end
 function IsShiftKeyDown() return state.shiftDown end
 function RequestTimePlayed() end
-function GetCoinTextureString(copper) return copper .. "c" end
+-- Nur C_CurrencyInfo: das globale GetCoinTextureString ist im Client ein Kompatibilitäts-Alias
+C_CurrencyInfo = { GetCoinTextureString = function(copper) return copper .. "c" end }
 function GetTitleText() return state.questTitle end
 function IsInInstance()
   if state.instance then return true, state.instance.type end
