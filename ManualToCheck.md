@@ -4,8 +4,15 @@ Was die Tests (WoW-Stub) nicht abdecken: echte API-Werte, Chatmeldungen des Serv
 
 **So füllst du das aus:** Befehle aus den grauen Blöcken in den Chat kopieren (ein Block = eine Zeile).
 Die Ausgabe bzw. was du siehst in den Block **Antwort** darunter schreiben, Kästchen abhaken. Fehlende
-Zeilen einfach leer lassen. Ausgaben von `/dump` lassen sich aus dem Chat nicht kopieren; abtippen oder
-einen Screenshot nennen reicht.
+Zeilen einfach leer lassen.
+
+**Kopieren aus dem Chat:** `/lt copy` öffnet die Zeilen des aktuellen Chatfensters im Kopierfenster;
+dort Strg+A, Strg+C. Mit Einstellungen → Komfort → „Chat kopieren“ gibt es dafür einen Button „C“ oben
+rechts an jedem Chatfenster.
+
+```
+/lt copy
+```
 
 **Vorher einmal:** Fehler sichtbar machen und das Debug-Log einschalten (gilt bis `/reload`).
 
@@ -658,4 +665,28 @@ Nach ein paar Leveln die Zeile „Max-Level in“ mit deinem Gefühl vergleichen
 ```text
 Level, Prognose:
 Einschätzung:
+```
+
+### 36. Chat kopieren (Roadmap 145)
+
+- [ ] geprüft
+
+Einstellungen → Komfort → „Chat kopieren“ an, Button „C“ oben rechts im Chatfenster anklicken; ohne
+Button:
+
+```
+/lt copy
+```
+
+**Erwartet:** Kopierfenster mit den Zeilen des Fensters, älteste oben, ohne Farbcodes; Links als
+`[Name]`. Der Button verdeckt nichts Wichtiges und erscheint in jedem Chatfenster (auch Reitern wie
+„Kampflog“).
+
+**Antwort:**
+
+```text
+Client:
+Zeilen vollständig (ja/nein):
+Button stört (wo):
+Fehler:
 ```

@@ -281,6 +281,8 @@ addToggles({
   toggle("DECLINE_GUILD_INVITES", "declineGuildInvites"),
   toggle("DECLINE_DUELS", "declineDuels"),
 })
+addSection("SECTION_CHAT")
+addToggles({ toggle("CHAT_COPY_TOGGLE", "chatCopyButton") })
 addHint("COMFORT_HINT")
 finishPage()
 

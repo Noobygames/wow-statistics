@@ -287,12 +287,17 @@ C_Timer = { After = function(_, callback) table.insert(wow.timers, callback) end
 -- Chatfenster wie im Client: schreiben /played in ihrem TIME_PLAYED_MSG-Handler (wow.playedLines)
 NUM_CHAT_WINDOWS = 2
 wow.playedLines = 0
+-- Zeilen wie Blizzards ScrollingMessageFrame: GetMessageInfo(1) ist die älteste (chatFrame._messages)
 for index = 1, NUM_CHAT_WINDOWS do
   local chatFrame = newFrame()
   chatFrame._events.TIME_PLAYED_MSG = true
   chatFrame._scripts.OnEvent = function() wow.playedLines = wow.playedLines + 1 end
+  chatFrame._messages = {}
+  chatFrame.GetNumMessages = function(self) return #self._messages end
+  chatFrame.GetMessageInfo = function(self, messageIndex) return self._messages[messageIndex], 1, 1, 1 end
   _G["ChatFrame" .. index] = chatFrame
 end
+DEFAULT_CHAT_FRAME, SELECTED_CHAT_FRAME = ChatFrame1, ChatFrame1
 date = os.date
 
 function print(...)

@@ -2,6 +2,10 @@
 
 Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt und unter „Erledigt“ mit Version vermerkt. Nummern laufen über alle Versionen weiter.
 
+## v2.9: Komfort
+
+- [x] 145. **Chat kopieren** (S): `/lt copy` öffnet die Zeilen des aktuellen Chatfensters im Kopierfenster (ohne Farben, Links und Texturen; geheime Zeilen gezählt). Optional (Reiter Komfort, aus) ein Button „C“ oben rechts an jedem Chatfenster.
+
 ## v2.8.1: Stabilität
 
 Aus dem Deep Review aller Funktionen (10 Prüfer je Bereich plus API-Abgleich gegen Blizzards UI-Quellen für Retail 12.1, Classic Era 1.15.9, TBC Anniversary 2.5.6 und WoW Forever 1.60.1; jeder Fund von zwei Gegenprüfern bestätigt). Sortiert nach Schwere.
