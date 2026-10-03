@@ -44,6 +44,12 @@ LevelTimerStatsDB.importedRuns = {}
 SlashCmdList.LEVELTIMER("runs import")
 expect("Fenster offen", LevelTimerExport:IsShown(), true)
 local editBox = wow.findFrame(function(frame) return frame._scripts.OnEscapePressed ~= nil and rawget(frame, "label") == nil and frame._text == "" end)
+expect("Eingabefeld hat den Fokus", editBox:HasFocus(), true)
+-- Fokus verloren (z.B. Fenster gewechselt): ein Klick irgendwo in den Textbereich holt ihn zurück
+editBox:ClearFocus()
+local textArea = wow.findFrame(function(frame) return frame._scripts.OnMouseDown ~= nil and frame._scripts.OnMouseWheel ~= nil end)
+textArea._scripts.OnMouseDown(textArea, "LeftButton")
+expect("Klick in den Textbereich fokussiert", editBox:HasFocus(), true)
 editBox:SetText(text)
 expectTrue("Button Importieren", wow.click(L.IMPORT))
 expect("über Fenster importiert", #LevelTimerStatsDB.importedRuns, 1)

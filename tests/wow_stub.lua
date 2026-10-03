@@ -138,6 +138,9 @@ local frameMethods = {
   SetShown = function(self, shown) self._shown = shown and true or false end,
   SetText = function(self, text) self._text = tostring(text) end,
   GetText = function(self) return self._text end,
+  SetFocus = function(self) wow.focus = self end,
+  ClearFocus = function(self) if wow.focus == self then wow.focus = nil end end,
+  HasFocus = function(self) return wow.focus == self end,
   GetChecked = function(self) return self._checked end,
   SetChecked = function(self, checked) self._checked = checked end,
   SetScript = function(self, name, handler) self._scripts[name] = handler end,
@@ -275,9 +278,10 @@ function StaticPopup_Show(name, textArg1, textArg2, data)
 end
 COMBATLOG_XPGAIN_FIRSTPERSON = "%s stirbt, Ihr bekommt %d Erfahrung."
 COMBATLOG_HONORGAIN = "%s stirbt, ehrenhafter Sieg Rang: %s (Geschätzte Ehrenpunkte: %d)"
-INSTANCE_RESET_SUCCESS = "%s wurde zurückgesetzt."
-INSTANCE_RESET_FAILED = "%s kann nicht zurückgesetzt werden. Es befinden sich noch Spieler in der Instanz."
-TRANSFER_ABORT_TOO_MANY_INSTANCES = "Ihr habt zu viele Instanzen betreten."
+-- Texte wie im deutschen Client (WoW Forever, per /dump geprüft)
+INSTANCE_RESET_SUCCESS = "'%s' wurde zurückgesetzt."
+INSTANCE_RESET_FAILED = "'%s' kann nicht zurückgesetzt werden. Es halten sich noch Spieler in der Instanz auf."
+TRANSFER_ABORT_TOO_MANY_INSTANCES = "Ihr habt in letzter Zeit zu viele Instanzen betreten."
 LOOT_ITEM_SELF = "Ihr erhaltet Beute: %s."
 LOOT_ITEM_SELF_MULTIPLE = "Ihr erhaltet Beute: %sx%d."
 LOOT_ITEM_PUSHED_SELF = "Ihr erhaltet einen Gegenstand: %s."
