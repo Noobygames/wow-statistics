@@ -9,10 +9,20 @@ ns.Experience = Experience
 local SECONDS_PER_HOUR = 3600
 local MIN_SECONDS_FOR_RATE = 60  -- darunter schwankt die Rate zu stark
 
+-- Wirksames Max-Level wie in Blizzards XP-Balken: Retail/Forever GameRulesUtil, Classic global;
+-- berücksichtigt das Levelcap der Erweiterung des Accounts. Ältere Clients: GetMaxPlayerLevel.
+local function isAtMaxLevel()
+  if GameRulesUtil and GameRulesUtil.IsPlayerAtEffectiveMaxLevel then
+    return GameRulesUtil.IsPlayerAtEffectiveMaxLevel()
+  end
+  if IsPlayerAtEffectiveMaxLevel then return IsPlayerAtEffectiveMaxLevel() end
+  return GetMaxPlayerLevel ~= nil and ns.level >= GetMaxPlayerLevel()
+end
+
 -- false auf Max-Level oder bei abgeschalteter XP
 function Experience.IsLeveling()
   if IsXPUserDisabled and IsXPUserDisabled() then return false end
-  if GetMaxPlayerLevel and ns.level >= GetMaxPlayerLevel() then return false end
+  if isAtMaxLevel() then return false end
   return UnitXPMax("player") > 0
 end
 

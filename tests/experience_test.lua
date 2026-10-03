@@ -36,3 +36,8 @@ expectTrue("levelt", Experience.IsLeveling())
 wow.state.level = 60
 addon.level = 60
 expect("Max-Level: levelt nicht", Experience.IsLeveling(), false)
+
+-- Levelcap der Erweiterung (Retail): Blizzards wirksames Max-Level zählt
+GameRulesUtil = { IsPlayerAtEffectiveMaxLevel = function() return true end }
+expect("am Levelcap kein Leveln", Experience.IsLeveling(), false)
+GameRulesUtil = nil
