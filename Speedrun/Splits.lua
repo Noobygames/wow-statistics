@@ -91,6 +91,12 @@ local function cacheKey()
     reference and reference.id or "" }, ":")
 end
 
+-- Login (auch der Neustart nach dem Löschen des eingeloggten Charakters, bei gleicher Zahl der
+-- Charaktere) baut den Vergleich neu
+ns.OnLogin(function()
+  cachedTimes = nil
+end)
+
 local function referenceTimes()
   local key = cacheKey()
   if cachedTimes and cachedFor == key then return cachedTimes end
