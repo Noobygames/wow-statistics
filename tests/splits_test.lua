@@ -89,3 +89,9 @@ SlashCmdList.LEVELTIMER("compare pb")
 expect("PB vor dem Löschen", Splits.GetReference(11), 2000)
 addon.DeleteCharacter(addon.characterKey)
 expect("PB nach dem Löschen ab Level 11", Splits.GetReference(11), 100)
+
+-- Der gewählte Vergleichslauf ist der eingeloggte Charakter selbst: Bestzeit je Level statt sich selbst
+LevelTimerDB.splitReference = { id = addon.characterKey, name = "Neu", times = { [11] = 1 } }
+addon.Set("splitComparison", "best")
+addon.Set("splitComparison", "run")
+expect("eigener Lauf: Bestzeit statt eigener Kopie", Splits.GetReference(11), 100)

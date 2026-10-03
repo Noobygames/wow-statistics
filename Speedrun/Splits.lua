@@ -66,9 +66,12 @@ local function personalBest()
   return bestTimes or {}
 end
 
--- Gewählter Lauf: beim Wählen kopierte Zeiten, bleiben fest, auch wenn der Charakter weiterlevelt
+-- Gewählter Lauf: beim Wählen kopierte Zeiten, bleiben fest, auch wenn der Charakter weiterlevelt.
+-- Der Vergleich ist accountweit; spielt man den gewählten Charakter selbst, wäre er sein eigener
+-- Vergleich, dann gilt die Bestzeit je Level.
 local function chosenRun()
   local reference = ns.db.splitReference
+  if reference and reference.id == ns.characterKey then return bestPerLevel() end
   return reference and reference.times or {}
 end
 
