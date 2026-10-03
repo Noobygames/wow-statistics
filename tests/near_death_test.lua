@@ -39,3 +39,15 @@ expect("nur der Spieler zählt", #addon.character.nearDeathLog, 1)
 addon.Set("showNearDeaths", true)
 SlashCmdList.LEVELTIMER("history")
 expectTrue("Reiter Beinahe-Tode", wow.click("Beinahe-Tode"))
+
+-- Wiederbelebung mit wenig Leben (Geistheiler, Seelenstein): kein Beinahe-Tod
+local before = Stats.Get(Stats.LEVEL, Stats.NEAR_DEATHS)
+wow.state.dead = false
+wow.fire("PLAYER_UNGHOST")
+health(5)
+health(40)
+expect("nach Wiederbelebung kein Beinahe-Tod", Stats.Get(Stats.LEVEL, Stats.NEAR_DEATHS), before)
+wow.advance(60)
+health(5)
+health(40)
+expect("später wieder gezählt", Stats.Get(Stats.LEVEL, Stats.NEAR_DEATHS), before + 1)
