@@ -25,6 +25,14 @@ wow.fire("PARTY_INVITE_REQUEST", "Einlader")
 expect("Gruppe abgelehnt", wow.declined[#wow.declined], "DeclineGroup")
 expectTrue("Einladungsdialog zu", hidden("PARTY_INVITE"))
 
+-- Einladung mit Rollenwahl (Retail/Forever): eigenes Fenster
+LFGInvitePopup = CreateFrame("Frame")
+LFGInvitePopup:Show()
+StaticPopupSpecial_Hide = function(frame) frame:Hide() end
+wow.fire("PARTY_INVITE_REQUEST", "Einlader")
+expect("Rollenwahl-Fenster zu", LFGInvitePopup:IsShown(), false)
+LFGInvitePopup, StaticPopupSpecial_Hide = nil, nil
+
 -- Gildeneinladung (Retail: eigenes Fenster)
 GuildInviteFrame = CreateFrame("Frame")
 GuildInviteFrame:Show()
