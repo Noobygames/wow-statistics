@@ -17,7 +17,7 @@ Aus dem Deep Review aller Funktionen (10 Prüfer je Bereich plus API-Abgleich ge
 
 ### Schwere: mittel
 
-- [ ] 98. **Fehler eines Moduls stoppt alle anderen** (S): `runAll` (Events, Login, Logout, Level-Up, Apply) ohne `xpcall`: ein Fehler beim Level-Up überspringt `ns.level = newLevel` und alle Resets, beim Logout gehen Session-Zeit und `lastSeen` verloren. Wie `ns.Every` je Callback schützen. `Core/LevelTimer.lua:38`
+- [x] 98. **Fehler eines Moduls stoppt alle anderen** (S): `runAll` (Events, Login, Logout, Level-Up, Apply) ohne `xpcall`: ein Fehler beim Level-Up überspringt `ns.level = newLevel` und alle Resets, beim Logout gehen Session-Zeit und `lastSeen` verloren. Wie `ns.Every` je Callback schützen. `Core/LevelTimer.lua:38`
 - [ ] 99. **Profilwechsel verschiebt das Fenster nicht** (S): `TimerWindow`: beim Profilwechsel bleibt das Fenster an der alten Stelle, eine Größenänderung überschreibt danach die Position des Profils. `UI/TimerWindow.lua:403`
 - [ ] 100. **Session-XP nach Level-Up zu niedrig** (M): `Experience.trackXpGained` erkennt Level-Ups nur an sinkender XP; ist die XP auf dem neuen Level ≥ der alten oder überspringt ein Gewinn zwei Level, fehlt XP (Session-XP/h, Recap, Tages-, Zonen- und Instanz-XP). Level-Up über `OnLevelCompleted` verbuchen. `Tracking/Experience.lua:84`
 - [ ] 101. **/played im Chat nicht unterdrückt** (S): Blizzard ruft in allen Clients `ChatFrameUtil.DisplayTimePlayed` auf, nicht den ersetzten Alias `ChatFrame_DisplayTimePlayed`; jede Addon-Abfrage schreibt in den Chat, und das Flag deckt nur ein Chatfenster ab. Richtige Funktion wrappen, alle Fenster bis zur Antwort unterdrücken, Stub korrigieren. `Tracking/PlayedTime.lua:39`
