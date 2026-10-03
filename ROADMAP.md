@@ -8,7 +8,7 @@ Aus dem Deep Review aller Funktionen (10 Prüfer je Bereich plus API-Abgleich ge
 
 ### Schwere: kritisch
 
-- [ ] 95. **Endlosschleife am Tag der Zeitumstellung** (S): `Daily.BookPlayTime` rechnet Mitternacht + 86400 s; am 25-Stunden-Tag (Ende Sommerzeit) kommt `from` nicht weiter, der Client hängt bei Logout, /reload oder beim Öffnen der Tagesgraphen. Nächste Mitternacht per Kalender (`time({ day = d.day + 1 })`) plus Schutz `untilTime <= from`. `History/Daily.lua:43`
+- [x] 95. **Endlosschleife am Tag der Zeitumstellung** (S): `Daily.BookPlayTime` rechnet Mitternacht + 86400 s; am 25-Stunden-Tag (Ende Sommerzeit) kommt `from` nicht weiter, der Client hängt bei Logout, /reload oder beim Öffnen der Tagesgraphen. Nächste Mitternacht per Kalender (`time({ day = d.day + 1 })`) plus Schutz `untilTime <= from`. `History/Daily.lua:43`
 
 ### Schwere: hoch
 

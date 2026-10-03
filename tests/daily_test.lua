@@ -34,3 +34,17 @@ expect("Wochenbeschriftung = Montag", perWeek[8].label, "12.10.")
 -- Mehrfaches Lesen verbucht nicht doppelt
 Analysis.PlayTimePerDay(addon.characterKey)
 expect("kein Doppelzählen", addon.character.dailyStats["2026-10-13"].seconds, 3600)
+
+-- Ende der Sommerzeit (25-Stunden-Tag in Europa): Buchung über 23 Uhr und Mitternacht hängt nicht
+-- und teilt korrekt auf. Ohne Zeitumstellung in der lokalen Zeitzone ist es ein normaler Tag.
+wow.state.clock = os.time({ year = 2026, month = 10, day = 25, hour = 22, min = 30 })
+addon.Daily.BookPlayTime()
+local stats = addon.character.dailyStats
+local before25 = stats["2026-10-25"] and stats["2026-10-25"].seconds or 0
+wow.advance(2 * 3600)
+addon.Daily.BookPlayTime()
+local nextMidnight = os.time({ year = 2026, month = 10, day = 26, hour = 0 })
+local endOfDay = nextMidnight - os.time({ year = 2026, month = 10, day = 25, hour = 22, min = 30 })
+expect("Rest des 25. Oktober", stats["2026-10-25"].seconds - before25, endOfDay)
+expect("Rest am 26. Oktober", stats["2026-10-26"].seconds, 2 * 3600 - endOfDay)
+expect("AddDays über den Kalender", addon.Daily.AddDays(nextMidnight - 3600, 1), nextMidnight)
