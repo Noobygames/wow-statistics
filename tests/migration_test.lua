@@ -52,3 +52,11 @@ local day = addon.character.dailyStats["2026-09-01"]
 expectTrue("Tageswert angelegt", day ~= nil)
 expect("Kill übernommen", day and day.kills, 1)
 expect("Tod übernommen", day and day.deaths, 1)
+
+-- Daten einer neueren Version (Downgrade): Schema-Version bleibt, nichts läuft doppelt
+LevelTimerStatsDB.characters["Zukunft-Realm"] = { schemaVersion = 99, name = "Zukunft", realm = "Realm",
+  currentLevel = { level = 3, counters = {} }, dailyStats = { ["2026-01-01"] = { seconds = 60, kills = 1, deaths = 0, xp = 0 } } }
+wow.logout()
+wow.login()
+expect("neuere Version nicht gesenkt", LevelTimerStatsDB.characters["Zukunft-Realm"].schemaVersion, 99)
+expect("Tageswerte unverändert", LevelTimerStatsDB.characters["Zukunft-Realm"].dailyStats["2026-01-01"].kills, 1)

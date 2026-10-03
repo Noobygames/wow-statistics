@@ -210,8 +210,11 @@ local settingsMigrations = {
   end,
 }
 
+-- Die Version wird nie gesenkt: nach einem Downgrade (ältere Addon-Version) liefen nicht wiederholbare
+-- Migrationen beim nächsten Upgrade sonst ein zweites Mal
 local function migrate(data, migrations, targetVersion)
   local version = data.schemaVersion or 1
+  if version >= targetVersion then return end
   for nextVersion = version + 1, targetVersion do
     if migrations[nextVersion] then
       migrations[nextVersion](data)
