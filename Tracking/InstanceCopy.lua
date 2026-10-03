@@ -192,8 +192,12 @@ local function onSystemMessage(message)
   notify("reset", name)
 end
 
+-- Nach dem Login die aktuelle Instanz einlesen. Normal kommt danach ohnehin PLAYER_ENTERING_WORLD;
+-- nötig ist es beim Neustart nach dem Löschen des eingeloggten Charakters mitten in einer Instanz.
+-- Verzögert, damit alle Login-Callbacks (z.B. Instances) vorher gelaufen sind.
 ns.OnLogin(function()
   inside = nil
+  C_Timer.After(0, onWorldChanged)
 end)
 
 -- Logout in der Instanz gilt als Verlassen, damit der nächste Login die Pause sieht

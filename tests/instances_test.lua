@@ -181,3 +181,8 @@ local beforeHeroic = #log()
 wow.state.instance = { name = "Burg Schattenfang", type = "party", difficulty = 2 }
 wow.fire("PLAYER_ENTERING_WORLD")
 expect("Heroisch: neuer Lauf", #log(), beforeHeroic + 1)
+
+-- Statistiken löschen, während man in einer Instanz ist: die Erfassung läuft gleich weiter
+addon.DeleteCharacter(addon.characterKey)
+wow.runTimers()
+expect("Lauf nach dem Löschen", run() and run().name, "Burg Schattenfang")
