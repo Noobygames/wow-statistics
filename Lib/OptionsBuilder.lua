@@ -20,6 +20,8 @@ local TAB_GAP = 12
 local CONTENT_TOP = -70
 local FOOTER_GAP = 8         -- Abstand zwischen Reiterinhalt und den Buttons unten
 local MIN_COLUMN_WIDTH = 144
+local FOOTER_COLUMN_GAP = 8     -- Abstand zwischen den beiden Button-Spalten unten
+local FOOTER_TEXT_PADDING = 24  -- Rand im Button links und rechts zusammen
 local COLUMN_GAP = 12        -- Mindestabstand zwischen einer Beschriftung und der rechten Spalte
 local ROW_SECTION = 24
 local ROW_CHECKBOX = 26
@@ -191,14 +193,23 @@ function OptionsBuilder.New(options)
     onRefresh(function() button:SetText(L[labelKey]) end)
   end
 
-  -- Buttons unten auf allen Reitern, von unten nach oben
-  local footerButtons = 0
+  -- Buttons unten auf allen Reitern in zwei Spalten, Zeilen von unten nach oben
+  local footerButtons = {}
+  local function footerRows()
+    return math.ceil(#footerButtons / 2)
+  end
   function builder.AddFooterButton(labelKey, onClick)
-    local button = Widgets.CreateButton(panel, MIN_WIDTH - 2 * MARGIN, BUTTON_HEIGHT, onClick)
-    local y = MARGIN + footerButtons * ROW_BUTTON
-    button:SetPoint("BOTTOMLEFT", MARGIN, y)
-    button:SetPoint("BOTTOMRIGHT", -MARGIN, y)
-    footerButtons = footerButtons + 1
+    local button = Widgets.CreateButton(panel, MIN_WIDTH / 2, BUTTON_HEIGHT, onClick)
+    local index = #footerButtons
+    local y = MARGIN + math.floor(index / 2) * ROW_BUTTON
+    if index % 2 == 0 then
+      button:SetPoint("BOTTOMLEFT", MARGIN, y)
+      button:SetPoint("BOTTOMRIGHT", panel, "BOTTOM", -FOOTER_COLUMN_GAP / 2, y)
+    else
+      button:SetPoint("BOTTOMLEFT", panel, "BOTTOM", FOOTER_COLUMN_GAP / 2, y)
+      button:SetPoint("BOTTOMRIGHT", -MARGIN, y)
+    end
+    table.insert(footerButtons, button)
     addTooltip(button, labelKey .. "_TIP", localized(labelKey))
     onRefresh(function() button:SetText(L[labelKey]) end)
   end
@@ -241,7 +252,7 @@ function OptionsBuilder.New(options)
     for _, entry in ipairs(pages) do
       lowestBottom = math.min(lowestBottom, entry.bottom)
     end
-    panel:SetHeight(-lowestBottom + FOOTER_GAP + footerButtons * ROW_BUTTON + MARGIN)
+    panel:SetHeight(-lowestBottom + FOOTER_GAP + footerRows() * ROW_BUTTON + MARGIN)
     showPage(pages[1])
   end
 
@@ -279,6 +290,15 @@ function OptionsBuilder.New(options)
     return width
   end
 
+  -- Beide Button-Spalten sind gleich breit: so breit wie der längste Text, doppelt plus Abstand
+  local function footerWidth()
+    local widest = 0
+    for _, button in ipairs(footerButtons) do
+      widest = math.max(widest, button:GetTextWidth() + FOOTER_TEXT_PADDING)
+    end
+    return 2 * widest + FOOTER_COLUMN_GAP
+  end
+
   -- Fensterbreite aus den Texten der gewählten Sprache; Abschnitte, Regler und Buttons strecken sich mit
   local function fitWidth()
     local column = columnWidth()
@@ -286,7 +306,7 @@ function OptionsBuilder.New(options)
       cell.checkbox:ClearAllPoints()
       cell.checkbox:SetPoint("TOPLEFT", MARGIN + cell.column * column, cell.y)
     end
-    local content = math.max(2 * column, widestChooserRow(), tabRowWidth())
+    local content = math.max(2 * column, widestChooserRow(), tabRowWidth(), footerWidth())
     panel:SetWidth(math.max(MIN_WIDTH, content + 2 * MARGIN))
   end
 
