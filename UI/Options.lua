@@ -1,10 +1,11 @@
--- Einstellungsfenster mit Reitern: Allgemein (Fenster, Sprache), Statistiken, Hinweise, Komfort, Stream, Speedrun, Profile.
+-- Einstellungsfenster mit Reitern: Allgemein (Fenster, Sprache), Statistiken, Hinweise, Einblendungen, Komfort, Stream, Speedrun, Profile.
 -- Darunter auf allen Reitern: Neue Session, Zusammenfassung, Historie.
 -- Nur der Inhalt; Aufbau, Tooltips, Breite und Aktualisierung übernimmt Lib/OptionsBuilder.lua.
 local _, ns = ...
 local L = ns.L
 local Widgets = ns.Widgets
 local TimerWindow = ns.TimerWindow
+local Alerts = ns.Alerts
 local Builder = ns.OptionsBuilder
 
 local MAX_PROFILE_ROWS = 6     -- so viele Profile listet der Reiter "Profile"
@@ -296,6 +297,10 @@ addToggles({
   toggle("HIGHLIGHT_DEATHS", "highlightDeaths"),
 })
 addBackgroundChooser()
+finishPage()
+
+-- Einblendungen: welche Arten, Aussehen und Position (Hinweise aus dem Reiter Hinweise nutzen dieselbe)
+addPage("OPTIONS_TAB_ALERTS")
 addSection("SECTION_ALERTS")
 addToggles({
   toggle("ALERT_TOGGLE_LEVEL_UP", "alertLevelUp"),
@@ -304,6 +309,33 @@ addToggles({
   toggle("ALERT_TOGGLE_LOOT", "alertEpicLoot"),
   toggle("ALERT_TOGGLE_NEAR_DEATH", "alertNearDeath", ns.NearDeath.IsAvailable),
 })
+addSection("SECTION_ALERT_LOOK")
+addChooser({ label = "ALERT_STYLE", setting = "alertStyle", choices = {
+  { value = Alerts.STYLE_BANNER, name = localized("ALERT_STYLE_BANNER") },
+  { value = Alerts.STYLE_TEXT, name = localized("ALERT_STYLE_TEXT") },
+} })
+addSlider({
+  label = "ALERT_SCALE",
+  min = toPercent(Alerts.MIN_SCALE),
+  max = toPercent(Alerts.MAX_SCALE),
+  step = 5,
+  get = function(db) return toPercent(db.alertScale) end,
+  set = function(value) ns.Set("alertScale", value / 100) end,
+  format = percent,
+})
+addSlider({
+  label = "ALERT_DURATION",
+  min = Alerts.MIN_DURATION,
+  max = Alerts.MAX_DURATION,
+  step = 1,
+  get = function(db) return db.alertDuration end,
+  set = function(value) ns.Set("alertDuration", value) end,
+  format = function(value) return string.format(L.SECONDS_SHORT, value) end,
+})
+addToggles({ toggle("ALERT_SOUND", "alertSound") })
+addButton("ALERT_PREVIEW", function() Alerts.Preview() end)
+addButton("ALERT_MOVE", function() Alerts.SetMoving(not Alerts.IsMoving()) end)
+addButton("ALERT_RESET_POSITION", function() Alerts.ResetPosition() end)
 finishPage()
 
 -- Speedrun: Splits, Split-Liste und Speedrun-Rekorde

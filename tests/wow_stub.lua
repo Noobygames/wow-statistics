@@ -119,6 +119,8 @@ local frameMethods = {
   SetSize = function(self, width, height) self._width, self._height = width, height or self._height end,
   GetHeight = function(self) return self._height end,
   SetHeight = function(self, height) self._height = height end,
+  GetAlpha = function(self) return self._alpha or 1 end,
+  SetAlpha = function(self, alpha) self._alpha = alpha end,
   GetScale = function(self) return self._scale end,
   SetScale = function(self, scale) self._scale = scale end,
   GetLeft = function() return 100 end,

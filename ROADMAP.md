@@ -8,7 +8,7 @@ Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt 
 - [x] 150. **Erhaltene XP** (S): Zeile „Erhaltene XP“ mit den absolut gewonnenen XP im gewählten Bereich (Level, Session oder Instanz), nicht pro Stunde.
 - [x] 151. **XP/h ohne AFK in der Historie** (S): Die Zeile des laufenden Levels und der laufenden Session ließ die noch nicht gebuchte AFK-Zeit weg (Historie, Vergleich, Graphen, Prognose zu niedrig); `TimeBreakdown.Snapshot`. Szenario `afk_rate` prüft ETA, Level-Up im AFK und AFK > Spielzeit.
 - [x] 152. **Instanz zurücksetzen** (S): Rechtsklick auf den Reiter „Instanz“, Button in den Einstellungen oder `/lt resetinstance` setzen Zeit, XP und Zähler des laufenden Laufs nach Rückfrage auf null; der Lauf bleibt offen, die Uhr läuft weiter.
-- [ ] 153. **Einblendungen gestalten** (M): Aussehen und Position der Einblendungen und Hinweise (`Alerts.lua`) einstellbar und hübscher. Geplant: Stil „Text“ oder „Banner“ (dunkler Hintergrund, Farbleiste in der Farbe der Art, weiches Ein- und Ausblenden), Größe, Anzeigedauer, optional Ton; Position per Ziehen (Verschiebemodus mit Vorschau) und Zurücksetzen; eigener Reiter „Einblendungen“ mit den Schaltern aus dem Stream-Reiter.
+- [x] 153. **Einblendungen gestalten** (M): Aussehen und Position der Einblendungen und Hinweise (`Alerts.lua`): Stil „Banner“ (dunkler Hintergrund, Farbleisten in der Farbe der Art, weiches Ein- und Ausblenden) oder „Text“, Größe, Anzeigedauer, optional Ton; Position per Ziehen im Verschiebemodus, Vorschau und Zurücksetzen. Eigener Reiter „Einblendungen“ mit den Schaltern aus dem Stream-Reiter.
 
 ## v2.8.2: Komfort und Fixes aus dem Spiel
 

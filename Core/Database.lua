@@ -43,6 +43,10 @@ local SETTINGS_DEFAULTS = {
   alertEliteKill = false,
   alertEpicLoot = false,
   alertNearDeath = false,
+  alertStyle = "banner",  -- "text" oder "banner" (siehe Alerts.lua)
+  alertScale = 1,
+  alertDuration = 3,      -- Sekunden voll sichtbar
+  alertSound = false,
   remindFood = false,  -- Hinweis, wenn beim Leveln "Satt" fehlt (siehe BuffReminder.lua)
   remindCamp = false,  -- Hinweis, wenn beim Leveln der Camp-Buff fehlt (WoW Forever)
   reminderInterval = 5,  -- Minuten zwischen zwei Hinweisen auf denselben fehlenden Buff
@@ -255,6 +259,7 @@ end
 local OPTIONAL_SETTINGS = {
   pos = isPosition,           -- Hauptfenster (TimerWindow.lua)
   splitListPos = isPosition,  -- Split-Liste (SplitList.lua)
+  alertPos = isPosition,      -- Einblendungen (Alerts.lua); fehlt = oben in der Mitte
   splitReference = function(value)  -- fester Vergleichslauf (Splits.lua)
     return type(value) == "table" and type(value.name) == "string" and isLevelTimes(value.times)
   end,
