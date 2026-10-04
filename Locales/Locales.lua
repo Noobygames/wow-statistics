@@ -12,9 +12,16 @@ ns.locales = {
     -- Allgemein und Befehle
     TAB_LEVEL = "Level %d",
     TAB_SESSION = "Session",
+    TAB_INSTANCE = "Instanz",
+    INSTANCE_RESET_NONE = "Kein Instanz-Lauf aktiv.",
+    INSTANCE_RESET_DONE = "Instanz-Lauf zurückgesetzt.",
+    INSTANCE_RESET_CONFIRM = "Daten von %s zurücksetzen? Zeit, XP und alle Zähler dieses Laufs beginnen bei null.",
+    INSTANCE_RESET_TIP = "Setzt die Daten des laufenden Instanz-Laufs (Zeit, XP, Kills, ...) auf null, ohne die Instanz zu verlassen (/lt resetinstance).",
+    INSTANCE_RESET = "Instanz zurücksetzen",
+    TAB_INSTANCE_TIP = "Werte des laufenden Instanz-Laufs. Rechtsklick setzt den Lauf zurück.",
     LOCKED = "fixiert",
     UNLOCKED = "verschiebbar",
-    HELP = "/lt [config] | history | lock | unlock | reset | compact | bar | newsession | recap | copy | splits | stream | goal <level> | compare best/pb/<name> | runs import/backup | profile [name/save/delete/export/import] | sync | show | hide | minimap",
+    HELP = "/lt [config] | history | lock | unlock | reset | compact | bar | newsession | resetinstance | recap | copy | splits | stream | goal <level> | compare best/pb/<name> | runs import/backup | profile [name/save/delete/export/import] | sync | show | hide | minimap",
     MINIMAP_HIDDEN = "Minimap-Button versteckt. Mit /lt minimap wieder einblenden.",
     DEBUG_ON = "Fehlersuche an: erweitertes Logging im Chat (bis /reload). Testbefehle: /lt debug help",
     DEBUG_OFF = "Fehlersuche aus.",
@@ -82,6 +89,7 @@ ns.locales = {
     LANGUAGE_TIP = "Sprache aller Texte des Addons. Unabhängig von der Sprache des Spiels.",
     SHOW_MINIMAP_TIP = "Knopf an der Minimap: Linksklick öffnet das Fenster, Rechtsklick die Einstellungen.",
     STAT_XP_RATE_TIP = "Erfahrung pro Stunde im gewählten Bereich (Level oder Session).",
+    STAT_XP_GAINED_TIP = "Gewonnene Erfahrung im gewählten Bereich (Level, Session oder Instanz-Lauf), nicht pro Stunde.",
     STAT_LEVEL_ETA_TIP = "Geschätzte Spielzeit bis zum nächsten Level bei gleicher XP/h.",
     STAT_MAX_LEVEL_ETA_TIP = "Prognose bis zum Max-Level: XP der restlichen Level laut XP-Tabelle des Clients geteilt durch deine XP/h der letzten 5 Level. In Retail (keine Tabelle) aus deinen letzten Level-Zeiten.",
     STAT_SPLITS_TIP = "Abweichung des laufenden Levels und aller Level zum Vergleich (Reiter Speedrun). Grün = schneller.",
@@ -266,6 +274,7 @@ ns.locales = {
 
     -- Schalter der Stats (Einstellungen)
     STAT_XP_RATE = "XP pro Stunde",
+    STAT_XP_GAINED = "Erhaltene XP",
     STAT_LEVEL_ETA = "Zeit bis Level-Up",
     STAT_MAX_LEVEL_ETA = "Zeit bis Max-Level",
     STAT_SPLITS = "Splits gegen Bestzeit",
@@ -284,6 +293,7 @@ ns.locales = {
 
     -- Zeilen im Fenster (Bezeichnung links, Wert rechts)
     ROW_XP_RATE = "XP/h",
+    ROW_XP_GAINED = "XP",
     ROW_LEVEL_ETA = "Level-Up in",
     ROW_MAX_LEVEL_ETA = "Max-Level in",
     ROW_SPLIT_LEVEL = "Split Level",
@@ -454,9 +464,16 @@ ns.locales = {
     -- General and commands
     TAB_LEVEL = "Level %d",
     TAB_SESSION = "Session",
+    TAB_INSTANCE = "Instance",
+    INSTANCE_RESET_NONE = "No instance run active.",
+    INSTANCE_RESET_DONE = "Instance run reset.",
+    INSTANCE_RESET_CONFIRM = "Reset the data of %s? Time, XP and all counters of this run start at zero.",
+    INSTANCE_RESET_TIP = "Sets the data of the running instance run (time, XP, kills, ...) back to zero without leaving the instance (/lt resetinstance).",
+    INSTANCE_RESET = "Reset instance run",
+    TAB_INSTANCE_TIP = "Stats of the running instance run. Right-click resets the run.",
     LOCKED = "locked",
     UNLOCKED = "unlocked",
-    HELP = "/lt [config] | history | lock | unlock | reset | compact | bar | newsession | recap | copy | splits | stream | goal <level> | compare best/pb/<name> | runs import/backup | profile [name/save/delete/export/import] | sync | show | hide | minimap",
+    HELP = "/lt [config] | history | lock | unlock | reset | compact | bar | newsession | resetinstance | recap | copy | splits | stream | goal <level> | compare best/pb/<name> | runs import/backup | profile [name/save/delete/export/import] | sync | show | hide | minimap",
     MINIMAP_HIDDEN = "Minimap button hidden. Use /lt minimap to show it again.",
     DEBUG_ON = "Debug on: extended logging in chat (until /reload). Test commands: /lt debug help",
     DEBUG_OFF = "Debug off.",
@@ -524,6 +541,7 @@ ns.locales = {
     LANGUAGE_TIP = "Language of all addon texts, independent of the game language.",
     SHOW_MINIMAP_TIP = "Minimap button: left-click toggles the window, right-click opens the settings.",
     STAT_XP_RATE_TIP = "Experience per hour in the selected scope (level or session).",
+    STAT_XP_GAINED_TIP = "Experience gained in the selected scope (level, session or instance run), not per hour.",
     STAT_LEVEL_ETA_TIP = "Estimated play time until the next level at the same XP/h.",
     STAT_MAX_LEVEL_ETA_TIP = "Forecast until max level: XP of the remaining levels from the client's XP table divided by your XP/h over the last 5 levels. In Retail (no table) from your recent level times.",
     STAT_SPLITS_TIP = "Difference of the running level and all levels to the comparison (Speedrun tab). Green = faster.",
@@ -708,6 +726,7 @@ ns.locales = {
 
     -- Stat toggles (settings)
     STAT_XP_RATE = "XP per hour",
+    STAT_XP_GAINED = "Gained XP",
     STAT_LEVEL_ETA = "Time to level up",
     STAT_MAX_LEVEL_ETA = "Time to max level",
     STAT_SPLITS = "Splits vs. best time",
@@ -726,6 +745,7 @@ ns.locales = {
 
     -- Rows in the window (label left, value right)
     ROW_XP_RATE = "XP/h",
+    ROW_XP_GAINED = "XP",
     ROW_LEVEL_ETA = "Level up in",
     ROW_MAX_LEVEL_ETA = "Max level in",
     ROW_SPLIT_LEVEL = "Level split",
@@ -896,9 +916,16 @@ ns.locales = {
     -- Général et commandes
     TAB_LEVEL = "Niveau %d",
     TAB_SESSION = "Session",
+    TAB_INSTANCE = "Instance",
+    INSTANCE_RESET_NONE = "Aucune instance active.",
+    INSTANCE_RESET_DONE = "Instance réinitialisée.",
+    INSTANCE_RESET_CONFIRM = "Réinitialiser les données de %s ? Temps, XP et compteurs repartent de zéro.",
+    INSTANCE_RESET_TIP = "Remet à zéro les données de l'instance en cours (temps, XP, victimes, ...) sans la quitter (/lt resetinstance).",
+    INSTANCE_RESET = "Réinitialiser l'instance",
+    TAB_INSTANCE_TIP = "Valeurs de l'instance en cours. Clic droit pour réinitialiser.",
     LOCKED = "verrouillée",
     UNLOCKED = "déverrouillée",
-    HELP = "/lt [config] | history | lock | unlock | reset | compact | bar | newsession | recap | copy | splits | stream | goal <level> | compare best/pb/<name> | runs import/backup | profile [name/save/delete/export/import] | sync | show | hide | minimap",
+    HELP = "/lt [config] | history | lock | unlock | reset | compact | bar | newsession | resetinstance | recap | copy | splits | stream | goal <level> | compare best/pb/<name> | runs import/backup | profile [name/save/delete/export/import] | sync | show | hide | minimap",
     MINIMAP_HIDDEN = "Bouton de la minicarte masqué. /lt minimap pour le réafficher.",
     DEBUG_ON = "Débogage activé : journal détaillé dans le chat (jusqu'au /reload). Commandes de test : /lt debug help",
     DEBUG_OFF = "Débogage désactivé.",
@@ -966,6 +993,7 @@ ns.locales = {
     LANGUAGE_TIP = "Langue de tous les textes de l'addon, indépendante de la langue du jeu.",
     SHOW_MINIMAP_TIP = "Bouton de la minicarte : clic gauche pour la fenêtre, clic droit pour les réglages.",
     STAT_XP_RATE_TIP = "Expérience par heure dans la portée choisie (niveau ou session).",
+    STAT_XP_GAINED_TIP = "Expérience gagnée dans la portée choisie (niveau, session ou instance), pas par heure.",
     STAT_LEVEL_ETA_TIP = "Temps de jeu estimé jusqu'au prochain niveau au même XP/h.",
     STAT_MAX_LEVEL_ETA_TIP = "Prévision jusqu'au niveau max : XP des niveaux restants selon la table d'XP du client divisée par ton XP/h des 5 derniers niveaux. Dans Retail (sans table) d'après tes derniers temps par niveau.",
     STAT_SPLITS_TIP = "Écart du niveau en cours et de tous les niveaux par rapport à la comparaison (onglet Speedrun). Vert = plus rapide.",
@@ -1150,6 +1178,7 @@ ns.locales = {
 
     -- Interrupteurs des statistiques
     STAT_XP_RATE = "XP par heure",
+    STAT_XP_GAINED = "XP gagnée",
     STAT_LEVEL_ETA = "Temps jusqu'au niveau",
     STAT_MAX_LEVEL_ETA = "Temps jusqu'au niveau max",
     STAT_SPLITS = "Écarts au meilleur temps",
@@ -1168,6 +1197,7 @@ ns.locales = {
 
     -- Lignes de la fenêtre
     ROW_XP_RATE = "XP/h",
+    ROW_XP_GAINED = "XP",
     ROW_LEVEL_ETA = "Niveau dans",
     ROW_MAX_LEVEL_ETA = "Niveau max dans",
     ROW_SPLIT_LEVEL = "Écart niveau",
@@ -1338,9 +1368,16 @@ ns.locales = {
     -- General y comandos
     TAB_LEVEL = "Nivel %d",
     TAB_SESSION = "Sesión",
+    TAB_INSTANCE = "Instancia",
+    INSTANCE_RESET_NONE = "Ninguna instancia activa.",
+    INSTANCE_RESET_DONE = "Instancia restablecida.",
+    INSTANCE_RESET_CONFIRM = "¿Restablecer los datos de %s? Tiempo, PX y contadores empiezan de cero.",
+    INSTANCE_RESET_TIP = "Pone a cero los datos de la instancia en curso (tiempo, PX, muertes, ...) sin salir de ella (/lt resetinstance).",
+    INSTANCE_RESET = "Restablecer instancia",
+    TAB_INSTANCE_TIP = "Valores de la instancia en curso. Clic derecho para restablecer.",
     LOCKED = "bloqueada",
     UNLOCKED = "desbloqueada",
-    HELP = "/lt [config] | history | lock | unlock | reset | compact | bar | newsession | recap | copy | splits | stream | goal <level> | compare best/pb/<name> | runs import/backup | profile [name/save/delete/export/import] | sync | show | hide | minimap",
+    HELP = "/lt [config] | history | lock | unlock | reset | compact | bar | newsession | resetinstance | recap | copy | splits | stream | goal <level> | compare best/pb/<name> | runs import/backup | profile [name/save/delete/export/import] | sync | show | hide | minimap",
     MINIMAP_HIDDEN = "Botón del minimapa oculto. Usa /lt minimap para mostrarlo de nuevo.",
     DEBUG_ON = "Depuración activada: registro ampliado en el chat (hasta /reload). Comandos de prueba: /lt debug help",
     DEBUG_OFF = "Depuración desactivada.",
@@ -1408,6 +1445,7 @@ ns.locales = {
     LANGUAGE_TIP = "Idioma de todos los textos del addon, independiente del idioma del juego.",
     SHOW_MINIMAP_TIP = "Botón del minimapa: clic izquierdo para la ventana, clic derecho para los ajustes.",
     STAT_XP_RATE_TIP = "Experiencia por hora en el ámbito elegido (nivel o sesión).",
+    STAT_XP_GAINED_TIP = "Experiencia ganada en el ámbito elegido (nivel, sesión o instancia), no por hora.",
     STAT_LEVEL_ETA_TIP = "Tiempo de juego estimado hasta el siguiente nivel con los mismos PX/h.",
     STAT_MAX_LEVEL_ETA_TIP = "Previsión hasta el nivel máximo: PX de los niveles restantes según la tabla de PX del cliente dividida entre tus PX/h de los últimos 5 niveles. En Retail (sin tabla) a partir de tus últimos tiempos por nivel.",
     STAT_SPLITS_TIP = "Diferencia del nivel actual y de todos los niveles con la comparación (pestaña Speedrun). Verde = más rápido.",
@@ -1592,6 +1630,7 @@ ns.locales = {
 
     -- Interruptores de estadísticas
     STAT_XP_RATE = "PX por hora",
+    STAT_XP_GAINED = "PX ganados",
     STAT_LEVEL_ETA = "Tiempo hasta subir",
     STAT_MAX_LEVEL_ETA = "Tiempo hasta nivel máx.",
     STAT_SPLITS = "Parciales vs. mejor tiempo",
@@ -1610,6 +1649,7 @@ ns.locales = {
 
     -- Filas de la ventana
     ROW_XP_RATE = "PX/h",
+    ROW_XP_GAINED = "PX",
     ROW_LEVEL_ETA = "Subes en",
     ROW_MAX_LEVEL_ETA = "Nivel máx. en",
     ROW_SPLIT_LEVEL = "Parcial nivel",

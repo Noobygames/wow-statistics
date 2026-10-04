@@ -370,6 +370,7 @@ finishPage()
 addFooterButton("HISTORY", function() ns.ToggleHistory() end)
 addFooterButton("RECAP_TITLE", function() ns.ToggleRecap() end)
 addFooterButton("NEW_SESSION", function() ns.StartNewSession() end)
+addFooterButton("INSTANCE_RESET", function() ns.ConfirmInstanceReset() end)
 
 builder.Finish()
 ns.RegisterApply(builder.Refresh)

@@ -17,10 +17,11 @@ local SETTINGS_DEFAULTS = {
   showXpBar = true,
   compactMode = false,  -- nur Zeit, XP-Balken und XP/h (siehe TimerWindow.lua)
   horizontalLayout = false,  -- Fenster als Info-Leiste: alles in einer Zeile (siehe TimerWindow.lua)
-  windowScope = "level",  -- "level" oder "session" (siehe Stats.lua)
+  windowScope = "level",  -- "level", "session" oder "instance" (siehe Stats.lua)
   -- Stat-Zeilen im Fenster (siehe StatLines.lua)
   showXpRate = true,
   showRecentXpRate = false,  -- XP/h der letzten 15 min (siehe RecentXpRate.lua)
+  showXpGained = true,  -- gewonnene XP im Bereich
   showLevelEta = true,
   showCountToLevel = false,  -- Kills und Quests bis zum Level-Up
   showMaxLevelEta = true,

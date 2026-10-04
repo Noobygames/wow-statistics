@@ -2,10 +2,12 @@
 -- vom ersten Betreten bis zum Reset oder bis man eine andere Kopie betritt. Raus und wieder rein in
 -- dieselbe Kopie (Händler, /reload) setzt den Lauf fort; die Zeit draußen zählt nicht, außer als Geist
 -- auf dem Weg zurück zur Leiche. Wiederbelebt draußen (Geistheiler) hält die Uhr an.
--- Offener Lauf: ns.character.currentRun = { name, instanceType, startedAt, seconds, level, xp,
--- counters = { kills, deaths }, zoneUID, unconfirmed }. unconfirmed = Stand vor einem Wiedereintritt,
--- dessen Kopie noch nicht bestätigt ist; zeigt sich eine andere Kopie, wird dort geteilt.
--- Beendete Läufe landen im Journal (instanceLog).
+-- Offener Lauf: ns.character.currentRun = { name, instanceType, startedAt, seconds, level,
+-- stats = alle Zähler wie bei Level und Session (Bereich Stats.INSTANCE), zoneUID, unconfirmed }.
+-- unconfirmed = Stand vor einem Wiedereintritt, dessen Kopie noch nicht bestätigt ist; zeigt sich
+-- eine andere Kopie, wird dort geteilt.
+-- Beendete Läufe landen im Journal (instanceLog) mit xp und counters = { kills, deaths }.
+-- Läufe aus älteren Versionen haben statt stats die Felder xp und counters; beim Login umgewandelt.
 local _, ns = ...
 local Stats = ns.Stats
 local Journal = ns.Journal
@@ -13,13 +15,6 @@ local InstanceCopy = ns.InstanceCopy
 
 local Instances = {}
 ns.Instances = Instances
-
--- Welche Zähler in den Lauf fließen
-local RUN_FIELDS = {
-  [Stats.PVE_KILLS] = "kills",
-  [Stats.PVP_KILLS] = "kills",
-  [Stats.DEATHS] = "deaths",
-}
 
 local runningSince  -- GetTime(), seit dem die Uhr des offenen Laufs läuft (nil = angehalten)
 
@@ -30,6 +25,22 @@ end
 -- Offener Lauf des eingeloggten Charakters (auch angehalten, solange man draußen ist) oder nil
 function Instances.GetCurrentRun()
   return currentRun()
+end
+
+-- XP, Kills und Tode eines Laufs (auch im alten Format ohne stats)
+function Instances.Summarize(run)
+  local stats = run.stats
+  if not stats then
+    return run.xp, run.counters.kills, run.counters.deaths
+  end
+  return stats[Stats.XP_GAINED] or 0, (stats[Stats.PVE_KILLS] or 0) + (stats[Stats.PVP_KILLS] or 0),
+    stats[Stats.DEATHS] or 0
+end
+
+-- Beendeter Lauf als Journal-Eintrag-Teil { xp, counters = { kills, deaths } }
+function Instances.ToRecord(run)
+  local xp, kills, deaths = Instances.Summarize(run)
+  return { xp = xp, counters = { kills = kills, deaths = deaths } }
 end
 
 function Instances.GetRunSeconds(run)
@@ -55,9 +66,16 @@ local function newRun(name, instanceType, startedAt, level)
     startedAt = startedAt,
     seconds = 0,
     level = level,
-    xp = 0,
-    counters = { kills = 0, deaths = 0 },
+    stats = ns.Database.NewCounters(),
   }
+end
+
+local function copyCounters(counters)
+  local copy = {}
+  for counter, value in pairs(counters) do
+    copy[counter] = value
+  end
+  return copy
 end
 
 local function finish()
@@ -67,10 +85,24 @@ local function finish()
   ns.character.currentRun = nil
 end
 
+-- Daten des offenen Laufs verwerfen und neu zählen (Button, /lt resetinstance); die Uhr läuft weiter,
+-- falls sie gerade lief. false ohne offenen Lauf.
+function Instances.ResetCurrent()
+  local run = currentRun()
+  if not run then return false end
+  run.stats = ns.Database.NewCounters()
+  run.seconds = 0
+  run.startedAt = time()
+  run.level = ns.level
+  run.unconfirmed = nil
+  if runningSince then runningSince = GetTime() end
+  ns.Debug("instances", "run reset: %s", run.name)
+  return true
+end
+
 -- Stand vor einem Wiedereintritt, dessen Kopie noch nicht feststeht
 local function snapshot(run)
-  return { seconds = run.seconds, xp = run.xp, kills = run.counters.kills, deaths = run.counters.deaths,
-    at = time(), level = ns.level }
+  return { seconds = run.seconds, stats = copyCounters(run.stats), at = time(), level = ns.level }
 end
 
 InstanceCopy.OnEnter(function(name, instanceType, isNew)
@@ -110,11 +142,10 @@ InstanceCopy.OnCorrected(function(name, instanceType, isNew)
     pause()
     local fresh = newRun(name, instanceType, before.at, before.level)
     fresh.seconds = run.seconds - before.seconds
-    fresh.xp = run.xp - before.xp
-    fresh.counters.kills = run.counters.kills - before.kills
-    fresh.counters.deaths = run.counters.deaths - before.deaths
-    run.seconds, run.xp = before.seconds, before.xp
-    run.counters.kills, run.counters.deaths = before.kills, before.deaths
+    for counter, value in pairs(run.stats) do
+      fresh.stats[counter] = value - (before.stats[counter] or 0)
+    end
+    run.seconds, run.stats = before.seconds, before.stats
     run.unconfirmed = nil
     finish()
     ns.character.currentRun = fresh
@@ -124,9 +155,10 @@ InstanceCopy.OnCorrected(function(name, instanceType, isNew)
     if not previous then return end
     run.startedAt, run.level = previous.time, previous.level
     run.seconds = run.seconds + previous.seconds
-    run.xp = run.xp + previous.xp
-    run.counters.kills = run.counters.kills + previous.counters.kills
-    run.counters.deaths = run.counters.deaths + previous.counters.deaths
+    local stats = run.stats
+    stats[Stats.XP_GAINED] = stats[Stats.XP_GAINED] + previous.xp
+    stats[Stats.PVE_KILLS] = stats[Stats.PVE_KILLS] + previous.counters.kills
+    stats[Stats.DEATHS] = stats[Stats.DEATHS] + previous.counters.deaths
   end
 end)
 
@@ -143,9 +175,28 @@ InstanceCopy.OnReset(function(name)
   if run and run.name == name then finish() end
 end)
 
+-- Lauf aus einer älteren Version (xp, counters) auf den vollen Zählersatz bringen
+local function upgrade(run)
+  if run.stats then return end
+  run.stats = ns.Database.NewCounters()
+  run.stats[Stats.XP_GAINED] = run.xp
+  run.stats[Stats.PVE_KILLS] = run.counters.kills
+  run.stats[Stats.DEATHS] = run.counters.deaths
+  run.xp, run.counters = nil, nil
+  if run.unconfirmed and not run.unconfirmed.stats then
+    local before = run.unconfirmed
+    before.stats = ns.Database.NewCounters()
+    before.stats[Stats.XP_GAINED] = before.xp
+    before.stats[Stats.PVE_KILLS] = before.kills
+    before.stats[Stats.DEATHS] = before.deaths
+    before.xp, before.kills, before.deaths = nil, nil, nil
+  end
+end
+
 -- Nach dem Login steht die Uhr; betritt man die Instanz (wieder), läuft sie weiter
 ns.OnLogin(function()
   runningSince = nil
+  if currentRun() then upgrade(currentRun()) end
 end)
 
 ns.OnLogout(pause)
@@ -156,10 +207,5 @@ ns.RegisterEvent("PLAYER_UNGHOST", onPossiblyAlive)
 Stats.OnIncrement(function(counter, amount)
   local run = currentRun()
   if not run or not runningSince then return end
-  if counter == Stats.XP_GAINED then
-    run.xp = run.xp + amount
-  elseif RUN_FIELDS[counter] then
-    local field = RUN_FIELDS[counter]
-    run.counters[field] = run.counters[field] + amount
-  end
+  run.stats[counter] = (run.stats[counter] or 0) + amount
 end)

@@ -2,6 +2,14 @@
 
 Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt und unter „Erledigt“ mit Version vermerkt. Nummern laufen über alle Versionen weiter.
 
+## v2.9: Instanz-Auswertung und Einblendungen
+
+- [x] 149. **Instanz-Reiter** (M): dritter Reiter „Instanz“ neben Level und Session; zeigt alle Stat-Zeilen für den laufenden Instanz-Lauf (`Stats.INSTANCE`, voller Zählersatz in `currentRun.stats`, gezählt nur bei laufender Lauf-Uhr). Alte offene Läufe werden beim Login umgewandelt.
+- [x] 150. **Erhaltene XP** (S): Zeile „Erhaltene XP“ mit den absolut gewonnenen XP im gewählten Bereich (Level, Session oder Instanz), nicht pro Stunde.
+- [x] 151. **XP/h ohne AFK in der Historie** (S): Die Zeile des laufenden Levels und der laufenden Session ließ die noch nicht gebuchte AFK-Zeit weg (Historie, Vergleich, Graphen, Prognose zu niedrig); `TimeBreakdown.Snapshot`. Szenario `afk_rate` prüft ETA, Level-Up im AFK und AFK > Spielzeit.
+- [x] 152. **Instanz zurücksetzen** (S): Rechtsklick auf den Reiter „Instanz“, Button in den Einstellungen oder `/lt resetinstance` setzen Zeit, XP und Zähler des laufenden Laufs nach Rückfrage auf null; der Lauf bleibt offen, die Uhr läuft weiter.
+- [ ] 153. **Einblendungen gestalten** (M): Aussehen und Position der Einblendungen und Hinweise (`Alerts.lua`) einstellbar und hübscher. Geplant: Stil „Text“ oder „Banner“ (dunkler Hintergrund, Farbleiste in der Farbe der Art, weiches Ein- und Ausblenden), Größe, Anzeigedauer, optional Ton; Position per Ziehen (Verschiebemodus mit Vorschau) und Zurücksetzen; eigener Reiter „Einblendungen“ mit den Schaltern aus dem Stream-Reiter.
+
 ## v2.8.2: Komfort und Fixes aus dem Spiel
 
 - [x] 145. **Chat kopieren** (S): `/lt copy` öffnet die Zeilen des aktuellen Chatfensters im Kopierfenster (ohne Farben, Links und Texturen; geheime Zeilen gezählt). Optional (Reiter Komfort, aus) ein Button „C“ oben rechts an jedem Chatfenster.

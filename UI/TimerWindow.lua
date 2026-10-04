@@ -1,4 +1,4 @@
--- Anzeigefenster: Reiter "Level | Session", Spielzeit im gewählten Bereich, XP-Balken und darunter
+-- Anzeigefenster: Reiter "Level | Session | Instanz", Spielzeit im gewählten Bereich, XP-Balken und darunter
 -- eine Tabelle der eingeschalteten Stats (Bezeichnung links, Wert rechts).
 -- Einstellung "horizontalLayout": dieselben Elemente nebeneinander in einer Zeile (Info-Leiste),
 -- der XP-Balken darunter über die ganze Breite.
@@ -57,6 +57,19 @@ local sessionTab = Widgets.CreateTab(window, "GameFontNormalSmall", function()
   ns.Set("windowScope", Stats.SESSION)
 end)
 
+local instanceTab = Widgets.CreateTab(window, "GameFontNormalSmall")
+
+-- Rechtsklick auf den Instanz-Reiter (oder Button/Befehl): Daten des Laufs zurücksetzen, nach Rückfrage
+instanceTab:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+instanceTab:SetScript("OnClick", function(_, mouseButton)
+  if mouseButton == "RightButton" then
+    ns.ConfirmInstanceReset()
+  else
+    ns.Set("windowScope", Stats.INSTANCE)
+  end
+end)
+Widgets.AttachTooltip(instanceTab, function() return L.TAB_INSTANCE end, function() return L.TAB_INSTANCE_TIP end)
+
 local timeText = window:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 timeText:SetTextColor(unpack(Widgets.COLORS.highlight))
 
@@ -104,8 +117,17 @@ local function growTo(width)
   end
 end
 
+-- Vertikal: drei Reiter um die Mitte (Session), Level links und Instanz rechts davon
+local function tabsWidth()
+  local side = math.max(levelTab:GetWidth(), instanceTab:GetWidth())
+  return sessionTab:GetWidth() + 2 * (side + TAB_GAP) + 2 * PADDING_X
+end
+
 -- Fenster verbreitern, falls Bezeichnung und Wert einer Zeile nicht mehr nebeneinander passen
 local function growToFitRows()
+  if levelTab:IsShown() then
+    growTo(tabsWidth())
+  end
   for _, row in ipairs(rows) do
     if row.label:IsShown() then
       growTo(row.label:GetStringWidth() + COLUMN_GAP + row.value:GetStringWidth() + 2 * PADDING_X)
@@ -117,7 +139,7 @@ end
 local function growToFitLine()
   local width = 2 * BAR_PADDING_X + timeText:GetWidth()
   if levelTab:IsShown() then
-    width = width + levelTab:GetWidth() + sessionTab:GetWidth() + 2 * BAR_ITEM_GAP
+    width = width + levelTab:GetWidth() + sessionTab:GetWidth() + instanceTab:GetWidth() + 3 * BAR_ITEM_GAP
   end
   for _, row in ipairs(rows) do
     if row.label:IsShown() then
@@ -154,6 +176,8 @@ local function refreshTexts()
   levelTab:SetActive(scope == Stats.LEVEL)
   sessionTab:SetLabel(L.TAB_SESSION)
   sessionTab:SetActive(scope == Stats.SESSION)
+  instanceTab:SetLabel(L.TAB_INSTANCE)
+  instanceTab:SetActive(scope == Stats.INSTANCE)
 
   local seconds = Stats.GetSeconds(scope)
   if digitsOfDays(seconds) > dayDigits then
@@ -181,6 +205,7 @@ local function updateVisibility(db)
   local compact = db.compactMode
   levelTab:SetShown(not compact)
   sessionTab:SetShown(not compact)
+  instanceTab:SetShown(not compact)
 
   local showXpBar = db.showXpBar and ns.Experience.IsLeveling()
   for _, part in ipairs(xpBarParts) do
@@ -214,9 +239,12 @@ local function layoutVertical()
   local y = PADDING_Y
   if levelTab:IsShown() then
     levelTab:ClearAllPoints()
-    levelTab:SetPoint("TOPRIGHT", window, "TOP", -TAB_GAP / 2, -y)
     sessionTab:ClearAllPoints()
-    sessionTab:SetPoint("TOPLEFT", window, "TOP", TAB_GAP / 2, -y)
+    sessionTab:SetPoint("TOP", window, "TOP", 0, -y)
+    levelTab:ClearAllPoints()
+    levelTab:SetPoint("TOPRIGHT", sessionTab, "TOPLEFT", -TAB_GAP, 0)
+    instanceTab:ClearAllPoints()
+    instanceTab:SetPoint("TOPLEFT", sessionTab, "TOPRIGHT", TAB_GAP, 0)
     y = y + fontSize(levelTab.label) + 4 + LINE_GAP
   end
   timeText:ClearAllPoints()
@@ -258,6 +286,7 @@ local function layoutHorizontal()
   if levelTab:IsShown() then
     chain(levelTab)
     chain(sessionTab, BAR_ITEM_GAP)
+    chain(instanceTab, BAR_ITEM_GAP)
   end
   chain(timeText, BAR_ITEM_GAP)
   for _, row in ipairs(rows) do
@@ -293,6 +322,33 @@ function TimerWindow.ApplyBackground(frame, db)
   else
     Widgets.SetDefaultBackground(frame, db.bgAlpha)
   end
+end
+
+---------------------------------------------------------------------------
+-- Instanz-Lauf zurücksetzen
+---------------------------------------------------------------------------
+local RESET_INSTANCE_POPUP = "LEVELTIMER_RESET_INSTANCE"
+
+StaticPopupDialogs[RESET_INSTANCE_POPUP] = {
+  button1 = YES or "Yes",
+  button2 = NO or "No",
+  OnAccept = function()
+    if ns.Instances.ResetCurrent() then ns.Print(L.INSTANCE_RESET_DONE) end
+  end,
+  timeout = 0,
+  whileDead = true,
+  hideOnEscape = true,
+  preferredIndex = 3,
+}
+
+function ns.ConfirmInstanceReset()
+  local run = ns.Instances.GetCurrentRun()
+  if not run then
+    ns.Print(L.INSTANCE_RESET_NONE)
+    return
+  end
+  StaticPopupDialogs[RESET_INSTANCE_POPUP].text = L.INSTANCE_RESET_CONFIRM  -- aktuelle Sprache
+  StaticPopup_Show(RESET_INSTANCE_POPUP, run.name)
 end
 
 ---------------------------------------------------------------------------

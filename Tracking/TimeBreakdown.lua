@@ -60,8 +60,18 @@ end
 -- Sekunden einer Tätigkeit im Bereich, inklusive der noch nicht gebuchten
 function TimeBreakdown.GetSeconds(scope, counter)
   if counter == Stats.DEAD_SECONDS then return ns.DeathCounter.GetDeadSeconds(scope) end
-  local running = (activity == counter) and pending or 0
+  local running = (activity == counter and Stats.IsOpen(scope)) and pending or 0
   return Stats.Get(scope, counter) + running
+end
+
+-- Alle Zähler des Bereichs wie Stats.Snapshot, aber mit der noch nicht gebuchten Zeit der Aufteilung,
+-- damit Historie-Zeilen des laufenden Levels/der Session dieselbe Rate zeigen wie das Fenster
+function TimeBreakdown.Snapshot(scope)
+  local counters = Stats.Snapshot(scope)
+  for _, counter in ipairs(TimeBreakdown.PARTS) do
+    counters[counter] = TimeBreakdown.GetSeconds(scope, counter)
+  end
+  return counters
 end
 
 -- Rest aus Gesamtzeit und Zählern, auch für Historie-Einträge ({ seconds, counters })

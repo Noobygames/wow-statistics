@@ -62,7 +62,7 @@ local function currentLevelRecord(characterKey)
       level = ns.level,
       seconds = Stats.GetSeconds(Stats.LEVEL),
       xp = Stats.GetXp(Stats.LEVEL),
-      counters = Stats.Snapshot(Stats.LEVEL),
+      counters = ns.TimeBreakdown.Snapshot(Stats.LEVEL),
       isCurrent = true,
     }
   end
@@ -78,7 +78,7 @@ local function currentSessionRecord(characterKey)
     record.seconds = ns.Session.GetSeconds()
     record.endLevel = ns.level
     record.xp = Stats.GetXp(Stats.SESSION)
-    record.counters = Stats.Snapshot(Stats.SESSION)
+    record.counters = ns.TimeBreakdown.Snapshot(Stats.SESSION)
     record.isCurrent = true
   end
   return record
@@ -146,13 +146,14 @@ function History.GetInstanceLog(characterKey)
   local records = newestFirst(character.instanceLog)
   local run = character.currentRun
   if run then
+    local record = ns.Instances.ToRecord(run)
     table.insert(records, 1, {
       time = run.startedAt,
       name = run.name,
       seconds = ns.Instances.GetRunSeconds(run),
       level = run.level,
-      xp = run.xp,
-      counters = run.counters,
+      xp = record.xp,
+      counters = record.counters,
       isCurrent = true,
     })
   end

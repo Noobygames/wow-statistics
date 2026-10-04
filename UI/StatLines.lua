@@ -150,13 +150,19 @@ end
 local function instanceRun()
   local run = ns.Instances.GetCurrentRun()
   if not run then return NO_VALUE end
-  return string.format(ns.L.INSTANCE_RUN_VALUE, Format.Duration(ns.Instances.GetRunSeconds(run)), Format.Number(run.xp))
+  return string.format(ns.L.INSTANCE_RUN_VALUE, Format.Duration(ns.Instances.GetRunSeconds(run)), Format.Number(ns.Instances.Summarize(run)))
+end
+
+-- Gewonnene XP im Bereich (Level, Session oder Instanz-Lauf), unabhängig von der Rate
+local function xpGained(scope)
+  return Format.Number(Stats.GetXp(scope))
 end
 
 ns.STAT_LINES = {
   { setting = "showXpRate", label = "STAT_XP_RATE", rows = { { label = "ROW_XP_RATE", value = xpRate } } },
   { setting = "showRecentXpRate", label = "STAT_RECENT_XP_RATE",
     rows = { { label = "ROW_RECENT_XP_RATE", value = recentXpRate } } },
+  { setting = "showXpGained", label = "STAT_XP_GAINED", rows = { { label = "ROW_XP_GAINED", value = xpGained } } },
   { setting = "showLevelEta", label = "STAT_LEVEL_ETA", rows = { { label = "ROW_LEVEL_ETA", value = timeToLevel } } },
   { setting = "showCountToLevel", label = "STAT_COUNT_TO_LEVEL", rows = {
     { label = "ROW_KILLS_TO_LEVEL", value = countToLevel(Stats.XP_KILLS, Stats.PVE_KILLS) },

@@ -18,6 +18,7 @@ local commands = {
   compact = function() ns.Set("compactMode", not ns.db.compactMode) end,
   bar = function() ns.Set("horizontalLayout", not ns.db.horizontalLayout) end,
   newsession = function() ns.StartNewSession() end,
+  resetinstance = function() ns.ConfirmInstanceReset() end,
   recap = function() ns.ToggleRecap() end,
   -- /lt copy: Zeilen des aktuellen Chatfensters zum Kopieren (ChatCopy.lua)
   copy = function() ns.ChatCopy.ShowCurrent() end,
