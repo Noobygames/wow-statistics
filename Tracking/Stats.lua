@@ -48,6 +48,12 @@ local function countersOf(scope)
   return ns.character.currentLevel.counters
 end
 
+-- Zählt der Bereich gerade mit? Level und Session immer, die Instanz nur bei laufender Lauf-Uhr
+-- (draußen steht der Lauf still). Noch nicht gebuchte Zeiten gehören nur dann dazu.
+function Stats.IsCounting(scope)
+  return scope ~= Stats.INSTANCE or ns.Instances.IsRunning()
+end
+
 -- Gibt es den Bereich gerade? Level und Session immer, die Instanz nur mit offenem Lauf.
 function Stats.IsOpen(scope)
   return scope ~= Stats.INSTANCE or ns.Instances.GetCurrentRun() ~= nil

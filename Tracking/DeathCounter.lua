@@ -19,7 +19,7 @@ local playerGUID  -- einmal beim Login gemerkt; das Kampflog feuert sehr oft
 
 -- Inklusive der laufenden Zeit, falls man gerade tot ist
 function DeathCounter.GetDeadSeconds(scope)
-  local running = (deadSince and Stats.IsOpen(scope)) and (GetTime() - deadSince) or 0
+  local running = (deadSince and Stats.IsCounting(scope)) and (GetTime() - deadSince) or 0
   return Stats.Get(scope, Stats.DEAD_SECONDS) + running
 end
 

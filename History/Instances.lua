@@ -27,6 +27,11 @@ function Instances.GetCurrentRun()
   return currentRun()
 end
 
+-- Läuft die Uhr des offenen Laufs? (nicht draußen, außer als Geist)
+function Instances.IsRunning()
+  return currentRun() ~= nil and runningSince ~= nil
+end
+
 -- XP, Kills und Tode eines Laufs (auch im alten Format ohne stats)
 function Instances.Summarize(run)
   local stats = run.stats

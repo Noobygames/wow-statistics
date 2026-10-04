@@ -95,3 +95,18 @@ expect("alter Lauf: XP", Stats.Get(Stats.INSTANCE, Stats.XP_GAINED), 700)
 expect("alter Lauf: Kills", Stats.GetTotalKills(Stats.INSTANCE), 4)
 expect("alter Lauf: Tode", Stats.Get(Stats.INSTANCE, Stats.DEATHS), 1)
 expect("alter Lauf: alte Felder weg", run.xp, nil)
+
+-- Ungebuchte Zeit (Kampf) zählt nur bei laufender Lauf-Uhr in den Instanz-Bereich
+enter("Burg Schattenfang")
+local seconds = function(scope) return addon.TimeBreakdown.GetSeconds(scope, Stats.COMBAT_SECONDS) end
+wow.state.inCombat = true
+addon.TimeBreakdown.Update(1)
+addon.TimeBreakdown.Update(1)
+expectTrue("drin: Kampfzeit zählt", seconds(Stats.INSTANCE) > 0)
+enter(nil)
+expect("draußen: Lauf steht", Stats.IsCounting(Stats.INSTANCE), false)
+addon.TimeBreakdown.Update(1)
+local frozen = seconds(Stats.INSTANCE)
+addon.TimeBreakdown.Update(1)
+expect("draußen: Kampfzeit steht", seconds(Stats.INSTANCE), frozen)
+wow.state.inCombat = false

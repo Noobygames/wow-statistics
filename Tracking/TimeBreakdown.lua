@@ -60,7 +60,7 @@ end
 -- Sekunden einer Tätigkeit im Bereich, inklusive der noch nicht gebuchten
 function TimeBreakdown.GetSeconds(scope, counter)
   if counter == Stats.DEAD_SECONDS then return ns.DeathCounter.GetDeadSeconds(scope) end
-  local running = (activity == counter and Stats.IsOpen(scope)) and pending or 0
+  local running = (activity == counter and Stats.IsCounting(scope)) and pending or 0
   return Stats.Get(scope, counter) + running
 end
 

@@ -6,7 +6,7 @@ local _, ns = ...
 local Classification = {}
 ns.Classification = Classification
 
-local MAX_NAMES = 500  -- danach wird neu begonnen, damit die Tabelle nicht endlos wächst
+local MAX_NAMES = 5000  -- danach wird neu begonnen, damit die Tabelle nicht endlos wächst
 
 local byName = {}
 local nameCount = 0
