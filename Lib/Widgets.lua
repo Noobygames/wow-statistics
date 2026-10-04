@@ -171,10 +171,43 @@ function Widgets.CreateTab(parent, fontObject, onClick)
   return tab
 end
 
--- Kleiner Button mit Text, z.B. Pfeile zum Blättern
+-- Flacher Button im Addon-Stil: dunkler Grund mit feinem goldenen Rand; bei Mauskontakt heller Rand und
+-- helle Schrift, beim Drücken dunkler. Eigener Text (SetText/GetText/GetTextWidth wie bei Blizzards Button).
+local BUTTON_BACKDROP = {
+  bgFile = WHITE_TEXTURE,
+  edgeFile = WHITE_TEXTURE,
+  edgeSize = 1,
+  insets = { left = 1, right = 1, top = 1, bottom = 1 },
+}
+local BUTTON_COLORS = {
+  normal = { background = { 0.11, 0.12, 0.2, 0.95 }, border = { 0.5, 0.38, 0.14, 1 }, text = Widgets.COLORS.highlight },
+  hover = { background = { 0.18, 0.19, 0.3, 0.98 }, border = Widgets.COLORS.border, text = { 1, 1, 1 } },
+  pressed = { background = { 0.06, 0.07, 0.12, 1 }, border = Widgets.COLORS.border, text = Widgets.COLORS.highlight },
+}
+
 function Widgets.CreateButton(parent, width, height, onClick)
-  local button = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
+  local button = CreateFrame("Button", nil, parent, "BackdropTemplate")
   button:SetSize(width, height)
+  button:SetBackdrop(BUTTON_BACKDROP)
+  button.label = button:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+  button.label:SetPoint("CENTER")
+
+  local hovered, pressed = false, false
+  local function paint()
+    local colors = (pressed and BUTTON_COLORS.pressed) or (hovered and BUTTON_COLORS.hover) or BUTTON_COLORS.normal
+    button:SetBackdropColor(unpack(colors.background))
+    button:SetBackdropBorderColor(unpack(colors.border))
+    button.label:SetTextColor(unpack(colors.text))
+  end
+  button:HookScript("OnEnter", function() hovered = true; paint() end)
+  button:HookScript("OnLeave", function() hovered, pressed = false, false; paint() end)
+  button:HookScript("OnMouseDown", function() pressed = true; paint() end)
+  button:HookScript("OnMouseUp", function() pressed = false; paint() end)
+  paint()
+
+  function button:SetText(text) self.label:SetText(text) end
+  function button:GetText() return self.label:GetText() end
+  function button:GetTextWidth() return self.label:GetStringWidth() end
   button:SetScript("OnClick", onClick)
   return button
 end
@@ -230,7 +263,7 @@ function Widgets.CreateResizeGrip(frame, clamp, onDone)
   return grip
 end
 
-local BUTTON_TEXT_PADDING = 24  -- Rand der Button-Vorlage links und rechts zusammen
+local BUTTON_TEXT_PADDING = 24  -- Rand links und rechts zusammen
 
 -- Text setzen und den Button mindestens so breit machen, dass er hineinpasst (übersetzte Texte sind
 -- unterschiedlich lang); minWidth bleibt die kleinste Breite
