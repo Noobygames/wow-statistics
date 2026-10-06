@@ -18,7 +18,7 @@ local FADE_SECONDS = 1       -- nach der Anzeigedauer ausblenden
 local DEFAULT_POSITION = { "TOP", "TOP", 0, -160 }
 local EPIC_QUALITY = 4
 local GROUP_INSTANCES = { party = true, raid = true }  -- Instanzarten von IsInInstance mit Elite-Gegnern
-local WHITE_TEXTURE = "Interface\Buttons\WHITE8x8"
+local WHITE_TEXTURE = "Interface\\Buttons\\WHITE8x8"
 local RAID_WARNING_SOUND = 8959  -- SOUNDKIT.RAID_WARNING, in allen Clients gleich
 -- Einstellung alertStyle: nur Text oder Banner (dunkler Grund mit Farbleisten)
 Alerts.STYLE_TEXT = "text"
