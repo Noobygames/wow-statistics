@@ -21,6 +21,7 @@ local UPDATE_INTERVAL = 0.25          -- Sekunden zwischen zwei Anzeige-Updates
 local PADDING_X = 20
 local PADDING_Y = 8
 local LINE_GAP = 3
+local NO_VALUE = "-"                -- Zeilen ohne Bereich (Instanz-Reiter ohne Lauf)
 local TAB_GAP = 10                    -- Abstand zwischen den Reitern
 local MIN_WIDTH = 160
 local COLUMN_GAP = 16                 -- Mindestabstand zwischen Bezeichnung und Wert
@@ -184,11 +185,12 @@ local function refreshTexts()
     dayDigits = digitsOfDays(seconds)
     updateLayout(ns.db)
   end
-  timeText:SetText(seconds and Format.Clock(seconds) or "...")
+  local open = Stats.IsOpen(scope)
+  timeText:SetText(not open and L.INSTANCE_NONE or seconds and Format.Clock(seconds) or "...")
   for _, row in ipairs(rows) do
     if row.label:IsShown() then
       row.label:SetText(L[row.definition.label])
-      row.value:SetText(row.definition.value(scope))
+      row.value:SetText(open and row.definition.value(scope) or NO_VALUE)
     end
   end
   if ns.db.horizontalLayout then
@@ -323,6 +325,24 @@ function TimerWindow.ApplyBackground(frame, db)
     Widgets.SetDefaultBackground(frame, db.bgAlpha)
   end
 end
+
+---------------------------------------------------------------------------
+-- Automatisch zum Reiter Instanz wechseln (Einstellung autoInstanceTab): beim Betreten hin, beim Verlassen
+-- zurück zum vorigen Reiter, außer man hat inzwischen selbst gewechselt
+---------------------------------------------------------------------------
+local scopeBeforeInstance
+
+ns.InstanceCopy.OnEnter(function()
+  if not ns.db.autoInstanceTab or scopeBeforeInstance or ns.db.windowScope == Stats.INSTANCE then return end
+  scopeBeforeInstance = ns.db.windowScope
+  ns.Set("windowScope", Stats.INSTANCE)
+end)
+
+ns.InstanceCopy.OnLeave(function()
+  local previous = scopeBeforeInstance
+  scopeBeforeInstance = nil
+  if previous and ns.db.windowScope == Stats.INSTANCE then ns.Set("windowScope", previous) end
+end)
 
 ---------------------------------------------------------------------------
 -- Instanz-Lauf zurücksetzen

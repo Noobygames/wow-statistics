@@ -207,6 +207,7 @@ addToggles({
   toggle("SHOW_XP_BAR", "showXpBar"),
   toggle("COMPACT_MODE", "compactMode"),
   toggle("HORIZONTAL_LAYOUT", "horizontalLayout"),
+  toggle("AUTO_INSTANCE_TAB", "autoInstanceTab"),
 })
 addButton("RESET_WINDOW", function() TimerWindow.ResetLayout() end)
 addHint("OPTIONS_HINT")

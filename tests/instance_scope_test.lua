@@ -110,3 +110,26 @@ local frozen = seconds(Stats.INSTANCE)
 addon.TimeBreakdown.Update(1)
 expect("draußen: Kampfzeit steht", seconds(Stats.INSTANCE), frozen)
 wow.state.inCombat = false
+
+-- Automatischer Reiter: rein = Instanz, raus = zurück; manueller Wechsel dazwischen bleibt
+addon.character.currentRun = nil
+enter(nil)
+addon.Set("windowScope", Stats.SESSION)
+addon.Set("autoInstanceTab", true)
+enter("Burg Schattenfang")
+expect("beim Betreten: Instanz", LevelTimerDB.windowScope, Stats.INSTANCE)
+enter(nil)
+expect("beim Verlassen: zurück", LevelTimerDB.windowScope, Stats.SESSION)
+enter("Burg Schattenfang")
+addon.Set("windowScope", Stats.LEVEL)
+enter(nil)
+expect("manueller Wechsel bleibt", LevelTimerDB.windowScope, Stats.LEVEL)
+addon.Set("autoInstanceTab", false)
+
+-- Leerer Zustand: Instanz-Reiter ohne Lauf zeigt "Kein Lauf" und Striche
+addon.character.currentRun = nil
+addon.Set("windowScope", Stats.INSTANCE)
+wow.update(1)
+local noRun = wow.findFrame(function(frame) return frame.GetText and frame:GetText() == addon.L.INSTANCE_NONE end)
+expectTrue("Hinweis Kein Lauf", noRun ~= nil)
+addon.Set("windowScope", Stats.LEVEL)
