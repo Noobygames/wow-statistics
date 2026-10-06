@@ -1,0 +1,30 @@
+-- Stat-Gruppen und Voreinstellungen.
+wow.login({ level = 10 })
+
+-- Jede Stat-Zeile gehört zu einer bekannten Gruppe, jede Gruppe hat Zeilen
+local known = {}
+for _, group in ipairs(addon.STAT_GROUPS) do known[group] = 0 end
+for _, line in ipairs(addon.STAT_LINES) do
+  expectTrue("Gruppe bekannt: " .. line.setting, known[line.group] ~= nil)
+  known[line.group] = (known[line.group] or 0) + 1
+end
+for group, count in pairs(known) do expectTrue("Gruppe nicht leer: " .. group, count > 0) end
+
+-- Voreinstellung: genau die genannten Zeilen sind an
+local preset = addon.STAT_PRESETS[1]
+addon.ApplyStatPreset(preset)
+local on = {}
+for _, setting in ipairs(preset.settings) do on[setting] = true end
+for _, line in ipairs(addon.STAT_LINES) do
+  expect("Minimal: " .. line.setting, LevelTimerDB[line.setting], on[line.setting] or false)
+end
+addon.ApplyStatPreset(addon.STAT_PRESETS[3])
+expect("Dungeon zeigt Instanz-Zeile", LevelTimerDB.showInstanceRun, true)
+expect("Dungeon blendet Geld aus", LevelTimerDB.showMoney, false)
+
+-- Button in den Einstellungen
+SlashCmdList.LEVELTIMER("config")
+wow.click(addon.L.STATISTICS)
+expectTrue("Button Leveln", wow.click(addon.L.PRESET_LEVELING))
+expect("Leveln: Quests an", LevelTimerDB.showQuests, true)
+expect("Leveln: Instanz-Zeile aus", LevelTimerDB.showInstanceRun, false)

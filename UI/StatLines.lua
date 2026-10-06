@@ -159,59 +159,59 @@ local function xpGained(scope)
 end
 
 ns.STAT_LINES = {
-  { setting = "showXpRate", label = "STAT_XP_RATE", rows = { { label = "ROW_XP_RATE", value = xpRate } } },
-  { setting = "showRecentXpRate", label = "STAT_RECENT_XP_RATE",
+  { setting = "showXpRate", group = "STAT_GROUP_XP", label = "STAT_XP_RATE", rows = { { label = "ROW_XP_RATE", value = xpRate } } },
+  { setting = "showRecentXpRate", group = "STAT_GROUP_XP", label = "STAT_RECENT_XP_RATE",
     rows = { { label = "ROW_RECENT_XP_RATE", value = recentXpRate } } },
-  { setting = "showXpGained", label = "STAT_XP_GAINED", rows = { { label = "ROW_XP_GAINED", value = xpGained } } },
-  { setting = "showLevelEta", label = "STAT_LEVEL_ETA", rows = { { label = "ROW_LEVEL_ETA", value = timeToLevel } } },
-  { setting = "showCountToLevel", label = "STAT_COUNT_TO_LEVEL", rows = {
+  { setting = "showXpGained", group = "STAT_GROUP_XP", label = "STAT_XP_GAINED", rows = { { label = "ROW_XP_GAINED", value = xpGained } } },
+  { setting = "showLevelEta", group = "STAT_GROUP_XP", label = "STAT_LEVEL_ETA", rows = { { label = "ROW_LEVEL_ETA", value = timeToLevel } } },
+  { setting = "showCountToLevel", group = "STAT_GROUP_XP", label = "STAT_COUNT_TO_LEVEL", rows = {
     { label = "ROW_KILLS_TO_LEVEL", value = countToLevel(Stats.XP_KILLS, Stats.PVE_KILLS) },
     { label = "ROW_QUESTS_TO_LEVEL", value = countToLevel(Stats.XP_QUESTS, Stats.QUESTS) },
   } },
-  { setting = "showMaxLevelEta", label = "STAT_MAX_LEVEL_ETA",
+  { setting = "showMaxLevelEta", group = "STAT_GROUP_XP", label = "STAT_MAX_LEVEL_ETA",
     rows = { { label = "ROW_MAX_LEVEL_ETA", value = timeToMaxLevel } } },
-  { setting = "showSplits", label = "STAT_SPLITS", rows = {
+  { setting = "showSplits", group = "STAT_GROUP_PROGRESS", label = "STAT_SPLITS", rows = {
     { label = "ROW_SPLIT_LEVEL", value = splitText(ns.Splits.GetCurrentDelta) },
     { label = "ROW_SPLIT_TOTAL", value = splitText(ns.Splits.GetTotalDelta) },
   } },
-  { setting = "showGoal", label = "STAT_GOAL", rows = { { label = "ROW_GOAL", value = goalText } } },
-  { setting = "showPveKills", label = "STAT_PVE_KILLS",
+  { setting = "showGoal", group = "STAT_GROUP_PROGRESS", label = "STAT_GOAL", rows = { { label = "ROW_GOAL", value = goalText } } },
+  { setting = "showPveKills", group = "STAT_GROUP_COMBAT", label = "STAT_PVE_KILLS",
     rows = { { label = "ROW_PVE_KILLS", value = counter(Stats.PVE_KILLS) } } },
-  { setting = "showPvpKills", label = "STAT_PVP_KILLS",
+  { setting = "showPvpKills", group = "STAT_GROUP_COMBAT", label = "STAT_PVP_KILLS",
     rows = { { label = "ROW_PVP_KILLS", value = counter(Stats.PVP_KILLS) } } },
-  { setting = "showSpecialKills", label = "STAT_SPECIAL_KILLS", rows = {
+  { setting = "showSpecialKills", group = "STAT_GROUP_COMBAT", label = "STAT_SPECIAL_KILLS", rows = {
     { label = "ROW_ELITE_KILLS", value = counter(Stats.ELITE_KILLS) },
     { label = "ROW_RARE_KILLS", value = counter(Stats.RARE_KILLS) },
   } },
-  { setting = "showDeaths", label = "STAT_DEATHS", rows = { { label = "ROW_DEATHS", value = deaths } } },
-  { setting = "showKillsPerDeath", label = "STAT_KILLS_PER_DEATH",
+  { setting = "showDeaths", group = "STAT_GROUP_COMBAT", label = "STAT_DEATHS", rows = { { label = "ROW_DEATHS", value = deaths } } },
+  { setting = "showKillsPerDeath", group = "STAT_GROUP_COMBAT", label = "STAT_KILLS_PER_DEATH",
     rows = { { label = "ROW_KILLS_PER_DEATH", value = killsPerDeath } } },
-  { setting = "showNearDeaths", label = "STAT_NEAR_DEATHS", available = ns.NearDeath.IsAvailable,
+  { setting = "showNearDeaths", group = "STAT_GROUP_COMBAT", label = "STAT_NEAR_DEATHS", available = ns.NearDeath.IsAvailable,
     rows = { { label = "ROW_NEAR_DEATHS", value = counter(Stats.NEAR_DEATHS) } } },
-  { setting = "showDeathless", label = "STAT_DEATHLESS",
+  { setting = "showDeathless", group = "STAT_GROUP_COMBAT", label = "STAT_DEATHLESS",
     rows = { { label = "ROW_DEATHLESS", value = timeWithoutDeath } } },
-  { setting = "showXpSources", label = "STAT_XP_SOURCES", rows = {
+  { setting = "showXpSources", group = "STAT_GROUP_XP", label = "STAT_XP_SOURCES", rows = {
     { label = "ROW_XP_KILLS", value = xpShare(1) },
     { label = "ROW_XP_QUESTS", value = xpShare(2) },
     { label = "ROW_XP_OTHER", value = xpShare(3) },
   } },
-  { setting = "showRested", label = "STAT_RESTED", rows = { { label = "ROW_RESTED", value = restedXp } } },
-  { setting = "showRestedLeft", label = "STAT_RESTED_LEFT", rows = { { label = "ROW_RESTED_LEFT", value = restedLeft } } },
-  { setting = "showTimeBreakdown", label = "STAT_TIME_BREAKDOWN", rows = {
+  { setting = "showRested", group = "STAT_GROUP_XP", label = "STAT_RESTED", rows = { { label = "ROW_RESTED", value = restedXp } } },
+  { setting = "showRestedLeft", group = "STAT_GROUP_XP", label = "STAT_RESTED_LEFT", rows = { { label = "ROW_RESTED_LEFT", value = restedLeft } } },
+  { setting = "showTimeBreakdown", group = "STAT_GROUP_TIME_MONEY", label = "STAT_TIME_BREAKDOWN", rows = {
     { label = "ROW_TIME_COMBAT", value = timePart(Stats.COMBAT_SECONDS) },
     { label = "ROW_TIME_TAXI", value = timePart(Stats.TAXI_SECONDS) },
     { label = "ROW_TIME_AFK", value = timePart(Stats.AFK_SECONDS) },
     { label = "ROW_TIME_REST", value = timeShare(function(scope) return ns.TimeBreakdown.GetRestSeconds(scope) end) },
   } },
-  { setting = "showInstanceRun", label = "STAT_INSTANCE_RUN",
+  { setting = "showInstanceRun", group = "STAT_GROUP_INSTANCE", label = "STAT_INSTANCE_RUN",
     rows = { { label = "ROW_INSTANCE_RUN", value = instanceRun } } },
-  { setting = "showInstanceLimit", label = "STAT_INSTANCE_LIMIT",
+  { setting = "showInstanceLimit", group = "STAT_GROUP_INSTANCE", label = "STAT_INSTANCE_LIMIT",
     rows = { { label = "ROW_INSTANCE_LIMIT", value = instanceLimit } } },
-  { setting = "showInstancesToday", label = "STAT_INSTANCES_TODAY",
+  { setting = "showInstancesToday", group = "STAT_GROUP_INSTANCE", label = "STAT_INSTANCES_TODAY",
     rows = { { label = "ROW_INSTANCES_TODAY", value = instancesToday } } },
-  { setting = "showQuests", label = "STAT_QUESTS", rows = { { label = "ROW_QUESTS", value = counter(Stats.QUESTS) } } },
-  { setting = "showMoney", label = "STAT_MONEY", rows = { { label = "ROW_MONEY", value = income } } },
-  { setting = "showSpending", label = "STAT_SPENDING", rows = {
+  { setting = "showQuests", group = "STAT_GROUP_TIME_MONEY", label = "STAT_QUESTS", rows = { { label = "ROW_QUESTS", value = counter(Stats.QUESTS) } } },
+  { setting = "showMoney", group = "STAT_GROUP_TIME_MONEY", label = "STAT_MONEY", rows = { { label = "ROW_MONEY", value = income } } },
+  { setting = "showSpending", group = "STAT_GROUP_TIME_MONEY", label = "STAT_SPENDING", rows = {
     { label = "ROW_SPENT_REPAIR", value = money(Stats.SPENT_REPAIR) },
     { label = "ROW_SPENT_MERCHANT", value = money(Stats.SPENT_MERCHANT) },
     { label = "ROW_SPENT_TAXI", value = money(Stats.SPENT_TAXI) },
@@ -220,6 +220,27 @@ ns.STAT_LINES = {
     { label = "ROW_JUNK_INCOME", value = money(Stats.MONEY_JUNK) },
   } },
 }
+
+-- Gruppen für die Einstellungen (Reihenfolge der Abschnitte); jede Stat-Zeile nennt ihre group
+ns.STAT_GROUPS = { "STAT_GROUP_XP", "STAT_GROUP_PROGRESS", "STAT_GROUP_COMBAT", "STAT_GROUP_INSTANCE", "STAT_GROUP_TIME_MONEY" }
+
+-- Voreinstellungen: genau diese Zeilen sind an, alle anderen aus
+ns.STAT_PRESETS = {
+  { label = "PRESET_MINIMAL", settings = { "showXpRate", "showLevelEta" } },
+  { label = "PRESET_LEVELING", settings = { "showXpRate", "showXpGained", "showLevelEta", "showMaxLevelEta",
+    "showPveKills", "showDeaths", "showQuests", "showMoney" } },
+  { label = "PRESET_DUNGEON", settings = { "showXpRate", "showXpGained", "showPveKills", "showDeaths",
+    "showKillsPerDeath", "showNearDeaths", "showInstanceRun", "showInstanceLimit", "showInstancesToday" } },
+}
+
+function ns.ApplyStatPreset(preset)
+  local on = {}
+  for _, setting in ipairs(preset.settings) do on[setting] = true end
+  for _, stat in ipairs(ns.STAT_LINES) do
+    ns.db[stat.setting] = on[stat.setting] or false
+  end
+  ns.ApplySettings()
+end
 
 -- Zeile eingeschaltet und im Client verfügbar
 function ns.IsStatShown(stat, db)

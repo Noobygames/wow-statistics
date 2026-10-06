@@ -221,12 +221,20 @@ finishPage()
 
 -- Statistiken: ein Schalter je Stat-Zeile, direkt aus ns.STAT_LINES
 addPage("STATISTICS")
-addSection("STATISTICS")
-local statToggles = {}
-for i, line in ipairs(ns.STAT_LINES) do
-  statToggles[i] = toggle(line.label, line.setting, line.available)
+addSection("SECTION_STAT_PRESETS")
+local presetButtons = {}
+for i, preset in ipairs(ns.STAT_PRESETS) do
+  presetButtons[i] = { label = preset.label, onClick = function() ns.ApplyStatPreset(preset) end }
 end
-addToggles(statToggles)
+builder.AddButtonRow(presetButtons)
+for _, group in ipairs(ns.STAT_GROUPS) do
+  addSection(group)
+  local statToggles = {}
+  for _, line in ipairs(ns.STAT_LINES) do
+    if line.group == group then table.insert(statToggles, toggle(line.label, line.setting, line.available)) end
+  end
+  addToggles(statToggles)
+end
 addSection("SECTION_CALCULATION")
 addToggles({ toggle("XP_RATE_WITHOUT_AFK", "xpRateWithoutAfk") })
 finishPage()

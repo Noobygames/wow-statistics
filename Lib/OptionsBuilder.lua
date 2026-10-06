@@ -20,6 +20,9 @@ local TAB_GAP = 12
 local CONTENT_TOP = -70
 local FOOTER_GAP = 8         -- Abstand zwischen Reiterinhalt und den Buttons unten
 local MIN_COLUMN_WIDTH = 144
+local BUTTON_ROW_GAP = 6          -- Abstand zwischen Buttons einer Zeile
+local BUTTON_ROW_MIN_WIDTH = 60
+local BUTTON_TEXT_PADDING = 24   -- Rand im Button links und rechts zusammen
 local FOOTER_COLUMN_GAP = 8     -- Abstand zwischen den beiden Button-Spalten unten
 local FOOTER_TEXT_PADDING = 24  -- Rand im Button links und rechts zusammen
 local COLUMN_GAP = 12        -- Mindestabstand zwischen einer Beschriftung und der rechten Spalte
@@ -186,6 +189,32 @@ function OptionsBuilder.New(options)
     nextRowY = nextRowY - math.ceil(#toggles / 2) * ROW_CHECKBOX
   end
 
+  -- Eine Zeile gleich breiter Buttons: buttons = { { label = Locale-Key, onClick }, ... }; Tooltip aus <label>_TIP
+  local buttonRows = {}
+  function builder.AddButtonRow(buttons)
+    local row = CreateFrame("Frame", nil, page)
+    row:SetHeight(BUTTON_HEIGHT)
+    addRow(row, ROW_BUTTON, true)
+    local widgets = {}
+    for i, definition in ipairs(buttons) do
+      local button = Widgets.CreateButton(row, BUTTON_ROW_MIN_WIDTH, BUTTON_HEIGHT, definition.onClick)
+      if i == 1 then
+        button:SetPoint("TOPLEFT", row, "TOPLEFT")
+      else
+        button:SetPoint("LEFT", widgets[i - 1], "RIGHT", BUTTON_ROW_GAP, 0)
+      end
+      addTooltip(button, definition.label .. "_TIP", localized(definition.label))
+      onRefresh(function() button:SetText(L[definition.label]) end)
+      widgets[i] = button
+    end
+    -- Breite gleichmäßig auf die Buttons verteilen, sobald die Zeile ihre Größe kennt
+    row:SetScript("OnSizeChanged", function(_, width)
+      local each = (width - BUTTON_ROW_GAP * (#widgets - 1)) / #widgets
+      for _, button in ipairs(widgets) do button:SetWidth(math.max(BUTTON_ROW_MIN_WIDTH, each)) end
+    end)
+    table.insert(buttonRows, widgets)
+  end
+
   function builder.AddButton(labelKey, onClick)
     local button = Widgets.CreateButton(page, MIN_WIDTH - 2 * MARGIN, BUTTON_HEIGHT, onClick)
     addRow(button, ROW_BUTTON, true)
@@ -299,6 +328,17 @@ function OptionsBuilder.New(options)
     return 2 * widest + FOOTER_COLUMN_GAP
   end
 
+  -- Eine Button-Zeile braucht Platz für alle Texte nebeneinander
+  local function buttonRowsWidth()
+    local widest = 0
+    for _, widgets in ipairs(buttonRows) do
+      local width = BUTTON_ROW_GAP * (#widgets - 1)
+      for _, button in ipairs(widgets) do width = width + button:GetTextWidth() + BUTTON_TEXT_PADDING end
+      widest = math.max(widest, width)
+    end
+    return widest
+  end
+
   -- Fensterbreite aus den Texten der gewählten Sprache; Abschnitte, Regler und Buttons strecken sich mit
   local function fitWidth()
     local column = columnWidth()
@@ -306,7 +346,7 @@ function OptionsBuilder.New(options)
       cell.checkbox:ClearAllPoints()
       cell.checkbox:SetPoint("TOPLEFT", MARGIN + cell.column * column, cell.y)
     end
-    local content = math.max(2 * column, widestChooserRow(), tabRowWidth(), footerWidth())
+    local content = math.max(2 * column, widestChooserRow(), tabRowWidth(), footerWidth(), buttonRowsWidth())
     panel:SetWidth(math.max(MIN_WIDTH, content + 2 * MARGIN))
   end
 
