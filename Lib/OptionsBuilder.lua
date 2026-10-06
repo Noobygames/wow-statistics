@@ -20,6 +20,9 @@ local TAB_GAP = 12
 local CONTENT_TOP = -70
 local FOOTER_GAP = 8         -- Abstand zwischen Reiterinhalt und den Buttons unten
 local MIN_COLUMN_WIDTH = 144
+local SCROLL_TOP = CONTENT_TOP + 8  -- Oberkante des scrollbaren Bereichs unter den Reitern
+local SCROLL_STEP = 40               -- Pixel je Mausrad-Raste
+local MAX_SCREEN_FRACTION = 0.9      -- höher als dieser Anteil des Bildschirms wird das Fenster nicht
 local BUTTON_ROW_GAP = 6          -- Abstand zwischen Buttons einer Zeile
 local BUTTON_ROW_MIN_WIDTH = 60
 local BUTTON_TEXT_PADDING = 24   -- Rand im Button links und rechts zusammen
@@ -93,15 +96,28 @@ function OptionsBuilder.New(options)
 
   local function showPage(selected)
     for _, entry in ipairs(pages) do
-      entry.frame:SetShown(entry == selected)
+      entry.scroll:SetShown(entry == selected)
       entry.tabButton:SetActive(entry == selected)
     end
   end
 
   -- Neue Seite beginnen; folgende Add*-Aufrufe landen darauf
   function builder.AddPage(labelKey)
-    local entry = { key = labelKey, frame = CreateFrame("Frame", nil, panel) }
-    entry.frame:SetAllPoints(panel)
+    -- Jede Seite scrollt: Inhalt (frame) in einem Scrollbereich zwischen Reitern und Buttons. Die Inhaltskoordinaten
+    -- bleiben die des Fensters (y ab Fensteroberkante); der Bereich beginnt bei SCROLL_TOP, daher steht er
+    -- ruhend um -SCROLL_TOP verschoben.
+    local scroll = CreateFrame("ScrollFrame", nil, panel)
+    local entry = { key = labelKey, scroll = scroll, frame = CreateFrame("Frame", nil, scroll) }
+    scroll:SetScrollChild(entry.frame)
+    scroll:EnableMouseWheel(true)
+    scroll:SetScript("OnMouseWheel", function(self, delta)
+      local target = self:GetVerticalScroll() - delta * SCROLL_STEP
+      self:SetVerticalScroll(math.max(-SCROLL_TOP, math.min(self:GetVerticalScrollRange(), target)))
+    end)
+    scroll:SetScript("OnScrollRangeChanged", function(self, _, yRange)
+      local current = self:GetVerticalScroll()
+      self:SetVerticalScroll(math.max(-SCROLL_TOP, math.min(yRange, current)))
+    end)
     entry.tabButton = Widgets.CreateTab(panel, "GameFontNormal", function() showPage(entry) end)
     local previous = pages[#pages]
     if previous then
@@ -276,12 +292,27 @@ function OptionsBuilder.New(options)
 
   -- Nach dem letzten Baustein: Höhe für die längste Seite, damit das Fenster beim Reiterwechsel
   -- nicht springt; erste Seite zeigen
+  -- Höher als der Bildschirm wird das Fenster nicht; der Rest scrollt (Mausrad)
+  local wantedHeight
+  local function maxPanelHeight()
+    return math.floor(UIParent:GetHeight() * MAX_SCREEN_FRACTION / panel:GetScale())
+  end
+
   function builder.Finish()
     local lowestBottom = CONTENT_TOP
     for _, entry in ipairs(pages) do
       lowestBottom = math.min(lowestBottom, entry.bottom)
     end
-    panel:SetHeight(-lowestBottom + FOOTER_GAP + footerRows() * ROW_BUTTON + MARGIN)
+    local footerHeight = footerRows() * ROW_BUTTON + MARGIN
+    local wanted = -lowestBottom + FOOTER_GAP + footerHeight
+    wantedHeight = wanted
+    panel:SetHeight(math.min(wanted, maxPanelHeight()))
+    for _, entry in ipairs(pages) do
+      entry.scroll:SetPoint("TOPLEFT", panel, "TOPLEFT", 0, SCROLL_TOP)
+      entry.scroll:SetPoint("BOTTOMRIGHT", panel, "BOTTOMRIGHT", 0, footerHeight)
+      entry.frame:SetHeight(-lowestBottom + FOOTER_GAP)
+      entry.scroll:SetVerticalScroll(-SCROLL_TOP)
+    end
     showPage(pages[1])
   end
 
@@ -348,6 +379,7 @@ function OptionsBuilder.New(options)
     end
     local content = math.max(2 * column, widestChooserRow(), tabRowWidth(), footerWidth(), buttonRowsWidth())
     panel:SetWidth(math.max(MIN_WIDTH, content + 2 * MARGIN))
+    for _, entry in ipairs(pages) do entry.frame:SetWidth(panel:GetWidth()) end
   end
 
   function builder.Refresh(db)
@@ -356,6 +388,8 @@ function OptionsBuilder.New(options)
       refreshControl(db)
     end
     fitWidth()
+    -- Bildschirmgröße oder UI-Skalierung können sich geändert haben
+    if wantedHeight then panel:SetHeight(math.min(wantedHeight, maxPanelHeight())) end
   end
 
   return builder
