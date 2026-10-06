@@ -67,6 +67,7 @@ expect("Retail: still", trainerReminders(), 0)
 wow.state.interface = 11509
 wow.levelUp(13)
 expect("ungerade: still", trainerReminders(), 0)
+addon.Alerts.Clear()
 wow.levelUp(14)
 expect("gerade: Hinweis", trainerReminders(), 1)
 expect("mit Level", LevelTimerAlert.text:GetText(), string.format(L.REMIND_TRAINER, 14))

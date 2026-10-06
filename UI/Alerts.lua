@@ -30,6 +30,9 @@ Alerts.MAX_DURATION = 10
 local BANNER_PADDING_X = 28
 local BANNER_PADDING_Y = 14
 local BANNER_MIN_WIDTH = 280
+local MAX_TEXT_WIDTH = 520   -- längere Texte brechen um
+local MAX_QUEUE = 4          -- wartende Einblendungen; bei mehr fällt die älteste weg
+local QUEUED_HOLD = 1.5      -- Anzeigedauer, solange weitere warten
 local BANNER_BACKGROUND_ALPHA = 0.78
 local ACCENT_WIDTH = 5       -- Leiste links und rechts
 local ACCENT_LINE_HEIGHT = 2 -- Linie unten
@@ -83,7 +86,13 @@ end
 
 -- Größe aus dem Text; Banner mit Rand und Mindestbreite, Text-Stil nur so groß wie der Text
 local function layout()
-  local width, height = frame.text:GetStringWidth() or 0, frame.text:GetStringHeight() or 0
+  frame.text:SetWidth(0)  -- erst natürliche Breite, dann bei Bedarf umbrechen
+  local width = frame.text:GetStringWidth() or 0
+  if width > MAX_TEXT_WIDTH then
+    frame.text:SetWidth(MAX_TEXT_WIDTH)
+    width = MAX_TEXT_WIDTH
+  end
+  local height = frame.text:GetStringHeight() or 0
   local banner = isBanner()
   for _, part in ipairs(bannerParts) do part:SetShown(banner) end
   if banner then
@@ -108,12 +117,30 @@ local function duration()
   return math.max(Alerts.MIN_DURATION, math.min(Alerts.MAX_DURATION, ns.db and ns.db.alertDuration or 3))
 end
 
+local queue = {}  -- { message, color, sound } der wartenden Einblendungen, älteste zuerst
+
+local function display(message, color, sound)
+  frame.text:SetText(message)
+  setColor(color)
+  layout()
+  shownAt = GetTime()
+  frame:SetAlpha(0)
+  frame:Show()
+  if sound and ns.db and ns.db.alertSound and PlaySound then PlaySound(RAID_WARNING_SOUND) end
+end
+
 frame:SetScript("OnUpdate", function(self)
   if moving then return end
   local age = GetTime() - shownAt
-  local hold = duration()
+  -- Warten weitere Einblendungen, ist die laufende kürzer zu sehen
+  local hold = #queue > 0 and math.min(duration(), QUEUED_HOLD) or duration()
   if age >= hold + FADE_SECONDS then
-    self:Hide()
+    local nextAlert = table.remove(queue, 1)
+    if nextAlert then
+      display(unpack(nextAlert))
+    else
+      self:Hide()
+    end
   elseif age > hold then
     self:SetAlpha(1 - (age - hold) / FADE_SECONDS)
   elseif age < FADE_IN_SECONDS then
@@ -123,17 +150,25 @@ frame:SetScript("OnUpdate", function(self)
   end
 end)
 
--- Neue Einblendung ersetzt eine laufende; im Verschiebemodus erscheint nichts Neues
-function Alerts.Show(message, color)
+-- Einblendung zeigen; läuft schon eine, wartet die neue (höchstens MAX_QUEUE). options = { immediate = ersetzt die
+-- laufende und leert die Warteschlange, sound = Ton, falls eingeschaltet }. Im Verschiebemodus erscheint nichts Neues.
+function Alerts.Show(message, color, options)
   ns.Debug("alert", "%s", message)
   if moving then return end
-  frame.text:SetText(message)
-  setColor(color)
-  layout()
-  shownAt = GetTime()
-  frame:SetAlpha(0)
-  frame:Show()
-  if ns.db and ns.db.alertSound and PlaySound then PlaySound(RAID_WARNING_SOUND) end
+  options = options or {}
+  if options.immediate then queue = {} end
+  if frame:IsShown() and not options.immediate then
+    if #queue >= MAX_QUEUE then table.remove(queue, 1) end
+    table.insert(queue, { message, color, options.sound })
+    return
+  end
+  display(message, color, options.sound)
+end
+
+-- Laufende und wartende Einblendungen verwerfen
+function Alerts.Clear()
+  queue = {}
+  if not moving then frame:Hide() end
 end
 
 ---------------------------------------------------------------------------
@@ -177,7 +212,7 @@ function Alerts.SetMoving(enabled)
   if enabled == (moving or false) then return end
   moving = false
   if enabled then
-    Alerts.Show(L.ALERT_MOVE_HINT, COLORS.levelUp)
+    Alerts.Show(L.ALERT_MOVE_HINT, COLORS.levelUp, { immediate = true })
     moving = true
     frame:SetAlpha(1)
     frame:EnableMouse(true)
@@ -219,7 +254,7 @@ Alerts.KINDS = {
 
 local function showKind(kind, value)
   local definition = Alerts.KINDS[kind]
-  Alerts.Show(string.format(L[definition.format], value), definition.color)
+  Alerts.Show(string.format(L[definition.format], value), definition.color, { sound = true })
 end
 
 -- Nur, wenn die Art eingeschaltet ist
@@ -231,6 +266,7 @@ end
 function Alerts.ShowSample(kind)
   local definition = Alerts.KINDS[kind]
   if not definition then return false end
+  Alerts.Clear()
   showKind(kind, definition.sample())
   return true
 end
