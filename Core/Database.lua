@@ -18,6 +18,7 @@ local SETTINGS_DEFAULTS = {
   compactMode = false,  -- nur Zeit, XP-Balken und XP/h (siehe TimerWindow.lua)
   horizontalLayout = false,  -- Fenster als Info-Leiste: alles in einer Zeile (siehe TimerWindow.lua)
   autoInstanceTab = false,  -- beim Betreten einer Instanz zum Reiter Instanz wechseln, beim Verlassen zurück
+  historyTab = "",  -- zuletzt gewählter Reiter der Historie (siehe HistoryWindow.lua)
   windowScope = "level",  -- "level", "session" oder "instance" (siehe Stats.lua)
   -- Stat-Zeilen im Fenster (siehe StatLines.lua)
   showXpRate = true,

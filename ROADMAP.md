@@ -9,6 +9,13 @@ Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt 
 - [x] 151. **XP/h ohne AFK in der Historie** (S): Die Zeile des laufenden Levels und der laufenden Session ließ die noch nicht gebuchte AFK-Zeit weg (Historie, Vergleich, Graphen, Prognose zu niedrig); `TimeBreakdown.Snapshot`. Szenario `afk_rate` prüft ETA, Level-Up im AFK und AFK > Spielzeit.
 - [x] 152. **Instanz zurücksetzen** (S): Rechtsklick auf den Reiter „Instanz“, Button in den Einstellungen oder `/lt resetinstance` setzen Zeit, XP und Zähler des laufenden Laufs nach Rückfrage auf null; der Lauf bleibt offen, die Uhr läuft weiter.
 - [x] 153. **Einblendungen gestalten** (M): Aussehen und Position der Einblendungen und Hinweise (`Alerts.lua`): Stil „Banner“ (dunkler Hintergrund, Farbleisten in der Farbe der Art, weiches Ein- und Ausblenden) oder „Text“, Größe, Anzeigedauer, optional Ton; Position per Ziehen im Verschiebemodus, Vorschau und Zurücksetzen. Eigener Reiter „Einblendungen“ mit den Schaltern aus dem Stream-Reiter.
+- [x] 154. **Buttons im Addon-Stil** (S): flacher dunkler Button mit goldenem Rand, Mouseover- und Gedrückt-Zustand für alle Buttons; Fußzeile der Einstellungen in zwei Spalten.
+- [x] 155. **Einblendungen mit Warteschlange** (S): eine zweite Einblendung ersetzt die laufende nicht mehr, sie wartet (höchstens 4, die laufende zeigt sich dann kürzer); lange Texte brechen um; der Ton gilt nur für Ereignisse, nicht für wiederholte Hinweise.
+- [x] 156. **Instanz-Reiter: Leerzustand und Automatik** (S): ohne Lauf steht „Kein Lauf“ und Striche statt Nullen; optional (Einstellung `autoInstanceTab`) wechselt das Fenster beim Betreten einer Instanz zum Reiter Instanz und beim Verlassen zurück.
+- [x] 157. **Hilfe in Gruppen und Willkommenshinweis** (S): `/lt help` zeigt die Befehle nach Themen in fünf Zeilen; beim allerersten Start ein Chat-Hinweis auf Rechtsklick und `/lt help`.
+- [x] 158. **Stat-Gruppen und Voreinstellungen** (M): die Stat-Schalter stehen in Gruppen (Erfahrung, Fortschritt, Kämpfe, Instanz, Zeit/Quests/Geld); darüber Voreinstellungen „Minimal“, „Leveln“ und „Dungeon“, die genau ihre Zeilen einschalten.
+- [x] 159. **Einstellungen scrollen** (M): jede Seite scrollt mit dem Mausrad; das Fenster wird höchstens 90 % so hoch wie der Bildschirm.
+- [x] 160. **Historie: Charakterliste und gemerkter Reiter** (S): Klick auf den Charakternamen öffnet eine Liste aller Charaktere (klassenfarbig, scrollt ab 12); der zuletzt gewählte Reiter bleibt erhalten (`historyTab`).
 
 ## v2.8.2: Komfort und Fixes aus dem Spiel
 
