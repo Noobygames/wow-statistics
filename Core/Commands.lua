@@ -2,7 +2,13 @@
 local _, ns = ...
 local L = ns.L
 
+-- Hilfe: eine Zeile je Gruppe von Befehlen
+local function printHelp()
+  for line in L.HELP:gmatch("[^\n]+") do ns.Print(line) end
+end
+
 local commands = {
+  help = function() printHelp() end,
   [""] = function() ns.ToggleOptions() end,
   config = function() ns.ToggleOptions() end,
   history = function() ns.ToggleHistory() end,
@@ -52,7 +58,7 @@ local commands = {
     elseif argument == "backup" then
       ns.Export.Show(L.RUNS_BACKUP, ns.Runs.ExportAll())
     else
-      ns.Print(L.HELP)
+      printHelp()
     end
   end,
   -- /lt compare best | pb | Name: Vergleich für die Splits
@@ -104,6 +110,13 @@ SlashCmdList.LEVELTIMER = function(input)
   if command then
     command(argument)
   else
-    ns.Print(L.HELP)
+    printHelp()
   end
 end
+
+-- Einmaliger Hinweis beim ersten Start (account-weit), damit man die Bedienung findet
+ns.OnLogin(function()
+  if LevelTimerStatsDB.introShown then return end
+  LevelTimerStatsDB.introShown = true
+  ns.Print(L.INTRO)
+end)
