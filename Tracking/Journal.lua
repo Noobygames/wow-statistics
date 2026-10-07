@@ -39,7 +39,7 @@ local function append(logName, entry, limit)
     table.remove(log, 1)
   end
   for _, listener in ipairs(addListeners) do
-    listener(logName, entry)
+    ns.SafeCall(listener, logName, entry)
   end
 end
 

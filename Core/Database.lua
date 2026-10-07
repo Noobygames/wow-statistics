@@ -184,37 +184,47 @@ local characterMigrations = {
 -- Migrationen für die Einstellungen, Schlüssel = Zielversion
 local SETTINGS_SCHEMA_VERSION = 4
 local OLD_DEFAULT_FONT_SIZE = 16
+
+-- Wendet fn auf die Einstellungen und alle darin gespeicherten Kopien an (Profile, Stream-Sicherung)
+local function forEachSettingsCopy(settings, fn)
+  fn(settings)
+  for _, profile in pairs(settings.profiles or {}) do
+    if type(profile) == "table" then fn(profile) end
+  end
+  if type(settings.streamBackup) == "table" then fn(settings.streamBackup) end
+end
+
 local settingsMigrations = {
   [2] = function(settings)  -- feste Schriftgröße der Zeitanzeige -> Skalierung des ganzen Fensters
-    if settings.fontSize then
-      settings.scale = settings.fontSize / OLD_DEFAULT_FONT_SIZE
-    end
-    settings.fontSize = nil
+    forEachSettingsCopy(settings, function(values)
+      if values.fontSize then
+        values.scale = values.fontSize / OLD_DEFAULT_FONT_SIZE
+      end
+      values.fontSize = nil
+    end)
   end,
   -- Zeilen mit mehreren Werten wurden aufgeteilt; neue Schalter übernehmen den alten Zustand:
   -- Kills -> PvE + PvP, XP/h -> + Zeit bis Level-Up, Tode -> + Kills pro Tod
   [3] = function(settings)
-    if settings.showKills ~= nil then
-      settings.showPveKills = settings.showKills
-      settings.showPvpKills = settings.showKills
-    end
-    if settings.showXpRate ~= nil then
-      settings.showLevelEta = settings.showXpRate
-    end
-    if settings.showDeaths ~= nil then
-      settings.showKillsPerDeath = settings.showDeaths
-    end
-    settings.showKills = nil
+    forEachSettingsCopy(settings, function(values)
+      if values.showKills ~= nil then
+        values.showPveKills = values.showKills
+        values.showPvpKills = values.showKills
+      end
+      if values.showXpRate ~= nil then
+        values.showLevelEta = values.showXpRate
+      end
+      if values.showDeaths ~= nil then
+        values.showKillsPerDeath = values.showDeaths
+      end
+      values.showKills = nil
+    end)
   end,
   -- Level-Up-Ansage in /sagen entfernt (kam außerhalb von Instanzen nicht an): aus, auch in Profilen
   [4] = function(settings)
-    local function dropSay(values)
+    forEachSettingsCopy(settings, function(values)
       if values.levelUpAnnounce == "say" then values.levelUpAnnounce = "off" end
-    end
-    dropSay(settings)
-    for _, profile in pairs(settings.profiles or {}) do
-      dropSay(profile)
-    end
+    end)
   end,
 }
 
@@ -258,6 +268,21 @@ local function isLevelTimes(value)
   return true
 end
 
+-- Erlaubte Bereiche von Zahlen-Einstellungen (wie die Regler und Fenster sie vorgeben); Importe werden begrenzt
+local SETTING_RANGES = {
+  scale = { 0.5, 2 },
+  bgAlpha = { 0, 1 },
+  splitListScale = { 0.5, 2 },
+  splitListRows = { 3, 15 },
+  reminderInterval = { 1, 30 },
+  alertScale = { 0.5, 2 },
+  alertDuration = { 1, 10 },
+}
+
+local function isFiniteNumber(value)
+  return value == value and value ~= math.huge and value ~= -math.huge
+end
+
 local OPTIONAL_SETTINGS = {
   pos = isPosition,           -- Hauptfenster (TimerWindow.lua)
   splitListPos = isPosition,  -- Split-Liste (SplitList.lua)
@@ -281,6 +306,11 @@ local function sanitizeValue(key, value)
     return check and check(value) and value or nil
   end
   if type(value) ~= type(default) then return nil end
+  if type(value) == "number" then
+    if not isFiniteNumber(value) then return nil end
+    local range = SETTING_RANGES[key]
+    if range then return math.max(range[1], math.min(range[2], value)) end
+  end
   if type(default) == "table" and next(default) ~= nil then
     local copy = {}
     for innerKey, innerDefault in pairs(default) do
@@ -364,9 +394,12 @@ function Database.Load()
   LevelTimerStatsDB = applyDefaults(LevelTimerStatsDB or {}, { characters = {} })
   -- Auch andere Charaktere auf den aktuellen Stand bringen: die Historie zeigt sie, und Daten aus
   -- älteren Versionen haben sonst Lücken (z.B. fehlende Journale)
+  -- Ein defekter Eintrag darf nicht alle Module lahmlegen: Fehler melden, Charakter überspringen
   for _, data in pairs(LevelTimerStatsDB.characters) do
-    migrate(data, characterMigrations, Database.CHARACTER_SCHEMA_VERSION)
-    applyDefaults(data, CHARACTER_DEFAULTS)
+    xpcall(function()
+      migrate(data, characterMigrations, Database.CHARACTER_SCHEMA_VERSION)
+      applyDefaults(data, CHARACTER_DEFAULTS)
+    end, geterrorhandler())
   end
   local characterKey, character = loadCharacter(LevelTimerStatsDB)
   return LevelTimerDB, characterKey, character

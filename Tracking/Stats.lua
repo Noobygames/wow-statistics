@@ -78,7 +78,7 @@ function Stats.Increment(counter, amount)
     counters[counter] = (counters[counter] or 0) + amount
   end
   for _, listener in ipairs(incrementListeners) do
-    listener(counter, amount)
+    ns.SafeCall(listener, counter, amount)
   end
 end
 

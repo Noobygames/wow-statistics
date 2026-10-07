@@ -38,6 +38,8 @@ local commands = {
       local names = {}
       for i, profileName in ipairs(Profiles.GetNames()) do names[i] = Profiles.DisplayName(profileName) end
       ns.Print(string.format(L.PROFILE_LIST, Profiles.DisplayName(Profiles.GetActive()), table.concat(names, ", ")))
+    elseif Profiles.Switch(argument) then
+      return  -- der ganze Text ist ein Profilname, auch "save x" oder "export"
     elseif action == "save" and Profiles.SaveAs(name) then
       ns.Print(string.format(L.PROFILE_SAVED, name))
       ns.ApplySettings()
@@ -47,7 +49,7 @@ local commands = {
       ns.Export.Show(Profiles.DisplayName(Profiles.GetActive()), Profiles.Export(Profiles.GetActive()))
     elseif action == "import" then
       ns.ShowProfileImport()
-    elseif not Profiles.Switch(argument) then
+    else
       ns.Print(L.PROFILE_UNKNOWN)
     end
   end,

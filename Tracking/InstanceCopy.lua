@@ -41,7 +41,7 @@ local listeners = { enter = {}, leave = {}, corrected = {}, confirmed = {}, rese
 
 local function notify(kind, ...)
   for _, listener in ipairs(listeners[kind]) do
-    listener(...)
+    ns.SafeCall(listener, ...)
   end
 end
 

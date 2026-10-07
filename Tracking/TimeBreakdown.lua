@@ -39,11 +39,13 @@ local function currentActivity()
 end
 
 local function flush()
-  if activity and pending > 0 then
-    Stats.Increment(activity, pending)
-  end
+  -- Zuerst zurücksetzen: scheitert ein Listener, dürfen die Sekunden nicht ein zweites Mal gebucht werden
+  local booked, counter = pending, activity
   pending = 0
   sinceFlush = 0
+  if counter and booked > 0 then
+    Stats.Increment(counter, booked)
+  end
 end
 
 -- elapsed Sekunden der bisherigen Tätigkeit zuordnen, dann die Tätigkeit neu bestimmen
