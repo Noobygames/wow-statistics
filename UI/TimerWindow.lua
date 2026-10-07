@@ -71,6 +71,9 @@ instanceTab:SetScript("OnClick", function(_, mouseButton)
 end)
 Widgets.AttachTooltip(instanceTab, function() return L.TAB_INSTANCE end, function() return L.TAB_INSTANCE_TIP end)
 
+Widgets.AttachTooltip(levelTab, function() return string.format(L.TAB_LEVEL, ns.level) end, function() return L.TAB_LEVEL_TIP end)
+Widgets.AttachTooltip(sessionTab, function() return L.TAB_SESSION end, function() return L.TAB_SESSION_TIP end)
+
 local timeText = window:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 timeText:SetTextColor(unpack(Widgets.COLORS.highlight))
 

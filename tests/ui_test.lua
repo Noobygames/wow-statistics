@@ -75,7 +75,8 @@ expect("minimap an", LevelTimerDB.minimap.hide, false)
 
 local printedBefore = #wow.printed
 SlashCmdList.LEVELTIMER("gibtsnicht")
-expectTrue("unbekannter Befehl zeigt Hilfe", wow.printed[printedBefore + 1]:find("/lt", 1, true) ~= nil)
+expectTrue("unbekannter Befehl wird gemeldet", wow.printed[printedBefore + 1]:find(addon.L.COMMAND_UNKNOWN, 1, true) ~= nil)
+expectTrue("danach die Hilfe", wow.printed[printedBefore + 2]:find("/lt", 1, true) ~= nil)
 
 -- Fenster öffnen/schließen und Einstellungen ändern ohne Fehler
 SlashCmdList.LEVELTIMER("")

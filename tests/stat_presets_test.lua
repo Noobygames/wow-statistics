@@ -28,3 +28,9 @@ wow.click(addon.L.STATISTICS)
 expectTrue("Button Leveln", wow.click(addon.L.PRESET_LEVELING))
 expect("Leveln: Quests an", LevelTimerDB.showQuests, true)
 expect("Leveln: Instanz-Zeile aus", LevelTimerDB.showInstanceRun, false)
+
+-- Rückmeldung im Chat
+addon.ApplyStatPreset(addon.STAT_PRESETS[2])
+expectTrue("Voreinstellung gemeldet", wow.printed[#wow.printed]:find(addon.L.PRESET_LEVELING, 1, true) ~= nil)
+SlashCmdList.LEVELTIMER("reset")
+expectTrue("Reset gemeldet", wow.printed[#wow.printed]:find(addon.L.RESET_DONE, 1, true) ~= nil)

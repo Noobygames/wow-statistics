@@ -189,6 +189,11 @@ function TableView.Create(definition)
       end
     end
 
+    -- Leerer Zustand: statt nur Kopf und "Gesamt: 0" ein Hinweis in der Mitte
+    local emptyText = frame:CreateFontString(nil, "OVERLAY", "GameFontDisable")
+    emptyText:SetPoint("CENTER", frame, "CENTER", 0, 0)
+    emptyText:Hide()
+
     -- Hinweis unten rechts neben der Summenzeile, z.B. was ein Klick bewirkt
     local hint = frame:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
     hint:SetPoint("BOTTOMRIGHT", -SCROLLBAR_GAP, 2)
@@ -245,6 +250,8 @@ function TableView.Create(definition)
       scrollBar:SetRange(math.max(0, #records - visibleRows))
       scrollTo(frame.offset)
       fillRow(footerRow, definition.footer(columns, records), Widgets.COLORS.highlight)
+      emptyText:SetText(L.TABLE_EMPTY)
+      emptyText:SetShown(#allRecords == 0)
     end
 
     -- Nach einer Spalte sortieren: erst absteigend, beim nächsten Aufruf für dieselbe Spalte aufsteigend
@@ -252,7 +259,8 @@ function TableView.Create(definition)
       if sort and sort.index == index then
         sort.descending = not sort.descending
       else
-        sort = { column = columns[index], index = index, descending = true }
+        -- Zahlen zuerst absteigend (größte oben), Text-Spalten aufsteigend (A-Z)
+        sort = { column = columns[index], index = index, descending = columns[index].align ~= "LEFT" }
       end
       frame.offset = 0
       apply()
@@ -310,7 +318,7 @@ function TableView.Create(definition)
       exportButton:SetText(L.EXPORT)
       local hintText = definition.hint
       if type(hintText) == "function" then hintText = hintText() elseif hintText then hintText = L[hintText] end
-      hint:SetText(hintText or "")
+      hint:SetText(hintText or L.TABLE_SORT_HINT)
       for _, button in ipairs(extraButtons) do button.widget:SetText(L[button.label]) end
       allRecords = definition.records(characterKey)
       if selectionChanged then frame.offset = 0 end

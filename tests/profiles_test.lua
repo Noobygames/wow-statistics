@@ -112,3 +112,17 @@ expect("Zusatz 8 erst nicht sichtbar", listed("Zusatz 8"), false)
 local firstRow = wow.findFrame(function(frame) return rawget(frame, "profileName") == "Default" end)
 for _ = 1, 10 do firstRow._scripts.OnMouseWheel(firstRow, -1) end
 expect("nach dem Scrollen sichtbar", listed("Zusatz 8"), true)
+
+-- Speichern: leerer Name meldet sich, vorhandener Name fragt vor dem Überschreiben nach
+SlashCmdList.LEVELTIMER("config")
+wow.click(addon.L.OPTIONS_TAB_PROFILES or "Profile")
+local saveButton = wow.findFrame(function(frame)
+  local label = rawget(frame, "label")
+  return label and label._text == L.PROFILE_SAVE
+end)
+expectTrue("Speichern-Button", saveButton ~= nil)
+local before = #wow.printed
+saveButton._scripts.OnClick(saveButton)
+expectTrue("leerer Name gemeldet", wow.printed[#wow.printed]:find(L.PROFILE_NAME_EMPTY, 1, true) ~= nil)
+expect("Profil-Exists", Profiles.Exists("Default"), true)
+expect("Profil-Exists (unbekannt)", Profiles.Exists("Gibtsnicht"), false)

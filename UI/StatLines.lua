@@ -240,6 +240,7 @@ function ns.ApplyStatPreset(preset)
     ns.db[stat.setting] = on[stat.setting] or false
   end
   ns.ApplySettings()
+  ns.Print(string.format(ns.L.PRESET_APPLIED, ns.L[preset.label]))
 end
 
 -- Zeile eingeschaltet und im Client verfügbar

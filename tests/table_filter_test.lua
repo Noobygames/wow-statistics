@@ -25,11 +25,11 @@ end
 
 expect("Standard: neueste zuerst", shownNames(), "Defias,Ghul,Wolf")
 
--- Sortieren nach Name (Spalte 2): erst absteigend, dann aufsteigend
-killTable:SortBy(2)
-expect("Name absteigend", shownNames(), "Wolf,Ghul,Defias")
+-- Sortieren nach Name (Spalte 2, Text): erst aufsteigend (A-Z), dann absteigend
 killTable:SortBy(2)
 expect("Name aufsteigend", shownNames(), "Defias,Ghul,Wolf")
+killTable:SortBy(2)
+expect("Name absteigend", shownNames(), "Wolf,Ghul,Defias")
 
 -- Sortieren nach Zeitpunkt nutzt den Zeitstempel, nicht den Text
 killTable:SortBy(1)

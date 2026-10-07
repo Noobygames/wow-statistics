@@ -20,7 +20,10 @@ local commands = {
     ns.Set("locked", false)
     ns.Print(L.UNLOCKED)
   end,
-  reset = function() ns.TimerWindow.ResetLayout() end,
+  reset = function()
+    ns.TimerWindow.ResetLayout()
+    ns.Print(L.RESET_DONE)
+  end,
   compact = function() ns.Set("compactMode", not ns.db.compactMode) end,
   bar = function() ns.Set("horizontalLayout", not ns.db.horizontalLayout) end,
   newsession = function() ns.StartNewSession() end,
@@ -78,7 +81,10 @@ local commands = {
   end,
   -- /lt goal 30 setzt das Ziel-Level, /lt goal ohne Zahl entfernt es
   goal = function(argument)
-    if argument == "" then
+    if argument == "" then  -- ohne Zahl nur den Stand zeigen, damit Nachschlagen nichts löscht
+      local goal = ns.Goal.Get()
+      ns.Print(goal and string.format(L.GOAL_STATUS, goal.level) or L.GOAL_NONE)
+    elseif argument:lower() == "off" then
       ns.Goal.Clear()
       ns.Print(L.GOAL_CLEARED)
     elseif ns.Goal.Set(tonumber(argument)) then
@@ -112,6 +118,7 @@ SlashCmdList.LEVELTIMER = function(input)
   if command then
     command(argument)
   else
+    if name ~= "" then ns.Print(L.COMMAND_UNKNOWN) end
     printHelp()
   end
 end

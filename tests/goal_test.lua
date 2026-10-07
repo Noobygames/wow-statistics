@@ -42,11 +42,16 @@ expect("Meldung", wow.printed[#wow.printed]:find(string.format(L.GOAL_REACHED, 1
 expect("Zeile erreicht", goalRow(), string.format(L.GOAL_DONE, 12))
 expect("Fortschritt voll", Goal.GetProgress(), 1)
 
--- Bleibt über Sessions, Entfernen ohne Zahl
+-- Bleibt über Sessions; ohne Zahl nur der Stand, Entfernen mit "off"
 SlashCmdList.LEVELTIMER("newsession")
 expect("übersteht neue Session", Goal.Get().level, 12)
 SlashCmdList.LEVELTIMER("goal")
+expect("ohne Zahl bleibt das Ziel", Goal.Get().level, 12)
+expectTrue("Stand im Chat", wow.printed[#wow.printed]:find("12", 1, true) ~= nil)
+SlashCmdList.LEVELTIMER("goal off")
 expect("entfernt", Goal.Get(), nil)
+SlashCmdList.LEVELTIMER("goal")
+expectTrue("kein Ziel gemeldet", wow.printed[#wow.printed]:find(addon.L.GOAL_NONE, 1, true) ~= nil)
 
 -- Kommazahlen sind kein Level
 expect("Kommazahl abgelehnt", addon.Goal.Set(addon.level + 1.5), false)

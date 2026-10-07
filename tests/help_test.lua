@@ -11,4 +11,4 @@ SlashCmdList.LEVELTIMER("help")
 expect("fünf Hilfezeilen", #wow.printed - before, 5)
 before = #wow.printed
 SlashCmdList.LEVELTIMER("quatsch")
-expect("unbekannter Befehl zeigt Hilfe", #wow.printed - before, 5)
+expect("unbekannter Befehl: Hinweis plus Hilfe", #wow.printed - before, 6)

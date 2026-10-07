@@ -147,17 +147,39 @@ function ns.ShowProfileImport()
   end)
 end
 
+local OVERWRITE_PROFILE_POPUP = "LEVELTIMER_OVERWRITE_PROFILE"
+
 local function addProfileSaver()
   local page = builder.Page()
   local nameBox = CreateFrame("EditBox", nil, page, "InputBoxTemplate")
   nameBox:SetSize(PROFILE_NAME_WIDTH, Builder.BUTTON_HEIGHT)
   nameBox:SetAutoFocus(false)
   nameBox:SetPoint("TOPLEFT", Builder.MARGIN + 6, builder.RowY())  -- Vorlage zeichnet ihren Rand links außerhalb
-  local saveButton = Widgets.CreateButton(page, PROFILE_SAVE_WIDTH, Builder.BUTTON_HEIGHT, function()
-    if ns.Profiles.SaveAs(nameBox:GetText()) then
-      ns.Print(string.format(L.PROFILE_SAVED, nameBox:GetText()))
+  local function save(name)
+    if ns.Profiles.SaveAs(name) then
+      ns.Print(string.format(L.PROFILE_SAVED, name))
       nameBox:SetText("")
       ns.ApplySettings()
+    end
+  end
+  StaticPopupDialogs[OVERWRITE_PROFILE_POPUP] = {
+    button1 = YES or "Yes",
+    button2 = NO or "No",
+    OnAccept = function(_, name) save(name) end,
+    timeout = 0,
+    whileDead = true,
+    hideOnEscape = true,
+    preferredIndex = 3,
+  }
+  local saveButton = Widgets.CreateButton(page, PROFILE_SAVE_WIDTH, Builder.BUTTON_HEIGHT, function()
+    local name = strtrim(nameBox:GetText())
+    if name == "" then
+      ns.Print(L.PROFILE_NAME_EMPTY)
+    elseif ns.Profiles.Exists(name) then
+      StaticPopupDialogs[OVERWRITE_PROFILE_POPUP].text = L.PROFILE_OVERWRITE_CONFIRM  -- aktuelle Sprache
+      StaticPopup_Show(OVERWRITE_PROFILE_POPUP, name, nil, name)
+    else
+      save(name)
     end
   end)
   saveButton:SetPoint("LEFT", nameBox, "RIGHT", Builder.CHOOSER_TAB_GAP, 0)
@@ -211,7 +233,7 @@ addToggles({
 })
 addButton("RESET_WINDOW", function() TimerWindow.ResetLayout() end)
 addHint("OPTIONS_HINT")
-addSection("SECTION_GENERAL")
+addSection("SECTION_LANGUAGE")
 addLanguageChooser()
 addToggles({
   { label = "SHOW_MINIMAP", get = function(db) return not db.minimap.hide end,
@@ -259,6 +281,7 @@ addSlider({
   format = function(value) return string.format(L.MINUTES, value) end,
 })
 addSection("SECTION_WARNINGS")
+addHint("WARN_LOOK_HINT")
 addToggles({
   toggle("WARN_BAGS_FULL_TOGGLE", "warnBagsFull"),
   toggle("WARN_DURABILITY_TOGGLE", "warnDurability"),
