@@ -16,6 +16,7 @@ ns.TableView = TableView
 local ROW_HEIGHT = 16
 local CELL_GAP = 6
 local SCROLLBAR_GAP = 6
+local REFRESH_SECONDS = 5  -- so oft werden Zeilen ohne erkennbare Änderung spätestens neu aufgebaut
 local WHEEL_STEP = 3  -- Zeilen pro Mausrad-Raste
 local WHITE = { 1, 1, 1 }
 local LEFT, RIGHT = "LEFT", "RIGHT"
@@ -184,7 +185,7 @@ function TableView.Create(definition)
           local record = records[frame.offset + i]
           if not record then return end
           definition.onRowClick(record, mouseButton)
-          frame:Render(frame.characterKey)
+          frame:Render(frame.characterKey, false, true)
         end)
       end
     end
@@ -219,6 +220,7 @@ function TableView.Create(definition)
     end
 
     local scrollBar
+    local lastSignature  -- siehe Render
     local function scrollTo(offset)
       frame.offset = math.max(0, math.min(offset, #records - visibleRows))
       scrollBar:SetOffsetSilently(frame.offset)
@@ -313,7 +315,8 @@ function TableView.Create(definition)
     end)
     exportButton:SetPoint("TOPLEFT", 0, -1)
 
-    function frame:Render(characterKey, selectionChanged)
+    -- force erzwingt das Neuzeichnen (nach Klick auf eine Zeile, die z.B. Favoriten ändert)
+    function frame:Render(characterKey, selectionChanged, force)
       frame.characterKey = characterKey
       filterLabel:SetText(L.FILTER)
       exportButton:SetText(L.EXPORT)
@@ -323,6 +326,14 @@ function TableView.Create(definition)
       for _, button in ipairs(extraButtons) do button.widget:SetText(L[button.label]) end
       allRecords = definition.records(characterKey)
       if selectionChanged then frame.offset = 0 end
+      -- Das Fenster ruft Render jede Sekunde; Filtern und Sortieren (bis 5000 Einträge) nur, wenn sich etwas
+      -- geändert hat: Charakter, Sprache, Anzahl, der jüngste (laufende) Eintrag, spätestens alle 5 s
+      local newest = allRecords[1]
+      local signature = table.concat({ characterKey or "", ns.db and ns.db.language or "", #allRecords,
+        newest and (newest.time or newest.startedAt or 0) or 0, newest and newest.seconds or 0,
+        newest and newest.xp or 0, math.floor(GetTime() / REFRESH_SECONDS) }, ":")
+      if signature == lastSignature and not selectionChanged and not force then return end
+      lastSignature = signature
       apply()
     end
 
