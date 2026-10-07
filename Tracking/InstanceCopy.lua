@@ -58,7 +58,7 @@ end
 
 -- zoneUID aus der GUID eines Gegners; nil für Spieler, Begleiter, geheime oder unbekannte GUIDs
 function InstanceCopy.ZoneUIDOf(guid)
-  if not guid or ns.IsSecret(guid) then return nil end
+  if ns.IsSecret(guid) or not guid then return nil end
   local digits = guid:match("^Creature%-%d+%-%d+%-%d+%-(%d+)%-")
   local zoneUID = digits and tonumber(digits)
   return zoneUID and zoneUID > 0 and zoneUID or nil

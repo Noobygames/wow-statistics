@@ -11,10 +11,14 @@ local MAX_NAMES = 5000  -- danach wird neu begonnen, damit die Tabelle nicht end
 local byName = {}
 local nameCount = 0
 
+-- Geheime Werte (Retail/Forever in eingeschränkten Instanzen) zuerst ausschließen: schon ein Wahrheitstest
+-- darauf ist für Addons ein Fehler
 local function remember(unit)
-  if not unit or not UnitExists(unit) or UnitIsPlayer(unit) then return end
+  if not unit then return end
+  local exists, isPlayer = UnitExists(unit), UnitIsPlayer(unit)
+  if ns.IsSecret(exists) or not exists or ns.IsSecret(isPlayer) or isPlayer then return end
   local name, classification = UnitName(unit), UnitClassification(unit)
-  if not name or ns.IsSecret(name) or ns.IsSecret(classification) then return end
+  if ns.IsSecret(name) or ns.IsSecret(classification) or not name then return end
   if not byName[name] then
     nameCount = nameCount + 1
     if nameCount > MAX_NAMES then
