@@ -17,7 +17,7 @@ Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt 
 - [x] 159. **Einstellungen scrollen** (M): jede Seite scrollt mit dem Mausrad; das Fenster wird höchstens 90 % so hoch wie der Bildschirm.
 - [x] 160. **Historie: Charakterliste und gemerkter Reiter** (S): Klick auf den Charakternamen öffnet eine Liste aller Charaktere (klassenfarbig, scrollt ab 12); der zuletzt gewählte Reiter bleibt erhalten (`historyTab`).
 
-## v2.9.1: Funde aus dem Review
+## v2.9: Funde aus dem Review
 
 Aus dem Review des Branches `feature/alert-style` (fünf Prüfer: Clean Code, Wiederverwendbarkeit, Bugs im neuen Code, Bugs im Kern, UX/Texte; Funde nur gelesen, nicht im Spiel getestet). „im Spiel prüfen“ = der Prüfer war unsicher, siehe `ManualToCheck.md`. Bereits behoben: Texturpfad in `Alerts.lua` (einfache Backslashes, der Banner wäre unsichtbar gewesen).
 
@@ -325,6 +325,7 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 
 ## Erledigt
 
+- v2.9.0: 149.–160. Instanz-Reiter mit Leerzustand und Auto-Reiter, Erhaltene XP, Instanz-Daten zurücksetzen, XP/h-Fix für das laufende Level, Einblendungen gestalten (Banner, Größe, Dauer, Ton, Position, Warteschlange), Buttons im Addon-Stil, Stat-Gruppen und Voreinstellungen, scrollende Einstellungen, Charakterliste der Historie; Review-Funde 161–217 zu großen Teilen behoben (geheime Werte, geschützte Migrationen und Listener, Profil-Import mit Wertebereichen, Texte in allen Sprachen, Befehle mit Rückmeldung, Chroma-Cyan für Splits); offen: 175, 180, 186, 194, 215 und Clean-Code/Wiederverwendbarkeit 218–235
 - v2.8.2: 145. Chat kopieren, 146. Ziehgriff an der Split-Liste, 147. Einfügen im Import-Fenster, 148. Buff-Hinweis im Bosskampf; Test-Stub mit den echten Reset-Texten
 - v2.8.1: 95.–144. Stabilität aus dem Deep Review (Endlosschleife bei Zeitumstellung, Lua-Fehler durch geheime Werte, Beute in Retail, Session- und Erholt-XP, /played im Chat, alte Twinks, wiederholbare Quests, Gildenreparatur, Instanz-Kopien, Profile, Speedrun, Darstellung)
 - v2.8.0: 78. Gedrosselter Ticker, 79. Taschen-Helfer, 80. Item-Helfer, 81. Hinweis-Helfer, 82. TableView, 83. OptionsBuilder, 84. Unterordner, 90. XP/h überall gleich, 91. Dungeon-Läufe, 92. Instanzlimit, 93. Instanz-Kopien erkennen, 94. Prognose mit XP-Tabelle; Anzeigename „Level Time“
