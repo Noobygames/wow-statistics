@@ -133,3 +133,22 @@ wow.update(1)
 local noRun = wow.findFrame(function(frame) return frame.GetText and frame:GetText() == addon.L.INSTANCE_NONE end)
 expectTrue("Hinweis Kein Lauf", noRun ~= nil)
 addon.Set("windowScope", Stats.LEVEL)
+
+-- Merker ging verloren (z.B. /reload in der Instanz): beim Verlassen zurück auf Level statt hängen zu bleiben
+enter(nil)
+addon.Set("autoInstanceTab", true)
+addon.Set("windowScope", Stats.INSTANCE)
+enter("Burg Schattenfang")
+enter(nil)
+expect("ohne Merker auf Level zurück", LevelTimerDB.windowScope, Stats.LEVEL)
+addon.Set("autoInstanceTab", false)
+
+-- Zurücksetzen bucht ungebuchte Zeit noch vor dem Nullen: nichts davon landet im neuen Stand
+enter("Burg Schattenfang")
+wow.state.inCombat = true
+addon.TimeBreakdown.Update(1)
+for _ = 1, 5 do addon.TimeBreakdown.Update(1) end
+addon.Instances.ResetCurrent()
+expect("nach Reset keine Kampfzeit", Stats.Get(Stats.INSTANCE, Stats.COMBAT_SECONDS), 0)
+wow.state.inCombat = false
+enter(nil)

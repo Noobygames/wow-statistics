@@ -48,6 +48,12 @@ local function flush()
   end
 end
 
+-- Gesammelte Zeit sofort buchen (z.B. wenn der Instanz-Lauf anhält oder weiterläuft, damit nichts davor/danach
+-- im falschen Bereich landet)
+function TimeBreakdown.Flush()
+  flush()
+end
+
 -- elapsed Sekunden der bisherigen Tätigkeit zuordnen, dann die Tätigkeit neu bestimmen
 function TimeBreakdown.Update(elapsed)
   if activity then pending = pending + elapsed end

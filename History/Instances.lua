@@ -56,12 +56,15 @@ end
 local function pause()
   local run = currentRun()
   if not run or not runningSince then return end
+  ns.TimeBreakdown.Flush()  -- Zeit bis jetzt gehört noch in den Lauf
   run.seconds = Instances.GetRunSeconds(run)
   runningSince = nil
 end
 
 local function resume()
-  runningSince = runningSince or GetTime()
+  if runningSince then return end
+  ns.TimeBreakdown.Flush()  -- Zeit von draußen gehört nicht in den Lauf
+  runningSince = GetTime()
 end
 
 local function newRun(name, instanceType, startedAt, level)
@@ -95,6 +98,7 @@ end
 function Instances.ResetCurrent()
   local run = currentRun()
   if not run then return false end
+  ns.TimeBreakdown.Flush()  -- noch ungebuchte Zeit gehört zum Stand vor dem Zurücksetzen
   run.stats = ns.Database.NewCounters()
   run.seconds = 0
   run.startedAt = time()
@@ -161,9 +165,9 @@ InstanceCopy.OnCorrected(function(name, instanceType, isNew)
     run.startedAt, run.level = previous.time, previous.level
     run.seconds = run.seconds + previous.seconds
     local stats = run.stats
-    stats[Stats.XP_GAINED] = stats[Stats.XP_GAINED] + previous.xp
-    stats[Stats.PVE_KILLS] = stats[Stats.PVE_KILLS] + previous.counters.kills
-    stats[Stats.DEATHS] = stats[Stats.DEATHS] + previous.counters.deaths
+    stats[Stats.XP_GAINED] = (stats[Stats.XP_GAINED] or 0) + previous.xp
+    stats[Stats.PVE_KILLS] = (stats[Stats.PVE_KILLS] or 0) + previous.counters.kills
+    stats[Stats.DEATHS] = (stats[Stats.DEATHS] or 0) + previous.counters.deaths
   end
 end)
 

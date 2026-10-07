@@ -183,6 +183,7 @@ local BUTTON_COLORS = {
   normal = { background = { 0.11, 0.12, 0.2, 0.95 }, border = { 0.5, 0.38, 0.14, 1 }, text = Widgets.COLORS.highlight },
   hover = { background = { 0.18, 0.19, 0.3, 0.98 }, border = Widgets.COLORS.border, text = { 1, 1, 1 } },
   pressed = { background = { 0.06, 0.07, 0.12, 1 }, border = Widgets.COLORS.border, text = Widgets.COLORS.highlight },
+  disabled = { background = { 0.08, 0.08, 0.1, 0.8 }, border = { 0.3, 0.3, 0.3, 1 }, text = { 0.5, 0.5, 0.5 } },
 }
 
 function Widgets.CreateButton(parent, width, height, onClick)
@@ -194,7 +195,14 @@ function Widgets.CreateButton(parent, width, height, onClick)
 
   local hovered, pressed = false, false
   local function paint()
-    local colors = (pressed and BUTTON_COLORS.pressed) or (hovered and BUTTON_COLORS.hover) or BUTTON_COLORS.normal
+    local colors = BUTTON_COLORS.normal
+    if button:IsEnabled() == false then
+      colors = BUTTON_COLORS.disabled
+    elseif pressed then
+      colors = BUTTON_COLORS.pressed
+    elseif hovered then
+      colors = BUTTON_COLORS.hover
+    end
     button:SetBackdropColor(unpack(colors.background))
     button:SetBackdropBorderColor(unpack(colors.border))
     button.label:SetTextColor(unpack(colors.text))
@@ -203,6 +211,8 @@ function Widgets.CreateButton(parent, width, height, onClick)
   button:HookScript("OnLeave", function() hovered, pressed = false, false; paint() end)
   button:HookScript("OnMouseDown", function() pressed = true; paint() end)
   button:HookScript("OnMouseUp", function() pressed = false; paint() end)
+  button:HookScript("OnEnable", paint)
+  button:HookScript("OnDisable", paint)
   paint()
 
   function button:SetText(text) self.label:SetText(text) end

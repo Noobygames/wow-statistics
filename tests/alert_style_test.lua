@@ -54,6 +54,9 @@ alert._scripts.OnDragStop(alert)
 expectTrue("Position gespeichert", LevelTimerDB.alertPos ~= nil)
 alert._scripts.OnMouseUp(alert, "RightButton")
 expect("Rechtsklick beendet", Alerts.IsMoving(), false)
+-- Was währenddessen kam (Level-Up-Beispiel), erscheint jetzt statt verloren zu gehen
+expect("Wartende erscheint danach", alert.text:GetText(), string.format(L.ALERT_LEVEL_UP, 11))
+Alerts.Clear()
 expect("danach versteckt", alert:IsShown(), false)
 
 -- Zurücksetzen
@@ -111,3 +114,10 @@ addon.Set("alertSound", true)
 local before = #played
 Alerts.Notify("Hinweis", { 1, 1, 1 })
 expect("Hinweis ohne Ton", #played, before)
+
+-- Größenänderung lässt die gespeicherte Einblendung visuell stehen (Abstände in der Skalierung des Rahmens)
+LevelTimerDB.alertPos = { "TOP", "TOP", 100, -200 }
+addon.Set("alertScale", 1)
+addon.Set("alertScale", 2)
+expect("Abstand x umgerechnet", LevelTimerDB.alertPos[3], 50)
+expect("Abstand y umgerechnet", LevelTimerDB.alertPos[4], -100)

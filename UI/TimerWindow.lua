@@ -341,7 +341,12 @@ end)
 ns.InstanceCopy.OnLeave(function()
   local previous = scopeBeforeInstance
   scopeBeforeInstance = nil
-  if previous and ns.db.windowScope == Stats.INSTANCE then ns.Set("windowScope", previous) end
+  if ns.db.windowScope ~= Stats.INSTANCE then return end  -- man hat selbst gewechselt
+  if previous then
+    ns.Set("windowScope", previous)
+  elseif ns.db.autoInstanceTab then
+    ns.Set("windowScope", Stats.LEVEL)  -- der Merker ging bei /reload in der Instanz verloren
+  end
 end)
 
 ---------------------------------------------------------------------------

@@ -55,7 +55,7 @@ local refresh            -- unten definiert
 local function selectView(entry, view)
   selectedEntry = entry
   entry.selected = view
-  ns.db.historyTab = view.tab  -- beim nächsten Öffnen wieder da
+  ns.Set("historyTab", view.tab)  -- beim nächsten Öffnen wieder da
   refresh()
 end
 
@@ -154,6 +154,16 @@ menu:EnableMouseWheel(true)
 menu:Hide()
 table.insert(UISpecialFrames, "LevelTimerHistoryMenu")
 
+-- Unsichtbarer Fänger hinter dem Menü: ein Klick irgendwo im Fenster schließt es
+local menuCatcher = CreateFrame("Button", nil, panel)
+menuCatcher:SetAllPoints(panel)
+menuCatcher:SetFrameStrata("FULLSCREEN_DIALOG")
+menuCatcher:SetFrameLevel(menu:GetFrameLevel() - 1)
+menuCatcher:SetScript("OnClick", function() menu:Hide() end)
+menuCatcher:Hide()
+menu:HookScript("OnShow", function() menuCatcher:Show() end)
+menu:HookScript("OnHide", function() menuCatcher:Hide() end)
+
 local menuRows = {}
 local menuOffset = 0
 
@@ -171,6 +181,7 @@ local function refreshMenu()
         refresh()
       end)
       row:SetPoint("TOPLEFT", MENU_PADDING, -MENU_PADDING - (i - 1) * MENU_ROW_HEIGHT)
+      row:SetPoint("TOPRIGHT", -MENU_PADDING, -MENU_PADDING - (i - 1) * MENU_ROW_HEIGHT)
       menuRows[i] = row
     end
     local key = keys[i + menuOffset]
@@ -323,17 +334,12 @@ ns.RegisterApply(function()
   if panel:IsShown() then refresh() end
 end)
 
-local restored = false
-
 function ns.ToggleHistory()
   if not ns.db then return end
   if panel:IsShown() then
     panel:Hide()
   else
-    if not restored then
-      restored = true
-      restoreView()
-    end
+    restoreView()  -- bei jedem Öffnen: folgt auch einem Profilwechsel
     refresh()
     panel:Show()
   end

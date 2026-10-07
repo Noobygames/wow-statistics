@@ -18,22 +18,24 @@ local dataObject  -- nil, solange keine LibDataBroker verfügbar ist
 
 local function brokerText()
   local scope = ns.db.windowScope
+  if not Stats.IsOpen(scope) then return L.INSTANCE_NONE end
   local seconds = Stats.GetSeconds(scope)
   local parts = { seconds and Format.Duration(seconds) or "..." }
   local rate = Experience.IsLeveling() and Experience.GetRatePerHour(scope)
   if rate then
-    table.insert(parts, Format.Number(rate) .. " XP/h")
+    table.insert(parts, Format.Number(rate) .. " " .. L.ROW_XP_RATE)
   end
   return table.concat(parts, TEXT_SEPARATOR)
 end
 
 local function showTooltip(tooltip)
   local scope = ns.db.windowScope
+  local open = Stats.IsOpen(scope)
   tooltip:AddLine(ns.DISPLAY_NAME)
   for _, stat in ipairs(ns.STAT_LINES) do
     if ns.IsStatShown(stat, ns.db) then
       for _, row in ipairs(stat.rows) do
-        tooltip:AddDoubleLine(L[row.label], row.value(scope), 1, 0.82, 0, 1, 1, 1)
+        tooltip:AddDoubleLine(L[row.label], open and row.value(scope) or "-", 1, 0.82, 0, 1, 1, 1)
       end
     end
   end

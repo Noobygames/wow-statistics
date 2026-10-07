@@ -154,10 +154,10 @@ end)
 -- laufende und leert die Warteschlange, sound = Ton, falls eingeschaltet }. Im Verschiebemodus erscheint nichts Neues.
 function Alerts.Show(message, color, options)
   ns.Debug("alert", "%s", message)
-  if moving then return end
   options = options or {}
   if options.immediate then queue = {} end
-  if frame:IsShown() and not options.immediate then
+  -- Im Verschiebemodus wartet alles Neue (auch die erste Einblendung) und erscheint nach dem Verschieben
+  if moving or (frame:IsShown() and not options.immediate) then
     if #queue >= MAX_QUEUE then table.remove(queue, 1) end
     table.insert(queue, { message, color, options.sound })
     return
@@ -219,6 +219,8 @@ function Alerts.SetMoving(enabled)
   else
     frame:EnableMouse(false)
     frame:Hide()
+    local waiting = table.remove(queue, 1)
+    if waiting then display(unpack(waiting)) end
   end
 end
 
@@ -311,8 +313,17 @@ function Alerts.Preview()
 end
 
 ns.RegisterApply(function(db)
-  frame:SetScale(math.max(Alerts.MIN_SCALE, math.min(Alerts.MAX_SCALE, db.alertScale)))
-  if db.alertPos ~= appliedPos then restorePosition() end
+  local oldScale = frame:GetScale()
+  local scale = math.max(Alerts.MIN_SCALE, math.min(Alerts.MAX_SCALE, db.alertScale))
+  frame:SetScale(scale)
+  if db.alertPos ~= appliedPos then
+    restorePosition()
+  elseif db.alertPos and math.abs(oldScale - scale) > 0.001 then
+    -- Ankerabstände gelten in der Skalierung des Rahmens: umrechnen, damit die Einblendung stehen bleibt
+    db.alertPos[3] = db.alertPos[3] * oldScale / scale
+    db.alertPos[4] = db.alertPos[4] * oldScale / scale
+    restorePosition()
+  end
   layout()
 end)
 
