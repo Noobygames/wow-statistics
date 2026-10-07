@@ -19,6 +19,8 @@
 --   QUEST_GREETING        alte Quest-Liste ohne Gespräch: dasselbe mit SelectActiveQuest/
 --                         SelectAvailableQuest(index), fertig laut GetActiveTitle.
 -- Graue (triviale) und ignorierte Quests werden nicht angenommen: beim Leveln Zeitverschwendung.
+-- Wiederholbare Quests wählt die Automatik nie selbst aus den Listen aus; öffnet man sie von Hand,
+-- gibt autoTurnIn sie im Dialog trotzdem ab (QUEST_PROGRESS/QUEST_COMPLETE kennen nur diesen einen Dialog).
 -- Gespräch überspringen wie Blizzards GossipFrame bei selectOptionWhenOnlyOption: keine Quests,
 -- genau eine verfügbare Option (GossipOptionStatus Available), kein ForceGossip; gewählt mit
 -- C_GossipInfo.SelectOptionByIndex(orderIndex). Optionen mit Bestätigung fragt das Spiel weiter nach.
@@ -124,14 +126,22 @@ ns.RegisterEvent("QUEST_COMPLETE", function()
   if choice then GetQuestReward(choice) end
 end)
 
--- Die einzige Gesprächsoption, wenn es sonst nichts zu tun gibt (z.B. Flugmeister, Händler)
+local REPEAT_GUARD_SECONDS = 2  -- dieselbe Option nicht öfter in so kurzer Zeit wählen (Schleifen)
+local lastSkipped  -- { id, at } der zuletzt automatisch gewählten Option
+
+-- Die einzige Gesprächsoption, wenn es sonst nichts zu tun gibt (z.B. Flugmeister, Händler).
+-- Als Geist nie: der Geistheiler hat genau eine Option ("Wiederbeleben"), die Wiederbelebungsschwäche kostet.
 local function onlyOption()
+  if UnitIsDeadOrGhost("player") then return nil end
   if C_GossipInfo.GetNumAvailableQuests() > 0 or C_GossipInfo.GetNumActiveQuests() > 0 then return nil end
   if C_GossipInfo.ForceGossip() then return nil end
   local options = C_GossipInfo.GetOptions()
   if #options ~= 1 or options[1].status ~= OPTION_AVAILABLE then return nil end
   -- Solche Optionen wählt Blizzards GossipFrame schon selbst (HandleShow), sonst doppelt gewählt
   if options[1].selectOptionWhenOnlyOption then return nil end
+  local id = options[1].gossipOptionID or options[1].orderIndex
+  if lastSkipped and lastSkipped.id == id and GetTime() - lastSkipped.at < REPEAT_GUARD_SECONDS then return nil end
+  lastSkipped = { id = id, at = GetTime() }
   return options[1]
 end
 

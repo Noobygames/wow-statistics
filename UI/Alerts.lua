@@ -307,9 +307,13 @@ Journal.OnAdd(function(logName, entry)
 end)
 
 -- Vorschau: eine Beispiel-Einblendung mit den aktuellen Einstellungen
+local PREVIEW_ORDER = { "levelUp", "rare", "elite", "loot", "nearDeath" }
+local previewIndex = 0
+
 function Alerts.Preview()
   if moving then Alerts.SetMoving(false) end
-  Alerts.ShowSample("levelUp")
+  previewIndex = previewIndex % #PREVIEW_ORDER + 1
+  Alerts.ShowSample(PREVIEW_ORDER[previewIndex])
 end
 
 ns.RegisterApply(function(db)

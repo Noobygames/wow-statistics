@@ -195,7 +195,8 @@ function TableView.Create(definition)
     emptyText:Hide()
 
     -- Hinweis unten rechts neben der Summenzeile, z.B. was ein Klick bewirkt
-    local hint = frame:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    local hint = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    hint:SetTextColor(unpack(Widgets.COLORS.muted))
     hint:SetPoint("BOTTOMRIGHT", -SCROLLBAR_GAP, 2)
 
     -- Weitere Buttons der Ansicht rechts neben dem Export-Button

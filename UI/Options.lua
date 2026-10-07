@@ -256,6 +256,9 @@ for _, group in ipairs(ns.STAT_GROUPS) do
     if line.group == group then table.insert(statToggles, toggle(line.label, line.setting, line.available)) end
   end
   addToggles(statToggles)
+  if group == "STAT_GROUP_INSTANCE" then
+    addButton("INSTANCE_RESET", function() ns.ConfirmInstanceReset() end)
+  end
 end
 addSection("SECTION_CALCULATION")
 addToggles({ toggle("XP_RATE_WITHOUT_AFK", "xpRateWithoutAfk") })
@@ -434,7 +437,6 @@ finishPage()
 addFooterButton("HISTORY", function() ns.ToggleHistory() end)
 addFooterButton("RECAP_TITLE", function() ns.ToggleRecap() end)
 addFooterButton("NEW_SESSION", function() ns.StartNewSession() end)
-addFooterButton("INSTANCE_RESET", function() ns.ConfirmInstanceReset() end)
 
 builder.Finish()
 ns.RegisterApply(builder.Refresh)

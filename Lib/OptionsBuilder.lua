@@ -284,7 +284,8 @@ function OptionsBuilder.New(options)
   end
 
   function builder.AddHint(labelKey)
-    local hint = page:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    local hint = page:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    hint:SetTextColor(unpack(Widgets.COLORS.muted))
     hint:SetJustifyH("LEFT")
     addRow(hint, ROW_HINT, true)
     onRefresh(function() hint:SetText(L[labelKey]) end)

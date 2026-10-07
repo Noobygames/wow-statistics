@@ -50,13 +50,21 @@ local window = Widgets.CreatePanel("LevelTimerFrame", 0.8)
 window:Hide()  -- erst nach Login anzeigen, wenn Daten und Einstellungen bereitstehen
 
 -- Reiter wählen den Bereich (Einstellung windowScope)
-local levelTab = Widgets.CreateTab(window, "GameFontNormalSmall", function()
-  ns.Set("windowScope", Stats.LEVEL)
-end)
+-- Linksklick wählt den Bereich, Rechtsklick öffnet wie auf dem Fenster die Einstellungen
+local function createScopeTab(scope)
+  local tab = Widgets.CreateTab(window, "GameFontNormalSmall", function(_, mouseButton)
+    if mouseButton == "RightButton" then
+      ns.ToggleOptions()
+    else
+      ns.Set("windowScope", scope)
+    end
+  end)
+  tab:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+  return tab
+end
 
-local sessionTab = Widgets.CreateTab(window, "GameFontNormalSmall", function()
-  ns.Set("windowScope", Stats.SESSION)
-end)
+local levelTab = createScopeTab(Stats.LEVEL)
+local sessionTab = createScopeTab(Stats.SESSION)
 
 local instanceTab = Widgets.CreateTab(window, "GameFontNormalSmall")
 

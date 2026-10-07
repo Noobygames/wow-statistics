@@ -11,6 +11,7 @@ Widgets.COLORS = {
   background = { 0.04, 0.05, 0.1 },
   border = { 0.72, 0.53, 0.17 },
   highlight = { 0.96, 0.79, 0.36 },
+  muted = { 0.72, 0.72, 0.72 },  -- Hinweise: lesbar, aber leiser als normaler Text
 }
 
 local PANEL_BACKDROP = {

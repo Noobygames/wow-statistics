@@ -23,13 +23,14 @@ local SUBTABS_TO_CONTENT = 22 -- Abstand von der ersten Unterreiter-Zeile zum In
 local ARROW_SIZE = 22
 local DELETE_BUTTON_WIDTH = 110
 local DELETE_BUTTON_HEIGHT = 20
+local CLOSE_BUTTON_GAP = 28  -- Platz für den Schließen-Knopf oben rechts
 local TAB_GAP = 12
 local SUBTAB_GAP = 10
 local UPDATE_INTERVAL = 1  -- Sekunden; hält laufende Einträge aktuell
 
 local panel = Widgets.CreatePanel("LevelTimerHistory", 0.95)
 panel:SetWidth(HistoryWindow.CONTENT_WIDTH + 2 * MARGIN)  -- Höhe hängt von den Unterreiter-Zeilen ab (refresh)
-panel:SetPoint("CENTER")
+panel:SetPoint("CENTER", UIParent, "CENTER", 40, -40)  -- versetzt zu den Einstellungen
 panel:SetFrameStrata("DIALOG")
 panel:SetScript("OnDragStart", panel.StartMoving)
 panel:SetScript("OnDragStop", panel.StopMovingOrSizing)
@@ -242,7 +243,7 @@ local deleteButton = Widgets.CreateButton(panel, DELETE_BUTTON_WIDTH, DELETE_BUT
   StaticPopupDialogs[DELETE_POPUP].text = L.DELETE_CHARACTER_CONFIRM  -- aktuelle Sprache
   StaticPopup_Show(DELETE_POPUP, History.DisplayName(selectedCharacter), nil, selectedCharacter)
 end)
-deleteButton:SetPoint("TOPLEFT", MARGIN, HEADER_TOP + 4)
+deleteButton:SetPoint("TOPRIGHT", -(MARGIN + CLOSE_BUTTON_GAP), HEADER_TOP + 4)
 
 local function showCharacterName(characterKey)
   local character = History.GetCharacter(characterKey)

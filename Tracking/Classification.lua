@@ -6,6 +6,8 @@ local _, ns = ...
 local Classification = {}
 ns.Classification = Classification
 
+-- Hinweis: der Name ist der Schlüssel (der Kill-Text nennt nur ihn); gleichnamige Gegner mit anderer Einstufung
+-- erben die zuletzt gesehene.
 local MAX_NAMES = 5000  -- danach wird neu begonnen, damit die Tabelle nicht endlos wächst
 
 local byName = {}

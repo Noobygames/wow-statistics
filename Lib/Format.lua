@@ -47,12 +47,14 @@ function Format.SignedDuration(seconds)
 end
 
 local AHEAD_COLOR = "|cff40ff40"   -- schneller als der Vergleich
+local AHEAD_COLOR_ON_GREEN = "|cff4dd2ff"  -- auf grünem Chroma-Hintergrund (OBS stanzt Grün aus): Cyan
 local BEHIND_COLOR = "|cffff4040"  -- langsamer als der Vergleich
 
 -- Split-Abweichung farbig: grün schneller, rot langsamer; "-" ohne Vergleichswert
 function Format.SplitDelta(seconds)
   if not seconds then return "-" end
-  return (seconds < 0 and AHEAD_COLOR or BEHIND_COLOR) .. Format.SignedDuration(seconds) .. "|r"
+  local ahead = (ns.db and ns.db.windowBackground == "green") and AHEAD_COLOR_ON_GREEN or AHEAD_COLOR
+  return (seconds < 0 and ahead or BEHIND_COLOR) .. Format.SignedDuration(seconds) .. "|r"
 end
 
 -- Große Zahlen kürzen: 950, 12.3k, 1.2M
