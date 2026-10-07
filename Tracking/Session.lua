@@ -54,7 +54,9 @@ local function startNew()
 end
 
 local function canResume(session)
-  return session.lastSeen ~= nil and time() - session.lastSeen <= RESUME_GAP_SECONDS
+  if session.lastSeen == nil then return false end
+  local gap = time() - session.lastSeen
+  return gap >= 0 and gap <= RESUME_GAP_SECONDS  -- negativ = Systemuhr zurückgestellt
 end
 
 -- Laufende Zeit in die Session schreiben und den Stand festhalten (Logout oder manuelles Beenden)

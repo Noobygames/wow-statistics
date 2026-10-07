@@ -11,7 +11,10 @@ ChatFrame1._messages = {
 
 -- Ohne Einstellung kein Button, /lt copy geht trotzdem
 local function copyButton()
-  return wow.findFrame(function(frame) return frame._text == "C" and frame._points[1] and frame._points[1][2] == ChatFrame1 end)
+  return wow.findFrame(function(frame)
+    local label = rawget(frame, "label")
+    return label and label._text == "C" and frame._points[1] and frame._points[1][2] == ChatFrame1
+  end)
 end
 expect("aus: kein Button", copyButton(), nil)
 

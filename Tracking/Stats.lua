@@ -1,7 +1,8 @@
--- Zähler des eingeloggten Charakters in zwei Bereichen (Scopes):
---   LEVEL    aktuelles Level, beginnt beim Level-Up neu
---   SESSION  aktuelle Session, beginnt beim Login neu (siehe Session.lua)
--- Jedes Increment zählt in beiden Bereichen.
+-- Zähler des eingeloggten Charakters in drei Bereichen (Scopes):
+--   LEVEL     aktuelles Level, beginnt beim Level-Up neu
+--   SESSION   aktuelle Session, beginnt beim Login neu (siehe Session.lua)
+--   INSTANCE  laufender Instanz-Lauf (siehe Instances.lua), ohne Lauf leer
+-- Jedes Increment zählt in Level und Session; den Instanz-Lauf zählt Instances.lua über OnIncrement.
 local _, ns = ...
 
 local Stats = {}
@@ -9,6 +10,7 @@ ns.Stats = Stats
 
 Stats.LEVEL = "level"
 Stats.SESSION = "session"
+Stats.INSTANCE = "instance"
 
 -- Zähler-Schlüssel (Defaults in Database.lua)
 Stats.PVE_KILLS = "pveKills"
@@ -34,11 +36,27 @@ Stats.SPENT_TAXI = "spentTaxi"
 Stats.SPENT_TRAINER = "spentTrainer"
 Stats.SPENT_OTHER = "spentOther"
 
+local NO_COUNTERS = {}  -- Instanz-Bereich ohne laufenden Lauf (nie beschrieben)
+
 local function countersOf(scope)
   if scope == Stats.SESSION then
     return ns.character.currentSession.counters
+  elseif scope == Stats.INSTANCE then
+    local run = ns.Instances.GetCurrentRun()
+    return run and run.stats or NO_COUNTERS
   end
   return ns.character.currentLevel.counters
+end
+
+-- Zählt der Bereich gerade mit? Level und Session immer, die Instanz nur bei laufender Lauf-Uhr
+-- (draußen steht der Lauf still). Noch nicht gebuchte Zeiten gehören nur dann dazu.
+function Stats.IsCounting(scope)
+  return scope ~= Stats.INSTANCE or ns.Instances.IsRunning()
+end
+
+-- Gibt es den Bereich gerade? Level und Session immer, die Instanz nur mit offenem Lauf.
+function Stats.IsOpen(scope)
+  return scope ~= Stats.INSTANCE or ns.Instances.GetCurrentRun() ~= nil
 end
 
 function Stats.Get(scope, counter)
@@ -60,7 +78,7 @@ function Stats.Increment(counter, amount)
     counters[counter] = (counters[counter] or 0) + amount
   end
   for _, listener in ipairs(incrementListeners) do
-    listener(counter, amount)
+    ns.SafeCall(listener, counter, amount)
   end
 end
 
@@ -81,15 +99,18 @@ end
 function Stats.GetSeconds(scope)
   if scope == Stats.SESSION then
     return ns.Session.GetSeconds()
+  elseif scope == Stats.INSTANCE then
+    local run = ns.Instances.GetCurrentRun()
+    return run and ns.Instances.GetRunSeconds(run) or 0
   end
   return ns.PlayedTime.GetLevelSeconds()
 end
 
 -- Gewonnene XP im Bereich. Für das Level ist UnitXP exakt (zählt ab Levelbeginn,
--- auch wenn das Addon erst später installiert wurde); Sessions zählen selbst mit.
+-- auch wenn das Addon erst später installiert wurde); Session und Instanz zählen selbst mit.
 function Stats.GetXp(scope)
-  if scope == Stats.SESSION then
-    return Stats.Get(Stats.SESSION, Stats.XP_GAINED)
+  if scope ~= Stats.LEVEL then
+    return Stats.Get(scope, Stats.XP_GAINED)
   end
   return UnitXP("player")
 end

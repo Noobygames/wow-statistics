@@ -20,6 +20,14 @@ local TAB_GAP = 12
 local CONTENT_TOP = -70
 local FOOTER_GAP = 8         -- Abstand zwischen Reiterinhalt und den Buttons unten
 local MIN_COLUMN_WIDTH = 144
+local SCROLL_TOP = CONTENT_TOP + 8  -- Oberkante des scrollbaren Bereichs unter den Reitern
+local SCROLL_STEP = 40               -- Pixel je Mausrad-Raste
+local MAX_SCREEN_FRACTION = 0.9      -- höher als dieser Anteil des Bildschirms wird das Fenster nicht
+local BUTTON_ROW_GAP = 6          -- Abstand zwischen Buttons einer Zeile
+local BUTTON_ROW_MIN_WIDTH = 60
+local BUTTON_TEXT_PADDING = 24   -- Rand im Button links und rechts zusammen
+local FOOTER_COLUMN_GAP = 8     -- Abstand zwischen den beiden Button-Spalten unten
+local FOOTER_TEXT_PADDING = 24  -- Rand im Button links und rechts zusammen
 local COLUMN_GAP = 12        -- Mindestabstand zwischen einer Beschriftung und der rechten Spalte
 local ROW_SECTION = 24
 local ROW_CHECKBOX = 26
@@ -88,15 +96,28 @@ function OptionsBuilder.New(options)
 
   local function showPage(selected)
     for _, entry in ipairs(pages) do
-      entry.frame:SetShown(entry == selected)
+      entry.scroll:SetShown(entry == selected)
       entry.tabButton:SetActive(entry == selected)
     end
   end
 
   -- Neue Seite beginnen; folgende Add*-Aufrufe landen darauf
   function builder.AddPage(labelKey)
-    local entry = { key = labelKey, frame = CreateFrame("Frame", nil, panel) }
-    entry.frame:SetAllPoints(panel)
+    -- Jede Seite scrollt: Inhalt (frame) in einem Scrollbereich zwischen Reitern und Buttons. Die Inhaltskoordinaten
+    -- bleiben die des Fensters (y ab Fensteroberkante); der Bereich beginnt bei SCROLL_TOP, daher steht er
+    -- ruhend um -SCROLL_TOP verschoben.
+    local scroll = CreateFrame("ScrollFrame", nil, panel)
+    local entry = { key = labelKey, scroll = scroll, frame = CreateFrame("Frame", nil, scroll) }
+    scroll:SetScrollChild(entry.frame)
+    scroll:EnableMouseWheel(true)
+    scroll:SetScript("OnMouseWheel", function(self, delta)
+      local target = self:GetVerticalScroll() - delta * SCROLL_STEP
+      self:SetVerticalScroll(math.max(-SCROLL_TOP, math.min(self:GetVerticalScrollRange(), target)))
+    end)
+    scroll:SetScript("OnScrollRangeChanged", function(self, _, yRange)
+      local current = self:GetVerticalScroll()
+      self:SetVerticalScroll(math.max(-SCROLL_TOP, math.min(yRange, current)))
+    end)
     entry.tabButton = Widgets.CreateTab(panel, "GameFontNormal", function() showPage(entry) end)
     local previous = pages[#pages]
     if previous then
@@ -184,6 +205,32 @@ function OptionsBuilder.New(options)
     nextRowY = nextRowY - math.ceil(#toggles / 2) * ROW_CHECKBOX
   end
 
+  -- Eine Zeile gleich breiter Buttons: buttons = { { label = Locale-Key, onClick }, ... }; Tooltip aus <label>_TIP
+  local buttonRows = {}
+  function builder.AddButtonRow(buttons)
+    local row = CreateFrame("Frame", nil, page)
+    row:SetHeight(BUTTON_HEIGHT)
+    addRow(row, ROW_BUTTON, true)
+    local widgets = {}
+    for i, definition in ipairs(buttons) do
+      local button = Widgets.CreateButton(row, BUTTON_ROW_MIN_WIDTH, BUTTON_HEIGHT, definition.onClick)
+      if i == 1 then
+        button:SetPoint("TOPLEFT", row, "TOPLEFT")
+      else
+        button:SetPoint("LEFT", widgets[i - 1], "RIGHT", BUTTON_ROW_GAP, 0)
+      end
+      addTooltip(button, definition.label .. "_TIP", localized(definition.label))
+      onRefresh(function() button:SetText(L[definition.label]) end)
+      widgets[i] = button
+    end
+    -- Breite gleichmäßig auf die Buttons verteilen, sobald die Zeile ihre Größe kennt
+    row:SetScript("OnSizeChanged", function(_, width)
+      local each = (width - BUTTON_ROW_GAP * (#widgets - 1)) / #widgets
+      for _, button in ipairs(widgets) do button:SetWidth(math.max(BUTTON_ROW_MIN_WIDTH, each)) end
+    end)
+    table.insert(buttonRows, widgets)
+  end
+
   function builder.AddButton(labelKey, onClick)
     local button = Widgets.CreateButton(page, MIN_WIDTH - 2 * MARGIN, BUTTON_HEIGHT, onClick)
     addRow(button, ROW_BUTTON, true)
@@ -191,14 +238,23 @@ function OptionsBuilder.New(options)
     onRefresh(function() button:SetText(L[labelKey]) end)
   end
 
-  -- Buttons unten auf allen Reitern, von unten nach oben
-  local footerButtons = 0
+  -- Buttons unten auf allen Reitern in zwei Spalten, Zeilen von unten nach oben
+  local footerButtons = {}
+  local function footerRows()
+    return math.ceil(#footerButtons / 2)
+  end
   function builder.AddFooterButton(labelKey, onClick)
-    local button = Widgets.CreateButton(panel, MIN_WIDTH - 2 * MARGIN, BUTTON_HEIGHT, onClick)
-    local y = MARGIN + footerButtons * ROW_BUTTON
-    button:SetPoint("BOTTOMLEFT", MARGIN, y)
-    button:SetPoint("BOTTOMRIGHT", -MARGIN, y)
-    footerButtons = footerButtons + 1
+    local button = Widgets.CreateButton(panel, MIN_WIDTH / 2, BUTTON_HEIGHT, onClick)
+    local index = #footerButtons
+    local y = MARGIN + math.floor(index / 2) * ROW_BUTTON
+    if index % 2 == 0 then
+      button:SetPoint("BOTTOMLEFT", MARGIN, y)
+      button:SetPoint("BOTTOMRIGHT", panel, "BOTTOM", -FOOTER_COLUMN_GAP / 2, y)
+    else
+      button:SetPoint("BOTTOMLEFT", panel, "BOTTOM", FOOTER_COLUMN_GAP / 2, y)
+      button:SetPoint("BOTTOMRIGHT", -MARGIN, y)
+    end
+    table.insert(footerButtons, button)
     addTooltip(button, labelKey .. "_TIP", localized(labelKey))
     onRefresh(function() button:SetText(L[labelKey]) end)
   end
@@ -228,7 +284,8 @@ function OptionsBuilder.New(options)
   end
 
   function builder.AddHint(labelKey)
-    local hint = page:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    local hint = page:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    hint:SetTextColor(unpack(Widgets.COLORS.muted))
     hint:SetJustifyH("LEFT")
     addRow(hint, ROW_HINT, true)
     onRefresh(function() hint:SetText(L[labelKey]) end)
@@ -236,12 +293,27 @@ function OptionsBuilder.New(options)
 
   -- Nach dem letzten Baustein: Höhe für die längste Seite, damit das Fenster beim Reiterwechsel
   -- nicht springt; erste Seite zeigen
+  -- Höher als der Bildschirm wird das Fenster nicht; der Rest scrollt (Mausrad)
+  local wantedHeight
+  local function maxPanelHeight()
+    return math.floor(UIParent:GetHeight() * MAX_SCREEN_FRACTION / panel:GetScale())
+  end
+
   function builder.Finish()
     local lowestBottom = CONTENT_TOP
     for _, entry in ipairs(pages) do
       lowestBottom = math.min(lowestBottom, entry.bottom)
     end
-    panel:SetHeight(-lowestBottom + FOOTER_GAP + footerButtons * ROW_BUTTON + MARGIN)
+    local footerHeight = footerRows() * ROW_BUTTON + MARGIN
+    local wanted = -lowestBottom + FOOTER_GAP + footerHeight
+    wantedHeight = wanted
+    panel:SetHeight(math.min(wanted, maxPanelHeight()))
+    for _, entry in ipairs(pages) do
+      entry.scroll:SetPoint("TOPLEFT", panel, "TOPLEFT", 0, SCROLL_TOP)
+      entry.scroll:SetPoint("BOTTOMRIGHT", panel, "BOTTOMRIGHT", 0, footerHeight)
+      entry.frame:SetHeight(-lowestBottom + FOOTER_GAP)
+      entry.scroll:SetVerticalScroll(-SCROLL_TOP)
+    end
     showPage(pages[1])
   end
 
@@ -279,6 +351,26 @@ function OptionsBuilder.New(options)
     return width
   end
 
+  -- Beide Button-Spalten sind gleich breit: so breit wie der längste Text, doppelt plus Abstand
+  local function footerWidth()
+    local widest = 0
+    for _, button in ipairs(footerButtons) do
+      widest = math.max(widest, button:GetTextWidth() + FOOTER_TEXT_PADDING)
+    end
+    return 2 * widest + FOOTER_COLUMN_GAP
+  end
+
+  -- Eine Button-Zeile braucht Platz für alle Texte nebeneinander
+  local function buttonRowsWidth()
+    local widest = 0
+    for _, widgets in ipairs(buttonRows) do
+      local width = BUTTON_ROW_GAP * (#widgets - 1)
+      for _, button in ipairs(widgets) do width = width + button:GetTextWidth() + BUTTON_TEXT_PADDING end
+      widest = math.max(widest, width)
+    end
+    return widest
+  end
+
   -- Fensterbreite aus den Texten der gewählten Sprache; Abschnitte, Regler und Buttons strecken sich mit
   local function fitWidth()
     local column = columnWidth()
@@ -286,8 +378,9 @@ function OptionsBuilder.New(options)
       cell.checkbox:ClearAllPoints()
       cell.checkbox:SetPoint("TOPLEFT", MARGIN + cell.column * column, cell.y)
     end
-    local content = math.max(2 * column, widestChooserRow(), tabRowWidth())
+    local content = math.max(2 * column, widestChooserRow(), tabRowWidth(), footerWidth(), buttonRowsWidth())
     panel:SetWidth(math.max(MIN_WIDTH, content + 2 * MARGIN))
+    for _, entry in ipairs(pages) do entry.frame:SetWidth(panel:GetWidth()) end
   end
 
   function builder.Refresh(db)
@@ -296,6 +389,8 @@ function OptionsBuilder.New(options)
       refreshControl(db)
     end
     fitWidth()
+    -- Bildschirmgröße oder UI-Skalierung können sich geändert haben
+    if wantedHeight then panel:SetHeight(math.min(wantedHeight, maxPanelHeight())) end
   end
 
   return builder

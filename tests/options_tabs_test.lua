@@ -22,3 +22,15 @@ expect("Camp-Hinweis nur in Forever", hasToggle("REMIND_CAMP_TOGGLE"), false)
 
 wow.state.interface = 16001
 expect("16001 ist Forever", addon.Client.IsForever(), true)
+
+-- Auf kleinen Bildschirmen wird das Fenster nicht höher als 90 % davon; der Rest scrollt
+UIParent:SetHeight(100000)
+addon.Set("scale", addon.db.scale)
+local fullHeight = LevelTimerOptions:GetHeight()
+expectTrue("Fenster hoch genug für alle Seiten", fullHeight > 360)
+UIParent:SetHeight(400)
+addon.Set("scale", addon.db.scale)
+expectTrue("Fenster begrenzt", LevelTimerOptions:GetHeight() <= 360)
+UIParent:SetHeight(100000)
+addon.Set("scale", addon.db.scale)
+expect("große Bildschirme: volle Höhe", LevelTimerOptions:GetHeight(), fullHeight)

@@ -2,7 +2,13 @@
 local _, ns = ...
 local L = ns.L
 
+-- Hilfe: eine Zeile je Gruppe von Befehlen
+local function printHelp()
+  for line in L.HELP:gmatch("[^\n]+") do ns.Print(line) end
+end
+
 local commands = {
+  help = function() printHelp() end,
   [""] = function() ns.ToggleOptions() end,
   config = function() ns.ToggleOptions() end,
   history = function() ns.ToggleHistory() end,
@@ -14,10 +20,14 @@ local commands = {
     ns.Set("locked", false)
     ns.Print(L.UNLOCKED)
   end,
-  reset = function() ns.TimerWindow.ResetLayout() end,
+  reset = function()
+    ns.TimerWindow.ResetLayout()
+    ns.Print(L.RESET_DONE)
+  end,
   compact = function() ns.Set("compactMode", not ns.db.compactMode) end,
   bar = function() ns.Set("horizontalLayout", not ns.db.horizontalLayout) end,
   newsession = function() ns.StartNewSession() end,
+  resetinstance = function() ns.ConfirmInstanceReset() end,
   recap = function() ns.ToggleRecap() end,
   -- /lt copy: Zeilen des aktuellen Chatfensters zum Kopieren (ChatCopy.lua)
   copy = function() ns.ChatCopy.ShowCurrent() end,
@@ -31,6 +41,8 @@ local commands = {
       local names = {}
       for i, profileName in ipairs(Profiles.GetNames()) do names[i] = Profiles.DisplayName(profileName) end
       ns.Print(string.format(L.PROFILE_LIST, Profiles.DisplayName(Profiles.GetActive()), table.concat(names, ", ")))
+    elseif Profiles.Switch(argument) then
+      return  -- der ganze Text ist ein Profilname, auch "save x" oder "export"
     elseif action == "save" and Profiles.SaveAs(name) then
       ns.Print(string.format(L.PROFILE_SAVED, name))
       ns.ApplySettings()
@@ -40,7 +52,7 @@ local commands = {
       ns.Export.Show(Profiles.DisplayName(Profiles.GetActive()), Profiles.Export(Profiles.GetActive()))
     elseif action == "import" then
       ns.ShowProfileImport()
-    elseif not Profiles.Switch(argument) then
+    else
       ns.Print(L.PROFILE_UNKNOWN)
     end
   end,
@@ -51,7 +63,7 @@ local commands = {
     elseif argument == "backup" then
       ns.Export.Show(L.RUNS_BACKUP, ns.Runs.ExportAll())
     else
-      ns.Print(L.HELP)
+      printHelp()
     end
   end,
   -- /lt compare best | pb | Name: Vergleich für die Splits
@@ -69,7 +81,10 @@ local commands = {
   end,
   -- /lt goal 30 setzt das Ziel-Level, /lt goal ohne Zahl entfernt es
   goal = function(argument)
-    if argument == "" then
+    if argument == "" then  -- ohne Zahl nur den Stand zeigen, damit Nachschlagen nichts löscht
+      local goal = ns.Goal.Get()
+      ns.Print(goal and string.format(L.GOAL_STATUS, goal.level) or L.GOAL_NONE)
+    elseif argument:lower() == "off" then
       ns.Goal.Clear()
       ns.Print(L.GOAL_CLEARED)
     elseif ns.Goal.Set(tonumber(argument)) then
@@ -103,6 +118,14 @@ SlashCmdList.LEVELTIMER = function(input)
   if command then
     command(argument)
   else
-    ns.Print(L.HELP)
+    if name ~= "" then ns.Print(L.COMMAND_UNKNOWN) end
+    printHelp()
   end
 end
+
+-- Einmaliger Hinweis beim ersten Start (account-weit), damit man die Bedienung findet
+ns.OnLogin(function()
+  if LevelTimerStatsDB.introShown then return end
+  LevelTimerStatsDB.introShown = true
+  ns.Print(L.INTRO)
+end)

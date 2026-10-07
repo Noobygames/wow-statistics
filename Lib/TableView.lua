@@ -16,6 +16,7 @@ ns.TableView = TableView
 local ROW_HEIGHT = 16
 local CELL_GAP = 6
 local SCROLLBAR_GAP = 6
+local REFRESH_SECONDS = 5  -- so oft werden Zeilen ohne erkennbare Änderung spätestens neu aufgebaut
 local WHEEL_STEP = 3  -- Zeilen pro Mausrad-Raste
 local WHITE = { 1, 1, 1 }
 local LEFT, RIGHT = "LEFT", "RIGHT"
@@ -184,13 +185,19 @@ function TableView.Create(definition)
           local record = records[frame.offset + i]
           if not record then return end
           definition.onRowClick(record, mouseButton)
-          frame:Render(frame.characterKey)
+          frame:Render(frame.characterKey, false, true)
         end)
       end
     end
 
+    -- Leerer Zustand: statt nur Kopf und "Gesamt: 0" ein Hinweis in der Mitte
+    local emptyText = frame:CreateFontString(nil, "OVERLAY", "GameFontDisable")
+    emptyText:SetPoint("CENTER", frame, "CENTER", 0, 0)
+    emptyText:Hide()
+
     -- Hinweis unten rechts neben der Summenzeile, z.B. was ein Klick bewirkt
-    local hint = frame:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+    local hint = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    hint:SetTextColor(unpack(Widgets.COLORS.muted))
     hint:SetPoint("BOTTOMRIGHT", -SCROLLBAR_GAP, 2)
 
     -- Weitere Buttons der Ansicht rechts neben dem Export-Button
@@ -213,6 +220,7 @@ function TableView.Create(definition)
     end
 
     local scrollBar
+    local lastSignature  -- siehe Render
     local function scrollTo(offset)
       frame.offset = math.max(0, math.min(offset, #records - visibleRows))
       scrollBar:SetOffsetSilently(frame.offset)
@@ -245,6 +253,8 @@ function TableView.Create(definition)
       scrollBar:SetRange(math.max(0, #records - visibleRows))
       scrollTo(frame.offset)
       fillRow(footerRow, definition.footer(columns, records), Widgets.COLORS.highlight)
+      emptyText:SetText(L.TABLE_EMPTY)
+      emptyText:SetShown(#allRecords == 0)
     end
 
     -- Nach einer Spalte sortieren: erst absteigend, beim nächsten Aufruf für dieselbe Spalte aufsteigend
@@ -252,7 +262,8 @@ function TableView.Create(definition)
       if sort and sort.index == index then
         sort.descending = not sort.descending
       else
-        sort = { column = columns[index], index = index, descending = true }
+        -- Zahlen zuerst absteigend (größte oben), Text-Spalten aufsteigend (A-Z)
+        sort = { column = columns[index], index = index, descending = columns[index].align ~= "LEFT" }
       end
       frame.offset = 0
       apply()
@@ -304,16 +315,25 @@ function TableView.Create(definition)
     end)
     exportButton:SetPoint("TOPLEFT", 0, -1)
 
-    function frame:Render(characterKey, selectionChanged)
+    -- force erzwingt das Neuzeichnen (nach Klick auf eine Zeile, die z.B. Favoriten ändert)
+    function frame:Render(characterKey, selectionChanged, force)
       frame.characterKey = characterKey
       filterLabel:SetText(L.FILTER)
       exportButton:SetText(L.EXPORT)
       local hintText = definition.hint
       if type(hintText) == "function" then hintText = hintText() elseif hintText then hintText = L[hintText] end
-      hint:SetText(hintText or "")
+      hint:SetText(hintText or L.TABLE_SORT_HINT)
       for _, button in ipairs(extraButtons) do button.widget:SetText(L[button.label]) end
       allRecords = definition.records(characterKey)
       if selectionChanged then frame.offset = 0 end
+      -- Das Fenster ruft Render jede Sekunde; Filtern und Sortieren (bis 5000 Einträge) nur, wenn sich etwas
+      -- geändert hat: Charakter, Sprache, Anzahl, der jüngste (laufende) Eintrag, spätestens alle 5 s
+      local newest = allRecords[1]
+      local signature = table.concat({ characterKey or "", ns.db and ns.db.language or "", #allRecords,
+        newest and (newest.time or newest.startedAt or 0) or 0, newest and newest.seconds or 0,
+        newest and newest.xp or 0, math.floor(GetTime() / REFRESH_SECONDS) }, ":")
+      if signature == lastSignature and not selectionChanged and not force then return end
+      lastSignature = signature
       apply()
     end
 

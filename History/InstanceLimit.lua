@@ -84,6 +84,8 @@ local function add(name, enteredAt)
   local entries = realmEntries()
   prune(entries, time())
   table.insert(entries, { time = enteredAt, name = name, character = ns.characterKey })
+  -- Eine Korrektur kann einen früheren Zeitpunkt nachtragen; prune und GetSecondsUntilNextFree brauchen "älteste zuerst"
+  table.sort(entries, function(a, b) return a.time < b.time end)
   ns.Debug("instances", "new instance %s, %s in the last hour", name, InstanceLimit.GetHourCount())
   warn()
 end

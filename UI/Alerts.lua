@@ -1,5 +1,7 @@
 -- Große Einblendungen oben in der Bildschirmmitte für Stream-Momente: Level-Up, Rare- und Elite-Kill,
 -- epische Beute, Beinahe-Tod. Jede Art ist einzeln schaltbar (Einstellungen alert*), alle aus.
+-- Aussehen: alertStyle (Text oder Banner), alertScale, alertDuration, alertSound; Position alertPos
+-- (ziehen im Verschiebemodus, Alerts.SetMoving). Dieselbe Einblendung zeigt auch Hinweise (Alerts.Notify).
 -- Quellen: ns.OnLevelStarted und neue Journal-Einträge (Journal.OnAdd), kein eigenes Event-Parsing.
 -- In Dungeons und Raids ist fast jeder Gegner Elite: dort keine Elite-Einblendung (IsInInstance).
 -- In Raids ist epische Beute normal: dort keine Beute-Einblendung.
@@ -11,11 +13,29 @@ local Classification = ns.Classification
 local Alerts = {}
 ns.Alerts = Alerts
 
-local HOLD_SECONDS = 3   -- voll sichtbar
-local FADE_SECONDS = 1   -- danach ausblenden
-local OFFSET_Y = -160    -- Abstand zur Bildschirmoberkante
+local FADE_IN_SECONDS = 0.25  -- weich einblenden
+local FADE_SECONDS = 1       -- nach der Anzeigedauer ausblenden
+local DEFAULT_POSITION = { "TOP", "TOP", 0, -160 }
 local EPIC_QUALITY = 4
 local GROUP_INSTANCES = { party = true, raid = true }  -- Instanzarten von IsInInstance mit Elite-Gegnern
+local WHITE_TEXTURE = "Interface\\Buttons\\WHITE8x8"
+local RAID_WARNING_SOUND = 8959  -- SOUNDKIT.RAID_WARNING, in allen Clients gleich
+-- Einstellung alertStyle: nur Text oder Banner (dunkler Grund mit Farbleisten)
+Alerts.STYLE_TEXT = "text"
+Alerts.STYLE_BANNER = "banner"
+Alerts.MIN_SCALE = 0.5
+Alerts.MAX_SCALE = 2
+Alerts.MIN_DURATION = 1
+Alerts.MAX_DURATION = 10
+local BANNER_PADDING_X = 28
+local BANNER_PADDING_Y = 14
+local BANNER_MIN_WIDTH = 280
+local MAX_TEXT_WIDTH = 520   -- längere Texte brechen um
+local MAX_QUEUE = 4          -- wartende Einblendungen; bei mehr fällt die älteste weg
+local QUEUED_HOLD = 1.5      -- Anzeigedauer, solange weitere warten
+local BANNER_BACKGROUND_ALPHA = 0.78
+local ACCENT_WIDTH = 5       -- Leiste links und rechts
+local ACCENT_LINE_HEIGHT = 2 -- Linie unten
 local COLORS = {
   levelUp = { 1, 0.82, 0 },
   rare = { 0.75, 0.75, 1 },
@@ -28,31 +48,185 @@ Alerts.REMINDER_COLOR = COLORS.levelUp   -- Hinweise zum Level-Up (Lehrer)
 
 local frame = CreateFrame("Frame", "LevelTimerAlert", UIParent)
 frame:SetSize(1, 1)
-frame:SetPoint("TOP", UIParent, "TOP", 0, OFFSET_Y)
+frame:SetPoint(DEFAULT_POSITION[1], UIParent, DEFAULT_POSITION[2], DEFAULT_POSITION[3], DEFAULT_POSITION[4])
 frame:SetFrameStrata("HIGH")
+frame:SetClampedToScreen(true)
+
+-- Banner: Hintergrund, Leisten links und rechts und eine Linie unten in der Farbe der Art
+local background = frame:CreateTexture(nil, "BACKGROUND")
+background:SetTexture(WHITE_TEXTURE)
+background:SetAllPoints(frame)
+local accentLeft = frame:CreateTexture(nil, "BORDER")
+accentLeft:SetTexture(WHITE_TEXTURE)
+accentLeft:SetPoint("TOPLEFT")
+accentLeft:SetPoint("BOTTOMLEFT")
+accentLeft:SetWidth(ACCENT_WIDTH)
+local accentRight = frame:CreateTexture(nil, "BORDER")
+accentRight:SetTexture(WHITE_TEXTURE)
+accentRight:SetPoint("TOPRIGHT")
+accentRight:SetPoint("BOTTOMRIGHT")
+accentRight:SetWidth(ACCENT_WIDTH)
+local accentLine = frame:CreateTexture(nil, "BORDER")
+accentLine:SetTexture(WHITE_TEXTURE)
+accentLine:SetPoint("BOTTOMLEFT")
+accentLine:SetPoint("BOTTOMRIGHT")
+accentLine:SetHeight(ACCENT_LINE_HEIGHT)
+local bannerParts = { background, accentLeft, accentRight, accentLine }
+
 frame.text = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
 frame.text:SetPoint("CENTER")
 frame:Hide()
 
 local shownAt
+local moving  -- Verschiebemodus: bleibt stehen und lässt sich ziehen
+
+local function isBanner()
+  return ns.db and ns.db.alertStyle == Alerts.STYLE_BANNER
+end
+
+-- Größe aus dem Text; Banner mit Rand und Mindestbreite, Text-Stil nur so groß wie der Text
+local function layout()
+  frame.text:SetWidth(0)  -- erst natürliche Breite, dann bei Bedarf umbrechen
+  local width = frame.text:GetStringWidth() or 0
+  if width > MAX_TEXT_WIDTH then
+    frame.text:SetWidth(MAX_TEXT_WIDTH)
+    width = MAX_TEXT_WIDTH
+  end
+  local height = frame.text:GetStringHeight() or 0
+  local banner = isBanner()
+  for _, part in ipairs(bannerParts) do part:SetShown(banner) end
+  if banner then
+    frame.text:SetShadowOffset(1, -1)
+    frame:SetSize(math.max(BANNER_MIN_WIDTH, width + 2 * BANNER_PADDING_X), height + 2 * BANNER_PADDING_Y)
+  else
+    frame.text:SetShadowOffset(2, -2)
+    frame:SetSize(math.max(1, width), math.max(1, height))
+  end
+end
+
+local function setColor(color)
+  frame.text:SetTextColor(unpack(color))
+  local r, g, b = unpack(color)
+  background:SetColorTexture(0.03, 0.04, 0.08, BANNER_BACKGROUND_ALPHA)
+  for _, part in ipairs({ accentLeft, accentRight, accentLine }) do
+    part:SetColorTexture(r, g, b, 1)
+  end
+end
+
+local function duration()
+  return math.max(Alerts.MIN_DURATION, math.min(Alerts.MAX_DURATION, ns.db and ns.db.alertDuration or 3))
+end
+
+local queue = {}  -- { message, color, sound } der wartenden Einblendungen, älteste zuerst
+
+local function display(message, color, sound)
+  frame.text:SetText(message)
+  setColor(color)
+  layout()
+  shownAt = GetTime()
+  frame:SetAlpha(0)
+  frame:Show()
+  if sound and ns.db and ns.db.alertSound and PlaySound then PlaySound(RAID_WARNING_SOUND) end
+end
 
 frame:SetScript("OnUpdate", function(self)
+  if moving then return end
   local age = GetTime() - shownAt
-  if age >= HOLD_SECONDS + FADE_SECONDS then
-    self:Hide()
-  elseif age > HOLD_SECONDS then
-    self:SetAlpha(1 - (age - HOLD_SECONDS) / FADE_SECONDS)
+  -- Warten weitere Einblendungen, ist die laufende kürzer zu sehen
+  local hold = #queue > 0 and math.min(duration(), QUEUED_HOLD) or duration()
+  if age >= hold + FADE_SECONDS then
+    local nextAlert = table.remove(queue, 1)
+    if nextAlert then
+      display(unpack(nextAlert))
+    else
+      self:Hide()
+    end
+  elseif age > hold then
+    self:SetAlpha(1 - (age - hold) / FADE_SECONDS)
+  elseif age < FADE_IN_SECONDS then
+    self:SetAlpha(age / FADE_IN_SECONDS)
+  else
+    self:SetAlpha(1)
   end
 end)
 
--- Neue Einblendung ersetzt eine laufende
-function Alerts.Show(message, color)
+-- Einblendung zeigen; läuft schon eine, wartet die neue (höchstens MAX_QUEUE). options = { immediate = ersetzt die
+-- laufende und leert die Warteschlange, sound = Ton, falls eingeschaltet }. Im Verschiebemodus erscheint nichts Neues.
+function Alerts.Show(message, color, options)
   ns.Debug("alert", "%s", message)
-  frame.text:SetText(message)
-  frame.text:SetTextColor(unpack(color))
-  shownAt = GetTime()
-  frame:SetAlpha(1)
-  frame:Show()
+  options = options or {}
+  if options.immediate then queue = {} end
+  -- Im Verschiebemodus wartet alles Neue (auch die erste Einblendung) und erscheint nach dem Verschieben
+  if moving or (frame:IsShown() and not options.immediate) then
+    if #queue >= MAX_QUEUE then table.remove(queue, 1) end
+    table.insert(queue, { message, color, options.sound })
+    return
+  end
+  display(message, color, options.sound)
+end
+
+-- Laufende und wartende Einblendungen verwerfen
+function Alerts.Clear()
+  queue = {}
+  if not moving then frame:Hide() end
+end
+
+---------------------------------------------------------------------------
+-- Position: ziehen im Verschiebemodus, gespeichert in alertPos
+---------------------------------------------------------------------------
+local appliedPos
+
+local function savePosition()
+  local point, _, relativePoint, x, y = frame:GetPoint()
+  ns.db.alertPos = { point, relativePoint, x, y }
+  appliedPos = ns.db.alertPos
+end
+
+local function restorePosition()
+  appliedPos = ns.db.alertPos
+  local pos = ns.db.alertPos or DEFAULT_POSITION
+  frame:ClearAllPoints()
+  frame:SetPoint(pos[1], UIParent, pos[2], pos[3], pos[4])
+end
+
+frame:SetMovable(true)
+frame:RegisterForDrag("LeftButton")
+frame:SetScript("OnDragStart", function(self)
+  if moving then self:StartMoving() end
+end)
+frame:SetScript("OnDragStop", function(self)
+  self:StopMovingOrSizing()
+  savePosition()
+end)
+frame:SetScript("OnMouseUp", function(_, mouseButton)
+  if moving and mouseButton == "RightButton" then Alerts.SetMoving(false) end
+end)
+
+function Alerts.IsMoving()
+  return moving or false
+end
+
+-- Verschiebemodus: Beispiel bleibt stehen, Ziehen verschiebt, Rechtsklick oder erneuter Aufruf beendet
+function Alerts.SetMoving(enabled)
+  enabled = enabled and true or false
+  if enabled == (moving or false) then return end
+  moving = false
+  if enabled then
+    Alerts.Show(L.ALERT_MOVE_HINT, COLORS.levelUp, { immediate = true })
+    moving = true
+    frame:SetAlpha(1)
+    frame:EnableMouse(true)
+  else
+    frame:EnableMouse(false)
+    frame:Hide()
+    local waiting = table.remove(queue, 1)
+    if waiting then display(unpack(waiting)) end
+  end
+end
+
+function Alerts.ResetPosition()
+  ns.db.alertPos = nil
+  restorePosition()
 end
 
 -- Hinweis an den Spieler: jede Nachricht als Chatzeile, alle zusammen in einer Einblendung.
@@ -82,7 +256,7 @@ Alerts.KINDS = {
 
 local function showKind(kind, value)
   local definition = Alerts.KINDS[kind]
-  Alerts.Show(string.format(L[definition.format], value), definition.color)
+  Alerts.Show(string.format(L[definition.format], value), definition.color, { sound = true })
 end
 
 -- Nur, wenn die Art eingeschaltet ist
@@ -94,6 +268,7 @@ end
 function Alerts.ShowSample(kind)
   local definition = Alerts.KINDS[kind]
   if not definition then return false end
+  Alerts.Clear()
   showKind(kind, definition.sample())
   return true
 end
@@ -130,3 +305,31 @@ Journal.OnAdd(function(logName, entry)
   local handler = handlers[logName]
   if handler then handler(entry) end
 end)
+
+-- Vorschau: eine Beispiel-Einblendung mit den aktuellen Einstellungen
+local PREVIEW_ORDER = { "levelUp", "rare", "elite", "loot", "nearDeath" }
+local previewIndex = 0
+
+function Alerts.Preview()
+  if moving then Alerts.SetMoving(false) end
+  previewIndex = previewIndex % #PREVIEW_ORDER + 1
+  Alerts.ShowSample(PREVIEW_ORDER[previewIndex])
+end
+
+ns.RegisterApply(function(db)
+  local oldScale = frame:GetScale()
+  local scale = math.max(Alerts.MIN_SCALE, math.min(Alerts.MAX_SCALE, db.alertScale))
+  frame:SetScale(scale)
+  if db.alertPos ~= appliedPos then
+    restorePosition()
+  elseif db.alertPos and math.abs(oldScale - scale) > 0.001 then
+    -- Ankerabstände gelten in der Skalierung des Rahmens: umrechnen, damit die Einblendung stehen bleibt
+    db.alertPos[3] = db.alertPos[3] * oldScale / scale
+    db.alertPos[4] = db.alertPos[4] * oldScale / scale
+    restorePosition()
+  end
+  layout()
+end)
+
+ns.OnLogin(restorePosition)
+ns.OnLogout(function() moving = false end)

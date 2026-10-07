@@ -26,6 +26,9 @@ end
 
 local function log() return addon.character.instanceLog end
 local function run() return Instances.GetCurrentRun() end
+local function runXp() return (Instances.Summarize(run())) end
+local function runKills() return select(2, Instances.Summarize(run())) end
+local function runDeaths() return select(3, Instances.Summarize(run())) end
 
 local function instanceRow()
   for _, line in ipairs(addon.STAT_LINES) do
@@ -68,13 +71,13 @@ expectNear("Geisterlauf draußen zählt", Instances.GetRunSeconds(run()), 960)
 enter("Die Todesminen")
 wow.state.dead = false
 wow.fire("PLAYER_UNGHOST")
-expect("Tod gezählt", run().counters.deaths, 1)
+expect("Tod gezählt", runDeaths(), 1)
 
 enter(nil)  -- lebend raus zum Händler
 wow.advance(600)
 gainXp(50)
 expectNear("draußen steht die Uhr", Instances.GetRunSeconds(run()), 960)
-expect("XP draußen zählt nicht", run().xp, 3000)
+expect("XP draußen zählt nicht", runXp(), 3000)
 expect("Zeile zeigt offenen Lauf", instanceRow(), string.format(addon.L.INSTANCE_RUN_VALUE,
   addon.Format.Duration(Instances.GetRunSeconds(run())), addon.Format.Number(3000)))
 enter("Die Todesminen")
@@ -126,7 +129,7 @@ seeCopy(444)
 expect("andere Kopie: alter Lauf beendet", #log(), 3)
 expect("alter Lauf ohne neue XP", log()[3].xp, 1000)
 expectNear("alter Lauf ohne neue Zeit", log()[3].seconds, 300)
-expect("neuer Lauf mit seiner XP", run().xp, 500)
+expect("neuer Lauf mit seiner XP", runXp(), 500)
 expectNear("neuer Lauf mit seiner Zeit", Instances.GetRunSeconds(run()), 60)
 expect("neue Kopie gemerkt", run().zoneUID, 444)
 
@@ -140,12 +143,12 @@ expect("geschätzt neu: alter Lauf beendet", #log(), 4)
 gainXp(200)
 seeCopy(444)
 expect("doch dieselbe Kopie: zusammengeführt", #log(), 3)
-expect("XP zusammen", run().xp, 700)
+expect("XP zusammen", runXp(), 700)
 
 -- Ein anderer Dungeon beendet den Lauf; Kills draußen zählen nicht
 enter(nil)
 wow.fire("CHAT_MSG_COMBAT_XP_GAIN", "Wolf stirbt, Ihr bekommt 10 Erfahrung.")
-expect("Welt-Kill nicht im Lauf", run().counters.kills, 0)
+expect("Welt-Kill nicht im Lauf", runKills(), 0)
 enter("Geschmolzener Kern", "raid")
 expect("anderer Dungeon: alter Lauf beendet", #log(), 4)
 expect("Raid erfasst", run().instanceType, "raid")

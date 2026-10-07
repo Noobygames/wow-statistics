@@ -5,7 +5,9 @@ local _, ns = ...
 local Stats = ns.Stats
 local Journal = ns.Journal
 
+local PENDING_TITLE_MAX_AGE = 60  -- Sekunden; ein verworfener Dialog soll keiner späteren Quest den Titel geben
 local pendingTitle  -- Titel der Quest im offenen Abgabe-Dialog
+local pendingTitleAt
 
 local function readable(value)
   if value == nil or ns.IsSecret(value) then return nil end
@@ -14,11 +16,13 @@ end
 
 local function questName(questID)
   local title = C_QuestLog and C_QuestLog.GetTitleForQuestID and C_QuestLog.GetTitleForQuestID(questID)
-  return readable(title) or pendingTitle
+  local fresh = pendingTitleAt and GetTime() - pendingTitleAt <= PENDING_TITLE_MAX_AGE
+  return readable(title) or (fresh and pendingTitle or nil)
 end
 
 ns.RegisterEvent("QUEST_COMPLETE", function()
   pendingTitle = GetTitleText and readable(GetTitleText()) or nil
+  pendingTitleAt = GetTime()
 end)
 
 ns.RegisterEvent("QUEST_TURNED_IN", function(questID, xpReward, moneyReward)

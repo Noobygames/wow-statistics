@@ -68,6 +68,7 @@ wow.advance(301)
 wow.state.buffs = { "Satt" }
 expect("Camp fehlt", BuffReminder.IsCampMissing(), true)
 addon.Set("remindCamp", true)
+addon.Alerts.Clear()  -- Einblendungen warten sonst hinter der laufenden
 BuffReminder.Check()
 expect("Camp-Hinweis", LevelTimerAlert.text:GetText(), L.REMIND_CAMP)
 
@@ -78,6 +79,7 @@ expect("Camp erkannt", BuffReminder.IsCampMissing(), false)
 -- Beide fehlen: beide Hinweise in einer Einblendung
 wow.advance(301)
 wow.state.buffs = {}
+addon.Alerts.Clear()
 BuffReminder.Check()
 expect("beide zusammen", LevelTimerAlert.text:GetText(), L.REMIND_FOOD .. "\n" .. L.REMIND_CAMP)
 

@@ -83,7 +83,7 @@ end
 -- Fenster
 ---------------------------------------------------------------------------
 local panel = Widgets.CreatePanel("LevelTimerRecap", 0.95)
-panel:SetPoint("CENTER")
+panel:SetPoint("CENTER", UIParent, "CENTER", -40, -40)  -- versetzt zu den Einstellungen
 panel:SetFrameStrata("DIALOG")
 panel:SetScript("OnDragStart", panel.StartMoving)
 panel:SetScript("OnDragStop", panel.StopMovingOrSizing)

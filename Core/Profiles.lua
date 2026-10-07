@@ -116,6 +116,11 @@ function Profiles.SaveAs(name)
   return true
 end
 
+-- Gibt es schon ein Profil mit diesem Namen (der angezeigte Standardname zählt)?
+function Profiles.Exists(name)
+  return profiles()[storedName(name and strtrim(name) or "")] ~= nil
+end
+
 -- Löschen; das Standard- und das aktive Profil bleiben. Charaktere damit nutzen wieder Standard.
 function Profiles.Delete(name)
   name = storedName(name)

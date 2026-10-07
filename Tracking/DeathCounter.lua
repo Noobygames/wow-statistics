@@ -19,7 +19,7 @@ local playerGUID  -- einmal beim Login gemerkt; das Kampflog feuert sehr oft
 
 -- Inklusive der laufenden Zeit, falls man gerade tot ist
 function DeathCounter.GetDeadSeconds(scope)
-  local running = deadSince and (GetTime() - deadSince) or 0
+  local running = (deadSince and Stats.IsCounting(scope)) and (GetTime() - deadSince) or 0
   return Stats.Get(scope, Stats.DEAD_SECONDS) + running
 end
 
@@ -131,7 +131,8 @@ end
 ns.RegisterEvent("PLAYER_DEAD", function()
   if deadSince then return end  -- schon tot (z.B. Login als Geist), nicht doppelt zählen
   Stats.Increment(Stats.DEATHS)
-  ns.character.lastDeathPlayed = ns.PlayedTime.GetTotalSeconds()
+  -- Vor der ersten /played-Antwort ist der Wert nil: den alten nicht damit überschreiben
+  ns.character.lastDeathPlayed = ns.PlayedTime.GetTotalSeconds() or ns.character.lastDeathPlayed
   local cause = takeDeathCause()
   ns.Debug("death", "died, combat log cause: %s / %s / %s", cause.killer, cause.spell, cause.environment)
   local entry = Journal.AddDeath(cause)

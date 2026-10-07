@@ -784,6 +784,319 @@ Fehler:
 
 ---
 
+## Neu in v2.9: Instanz-Reiter, Einblendungen, Einstellungen (Branch `feature/alert-style`)
+
+Das Gebaute ist nur im Stub getestet; Darstellung und Verhalten der echten Frames sind hier offen.
+
+### 37. Einblendungen: Banner sichtbar (Roadmap 153, Texturpfad)
+
+- [ ] geprüft
+
+Einstellungen → Einblendungen → Vorschau.
+
+**Erwartet:** dunkler Banner mit Farbleisten links, rechts und unten in Gold; der Text steht auf dem
+Banner. Wirkt der Stil „Text“, nur Schrift ohne Hintergrund. (Früher wäre der Hintergrund wegen des
+Texturpfads unsichtbar gewesen.)
+
+**Antwort:**
+
+```text
+Client:
+Banner mit Leisten sichtbar (ja/nein):
+Stil Text (ja/nein, aussehen):
+```
+
+### 38. Einblendungen: Größe, Dauer, Ton, Position (Roadmap 153, 165)
+
+- [ ] geprüft
+
+Größe auf 50 % und 200 %, Dauer auf 1 und 10 s, Ton an; „Position verschieben“, an eine andere Stelle
+ziehen, Rechtsklick; danach die Größe ändern.
+
+**Erwartet:** Größe und Dauer wirken sofort; Ton beim Level-Up (`/lt debug alert levelUp`); die Position
+bleibt nach `/reload`; „Position zurücksetzen“ bringt sie nach oben in die Mitte. Beim Ändern der
+Größe darf die Einblendung nicht auffällig wandern (Roadmap 165).
+
+**Antwort:**
+
+```text
+Ton gehört (ja/nein):
+Position nach /reload gleich (ja/nein):
+Wandert beim Skalieren (ja/nein, wohin):
+```
+
+### 39. Einblendungen: Warteschlange und Verschiebemodus (Roadmap 155, 163)
+
+- [ ] geprüft
+
+Mehrere Ereignisse kurz hintereinander auslösen (`/lt debug alert rare`, danach `elite`, `loot` schnell
+hintereinander). Dann „Position verschieben“ aktivieren und währenddessen eine Warnung auslösen
+(z.B. `/lt debug remind`).
+
+**Erwartet:** die Einblendungen erscheinen nacheinander, die laufende zeigt sich dann kürzer; im
+Verschiebemodus geht die Warnung nur in den Chat (bekannte Lücke Roadmap 163).
+
+**Antwort:**
+
+```text
+Reihenfolge und Kürze (ja/nein):
+Warnung im Verschiebemodus verloren (ja/nein):
+```
+
+### 40. Instanz-Reiter im Spiel (Roadmap 149, 152, 156, 161, 162)
+
+- [ ] geprüft
+
+Einen Dungeon betreten und den Reiter „Instanz“ wählen. Kämpfen, XP sammeln, sterben. Dann Rechtsklick auf
+den Reiter (oder `/lt resetinstance`) und bestätigen. „Instanz-Reiter automatisch“ (Einstellungen →
+Allgemein) einschalten, raus- und wieder hineingehen und **in der Instanz** `/reload` ausführen.
+
+**Erwartet:** Zeit und XP des Laufs zählen nur drinnen; nach dem Zurücksetzen beginnen alle Werte bei
+null (Kampfzeit darf nicht sofort springen, Roadmap 162); ohne Lauf steht „Kein Lauf“ und „-“. Nach
+`/reload` in der Instanz und dem Verlassen darf das Fenster nicht auf „Instanz“ hängen bleiben
+(Roadmap 161).
+
+**Antwort:**
+
+```text
+Client, Dungeon:
+Werte zählen nur drinnen (ja/nein):
+Nach Reset sofort Kampfzeit > 0 (ja/nein):
+Reiter nach /reload und Verlassen (Level/Session/Instanz):
+```
+
+### 41. Einstellungen scrollen (Roadmap 159)
+
+- [ ] geprüft
+
+Einstellungen öffnen, Reiter „Statistiken“ (die längste Seite). Bei kleiner Fensterauflösung oder großer
+UI-Skalierung (Video → UI-Skalierung) wiederholen.
+
+**Erwartet:** das Fenster wird höchstens 90 % der Bildschirmhöhe; jede Seite beginnt oben direkt unter den
+Reitern; das Mausrad scrollt den Inhalt, nicht über die Reiter oder die Fußzeile; kein Inhalt läuft aus dem
+Fenster; jeder Reiter hat beim ersten Öffnen die richtige Scroll-Stellung.
+
+**Antwort:**
+
+```text
+Client, Auflösung, UI-Skalierung:
+Seite beginnt oben bündig (ja/nein, welcher Reiter anders):
+Mausrad (ja/nein):
+```
+
+### 42. Voreinstellungen und Gruppen (Roadmap 158)
+
+- [ ] geprüft
+
+Einstellungen → Statistiken → „Minimal“, „Leveln“, „Dungeon“. Sprache nacheinander auf Français und
+Español stellen und die Seite zuerst öffnen, bevor eine andere Seite offen war.
+
+**Erwartet:** die Zeilen im Fenster passen zur Voreinstellung; die drei Buttons stehen nebeneinander, gleich
+breit, Texte vollständig (auch fr/es); die Buttons haben ihre Breite auch auf der Seite, die nicht zuerst
+geöffnet wurde (Prüfer fragte, ob `OnSizeChanged` bei versteckten Seiten feuert).
+
+**Antwort:**
+
+```text
+Buttons nebeneinander und breit genug (Sprache):
+Zeilen wie erwartet (ja/nein):
+```
+
+### 43. Buttons und Fußzeile (Roadmap 154)
+
+- [ ] geprüft
+
+Mit der Maus über Buttons fahren, klicken und gedrückt halten (Einstellungen, Historie, „C“-Button im
+Chat). Fußzeile in Deutsch, Französisch und Spanisch ansehen.
+
+**Erwartet:** Mouseover heller Rand und weiße Schrift, gedrückt dunkler; Schrift jederzeit lesbar; vier
+Fußzeilen-Buttons in zwei Spalten gleich breit, Texte vollständig.
+
+**Antwort:**
+
+```text
+Lesbar (ja/nein):
+Abgeschnitten (Sprache, Button):
+```
+
+### 44. Charakterliste und gemerkter Reiter in der Historie (Roadmap 160, 168)
+
+- [ ] geprüft
+
+`/lt history`, Reiter „Sessions“ wählen, Fenster schließen und wieder öffnen; auf den Charakternamen klicken,
+einen anderen Charakter wählen. Menü offen lassen und irgendwo anders ins Fenster klicken.
+
+**Erwartet:** der Reiter bleibt (auch nach `/reload`); die Liste zeigt alle Charaktere klassenfarbig, ab 12
+scrollt sie mit dem Mausrad; ein Klick daneben schließt sie (bekannte Lücke Roadmap 168: schließt bisher nur
+über Name, Eintrag, ESC).
+
+**Antwort:**
+
+```text
+Reiter gemerkt (ja/nein):
+Liste vollständig (ja/nein):
+Schließt bei Klick daneben (ja/nein):
+```
+
+### 45. Hilfe und Willkommenshinweis (Roadmap 157)
+
+- [ ] geprüft
+
+Hinweis erneut auslösen und Hilfe ansehen:
+
+```
+/run LevelTimerStatsDB.introShown = nil
+```
+
+```
+/reload
+```
+
+```
+/lt help
+```
+
+**Erwartet:** nach `/reload` einmal die Zeile mit Rechtsklick und `/lt help`; danach nie wieder; die Hilfe
+steht in fünf Zeilen nach Themen.
+
+**Antwort:**
+
+```text
+Willkommenszeile einmalig (ja/nein):
+Hilfe in 5 Zeilen (ja/nein):
+```
+
+### 46. Erhaltene XP und XP/h ohne AFK (Roadmap 150, 151)
+
+- [ ] geprüft
+
+Einstellungen → Statistiken → „Erhaltene XP“ an. Auf allen drei Reitern Level, Session, Instanz die Zeile
+ansehen. „XP/h ohne AFK-Zeit“ an, einige Minuten AFK, dann leveln; Historie → Levels und Vergleich ansehen.
+
+**Erwartet:** die Zeile zeigt die absolut gewonnenen XP je Reiter; Fenster, Level-Tabelle und Vergleich
+zeigen für das laufende Level dieselbe XP/h (Roadmap 151).
+
+**Antwort:**
+
+```text
+Werte Level / Session / Instanz:
+XP/h Fenster / Historie / Vergleich:
+```
+
+### 47. Klassifikation mit geheimen Werten (Roadmap 171, Retail/Forever)
+
+- [ ] geprüft
+
+Im Dungeon oder Bosskampf mit Mouseover und Ziel auf Gegner (und Spieler) fahren; BugSack beobachten.
+
+**Erwartet:** kein Fehler aus `Classification.lua`, `InstanceCopy.lua` oder `Zones.lua` („attempt to
+compare/perform boolean test on a secret value“); Rare-/Elite-Kills werden weiter erkannt.
+
+**Antwort:**
+
+```text
+Client:
+Fehlertext, Datei:Zeile:
+```
+
+### 48. `UnitXPMax` beim Level-Up (Roadmap 175)
+
+- [ ] geprüft
+
+Vor einem Level-Up einmalig einschalten (gilt bis `/reload`):
+
+```
+/run local f=CreateFrame("Frame"); f:RegisterEvent("PLAYER_LEVEL_UP"); f:SetScript("OnEvent", function() print("XPMax beim Level-Up:", UnitXPMax("player")) end)
+```
+
+Dann das Level erreichen und mit dem XP-Bedarf des alten Levels (`UnitXPMax` kurz vorher) und der Spalte
+„XP“ des Eintrags in Historie → Levels vergleichen.
+
+**Erwartet:** der ausgegebene Wert ist der Bedarf des **alten** Levels (dann stimmt die Annahme in
+`History.lua:204`); ist er der des neuen Levels, ist Roadmap 175 ein echter Fehler.
+
+**Antwort:**
+
+```text
+Client, Level:
+Ausgabe beim Level-Up:
+XP-Bedarf vorher:
+Eintrag in der Historie:
+```
+
+### 49. Death Recap ohne ID (Roadmap 180, Retail/Forever)
+
+- [ ] geprüft
+
+Nach einem Tod (Geist freigelassen, noch in der Nähe):
+
+```
+/dump C_DeathRecap.GetRecapEvents()
+```
+
+**Erwartet:** eine Tabelle mit Ereignissen (kein Fehler wegen fehlendem Argument); in Historie → Journal →
+Tode steht die Ursache. Bei Fehler oder `nil` ist die Ursache in Retail/Forever immer „unbekannt“.
+
+**Antwort:**
+
+```text
+Client:
+Ausgabe oder Fehler:
+Ursache im Journal:
+```
+
+### 50. Gespräch überspringen beim Geistheiler (Roadmap 181)
+
+- [ ] geprüft
+
+Komfort → Gespräche überspringen an, als Geist den Geistheiler ansprechen.
+
+**Erwartet:** nichts wird automatisch gewählt („Wiederbeleben“ kostet Wiederbelebungsschwäche bzw.
+Haltbarkeit). Tritt es doch auf, ist Roadmap 181 bestätigt.
+
+**Antwort:**
+
+```text
+Client:
+Automatisch gewählt (ja/nein):
+```
+
+### 51. Gildenreparatur und Abhebelimit (Roadmap 179)
+
+- [ ] geprüft
+
+Komfort → Automatisch reparieren und „zuerst aus der Gildenbank“; einmal mit Gildenbank-Limit **unter** den
+Reparaturkosten, einmal darüber zu einem Händler.
+
+**Erwartet:** reicht das Limit nicht, zahlt der Charakter den Rest (kein doppeltes Abbuchen); die Chatzeile
+nennt, was aus der Gildenbank kam.
+
+**Antwort:**
+
+```text
+Client, Limit, Kosten:
+Chatzeilen:
+Gold vorher / nachher:
+```
+
+### 52. Chroma-Grün und schnelle Splits (Roadmap 198)
+
+- [ ] geprüft
+
+Einstellungen → Stream → Hintergrund „Grün“, `/lt splits`, Vergleich mit einem langsameren Lauf, damit
+ein Split grün („schneller“) erscheint.
+
+**Erwartet:** Schrift in Gold und die schnellen Splits sind auf grünem Grund lesbar (bisher in reinem Grün
+unsichtbar bzw. von OBS ausgestanzt).
+
+**Antwort:**
+
+```text
+Schnelle Splits sichtbar (ja/nein):
+```
+
+---
+
 ## Errors
 
 ### When starting boss fight

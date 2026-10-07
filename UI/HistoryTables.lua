@@ -151,8 +151,8 @@ end
 
 local KILL_COLUMNS = {
   whenColumn(100),
-  { header = "HISTORY_NAME", width = 140, align = LEFT, value = function(r) return r.name or L.UNKNOWN_NAME end },
-  { header = "HISTORY_KIND", width = 40, value = killKind },
+  { header = "HISTORY_NAME", width = 108, align = LEFT, value = function(r) return r.name or L.UNKNOWN_NAME end },
+  { header = "HISTORY_KIND", width = 72, value = killKind },  -- "Rare-Elite" braucht Platz
   levelColumn(40),
   zoneColumn(126),
 }

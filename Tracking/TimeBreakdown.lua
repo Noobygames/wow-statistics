@@ -39,11 +39,19 @@ local function currentActivity()
 end
 
 local function flush()
-  if activity and pending > 0 then
-    Stats.Increment(activity, pending)
-  end
+  -- Zuerst zurücksetzen: scheitert ein Listener, dürfen die Sekunden nicht ein zweites Mal gebucht werden
+  local booked, counter = pending, activity
   pending = 0
   sinceFlush = 0
+  if counter and booked > 0 then
+    Stats.Increment(counter, booked)
+  end
+end
+
+-- Gesammelte Zeit sofort buchen (z.B. wenn der Instanz-Lauf anhält oder weiterläuft, damit nichts davor/danach
+-- im falschen Bereich landet)
+function TimeBreakdown.Flush()
+  flush()
 end
 
 -- elapsed Sekunden der bisherigen Tätigkeit zuordnen, dann die Tätigkeit neu bestimmen
@@ -60,8 +68,18 @@ end
 -- Sekunden einer Tätigkeit im Bereich, inklusive der noch nicht gebuchten
 function TimeBreakdown.GetSeconds(scope, counter)
   if counter == Stats.DEAD_SECONDS then return ns.DeathCounter.GetDeadSeconds(scope) end
-  local running = (activity == counter) and pending or 0
+  local running = (activity == counter and Stats.IsCounting(scope)) and pending or 0
   return Stats.Get(scope, counter) + running
+end
+
+-- Alle Zähler des Bereichs wie Stats.Snapshot, aber mit der noch nicht gebuchten Zeit der Aufteilung,
+-- damit Historie-Zeilen des laufenden Levels/der Session dieselbe Rate zeigen wie das Fenster
+function TimeBreakdown.Snapshot(scope)
+  local counters = Stats.Snapshot(scope)
+  for _, counter in ipairs(TimeBreakdown.PARTS) do
+    counters[counter] = TimeBreakdown.GetSeconds(scope, counter)
+  end
+  return counters
 end
 
 -- Rest aus Gesamtzeit und Zählern, auch für Historie-Einträge ({ seconds, counters })

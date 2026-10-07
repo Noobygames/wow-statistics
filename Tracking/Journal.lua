@@ -39,7 +39,7 @@ local function append(logName, entry, limit)
     table.remove(log, 1)
   end
   for _, listener in ipairs(addListeners) do
-    listener(logName, entry)
+    ns.SafeCall(listener, logName, entry)
   end
 end
 
@@ -89,14 +89,15 @@ end
 
 -- Beendeter Instanz-Lauf (Form siehe Instances.lua); time = Betreten der Instanz
 function Journal.AddInstanceRun(run)
+  local record = ns.Instances.ToRecord(run)
   append("instanceLog", {
     time = run.startedAt,
     name = run.name,
     instanceType = run.instanceType,
     seconds = run.seconds,
     level = run.level,
-    xp = run.xp,
-    counters = run.counters,
+    xp = record.xp,
+    counters = record.counters,
     zoneUID = run.zoneUID,
   }, Journal.MAX_INSTANCE_RUNS)
 end

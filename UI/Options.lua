@@ -1,10 +1,11 @@
--- Einstellungsfenster mit Reitern: Allgemein (Fenster, Sprache), Statistiken, Hinweise, Komfort, Stream, Speedrun, Profile.
+-- Einstellungsfenster mit Reitern: Allgemein (Fenster, Sprache), Statistiken, Hinweise, Einblendungen, Komfort, Stream, Speedrun, Profile.
 -- Darunter auf allen Reitern: Neue Session, Zusammenfassung, Historie.
 -- Nur der Inhalt; Aufbau, Tooltips, Breite und Aktualisierung übernimmt Lib/OptionsBuilder.lua.
 local _, ns = ...
 local L = ns.L
 local Widgets = ns.Widgets
 local TimerWindow = ns.TimerWindow
+local Alerts = ns.Alerts
 local Builder = ns.OptionsBuilder
 
 local MAX_PROFILE_ROWS = 6     -- so viele Profile listet der Reiter "Profile"
@@ -146,17 +147,39 @@ function ns.ShowProfileImport()
   end)
 end
 
+local OVERWRITE_PROFILE_POPUP = "LEVELTIMER_OVERWRITE_PROFILE"
+
 local function addProfileSaver()
   local page = builder.Page()
   local nameBox = CreateFrame("EditBox", nil, page, "InputBoxTemplate")
   nameBox:SetSize(PROFILE_NAME_WIDTH, Builder.BUTTON_HEIGHT)
   nameBox:SetAutoFocus(false)
   nameBox:SetPoint("TOPLEFT", Builder.MARGIN + 6, builder.RowY())  -- Vorlage zeichnet ihren Rand links außerhalb
-  local saveButton = Widgets.CreateButton(page, PROFILE_SAVE_WIDTH, Builder.BUTTON_HEIGHT, function()
-    if ns.Profiles.SaveAs(nameBox:GetText()) then
-      ns.Print(string.format(L.PROFILE_SAVED, nameBox:GetText()))
+  local function save(name)
+    if ns.Profiles.SaveAs(name) then
+      ns.Print(string.format(L.PROFILE_SAVED, name))
       nameBox:SetText("")
       ns.ApplySettings()
+    end
+  end
+  StaticPopupDialogs[OVERWRITE_PROFILE_POPUP] = {
+    button1 = YES or "Yes",
+    button2 = NO or "No",
+    OnAccept = function(_, name) save(name) end,
+    timeout = 0,
+    whileDead = true,
+    hideOnEscape = true,
+    preferredIndex = 3,
+  }
+  local saveButton = Widgets.CreateButton(page, PROFILE_SAVE_WIDTH, Builder.BUTTON_HEIGHT, function()
+    local name = strtrim(nameBox:GetText())
+    if name == "" then
+      ns.Print(L.PROFILE_NAME_EMPTY)
+    elseif ns.Profiles.Exists(name) then
+      StaticPopupDialogs[OVERWRITE_PROFILE_POPUP].text = L.PROFILE_OVERWRITE_CONFIRM  -- aktuelle Sprache
+      StaticPopup_Show(OVERWRITE_PROFILE_POPUP, name, nil, name)
+    else
+      save(name)
     end
   end)
   saveButton:SetPoint("LEFT", nameBox, "RIGHT", Builder.CHOOSER_TAB_GAP, 0)
@@ -206,10 +229,11 @@ addToggles({
   toggle("SHOW_XP_BAR", "showXpBar"),
   toggle("COMPACT_MODE", "compactMode"),
   toggle("HORIZONTAL_LAYOUT", "horizontalLayout"),
+  toggle("AUTO_INSTANCE_TAB", "autoInstanceTab"),
 })
 addButton("RESET_WINDOW", function() TimerWindow.ResetLayout() end)
 addHint("OPTIONS_HINT")
-addSection("SECTION_GENERAL")
+addSection("SECTION_LANGUAGE")
 addLanguageChooser()
 addToggles({
   { label = "SHOW_MINIMAP", get = function(db) return not db.minimap.hide end,
@@ -219,12 +243,23 @@ finishPage()
 
 -- Statistiken: ein Schalter je Stat-Zeile, direkt aus ns.STAT_LINES
 addPage("STATISTICS")
-addSection("STATISTICS")
-local statToggles = {}
-for i, line in ipairs(ns.STAT_LINES) do
-  statToggles[i] = toggle(line.label, line.setting, line.available)
+addSection("SECTION_STAT_PRESETS")
+local presetButtons = {}
+for i, preset in ipairs(ns.STAT_PRESETS) do
+  presetButtons[i] = { label = preset.label, onClick = function() ns.ApplyStatPreset(preset) end }
 end
-addToggles(statToggles)
+builder.AddButtonRow(presetButtons)
+for _, group in ipairs(ns.STAT_GROUPS) do
+  addSection(group)
+  local statToggles = {}
+  for _, line in ipairs(ns.STAT_LINES) do
+    if line.group == group then table.insert(statToggles, toggle(line.label, line.setting, line.available)) end
+  end
+  addToggles(statToggles)
+  if group == "STAT_GROUP_INSTANCE" then
+    addButton("INSTANCE_RESET", function() ns.ConfirmInstanceReset() end)
+  end
+end
 addSection("SECTION_CALCULATION")
 addToggles({ toggle("XP_RATE_WITHOUT_AFK", "xpRateWithoutAfk") })
 finishPage()
@@ -249,6 +284,7 @@ addSlider({
   format = function(value) return string.format(L.MINUTES, value) end,
 })
 addSection("SECTION_WARNINGS")
+addHint("WARN_LOOK_HINT")
 addToggles({
   toggle("WARN_BAGS_FULL_TOGGLE", "warnBagsFull"),
   toggle("WARN_DURABILITY_TOGGLE", "warnDurability"),
@@ -296,6 +332,10 @@ addToggles({
   toggle("HIGHLIGHT_DEATHS", "highlightDeaths"),
 })
 addBackgroundChooser()
+finishPage()
+
+-- Einblendungen: welche Arten, Aussehen und Position (Hinweise aus dem Reiter Hinweise nutzen dieselbe)
+addPage("OPTIONS_TAB_ALERTS")
 addSection("SECTION_ALERTS")
 addToggles({
   toggle("ALERT_TOGGLE_LEVEL_UP", "alertLevelUp"),
@@ -304,6 +344,33 @@ addToggles({
   toggle("ALERT_TOGGLE_LOOT", "alertEpicLoot"),
   toggle("ALERT_TOGGLE_NEAR_DEATH", "alertNearDeath", ns.NearDeath.IsAvailable),
 })
+addSection("SECTION_ALERT_LOOK")
+addChooser({ label = "ALERT_STYLE", setting = "alertStyle", choices = {
+  { value = Alerts.STYLE_BANNER, name = localized("ALERT_STYLE_BANNER") },
+  { value = Alerts.STYLE_TEXT, name = localized("ALERT_STYLE_TEXT") },
+} })
+addSlider({
+  label = "ALERT_SCALE",
+  min = toPercent(Alerts.MIN_SCALE),
+  max = toPercent(Alerts.MAX_SCALE),
+  step = 5,
+  get = function(db) return toPercent(db.alertScale) end,
+  set = function(value) ns.Set("alertScale", value / 100) end,
+  format = percent,
+})
+addSlider({
+  label = "ALERT_DURATION",
+  min = Alerts.MIN_DURATION,
+  max = Alerts.MAX_DURATION,
+  step = 1,
+  get = function(db) return db.alertDuration end,
+  set = function(value) ns.Set("alertDuration", value) end,
+  format = function(value) return string.format(L.SECONDS_SHORT, value) end,
+})
+addToggles({ toggle("ALERT_SOUND", "alertSound") })
+addButton("ALERT_PREVIEW", function() Alerts.Preview() end)
+addButton("ALERT_MOVE", function() Alerts.SetMoving(not Alerts.IsMoving()) end)
+addButton("ALERT_RESET_POSITION", function() Alerts.ResetPosition() end)
 finishPage()
 
 -- Speedrun: Splits, Split-Liste und Speedrun-Rekorde

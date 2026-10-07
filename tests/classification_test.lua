@@ -37,3 +37,16 @@ expect("Spieler werden nicht eingestuft", addon.Classification.Of("Spieler"), ni
 addon.Set("showSpecialKills", true)
 SlashCmdList.LEVELTIMER("history")
 expectTrue("Kill-Liste rendert", wow.click("Kills"))
+
+-- Geheime Werte (Retail/Forever): weder Fehler noch Einträge
+wow.errors = {}
+wow.state.units.mouseover = { name = wow.SECRET, classification = "elite" }
+wow.fire("UPDATE_MOUSEOVER_UNIT")
+wow.state.units.mouseover = { name = "Geheimer Elite", classification = wow.SECRET }
+wow.fire("UPDATE_MOUSEOVER_UNIT")
+wow.state.units.mouseover = { name = "Geheimer Spieler", classification = "elite", isPlayer = wow.SECRET }
+wow.fire("UPDATE_MOUSEOVER_UNIT")
+expect("geheime Werte ohne Fehler", #wow.errors, 0)
+expect("geheimer Name nicht gemerkt", addon.Classification.Of("Geheimer Elite"), nil)
+expect("geheimer Spielerstatus nicht gemerkt", addon.Classification.Of("Geheimer Spieler"), nil)
+expect("geheime GUID ohne zoneUID", addon.InstanceCopy.ZoneUIDOf(wow.SECRET), nil)

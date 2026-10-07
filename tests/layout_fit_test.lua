@@ -70,7 +70,7 @@ local subtabs = {}
 wow.findFrame(function(frame)
   local label = rawget(frame, "label")
   local point = frame._points[1]
-  if label and frame:IsShown() and point and point[1] == "TOPLEFT" and #point == 3 and point[3] <= SUBTABS_TOP then
+  if label and frame:IsShown() and point and point[1] == "TOPLEFT" and #point == 3 and type(point[3]) == "number" and point[3] <= SUBTABS_TOP then
     table.insert(subtabs, frame)
   end
   return false

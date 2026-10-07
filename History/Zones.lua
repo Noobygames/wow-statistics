@@ -21,7 +21,7 @@ local enteredAt    -- GetTime() seit dem die laufende Zeit gezählt wird
 
 local function zoneName()
   local zone = (GetRealZoneText and GetRealZoneText()) or (GetZoneText and GetZoneText())
-  if not zone or zone == "" or ns.IsSecret(zone) then return nil end
+  if ns.IsSecret(zone) or not zone or zone == "" then return nil end
   return zone
 end
 

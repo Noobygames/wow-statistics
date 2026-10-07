@@ -17,13 +17,16 @@ local SETTINGS_DEFAULTS = {
   showXpBar = true,
   compactMode = false,  -- nur Zeit, XP-Balken und XP/h (siehe TimerWindow.lua)
   horizontalLayout = false,  -- Fenster als Info-Leiste: alles in einer Zeile (siehe TimerWindow.lua)
-  windowScope = "level",  -- "level" oder "session" (siehe Stats.lua)
+  autoInstanceTab = false,  -- beim Betreten einer Instanz zum Reiter Instanz wechseln, beim Verlassen zurück
+  historyTab = "",  -- zuletzt gewählter Reiter der Historie (siehe HistoryWindow.lua)
+  windowScope = "level",  -- "level", "session" oder "instance" (siehe Stats.lua)
   -- Stat-Zeilen im Fenster (siehe StatLines.lua)
   showXpRate = true,
   showRecentXpRate = false,  -- XP/h der letzten 15 min (siehe RecentXpRate.lua)
+  showXpGained = true,  -- gewonnene XP im Bereich
   showLevelEta = true,
   showCountToLevel = false,  -- Kills und Quests bis zum Level-Up
-  showMaxLevelEta = true,
+  showMaxLevelEta = false,
   showSplits = false,  -- Splits gegen einen Vergleich (siehe Splits.lua)
   splitComparison = "best",  -- "best", "pb" oder "run" (db.splitReference, siehe Splits.lua)
   showSplitList = false,  -- eigene Anzeige mit den letzten Leveln (siehe SplitList.lua)
@@ -42,6 +45,10 @@ local SETTINGS_DEFAULTS = {
   alertEliteKill = false,
   alertEpicLoot = false,
   alertNearDeath = false,
+  alertStyle = "banner",  -- "text" oder "banner" (siehe Alerts.lua)
+  alertScale = 1,
+  alertDuration = 3,      -- Sekunden voll sichtbar
+  alertSound = false,
   remindFood = false,  -- Hinweis, wenn beim Leveln "Satt" fehlt (siehe BuffReminder.lua)
   remindCamp = false,  -- Hinweis, wenn beim Leveln der Camp-Buff fehlt (WoW Forever)
   reminderInterval = 5,  -- Minuten zwischen zwei Hinweisen auf denselben fehlenden Buff
@@ -67,7 +74,7 @@ local SETTINGS_DEFAULTS = {
   levelUpSummary = true,
   levelUpAnnounce = "off",  -- Level-Up-Zusammenfassung an "party" oder "guild" (siehe LevelUpSummary.lua)  -- Chatzeile beim Level-Up (siehe LevelUpSummary.lua)
   showPveKills = true,
-  showPvpKills = true,
+  showPvpKills = false,
   showSpecialKills = false,
   showDeaths = true,
   showKillsPerDeath = false,
@@ -82,8 +89,8 @@ local SETTINGS_DEFAULTS = {
   showInstanceRun = false,  -- laufender Dungeon-/Raid-Lauf (siehe Instances.lua)
   showInstanceLimit = false,   -- neue Instanzen in der letzten Stunde (siehe InstanceLimit.lua)
   showInstancesToday = false,  -- neue Instanzen seit Mitternacht
-  showQuests = true,
-  showMoney = true,
+  showQuests = false,
+  showMoney = false,
   showSpending = false,  -- Ausgaben nach Art und Schrott-Erlös (siehe MoneyCounter.lua)
   minimap = { hide = false, angle = 225 },
 }
@@ -177,37 +184,47 @@ local characterMigrations = {
 -- Migrationen für die Einstellungen, Schlüssel = Zielversion
 local SETTINGS_SCHEMA_VERSION = 4
 local OLD_DEFAULT_FONT_SIZE = 16
+
+-- Wendet fn auf die Einstellungen und alle darin gespeicherten Kopien an (Profile, Stream-Sicherung)
+local function forEachSettingsCopy(settings, fn)
+  fn(settings)
+  for _, profile in pairs(settings.profiles or {}) do
+    if type(profile) == "table" then fn(profile) end
+  end
+  if type(settings.streamBackup) == "table" then fn(settings.streamBackup) end
+end
+
 local settingsMigrations = {
   [2] = function(settings)  -- feste Schriftgröße der Zeitanzeige -> Skalierung des ganzen Fensters
-    if settings.fontSize then
-      settings.scale = settings.fontSize / OLD_DEFAULT_FONT_SIZE
-    end
-    settings.fontSize = nil
+    forEachSettingsCopy(settings, function(values)
+      if values.fontSize then
+        values.scale = values.fontSize / OLD_DEFAULT_FONT_SIZE
+      end
+      values.fontSize = nil
+    end)
   end,
   -- Zeilen mit mehreren Werten wurden aufgeteilt; neue Schalter übernehmen den alten Zustand:
   -- Kills -> PvE + PvP, XP/h -> + Zeit bis Level-Up, Tode -> + Kills pro Tod
   [3] = function(settings)
-    if settings.showKills ~= nil then
-      settings.showPveKills = settings.showKills
-      settings.showPvpKills = settings.showKills
-    end
-    if settings.showXpRate ~= nil then
-      settings.showLevelEta = settings.showXpRate
-    end
-    if settings.showDeaths ~= nil then
-      settings.showKillsPerDeath = settings.showDeaths
-    end
-    settings.showKills = nil
+    forEachSettingsCopy(settings, function(values)
+      if values.showKills ~= nil then
+        values.showPveKills = values.showKills
+        values.showPvpKills = values.showKills
+      end
+      if values.showXpRate ~= nil then
+        values.showLevelEta = values.showXpRate
+      end
+      if values.showDeaths ~= nil then
+        values.showKillsPerDeath = values.showDeaths
+      end
+      values.showKills = nil
+    end)
   end,
   -- Level-Up-Ansage in /sagen entfernt (kam außerhalb von Instanzen nicht an): aus, auch in Profilen
   [4] = function(settings)
-    local function dropSay(values)
+    forEachSettingsCopy(settings, function(values)
       if values.levelUpAnnounce == "say" then values.levelUpAnnounce = "off" end
-    end
-    dropSay(settings)
-    for _, profile in pairs(settings.profiles or {}) do
-      dropSay(profile)
-    end
+    end)
   end,
 }
 
@@ -251,9 +268,25 @@ local function isLevelTimes(value)
   return true
 end
 
+-- Erlaubte Bereiche von Zahlen-Einstellungen (wie die Regler und Fenster sie vorgeben); Importe werden begrenzt
+local SETTING_RANGES = {
+  scale = { 0.5, 2 },
+  bgAlpha = { 0, 1 },
+  splitListScale = { 0.5, 2 },
+  splitListRows = { 3, 15 },
+  reminderInterval = { 1, 30 },
+  alertScale = { 0.5, 2 },
+  alertDuration = { 1, 10 },
+}
+
+local function isFiniteNumber(value)
+  return value == value and value ~= math.huge and value ~= -math.huge
+end
+
 local OPTIONAL_SETTINGS = {
   pos = isPosition,           -- Hauptfenster (TimerWindow.lua)
   splitListPos = isPosition,  -- Split-Liste (SplitList.lua)
+  alertPos = isPosition,      -- Einblendungen (Alerts.lua); fehlt = oben in der Mitte
   splitReference = function(value)  -- fester Vergleichslauf (Splits.lua)
     return type(value) == "table" and type(value.name) == "string" and isLevelTimes(value.times)
   end,
@@ -273,6 +306,11 @@ local function sanitizeValue(key, value)
     return check and check(value) and value or nil
   end
   if type(value) ~= type(default) then return nil end
+  if type(value) == "number" then
+    if not isFiniteNumber(value) then return nil end
+    local range = SETTING_RANGES[key]
+    if range then return math.max(range[1], math.min(range[2], value)) end
+  end
   if type(default) == "table" and next(default) ~= nil then
     local copy = {}
     for innerKey, innerDefault in pairs(default) do
@@ -356,9 +394,12 @@ function Database.Load()
   LevelTimerStatsDB = applyDefaults(LevelTimerStatsDB or {}, { characters = {} })
   -- Auch andere Charaktere auf den aktuellen Stand bringen: die Historie zeigt sie, und Daten aus
   -- älteren Versionen haben sonst Lücken (z.B. fehlende Journale)
+  -- Ein defekter Eintrag darf nicht alle Module lahmlegen: Fehler melden, Charakter überspringen
   for _, data in pairs(LevelTimerStatsDB.characters) do
-    migrate(data, characterMigrations, Database.CHARACTER_SCHEMA_VERSION)
-    applyDefaults(data, CHARACTER_DEFAULTS)
+    xpcall(function()
+      migrate(data, characterMigrations, Database.CHARACTER_SCHEMA_VERSION)
+      applyDefaults(data, CHARACTER_DEFAULTS)
+    end, geterrorhandler())
   end
   local characterKey, character = loadCharacter(LevelTimerStatsDB)
   return LevelTimerDB, characterKey, character
