@@ -78,6 +78,7 @@ Assist\Merchant.lua
 Assist\QuestAutomation.lua
 Assist\Declines.lua
 Assist\ChatCopy.lua
+Assist\MoveFrames.lua
 UI\TimerWindow.lua
 Speedrun\SplitList.lua
 Lib\Charts.lua

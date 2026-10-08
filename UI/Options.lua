@@ -342,6 +342,9 @@ addToggles({
 })
 addSection("SECTION_CHAT")
 addToggles({ toggle("CHAT_COPY_TOGGLE", "chatCopyButton") })
+addSection("SECTION_WINDOWS")
+addToggles({ toggle("MOVE_FRAMES", "moveFrames") })
+addButton("MOVE_FRAMES_RESET", function() ns.MoveFrames.Reset() end)
 addHint("COMFORT_HINT")
 finishPage()
 

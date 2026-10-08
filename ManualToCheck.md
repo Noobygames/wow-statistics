@@ -1155,6 +1155,29 @@ Fehler:
 
 ---
 
+### 55. Fenster verschieben (Roadmap 238)
+
+- [ ] geprüft
+
+Einstellungen → Komfort → „Fenster verschieben“ einschalten. Charakterfenster (C), Zauberbuch, Händler, Questgespräch
+und Talente öffnen und jeweils an der Titelleiste oder einer freien Stelle mit der linken Maustaste ziehen. Fenster
+schließen und wieder öffnen, dann /reload und noch einmal öffnen. Im Kampf ziehen. „Fensterpositionen zurücksetzen“
+klicken, /reload.
+
+**Erwartet:** Fenster folgt der Maus und bleibt nach Schließen, Öffnen und /reload an der neuen Stelle (auch Fenster,
+die Blizzard beim Öffnen selbst anordnet); im Kampf bewegt sich nichts und es gibt keinen „Aktion blockiert“-Fehler;
+nach dem Zurücksetzen und /reload stehen alle Fenster wieder an der Standardstelle; ausgeschaltet lässt sich nichts ziehen.
+
+**Antwort:**
+
+```text
+Welche Fenster verschiebbar (und welche nicht):
+Position nach Öffnen/Reload gemerkt (ja/nein):
+Fehler oder „Aktion blockiert“ (Text):
+```
+
+---
+
 ## Errors
 
 ### When starting boss fight

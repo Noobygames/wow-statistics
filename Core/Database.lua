@@ -76,6 +76,7 @@ local SETTINGS_DEFAULTS = {
   declineGuildInvites = false,
   declineDuels = false,
   chatCopyButton = false,   -- Button zum Kopieren an jedem Chatfenster (ChatCopy.lua)
+  moveFrames = false,       -- Standardfenster des Spiels verschiebbar machen (MoveFrames.lua)
   levelUpSummary = true,
   levelUpAnnounce = "off",  -- Level-Up-Zusammenfassung an "party" oder "guild" (siehe LevelUpSummary.lua)  -- Chatzeile beim Level-Up (siehe LevelUpSummary.lua)
   showPveKills = true,
@@ -294,6 +295,13 @@ local OPTIONAL_SETTINGS = {
   splitListPos = isPosition,  -- Split-Liste (SplitList.lua)
   alertPos = isPosition,      -- Einblendungen (Alerts.lua); fehlt = oben in der Mitte
   campPos = isPosition,       -- Lagerfeuer-Anzeige (CampDisplay.lua)
+  movedFrames = function(value)  -- gemerkte Fensterpositionen (MoveFrames.lua), Name -> Position
+    if type(value) ~= "table" then return false end
+    for name, pos in pairs(value) do  -- ungültige Einträge einzeln entfernen, gültige behalten
+      if type(name) ~= "string" or not isPosition(pos) then value[name] = nil end
+    end
+    return true
+  end,
   splitReference = function(value)  -- fester Vergleichslauf (Splits.lua)
     return type(value) == "table" and type(value.name) == "string" and isLevelTimes(value.times)
   end,
