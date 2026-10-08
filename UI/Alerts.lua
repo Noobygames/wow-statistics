@@ -119,6 +119,11 @@ end
 
 local queue = {}  -- { message, color, sound } der wartenden Einblendungen, älteste zuerst
 
+-- Der Raid-Warnton; auch für andere Anzeigen (z.B. Lagerfeuer), wenn der Spieler Ton eingeschaltet hat
+function Alerts.PlaySound()
+  if PlaySound then PlaySound(RAID_WARNING_SOUND) end
+end
+
 local function display(message, color, sound)
   frame.text:SetText(message)
   setColor(color)
@@ -126,7 +131,7 @@ local function display(message, color, sound)
   shownAt = GetTime()
   frame:SetAlpha(0)
   frame:Show()
-  if sound and ns.db and ns.db.alertSound and PlaySound then PlaySound(RAID_WARNING_SOUND) end
+  if sound and ns.db and ns.db.alertSound then Alerts.PlaySound() end
 end
 
 frame:SetScript("OnUpdate", function(self)

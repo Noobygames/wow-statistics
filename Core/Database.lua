@@ -49,6 +49,11 @@ local SETTINGS_DEFAULTS = {
   alertScale = 1,
   alertDuration = 3,      -- Sekunden voll sichtbar
   alertSound = false,
+  -- Lagerfeuer in WoW Forever (siehe CampFire.lua, CampDisplay.lua)
+  campCountdown = true,  -- Countdown beim einladenden Lagerfeuer
+  campHint = true,       -- Hinweis, wenn ein Feuer in der Nähe ist und die Lagervorteile fehlen
+  campSound = false,     -- Ton, wenn die Lagervorteile da sind
+  campScale = 1,
   remindFood = false,  -- Hinweis, wenn beim Leveln "Satt" fehlt (siehe BuffReminder.lua)
   remindCamp = false,  -- Hinweis, wenn beim Leveln der Camp-Buff fehlt (WoW Forever)
   reminderInterval = 5,  -- Minuten zwischen zwei Hinweisen auf denselben fehlenden Buff
@@ -277,6 +282,7 @@ local SETTING_RANGES = {
   reminderInterval = { 1, 30 },
   alertScale = { 0.5, 2 },
   alertDuration = { 1, 10 },
+  campScale = { 0.5, 2 },
 }
 
 local function isFiniteNumber(value)
@@ -287,6 +293,7 @@ local OPTIONAL_SETTINGS = {
   pos = isPosition,           -- Hauptfenster (TimerWindow.lua)
   splitListPos = isPosition,  -- Split-Liste (SplitList.lua)
   alertPos = isPosition,      -- Einblendungen (Alerts.lua); fehlt = oben in der Mitte
+  campPos = isPosition,       -- Lagerfeuer-Anzeige (CampDisplay.lua)
   splitReference = function(value)  -- fester Vergleichslauf (Splits.lua)
     return type(value) == "table" and type(value.name) == "string" and isLevelTimes(value.times)
   end,

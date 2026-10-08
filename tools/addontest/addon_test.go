@@ -39,6 +39,7 @@ func runScenario(t *testing.T, root, scenario string) {
 	defer L.Close()
 
 	L.SetGlobal("ADDON_DIR", lua.LString(filepath.ToSlash(root)))
+	L.SetGlobal("SCENARIO", lua.LString(strings.TrimSuffix(filepath.Base(scenario), "_test.lua")))
 	if err := L.DoFile(filepath.Join(root, "tests", "wow_stub.lua")); err != nil {
 		t.Fatalf("Addon laden: %v", err)
 	}

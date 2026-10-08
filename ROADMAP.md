@@ -2,6 +2,10 @@
 
 Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt und unter „Erledigt“ mit Version vermerkt. Nummern laufen über alle Versionen weiter.
 
+## v2.10: Lagerfeuer in WoW Forever
+
+- [x] 236. **Lagerfeuer-Countdown und -Hinweis** (M, nur WoW Forever): Beim Buff „Einladendes Lagerfeuer“ (60 s, Spell 1229739) zeigt eine kleine Anzeige die Restzeit als Zahl und leerlaufenden Balken („Sitzen bleiben!“), danach kurz „Lagervorteile aktiv!“ (nur wenn der Countdown die Lagervorteile 1229741 erneuert hat; optional mit Ton). Ist ein Lagerfeuer in der Nähe (1283391) und fehlen die Lagervorteile, erscheint ein pulsierender Hinweis, sich hinzusetzen. Spell-IDs im Spiel per Aura-Liste ermittelt. Einstellungen im Reiter Hinweise (Abschnitt Lagerfeuer): Countdown, Hinweis, Ton, Größe, Vorschau (Hinweis → Countdown → aktiv), Verschieben und Zurücksetzen. Neue Bausteine: `Lib/Auras.lua` (Buffs lesen mit allen Sperr-Schutzen, von `BuffReminder` mitgenutzt) und `Widgets.CreateMover` (verschiebbare Anzeige mit gespeicherter Position, Größen-Umrechnung und Verschiebemodus; `Alerts.lua` kann darauf umgestellt werden, siehe 234).
+
 ## v2.9: Instanz-Auswertung und Einblendungen
 
 - [x] 149. **Instanz-Reiter** (M): dritter Reiter „Instanz“ neben Level und Session; zeigt alle Stat-Zeilen für den laufenden Instanz-Lauf (`Stats.INSTANCE`, voller Zählersatz in `currentRun.stats`, gezählt nur bei laufender Lauf-Uhr). Alte offene Läufe werden beim Login umgewandelt.
