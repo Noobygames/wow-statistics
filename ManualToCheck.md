@@ -1130,6 +1130,29 @@ Position nach /reload gleich (ja/nein):
 Fehler:
 ```
 
+### 54. Hinweise als Karten (Roadmap 237)
+
+- [ ] geprüft
+
+Einstellungen → Einblendungen → „Vorschau“ so oft anklicken, bis die Karte „Taschen“ erscheint. Dann die
+echten Hinweise auslösen: Food-Hinweis (Satt fehlt, Einstellungen → Hinweise → „Hinweis: Satt fehlt“),
+Taschen fast voll, Haltbarkeit unter 20 %, als Jäger Munition knapp, geradzahliger Level-Up (Lehrer),
+Instanzlimit.
+
+**Erwartet:** jede Meldung als dunkle Karte mit Farbleiste, passendem Symbol (kein grünes Quadrat, kein
+Fragezeichen außer bei unbekanntem Zauber), Titel in Gold/Orange und Text darunter; mehrere gleichzeitig
+(Satt + Lagervorteile) erscheinen nacheinander; Größe, Dauer und Position folgen den Einstellungen im Reiter
+„Einblendungen“; die Chatzeile erscheint weiterhin.
+
+**Antwort:**
+
+```text
+Symbole sichtbar (welche fehlen oder sind grün):
+Texte in fr/es passen (ja/nein):
+Position und Größe wie eingestellt (ja/nein):
+Fehler:
+```
+
 ---
 
 ## Errors

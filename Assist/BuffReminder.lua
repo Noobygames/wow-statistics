@@ -48,8 +48,8 @@ end
 
 -- Je Hinweis: Einstellung, Prüfung, Text und Zeitpunkt des letzten Hinweises
 local REMINDERS = {
-  { setting = "remindFood", isMissing = BuffReminder.IsFoodMissing, message = "REMIND_FOOD" },
-  { setting = "remindCamp", isMissing = BuffReminder.IsCampMissing, message = "REMIND_CAMP" },
+  { setting = "remindFood", isMissing = BuffReminder.IsFoodMissing, message = "REMIND_FOOD", icon = "food" },
+  { setting = "remindCamp", isMissing = BuffReminder.IsCampMissing, message = "REMIND_CAMP", icon = "camp" },
 }
 
 function BuffReminder.WorthReminding()
@@ -73,7 +73,7 @@ function BuffReminder.Check()
     if isDue(reminder) then
       ns.Debug("reminder", "%s missing, reminding", reminder.setting)
       reminder.lastShown = GetTime()
-      table.insert(messages, L[reminder.message])
+      table.insert(messages, { title = L.NOTICE_BUFF, text = L[reminder.message], icon = ns.Alerts.ICONS[reminder.icon] })
     end
   end
   if #messages > 0 then

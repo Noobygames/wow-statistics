@@ -121,3 +121,42 @@ addon.Set("alertScale", 1)
 addon.Set("alertScale", 2)
 expect("Abstand x umgerechnet", LevelTimerDB.alertPos[3], 50)
 expect("Abstand y umgerechnet", LevelTimerDB.alertPos[4], -100)
+
+-- Hinweise (Notify) erscheinen als Karte mit Symbol, Titel und Text, an derselben Stelle wie das Banner
+local noticeFrame = LevelTimerNotice
+Alerts.Clear()
+Alerts.Notify({ title = "Titel", text = "Text", icon = Alerts.ICONS.bags }, { 1, 0.6, 0.2 })
+expect("Karte statt Banner", noticeFrame:IsShown(), true)
+expect("Banner aus", alert:IsShown(), false)
+expect("Titel", noticeFrame.title:GetText(), "Titel")
+expect("Text", noticeFrame.body:GetText(), "Text")
+-- ohne Titel ist der Text der Titel
+Alerts.Clear()
+Alerts.Notify("Nur Text", { 1, 0.6, 0.2 })
+expect("ohne Titel", noticeFrame.title:GetText(), "Nur Text")
+expect("ohne Titel kein Text darunter", noticeFrame.body:GetText(), "")
+-- Karte folgt Größe und blendet wie das Banner aus
+addon.Set("alertScale", 1.5)
+expect("Karte skaliert mit", noticeFrame:GetScale(), 1.5)
+addon.Set("alertScale", 1)
+addon.Set("alertDuration", 3)
+Alerts.Clear()
+Alerts.Notify({ title = "T", text = "X" }, { 1, 1, 1 })
+wow.advance(3 + 1.1)
+noticeFrame._scripts.OnUpdate(noticeFrame, 0.1)
+expect("Karte verschwindet nach der Dauer", noticeFrame:IsShown(), false)
+-- Banner und Karten teilen die Warteschlange: Karte, dann Ereignis
+Alerts.Notify({ title = "T", text = "Karte" }, { 1, 1, 1 })
+Alerts.Show("Ereignis", { 1, 1, 1 })
+wow.advance(1.5 + 1.1)
+noticeFrame._scripts.OnUpdate(noticeFrame, 0.1)
+expect("danach das Banner", alert.text:GetText(), "Ereignis")
+expect("Karte ist weg", noticeFrame:IsShown(), false)
+Alerts.Clear()
+-- Vorschau: die sechste Art ist eine Hinweis-Karte
+for _ = 1, 6 do
+  Alerts.Preview()
+  if noticeFrame:IsShown() then break end
+end
+expect("Vorschau zeigt irgendwann die Karte", noticeFrame.title:GetText(), L.NOTICE_BAGS)
+Alerts.Clear()

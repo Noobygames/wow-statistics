@@ -18,5 +18,6 @@ end
 ns.OnLevelStarted(function(newLevel)
   if not ns.db.remindTrainer or not TrainerReminder.IsAvailable() then return end
   if not TrainerReminder.HasNewSpells(newLevel) then return end
-  ns.Alerts.Notify(string.format(L.REMIND_TRAINER, newLevel), ns.Alerts.REMINDER_COLOR)
+  ns.Alerts.Notify({ title = L.NOTICE_TRAINER, text = string.format(L.REMIND_TRAINER, newLevel),
+    icon = ns.Alerts.ICONS.trainer }, ns.Alerts.REMINDER_COLOR)
 end)

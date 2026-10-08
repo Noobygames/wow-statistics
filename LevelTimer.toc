@@ -27,6 +27,7 @@ Lib\Bags.lua
 Lib\Items.lua
 Lib\Widgets.lua
 Lib\Auras.lua
+Lib\Card.lua
 
 # Erfassung: Zähler und Ereignisse (Tracking)
 Tracking\Stats.lua
