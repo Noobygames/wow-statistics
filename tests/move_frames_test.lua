@@ -38,12 +38,15 @@ character:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
 wow.runTimers()
 expect("nach der Anordnung des Spiels erneut", character._points[#character._points][4], 120)
 
--- Im Kampf wird nichts angefasst
+-- Im Kampf wird nichts angefasst; ein nie begonnenes Ziehen wird nicht gespeichert
+LevelTimerDB.movedFrames = nil
 InCombatLockdown = function() return true end
 moved = 0
 character._scripts.OnDragStart(character)
 expect("Kampf: kein Verschieben", moved, 0)
 InCombatLockdown = nil
+character._scripts.OnDragStop(character)
+expect("kein Ziehen: nichts gespeichert", LevelTimerDB.movedFrames, nil)
 
 -- Später geladene Blizzard-Fenster kommen über ADDON_LOADED dazu
 local talents = blizzardFrame("PlayerTalentFrame")
@@ -65,4 +68,7 @@ expect("Positionen vergessen", LevelTimerDB.movedFrames, nil)
 
 -- Ungültige Positionen aus einem Import werden verworfen
 local clean = addon.Database.SanitizeSettings({ movedFrames = { CharacterFrame = "kaputt" } })
-expect("ungültige Position verworfen", clean.movedFrames, nil)
+expect("ungültige Position verworfen", next(clean.movedFrames), nil)
+clean = addon.Database.SanitizeSettings({ movedFrames = { A = "kaputt", B = { "TOP", "TOP", 1, 2 } } })
+expect("gültige Position bleibt", clean.movedFrames.B[3], 1)
+expect("kaputte entfernt", clean.movedFrames.A, nil)

@@ -28,9 +28,15 @@ local function isEnabled()
   return ns.db and ns.db.moveFrames
 end
 
+-- Gespeicherte Position nur benutzen, wenn sie vollständig ist (beschädigte Daten würden bei jedem Öffnen Fehler werfen)
+local function validPosition(pos)
+  return type(pos) == "table" and type(pos[1]) == "string" and type(pos[2]) == "string"
+    and type(pos[3]) == "number" and type(pos[4]) == "number"
+end
+
 local function restore(frame, name)
   local pos = ns.db and ns.db.movedFrames and ns.db.movedFrames[name]
-  if not pos or not isEnabled() or inCombat() then return end
+  if not validPosition(pos) or not isEnabled() or inCombat() then return end
   frame:ClearAllPoints()
   frame:SetPoint(pos[1], UIParent, pos[2], pos[3], pos[4])
 end
@@ -38,11 +44,14 @@ end
 -- Gemerkt wird nur, was am Bildschirm hängt (nach StopMovingOrSizing immer der Fall)
 local function save(frame, name)
   local point, relativeTo, relativePoint, x, y = frame:GetPoint()
+  if not point or not x or not y then return end
   if relativeTo ~= nil and relativeTo ~= UIParent then return end
   ns.db.movedFrames = ns.db.movedFrames or {}
   ns.db.movedFrames[name] = { point, relativePoint or point, x, y }
 end
 
+-- Die Griffe bleiben auch nach dem Ausschalten am Fenster (Verschieben, Maus, Bildschirmrand); nur das Ziehen
+-- und Wiederherstellen prüft die Einstellung.
 local function attach(name)
   local frame = _G[name]
   if attached[name] or type(frame) ~= "table" or not frame.HookScript then return end
@@ -51,17 +60,22 @@ local function attach(name)
   frame:EnableMouse(true)
   frame:SetClampedToScreen(true)
   frame:RegisterForDrag("LeftButton")
+  local dragging = false  -- nur ein Ziehen, das wirklich begonnen hat, wird gespeichert
   frame:HookScript("OnDragStart", function(self)
-    if isEnabled() and not inCombat() then self:StartMoving() end
+    if not isEnabled() or inCombat() then return end
+    dragging = true
+    self:StartMoving()
   end)
   frame:HookScript("OnDragStop", function(self)
+    if not dragging then return end
+    dragging = false
     self:StopMovingOrSizing()
-    if isEnabled() then save(self, name) end
+    if isEnabled() then ns.SafeCall(save, self, name) end
   end)
   -- Blizzard setzt verwaltete Fenster beim Öffnen selbst: nach deren Anordnung noch einmal überschreiben
   frame:HookScript("OnShow", function(self)
-    restore(self, name)
-    C_Timer.After(0, function() restore(self, name) end)
+    ns.SafeCall(restore, self, name)
+    C_Timer.After(0, function() ns.SafeCall(restore, self, name) end)
   end)
   ns.Debug("moveframes", "attached to %s", name)
 end

@@ -297,8 +297,8 @@ local OPTIONAL_SETTINGS = {
   campPos = isPosition,       -- Lagerfeuer-Anzeige (CampDisplay.lua)
   movedFrames = function(value)  -- gemerkte Fensterpositionen (MoveFrames.lua), Name -> Position
     if type(value) ~= "table" then return false end
-    for name, pos in pairs(value) do
-      if type(name) ~= "string" or not isPosition(pos) then return false end
+    for name, pos in pairs(value) do  -- ungültige Einträge einzeln entfernen, gültige behalten
+      if type(name) ~= "string" or not isPosition(pos) then value[name] = nil end
     end
     return true
   end,
