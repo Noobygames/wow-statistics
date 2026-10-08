@@ -26,6 +26,8 @@ Lib\ChatPatterns.lua
 Lib\Bags.lua
 Lib\Items.lua
 Lib\Widgets.lua
+Lib\Auras.lua
+Lib\Card.lua
 
 # Erfassung: Zähler und Ereignisse (Tracking)
 Tracking\Stats.lua
@@ -66,7 +68,9 @@ Speedrun\WorldRecords.lua
 UI\StatLines.lua
 UI\LevelUpSummary.lua
 UI\Alerts.lua
+UI\CampDisplay.lua
 Assist\BuffReminder.lua
+Assist\CampFire.lua
 Assist\GearWarnings.lua
 Assist\TrainerReminder.lua
 Assist\Comfort.lua

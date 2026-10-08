@@ -19,36 +19,14 @@ local CHECK_INTERVAL = 5           -- Sekunden zwischen zwei Prüfungen
 local SECONDS_PER_MINUTE = 60
 BuffReminder.MIN_INTERVAL = 1      -- Minuten; Grenzen des Reglers in den Einstellungen
 BuffReminder.MAX_INTERVAL = 30
-local MAX_AURAS = 40
 
 local function spellName(spellID)
   return C_Spell and C_Spell.GetSpellName and C_Spell.GetSpellName(spellID)
 end
 
--- In Retail und WoW Forever sind Auren bei Kampf-, Bosskampf-, Mythisch+- oder PvP-Beschränkungen
--- geheim; GetAuraDataByIndex bricht dann für Addons mit einem Fehler ab (RequiresUnitAuraAccess,
--- im Spiel beim Bosskampf gemeldet). C_Secrets.ShouldAurasBeSecret sagt das vorher (alle Clients).
-local function aurasRestricted()
-  return C_Secrets ~= nil and C_Secrets.ShouldAurasBeSecret ~= nil and C_Secrets.ShouldAurasBeSecret()
-end
-
--- true/false, ob ein Buff mit matches(aura) aktiv ist; nil, wenn der Client Auren verbirgt
-local function hasBuff(matches)
-  if not C_UnitAuras or not C_UnitAuras.GetAuraDataByIndex or aurasRestricted() then return nil end
-  for index = 1, MAX_AURAS do
-    -- Geschützt, falls die Beschränkung zwischen Prüfung und Abfrage beginnt
-    local ok, aura = pcall(C_UnitAuras.GetAuraDataByIndex, "player", index, "HELPFUL")
-    if not ok then return nil end
-    if not aura then return false end
-    if ns.IsSecret(aura.name) or ns.IsSecret(aura.spellId) then return nil end
-    if matches(aura) then return true end
-  end
-  return false
-end
-
--- true, wenn der Buff fehlt; nil, wenn sich das nicht feststellen lässt
+-- true, wenn der Buff fehlt; nil, wenn sich das nicht feststellen lässt (Auren gesperrt, siehe Lib/Auras.lua)
 local function missing(matches)
-  local active = hasBuff(matches)
+  local active = ns.Auras.Has(matches)
   if active == nil then return nil end
   return not active
 end
@@ -70,8 +48,8 @@ end
 
 -- Je Hinweis: Einstellung, Prüfung, Text und Zeitpunkt des letzten Hinweises
 local REMINDERS = {
-  { setting = "remindFood", isMissing = BuffReminder.IsFoodMissing, message = "REMIND_FOOD" },
-  { setting = "remindCamp", isMissing = BuffReminder.IsCampMissing, message = "REMIND_CAMP" },
+  { setting = "remindFood", isMissing = BuffReminder.IsFoodMissing, message = "REMIND_FOOD", icon = "food" },
+  { setting = "remindCamp", isMissing = BuffReminder.IsCampMissing, message = "REMIND_CAMP", icon = "camp" },
 }
 
 function BuffReminder.WorthReminding()
@@ -95,7 +73,7 @@ function BuffReminder.Check()
     if isDue(reminder) then
       ns.Debug("reminder", "%s missing, reminding", reminder.setting)
       reminder.lastShown = GetTime()
-      table.insert(messages, L[reminder.message])
+      table.insert(messages, { title = L.NOTICE_BUFF, text = L[reminder.message], icon = ns.Alerts.ICONS[reminder.icon] })
     end
   end
   if #messages > 0 then

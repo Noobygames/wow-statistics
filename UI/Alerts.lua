@@ -7,6 +7,7 @@
 -- In Raids ist epische Beute normal: dort keine Beute-Einblendung.
 local _, ns = ...
 local L = ns.L
+local Widgets = ns.Widgets
 local Journal = ns.Journal
 local Classification = ns.Classification
 
@@ -77,6 +78,27 @@ frame.text = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
 frame.text:SetPoint("CENTER")
 frame:Hide()
 
+-- Hinweise (Buffs, Taschen, Haltbarkeit, ...) erscheinen als Karte mit Symbol, Titel und Text (Lib/Card.lua) an
+-- derselben Stelle wie das Banner; Größe, Dauer, Position und Warteschlange sind gemeinsam
+local notice = ns.Card.Create("LevelTimerNotice")
+notice.frame:SetFrameStrata("HIGH")
+notice.frame:SetPoint("TOP", frame, "TOP")
+
+local function iconPath(name)
+  return "Interface\\Icons\\" .. name
+end
+
+-- Symbole der Hinweise: Zahl = Spell-ID (Textur aus dem Client), sonst Pfad eines Symbols, das es in allen Clients gibt
+Alerts.ICONS = {
+  food = 19705,   -- Satt
+  camp = 1229741, -- Lagervorteile (WoW Forever)
+  bags = iconPath("INV_Misc_Bag_08"),
+  durability = iconPath("INV_Misc_Gear_01"),
+  ammo = iconPath("INV_Ammo_Arrow_02"),
+  trainer = iconPath("INV_Misc_Book_09"),
+  instanceLimit = iconPath("INV_Misc_PocketWatch_01"),
+}
+
 local shownAt
 local moving  -- Verschiebemodus: bleibt stehen und lässt sich ziehen
 
@@ -119,17 +141,37 @@ end
 
 local queue = {}  -- { message, color, sound } der wartenden Einblendungen, älteste zuerst
 
-local function display(message, color, sound)
-  frame.text:SetText(message)
-  setColor(color)
-  layout()
-  shownAt = GetTime()
-  frame:SetAlpha(0)
-  frame:Show()
-  if sound and ns.db and ns.db.alertSound and PlaySound then PlaySound(RAID_WARNING_SOUND) end
+-- Der Raid-Warnton; auch für andere Anzeigen (z.B. Lagerfeuer), wenn der Spieler Ton eingeschaltet hat
+function Alerts.PlaySound()
+  if PlaySound then PlaySound(RAID_WARNING_SOUND) end
 end
 
-frame:SetScript("OnUpdate", function(self)
+local function isShowing()
+  return frame:IsShown() or notice.frame:IsShown()
+end
+
+-- spec = { icon, title, body }: als Karte statt als Banner
+local function display(message, color, sound, spec)
+  local shown
+  if spec then
+    frame:Hide()
+    notice.Set({ color = color, icon = spec.icon, title = spec.title, body = spec.body })
+    shown = notice.frame
+  else
+    notice.frame:Hide()
+    frame.text:SetText(message)
+    setColor(color)
+    layout()
+    shown = frame
+  end
+  shownAt = GetTime()
+  shown:SetAlpha(0)
+  shown:Show()
+  if sound and ns.db and ns.db.alertSound then Alerts.PlaySound() end
+end
+
+-- Einblenden, halten, ausblenden; danach die nächste wartende (Banner und Karte teilen sich den Ablauf)
+local function fade(self)
   if moving then return end
   local age = GetTime() - shownAt
   -- Warten weitere Einblendungen, ist die laufende kürzer zu sehen
@@ -137,7 +179,7 @@ frame:SetScript("OnUpdate", function(self)
   if age >= hold + FADE_SECONDS then
     local nextAlert = table.remove(queue, 1)
     if nextAlert then
-      display(unpack(nextAlert))
+      display(unpack(nextAlert, 1, 4))
     else
       self:Hide()
     end
@@ -148,59 +190,55 @@ frame:SetScript("OnUpdate", function(self)
   else
     self:SetAlpha(1)
   end
-end)
+end
+
+frame:SetScript("OnUpdate", fade)
+notice.frame:SetScript("OnUpdate", fade)
 
 -- Einblendung zeigen; läuft schon eine, wartet die neue (höchstens MAX_QUEUE). options = { immediate = ersetzt die
--- laufende und leert die Warteschlange, sound = Ton, falls eingeschaltet }. Im Verschiebemodus erscheint nichts Neues.
+-- laufende und leert die Warteschlange, sound = Ton, falls eingeschaltet, notice = { icon, title, body } zeigt eine
+-- Karte statt des Banners }. Im Verschiebemodus erscheint nichts Neues.
 function Alerts.Show(message, color, options)
   ns.Debug("alert", "%s", message)
   options = options or {}
   if options.immediate then queue = {} end
   -- Im Verschiebemodus wartet alles Neue (auch die erste Einblendung) und erscheint nach dem Verschieben
-  if moving or (frame:IsShown() and not options.immediate) then
+  if moving or (isShowing() and not options.immediate) then
     if #queue >= MAX_QUEUE then table.remove(queue, 1) end
-    table.insert(queue, { message, color, options.sound })
+    table.insert(queue, { message, color, options.sound, options.notice })
     return
   end
-  display(message, color, options.sound)
+  display(message, color, options.sound, options.notice)
 end
 
 -- Laufende und wartende Einblendungen verwerfen
 function Alerts.Clear()
   queue = {}
-  if not moving then frame:Hide() end
+  if not moving then
+    frame:Hide()
+    notice.frame:Hide()
+  end
 end
 
 ---------------------------------------------------------------------------
 -- Position: ziehen im Verschiebemodus, gespeichert in alertPos
 ---------------------------------------------------------------------------
-local appliedPos
-
-local function savePosition()
-  local point, _, relativePoint, x, y = frame:GetPoint()
-  ns.db.alertPos = { point, relativePoint, x, y }
-  appliedPos = ns.db.alertPos
-end
-
-local function restorePosition()
-  appliedPos = ns.db.alertPos
-  local pos = ns.db.alertPos or DEFAULT_POSITION
-  frame:ClearAllPoints()
-  frame:SetPoint(pos[1], UIParent, pos[2], pos[3], pos[4])
-end
-
-frame:SetMovable(true)
-frame:RegisterForDrag("LeftButton")
-frame:SetScript("OnDragStart", function(self)
-  if moving then self:StartMoving() end
-end)
-frame:SetScript("OnDragStop", function(self)
-  self:StopMovingOrSizing()
-  savePosition()
-end)
-frame:SetScript("OnMouseUp", function(_, mouseButton)
-  if moving and mouseButton == "RightButton" then Alerts.SetMoving(false) end
-end)
+local mover = Widgets.CreateMover(frame, {
+  default = DEFAULT_POSITION,
+  get = function() return ns.db and ns.db.alertPos end,
+  set = function(pos) ns.db.alertPos = pos end,
+  onMovingChanged = function(isMoving)
+    moving = isMoving
+    if isMoving then
+      frame:SetAlpha(1)
+      return
+    end
+    frame:Hide()
+    notice.frame:Hide()
+    local waiting = table.remove(queue, 1)
+    if waiting then display(unpack(waiting, 1, 4)) end
+  end,
+})
 
 function Alerts.IsMoving()
   return moving or false
@@ -210,33 +248,30 @@ end
 function Alerts.SetMoving(enabled)
   enabled = enabled and true or false
   if enabled == (moving or false) then return end
-  moving = false
   if enabled then
-    Alerts.Show(L.ALERT_MOVE_HINT, COLORS.levelUp, { immediate = true })
-    moving = true
-    frame:SetAlpha(1)
-    frame:EnableMouse(true)
-  else
-    frame:EnableMouse(false)
-    frame:Hide()
-    local waiting = table.remove(queue, 1)
-    if waiting then display(unpack(waiting)) end
+    Alerts.Show(L.ALERT_MOVE_HINT, COLORS.levelUp, { immediate = true })  -- noch nicht im Modus: wird gezeigt
   end
+  mover.SetMoving(enabled)
 end
 
 function Alerts.ResetPosition()
-  ns.db.alertPos = nil
-  restorePosition()
+  mover.Reset()
 end
 
--- Hinweis an den Spieler: jede Nachricht als Chatzeile, alle zusammen in einer Einblendung.
--- messages = Text oder Liste von Texten
-function Alerts.Notify(messages, color)
-  if type(messages) == "string" then messages = { messages } end
-  for _, message in ipairs(messages) do
-    ns.Print(message)
+-- Karte zu einem Hinweis: mit Titel steht der Text als Zeile darunter, ohne Titel ist der Text der Titel
+local function noticeCard(entry)
+  return { icon = entry.icon, title = entry.title or entry.text, body = entry.title and entry.text or nil }
+end
+
+-- Hinweis an den Spieler: jede Nachricht als Chatzeile und als Karte (mehrere warten nacheinander).
+-- notices = Text, { text, title, icon } oder eine Liste davon; icon siehe Alerts.ICONS
+function Alerts.Notify(notices, color)
+  if type(notices) == "string" or notices.text then notices = { notices } end
+  for _, entry in ipairs(notices) do
+    if type(entry) == "string" then entry = { text = entry } end
+    ns.Print(entry.text)
+    Alerts.Show(entry.text, color, { notice = noticeCard(entry) })
   end
-  Alerts.Show(table.concat(messages, "\n"), color)
 end
 
 -- Arten: Einstellung, Farbe, Text aus einem Wert (Level, Name, Link, Prozent) und Beispielwert
@@ -307,29 +342,30 @@ Journal.OnAdd(function(logName, entry)
 end)
 
 -- Vorschau: eine Beispiel-Einblendung mit den aktuellen Einstellungen
-local PREVIEW_ORDER = { "levelUp", "rare", "elite", "loot", "nearDeath" }
+local PREVIEW_ORDER = { "levelUp", "rare", "elite", "loot", "nearDeath", "notice" }
 local previewIndex = 0
+
+-- Beispiel einer Hinweis-Karte (wie "Taschen fast voll"), ohne Chatzeile
+local function showNoticeSample()
+  Alerts.Clear()
+  local sample = { icon = Alerts.ICONS.bags, title = L.NOTICE_BAGS, text = L.WARN_BAGS_FULL }
+  Alerts.Show(sample.text, Alerts.WARNING_COLOR, { notice = noticeCard(sample), immediate = true })
+end
 
 function Alerts.Preview()
   if moving then Alerts.SetMoving(false) end
   previewIndex = previewIndex % #PREVIEW_ORDER + 1
-  Alerts.ShowSample(PREVIEW_ORDER[previewIndex])
+  local kind = PREVIEW_ORDER[previewIndex]
+  if kind == "notice" then showNoticeSample() else Alerts.ShowSample(kind) end
 end
 
 ns.RegisterApply(function(db)
-  local oldScale = frame:GetScale()
   local scale = math.max(Alerts.MIN_SCALE, math.min(Alerts.MAX_SCALE, db.alertScale))
-  frame:SetScale(scale)
-  if db.alertPos ~= appliedPos then
-    restorePosition()
-  elseif db.alertPos and math.abs(oldScale - scale) > 0.001 then
-    -- Ankerabstände gelten in der Skalierung des Rahmens: umrechnen, damit die Einblendung stehen bleibt
-    db.alertPos[3] = db.alertPos[3] * oldScale / scale
-    db.alertPos[4] = db.alertPos[4] * oldScale / scale
-    restorePosition()
-  end
+  mover.SetScale(scale)
+  notice.frame:SetScale(scale)
+  mover.Sync()
   layout()
 end)
 
-ns.OnLogin(restorePosition)
+ns.OnLogin(mover.Restore)
 ns.OnLogout(function() moving = false end)

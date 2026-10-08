@@ -1097,6 +1097,64 @@ Schnelle Splits sichtbar (ja/nein):
 
 ---
 
+## Neu in v2.10: Lagerfeuer (nur WoW Forever)
+
+### 53. Lagerfeuer-Hinweis und Countdown (Roadmap 236)
+
+- [ ] geprüft
+
+Einstellungen → Hinweise → Abschnitt „Lagerfeuer“: Countdown und Hinweis an. Zuerst „Vorschau“ mehrfach
+anklicken (Hinweis, Countdown, „Lagervorteile aktiv“), „Verschieben“ ausprobieren, Größe ändern. Dann echt:
+zu einem Lagerfeuer gehen **ohne** Lagervorteile (Buff „Lagervorteile“ ablaufen lassen oder abbrechen),
+stehen, danach hinsetzen und die 60 Sekunden abwarten.
+
+**Erwartet:** beim Dazustellen erscheint der blaue, leicht pulsierende Hinweis „Setz dich hin“; beim Hinsetzen
+wechselt er zum Countdown mit Zauber-Symbol, Zahl und Balken, der von 60 s bis 0 läuft (Zahl und Buff-Zeit
+gleich, Prüfung mit der Aura-Liste); danach kurz „Lagervorteile aktiv!“ (grün), mit Ton, wenn „Ton bei
+Lagervorteilen“ an ist. Wer vorher aufsteht, bekommt keine Erfolgsmeldung. Mit Lagervorteilen und ohne
+Hinsetzen erscheint kein Hinweis. Im Kampf und bei Bosskämpfen nichts und kein Fehler.
+
+```
+/run for i=1,40 do local a=C_UnitAuras.GetAuraDataByIndex("player",i,"HELPFUL"); if not a then break end print(i, a.spellId, a.name, a.duration, a.expirationTime, GetTime()) end
+```
+
+**Antwort:**
+
+```text
+Hinweis erscheint (ja/nein):
+Countdown läuft von 60 bis 0 (ja/nein, Abweichung zur Aura-Liste):
+Meldung "aktiv" und Ton (ja/nein):
+Symbol sichtbar (ja/nein):
+Texte in fr/es passen (ja/nein):
+Position nach /reload gleich (ja/nein):
+Fehler:
+```
+
+### 54. Hinweise als Karten (Roadmap 237)
+
+- [ ] geprüft
+
+Einstellungen → Einblendungen → „Vorschau“ so oft anklicken, bis die Karte „Taschen“ erscheint. Dann die
+echten Hinweise auslösen: Food-Hinweis (Satt fehlt, Einstellungen → Hinweise → „Hinweis: Satt fehlt“),
+Taschen fast voll, Haltbarkeit unter 20 %, als Jäger Munition knapp, geradzahliger Level-Up (Lehrer),
+Instanzlimit.
+
+**Erwartet:** jede Meldung als dunkle Karte mit Farbleiste, passendem Symbol (kein grünes Quadrat, kein
+Fragezeichen außer bei unbekanntem Zauber), Titel in Gold/Orange und Text darunter; mehrere gleichzeitig
+(Satt + Lagervorteile) erscheinen nacheinander; Größe, Dauer und Position folgen den Einstellungen im Reiter
+„Einblendungen“; die Chatzeile erscheint weiterhin.
+
+**Antwort:**
+
+```text
+Symbole sichtbar (welche fehlen oder sind grün):
+Texte in fr/es passen (ja/nein):
+Position und Größe wie eingestellt (ja/nein):
+Fehler:
+```
+
+---
+
 ## Errors
 
 ### When starting boss fight

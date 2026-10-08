@@ -53,11 +53,11 @@ end
 
 -- Je Hinweis: Einstellung, Prüfung (true = warnen), Text; active = Zustand bei der letzten Prüfung
 local WARNINGS = {
-  { setting = "warnBagsFull", message = "WARN_BAGS_FULL",
+  { setting = "warnBagsFull", message = "WARN_BAGS_FULL", title = "NOTICE_BAGS", icon = "bags",
     isDue = function() return ns.Bags.GetFreeSlots() < BAGS_LOW end },
-  { setting = "warnDurability", message = "WARN_DURABILITY",
+  { setting = "warnDurability", message = "WARN_DURABILITY", title = "NOTICE_DURABILITY", icon = "durability",
     isDue = function() return GearWarnings.GetLowestDurability() < DURABILITY_LOW end },
-  { setting = "warnAmmo", message = "WARN_AMMO", isDue = isAmmoLow },
+  { setting = "warnAmmo", message = "WARN_AMMO", title = "NOTICE_AMMO", icon = "ammo", isDue = isAmmoLow },
 }
 
 function GearWarnings.Check()
@@ -66,7 +66,8 @@ function GearWarnings.Check()
     local due = ns.db[warning.setting] and warning.isDue() or false
     if due and not warning.active then
       ns.Debug("warnings", "%s", warning.setting)
-      ns.Alerts.Notify(L[warning.message], ns.Alerts.WARNING_COLOR)
+      ns.Alerts.Notify({ title = L[warning.title], text = L[warning.message], icon = ns.Alerts.ICONS[warning.icon] },
+        ns.Alerts.WARNING_COLOR)
     end
     warning.active = due
   end

@@ -50,7 +50,7 @@ wow = {
     resting = false,
     buffs = {},              -- aktive Buffs: Name oder { name, spellId } (C_UnitAuras.GetAuraDataByIndex)
     spellNames = { [19705] = "Satt", [1229741] = "Lagervorteile" },  -- C_Spell.GetSpellName
-    interface = 120100,      -- Interface-Version (GetBuildInfo); 16001 = WoW Forever
+    interface = (SCENARIO or ""):match("^forever_") and 16001 or 120100,  -- Interface-Version (GetBuildInfo); Szenarien forever_* laden als WoW Forever (16001)
     health = 1000,
     healthMax = 1000,
     -- Händler: Reparatur (CanMerchantRepair, GetRepairAllCost) und Gildenbank
@@ -366,7 +366,10 @@ function GetInventoryItemDurability(slot)
 end
 function UnitIsAFK() return state.afk end
 function IsResting() return state.resting end
-C_Spell = { GetSpellName = function(spellID) return state.spellNames[spellID] end }
+C_Spell = {
+  GetSpellName = function(spellID) return state.spellNames[spellID] end,
+  GetSpellTexture = function(spellID) return "Interface\Icons\Spell_" .. spellID end,
+}
 -- Beschränkte Auren (Retail/Forever, z.B. Bosskampf): wie im Client bricht die Abfrage mit Fehler ab
 C_Secrets = { ShouldAurasBeSecret = function() return state.aurasSecret == true end }
 C_UnitAuras = {

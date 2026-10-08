@@ -70,7 +70,8 @@ end
 local function notifyCount(format, ...)
   local count, limit = InstanceLimit.GetHourCount(), InstanceLimit.GetLimit()
   local wait = InstanceLimit.GetSecondsUntilNextFree() or 0
-  ns.Alerts.Notify(string.format(format, count, limit, Format.Duration(wait), ...), ns.Alerts.WARNING_COLOR)
+  ns.Alerts.Notify({ title = L.NOTICE_INSTANCE_LIMIT, text = string.format(format, count, limit, Format.Duration(wait), ...),
+    icon = ns.Alerts.ICONS.instanceLimit }, ns.Alerts.WARNING_COLOR)
 end
 
 local function warn()

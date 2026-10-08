@@ -292,6 +292,29 @@ addToggles({
   toggle("WARN_AMMO_TOGGLE", "warnAmmo", ns.GearWarnings.HasAmmo),
   toggle("WARN_INSTANCE_LIMIT_TOGGLE", "warnInstanceLimit"),
 })
+-- Lagerfeuer-Anzeige: nur in WoW Forever (dort gibt es den Lagerfeuer-Buff)
+if ns.CampFire.IsAvailable() then
+  addSection("SECTION_CAMP")
+  addToggles({
+    toggle("CAMP_COUNTDOWN_TOGGLE", "campCountdown"),
+    toggle("CAMP_HINT_TOGGLE", "campHint"),
+    toggle("CAMP_SOUND", "campSound"),
+  })
+  addSlider({
+    label = "CAMP_SCALE",
+    min = toPercent(ns.CampDisplay.MIN_SCALE),
+    max = toPercent(ns.CampDisplay.MAX_SCALE),
+    step = 5,
+    get = function(db) return toPercent(db.campScale) end,
+    set = function(value) ns.Set("campScale", value / 100) end,
+    format = percent,
+  })
+  builder.AddButtonRow({
+    { label = "CAMP_PREVIEW", onClick = function() ns.CampDisplay.Preview() end },
+    { label = "CAMP_MOVE", onClick = function() ns.CampDisplay.SetMoving(not ns.CampDisplay.IsMoving()) end },
+    { label = "CAMP_RESET_POSITION", onClick = function() ns.CampDisplay.ResetPosition() end },
+  })
+end
 finishPage()
 
 -- Komfort: Automatik bei Händlern, Quests und Gesprächen

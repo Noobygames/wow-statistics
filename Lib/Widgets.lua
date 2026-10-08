@@ -35,6 +35,7 @@ local CLOSE_BUTTON_SIZE = 24
 local SCROLLBAR_WIDTH = 8
 local SCROLLBAR_THUMB_HEIGHT = 30
 local WHITE_TEXTURE = "Interface\\Buttons\\WHITE8x8"
+Widgets.WHITE_TEXTURE = WHITE_TEXTURE  -- einfarbige Fläche für Hintergründe und Balken
 
 local CHECKBOX_SIZE = 26
 Widgets.CHECKBOX_LABEL_GAP = 2  -- Abstand Kästchen zu Beschriftung (Options.lua rechnet damit)
@@ -221,6 +222,76 @@ function Widgets.CreateButton(parent, width, height, onClick)
   function button:GetTextWidth() return self.label:GetStringWidth() end
   button:SetScript("OnClick", onClick)
   return button
+end
+
+---------------------------------------------------------------------------
+-- Verschiebbare Anzeige: speichert die Position, kennt einen Verschiebemodus (Ziehen, Rechtsklick beendet)
+-- config = { default = { Punkt, Bezugspunkt, x, y }, get() -> gespeicherte Position oder nil, set(Position oder nil) }
+-- Rückgabe: { Restore, Sync, SetScale, SetMoving, IsMoving, Reset }
+---------------------------------------------------------------------------
+function Widgets.CreateMover(frame, config)
+  local mover = {}
+  local moving = false
+  local applied  -- zuletzt angewendete Position (Tabelle); ein Profilwechsel liefert eine andere
+
+  function mover.Restore()
+    applied = config.get()
+    local pos = applied or config.default
+    frame:ClearAllPoints()
+    frame:SetPoint(pos[1], UIParent, pos[2], pos[3], pos[4])
+  end
+
+  -- Nur wenn sich die Position seit dem letzten Anwenden geändert hat (z.B. anderes Profil)
+  function mover.Sync()
+    if config.get() ~= applied then mover.Restore() end
+  end
+
+  -- Ankerabstände gelten in der Skalierung des Rahmens: ändert sich die Größe bei stehender Position, umrechnen,
+  -- damit er stehen bleibt. Nicht bei der ersten Anwendung nach dem Laden (die gespeicherten Abstände gelten schon
+  -- in dieser Größe) und nicht bei einem Profilwechsel (neue Position, neue Größe zusammen gespeichert).
+  local scaleApplied = false
+  function mover.SetScale(scale)
+    local old = frame:GetScale()
+    frame:SetScale(scale)
+    local pos = config.get()
+    if scaleApplied and pos and pos == applied and math.abs(old - scale) > 0.001 then
+      pos[3] = pos[3] * old / scale
+      pos[4] = pos[4] * old / scale
+      mover.Restore()
+    end
+    scaleApplied = true
+  end
+
+  function mover.IsMoving() return moving end
+
+  function mover.SetMoving(enabled)
+    moving = enabled and true or false
+    frame:EnableMouse(moving)
+    if config.onMovingChanged then config.onMovingChanged(moving) end
+  end
+
+  function mover.Reset()
+    config.set(nil)
+    mover.Restore()
+  end
+
+  frame:SetMovable(true)
+  frame:SetClampedToScreen(true)
+  frame:RegisterForDrag("LeftButton")
+  frame:SetScript("OnDragStart", function(self)
+    if moving then self:StartMoving() end
+  end)
+  frame:SetScript("OnDragStop", function(self)
+    self:StopMovingOrSizing()
+    local point, _, relativePoint, x, y = self:GetPoint()
+    local pos = { point, relativePoint, x, y }
+    config.set(pos)
+    applied = pos
+  end)
+  frame:SetScript("OnMouseUp", function(_, mouseButton)
+    if moving and mouseButton == "RightButton" then mover.SetMoving(false) end
+  end)
+  return mover
 end
 
 ---------------------------------------------------------------------------

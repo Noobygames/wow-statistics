@@ -2,6 +2,12 @@
 
 Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt und unter „Erledigt“ mit Version vermerkt. Nummern laufen über alle Versionen weiter.
 
+## v2.10: Lagerfeuer in WoW Forever
+
+- [x] 236. **Lagerfeuer-Countdown und -Hinweis** (M, nur WoW Forever): Beim Buff „Einladendes Lagerfeuer“ (60 s, Spell 1229739) zeigt eine kleine Anzeige die Restzeit als Zahl und leerlaufenden Balken („Sitzen bleiben!“), danach kurz „Lagervorteile aktiv!“ (nur wenn der Countdown die Lagervorteile 1229741 erneuert hat; optional mit Ton). Ist ein Lagerfeuer in der Nähe (1283391) und fehlen die Lagervorteile, erscheint ein pulsierender Hinweis, sich hinzusetzen. Spell-IDs im Spiel per Aura-Liste ermittelt. Einstellungen im Reiter Hinweise (Abschnitt Lagerfeuer): Countdown, Hinweis, Ton, Größe, Vorschau (Hinweis → Countdown → aktiv), Verschieben und Zurücksetzen. Neue Bausteine: `Lib/Auras.lua` (Buffs lesen mit allen Sperr-Schutzen, von `BuffReminder` mitgenutzt) und `Widgets.CreateMover` (verschiebbare Anzeige mit gespeicherter Position, Größen-Umrechnung und Verschiebemodus; `Alerts.lua` kann darauf umgestellt werden, siehe 234).
+
+- [x] 237. **Hinweise als Karten** (M): Alle Hinweise (Buff fehlt „Satt“ und „Lagervorteile“, Taschen fast voll, Haltbarkeit niedrig, Munition knapp, Lehrer besuchen, Instanzlimit) erscheinen wie die Lagerfeuer-Anzeige: dunkle Karte mit Farbleiste, Symbol (Zauber-Textur oder Item-Symbol), Titel und Text. `Lib/Card.lua` ist der gemeinsame Baustein (auch für `CampDisplay`); `Alerts.Notify` nimmt `{ text, title, icon }` und stellt mehrere Hinweise in die Warteschlange. Größe, Dauer, Position und Ton bleiben die der Einblendungen; die Vorschau zeigt als sechste Art eine Hinweis-Karte.
+
 ## v2.9: Instanz-Auswertung und Einblendungen
 
 - [x] 149. **Instanz-Reiter** (M): dritter Reiter „Instanz“ neben Level und Session; zeigt alle Stat-Zeilen für den laufenden Instanz-Lauf (`Stats.INSTANCE`, voller Zählersatz in `currentRun.stats`, gezählt nur bei laufender Lauf-Uhr). Alte offene Läufe werden beim Login umgewandelt.
@@ -325,6 +331,7 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 
 ## Erledigt
 
+- v2.10.0: 236. Lagerfeuer-Countdown und -Hinweis (WoW Forever), 237. Hinweise als Karten (Satt fehlt, Taschen, Haltbarkeit, Munition, Lehrer, Instanzlimit); neue Bausteine `Lib/Auras.lua`, `Lib/Card.lua`, `Widgets.CreateMover`
 - v2.9.0: 149.–160. Instanz-Reiter mit Leerzustand und Auto-Reiter, Erhaltene XP, Instanz-Daten zurücksetzen, XP/h-Fix für das laufende Level, Einblendungen gestalten (Banner, Größe, Dauer, Ton, Position, Warteschlange), Buttons im Addon-Stil, Stat-Gruppen und Voreinstellungen, scrollende Einstellungen, Charakterliste der Historie; Review-Funde 161–217 zu großen Teilen behoben (geheime Werte, geschützte Migrationen und Listener, Profil-Import mit Wertebereichen, Texte in allen Sprachen, Befehle mit Rückmeldung, Chroma-Cyan für Splits); offen: 175, 180, 186, 194, 215 und Clean-Code/Wiederverwendbarkeit 218–235
 - v2.8.2: 145. Chat kopieren, 146. Ziehgriff an der Split-Liste, 147. Einfügen im Import-Fenster, 148. Buff-Hinweis im Bosskampf; Test-Stub mit den echten Reset-Texten
 - v2.8.1: 95.–144. Stabilität aus dem Deep Review (Endlosschleife bei Zeitumstellung, Lua-Fehler durch geheime Werte, Beute in Retail, Session- und Erholt-XP, /played im Chat, alte Twinks, wiederholbare Quests, Gildenreparatur, Instanz-Kopien, Profile, Speedrun, Darstellung)

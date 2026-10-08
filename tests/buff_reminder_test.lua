@@ -19,7 +19,9 @@ expect("aus: kein Hinweis", reminders(), 0)
 addon.Set("remindFood", true)
 BuffReminder.Check()
 expect("Hinweis", reminders(), 1)
-expect("als Einblendung", LevelTimerAlert.text:GetText(), L.REMIND_FOOD)
+expect("als Karte: Text", LevelTimerNotice.body:GetText(), L.REMIND_FOOD)
+expect("als Karte: Titel", LevelTimerNotice.title:GetText(), L.NOTICE_BUFF)
+expect("Banner bleibt aus", LevelTimerAlert:IsShown(), false)
 
 BuffReminder.Check()
 expect("Pause zwischen Hinweisen", reminders(), 1)
@@ -70,7 +72,7 @@ expect("Camp fehlt", BuffReminder.IsCampMissing(), true)
 addon.Set("remindCamp", true)
 addon.Alerts.Clear()  -- Einblendungen warten sonst hinter der laufenden
 BuffReminder.Check()
-expect("Camp-Hinweis", LevelTimerAlert.text:GetText(), L.REMIND_CAMP)
+expect("Camp-Hinweis", LevelTimerNotice.body:GetText(), L.REMIND_CAMP)
 
 -- Aktiver Camp-Buff wird an der Spell-ID erkannt
 wow.state.buffs = { "Satt", { name = "Lagervorteile", spellId = 1229741 } }
@@ -81,7 +83,10 @@ wow.advance(301)
 wow.state.buffs = {}
 addon.Alerts.Clear()
 BuffReminder.Check()
-expect("beide zusammen", LevelTimerAlert.text:GetText(), L.REMIND_FOOD .. "\n" .. L.REMIND_CAMP)
+expect("beide: erst Essen", LevelTimerNotice.body:GetText(), L.REMIND_FOOD)
+wow.advance(1.5 + 1.1)  -- die laufende zeigt sich kürzer, solange eine weitere wartet
+LevelTimerNotice._scripts.OnUpdate(LevelTimerNotice, 0.1)
+expect("beide: dann Camp", LevelTimerNotice.body:GetText(), L.REMIND_CAMP)
 
 -- Forever ohne den Zauber (älterer Build): nichts behaupten
 wow.state.spellNames = { [19705] = "Satt" }

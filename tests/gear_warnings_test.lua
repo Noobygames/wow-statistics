@@ -23,7 +23,8 @@ expect("aus: still", count(L.WARN_BAGS_FULL), 0)
 addon.Set("warnBagsFull", true)
 GearWarnings.Check()
 expect("Warnung", count(L.WARN_BAGS_FULL), 1)
-expect("Einblendung", LevelTimerAlert.text:GetText(), L.WARN_BAGS_FULL)
+expect("Karte: Text", LevelTimerNotice.body:GetText(), L.WARN_BAGS_FULL)
+expect("Karte: Titel", LevelTimerNotice.title:GetText(), L.NOTICE_BAGS)
 GearWarnings.Check()
 expect("nur einmal", count(L.WARN_BAGS_FULL), 1)
 
@@ -70,7 +71,7 @@ expect("ungerade: still", trainerReminders(), 0)
 addon.Alerts.Clear()
 wow.levelUp(14)
 expect("gerade: Hinweis", trainerReminders(), 1)
-expect("mit Level", LevelTimerAlert.text:GetText(), string.format(L.REMIND_TRAINER, 14))
+expect("mit Level", LevelTimerNotice.body:GetText(), string.format(L.REMIND_TRAINER, 14))
 
 wow.state.interface = 16001
 expect("Forever: verfügbar", addon.TrainerReminder.IsAvailable(), true)
