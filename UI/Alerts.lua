@@ -7,6 +7,7 @@
 -- In Raids ist epische Beute normal: dort keine Beute-Einblendung.
 local _, ns = ...
 local L = ns.L
+local Widgets = ns.Widgets
 local Journal = ns.Journal
 local Classification = ns.Classification
 
@@ -222,33 +223,22 @@ end
 ---------------------------------------------------------------------------
 -- Position: ziehen im Verschiebemodus, gespeichert in alertPos
 ---------------------------------------------------------------------------
-local appliedPos
-
-local function savePosition()
-  local point, _, relativePoint, x, y = frame:GetPoint()
-  ns.db.alertPos = { point, relativePoint, x, y }
-  appliedPos = ns.db.alertPos
-end
-
-local function restorePosition()
-  appliedPos = ns.db.alertPos
-  local pos = ns.db.alertPos or DEFAULT_POSITION
-  frame:ClearAllPoints()
-  frame:SetPoint(pos[1], UIParent, pos[2], pos[3], pos[4])
-end
-
-frame:SetMovable(true)
-frame:RegisterForDrag("LeftButton")
-frame:SetScript("OnDragStart", function(self)
-  if moving then self:StartMoving() end
-end)
-frame:SetScript("OnDragStop", function(self)
-  self:StopMovingOrSizing()
-  savePosition()
-end)
-frame:SetScript("OnMouseUp", function(_, mouseButton)
-  if moving and mouseButton == "RightButton" then Alerts.SetMoving(false) end
-end)
+local mover = Widgets.CreateMover(frame, {
+  default = DEFAULT_POSITION,
+  get = function() return ns.db and ns.db.alertPos end,
+  set = function(pos) ns.db.alertPos = pos end,
+  onMovingChanged = function(isMoving)
+    moving = isMoving
+    if isMoving then
+      frame:SetAlpha(1)
+      return
+    end
+    frame:Hide()
+    notice.frame:Hide()
+    local waiting = table.remove(queue, 1)
+    if waiting then display(unpack(waiting, 1, 4)) end
+  end,
+})
 
 function Alerts.IsMoving()
   return moving or false
@@ -258,39 +248,29 @@ end
 function Alerts.SetMoving(enabled)
   enabled = enabled and true or false
   if enabled == (moving or false) then return end
-  moving = false
   if enabled then
-    Alerts.Show(L.ALERT_MOVE_HINT, COLORS.levelUp, { immediate = true })
-    moving = true
-    frame:SetAlpha(1)
-    frame:EnableMouse(true)
-  else
-    frame:EnableMouse(false)
-    frame:Hide()
-    notice.frame:Hide()
-    local waiting = table.remove(queue, 1)
-    if waiting then display(unpack(waiting)) end
+    Alerts.Show(L.ALERT_MOVE_HINT, COLORS.levelUp, { immediate = true })  -- noch nicht im Modus: wird gezeigt
   end
+  mover.SetMoving(enabled)
 end
 
 function Alerts.ResetPosition()
-  ns.db.alertPos = nil
-  restorePosition()
+  mover.Reset()
 end
 
 -- Karte zu einem Hinweis: mit Titel steht der Text als Zeile darunter, ohne Titel ist der Text der Titel
-local function noticeCard(notice)
-  return { icon = notice.icon, title = notice.title or notice.text, body = notice.title and notice.text or nil }
+local function noticeCard(entry)
+  return { icon = entry.icon, title = entry.title or entry.text, body = entry.title and entry.text or nil }
 end
 
 -- Hinweis an den Spieler: jede Nachricht als Chatzeile und als Karte (mehrere warten nacheinander).
 -- notices = Text, { text, title, icon } oder eine Liste davon; icon siehe Alerts.ICONS
 function Alerts.Notify(notices, color)
   if type(notices) == "string" or notices.text then notices = { notices } end
-  for _, notice in ipairs(notices) do
-    if type(notice) == "string" then notice = { text = notice } end
-    ns.Print(notice.text)
-    Alerts.Show(notice.text, color, { notice = noticeCard(notice) })
+  for _, entry in ipairs(notices) do
+    if type(entry) == "string" then entry = { text = entry } end
+    ns.Print(entry.text)
+    Alerts.Show(entry.text, color, { notice = noticeCard(entry) })
   end
 end
 
@@ -380,20 +360,12 @@ function Alerts.Preview()
 end
 
 ns.RegisterApply(function(db)
-  local oldScale = frame:GetScale()
   local scale = math.max(Alerts.MIN_SCALE, math.min(Alerts.MAX_SCALE, db.alertScale))
-  frame:SetScale(scale)
+  mover.SetScale(scale)
   notice.frame:SetScale(scale)
-  if db.alertPos ~= appliedPos then
-    restorePosition()
-  elseif db.alertPos and math.abs(oldScale - scale) > 0.001 then
-    -- Ankerabstände gelten in der Skalierung des Rahmens: umrechnen, damit die Einblendung stehen bleibt
-    db.alertPos[3] = db.alertPos[3] * oldScale / scale
-    db.alertPos[4] = db.alertPos[4] * oldScale / scale
-    restorePosition()
-  end
+  mover.Sync()
   layout()
 end)
 
-ns.OnLogin(restorePosition)
+ns.OnLogin(mover.Restore)
 ns.OnLogout(function() moving = false end)

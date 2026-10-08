@@ -246,16 +246,20 @@ function Widgets.CreateMover(frame, config)
     if config.get() ~= applied then mover.Restore() end
   end
 
-  -- Ankerabstände gelten in der Skalierung des Rahmens: bei neuer Größe umrechnen, damit er stehen bleibt
+  -- Ankerabstände gelten in der Skalierung des Rahmens: ändert sich die Größe bei stehender Position, umrechnen,
+  -- damit er stehen bleibt. Nicht bei der ersten Anwendung nach dem Laden (die gespeicherten Abstände gelten schon
+  -- in dieser Größe) und nicht bei einem Profilwechsel (neue Position, neue Größe zusammen gespeichert).
+  local scaleApplied = false
   function mover.SetScale(scale)
     local old = frame:GetScale()
     frame:SetScale(scale)
     local pos = config.get()
-    if pos and math.abs(old - scale) > 0.001 then
+    if scaleApplied and pos and pos == applied and math.abs(old - scale) > 0.001 then
       pos[3] = pos[3] * old / scale
       pos[4] = pos[4] * old / scale
       mover.Restore()
     end
+    scaleApplied = true
   end
 
   function mover.IsMoving() return moving end

@@ -52,16 +52,18 @@ end
 
 local GRANT_WINDOW = 3      -- Sekunden nach dem Ende des Countdowns, in denen die Lagervorteile eintreffen dürfen
 local previousKind          -- Art des letzten Zustands
-local benefitsAtStart = false  -- Lagervorteile (Ablaufzeit) beim Start des Countdowns; false = hatte man keine
+local NO_BENEFITS, UNKNOWN_EXPIRATION = false, "unknown"
+local benefitsAtStart = NO_BENEFITS  -- Lagervorteile beim Start des Countdowns: keine, Ablaufzeit oder unbekannt
 local countdownEndedAt      -- GetTime(), seit der Countdown nicht mehr läuft, bis das Ergebnis feststeht
 
 -- Hat der Countdown die Lagervorteile gebracht? Sie sind neu oder wurden erneuert (spätere Ablaufzeit).
 -- Wer vorher aufsteht, hat sie nicht bekommen.
 local function benefitsGranted(benefits)
   if not benefits then return false end
-  if benefitsAtStart == false then return true end
+  if benefitsAtStart == NO_BENEFITS then return true end
+  if benefitsAtStart == UNKNOWN_EXPIRATION then return false end  -- nicht feststellbar: lieber keine Meldung
   local expiration = benefitsExpiration(benefits)
-  return expiration ~= nil and benefitsAtStart ~= nil and expiration > benefitsAtStart + 1
+  return expiration ~= nil and expiration > benefitsAtStart + 1
 end
 
 function CampFire.Check()
@@ -70,7 +72,7 @@ function CampFire.Check()
   local kind = state and state.kind or nil
 
   if kind == "countdown" and previousKind ~= "countdown" then
-    benefitsAtStart = benefits and benefitsExpiration(benefits) or false
+    benefitsAtStart = not benefits and NO_BENEFITS or benefitsExpiration(benefits) or UNKNOWN_EXPIRATION
     countdownEndedAt = nil
   elseif kind ~= "countdown" and previousKind == "countdown" then
     countdownEndedAt = GetTime()
@@ -97,8 +99,10 @@ end
 
 -- Regelmäßig prüfen statt auf UNIT_AURA zu hören: der Countdown läuft in der Anzeige selbst weiter,
 -- und die Prüfung ist billig
-ns.Every(CHECK_INTERVAL, CampFire.Check)
+if CampFire.IsAvailable() then
+  ns.Every(CHECK_INTERVAL, CampFire.Check)
+end
 
 ns.OnLogin(function()
-  previousKind, benefitsAtStart, countdownEndedAt = nil, false, nil
+  previousKind, benefitsAtStart, countdownEndedAt = nil, NO_BENEFITS, nil
 end)

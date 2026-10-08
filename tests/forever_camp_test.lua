@@ -82,6 +82,17 @@ Camp.Check()
 expect("kein Countdown mehr", camp:IsShown(), false)
 expect("keine falsche Erfolgsmeldung", shownText(L.CAMP_DONE) and camp:IsShown(), false)
 
+-- Lagervorteile mit unlesbarer Ablaufzeit: ob der Countdown sie erneuert hat, ist nicht feststellbar, also keine Meldung
+local secretBenefits = aura(BENEFITS, "Lagervorteile", 3600, wow.SECRET)
+wow.state.buffs = { nearby(), secretBenefits, inviting(GetTime() + 60) }
+Camp.Check()
+wow.advance(10)
+wow.state.buffs = { nearby(), secretBenefits }
+Camp.Check()
+wow.advance(5)
+Camp.Check()
+expect("unbekannte Ablaufzeit: keine Meldung", camp:IsShown(), false)
+
 -- Countdown abgeschaltet
 addon.Set("campCountdown", false)
 wow.state.buffs = { nearby(), inviting(GetTime() + 60) }
