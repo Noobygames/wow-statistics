@@ -343,6 +343,7 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 
 ## Erledigt
 
+- v2.13.0: 240. Kill-Quest-Mobs markieren (Symbol links vom Lebensbalken der Namensplakette, über `C_QuestLog.UnitIsRelatedToActiveQuest`)
 - v2.12.0: 239. „Kills/Quests bis Level-Up“ getrennt schaltbar (Community-Wunsch für No-Quest-Läufe)
 - v2.11.0: 238. Fenster verschieben („Move Anything“): Standardfenster des Spiels ziehbar, Positionen gemerkt, Reset-Button
 - v2.10.0: 236. Lagerfeuer-Countdown und -Hinweis (WoW Forever), 237. Hinweise als Karten (Satt fehlt, Taschen, Haltbarkeit, Munition, Lehrer, Instanzlimit); neue Bausteine `Lib/Auras.lua`, `Lib/Card.lua`, `Widgets.CreateMover`
