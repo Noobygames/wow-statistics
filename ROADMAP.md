@@ -339,6 +339,7 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 
 ## Erledigt
 
+- v2.12.0: 239. „Kills/Quests bis Level-Up“ getrennt schaltbar (Community-Wunsch für No-Quest-Läufe)
 - v2.11.0: 238. Fenster verschieben („Move Anything“): Standardfenster des Spiels ziehbar, Positionen gemerkt, Reset-Button
 - v2.10.0: 236. Lagerfeuer-Countdown und -Hinweis (WoW Forever), 237. Hinweise als Karten (Satt fehlt, Taschen, Haltbarkeit, Munition, Lehrer, Instanzlimit); neue Bausteine `Lib/Auras.lua`, `Lib/Card.lua`, `Widgets.CreateMover`
 - v2.9.0: 149.–160. Instanz-Reiter mit Leerzustand und Auto-Reiter, Erhaltene XP, Instanz-Daten zurücksetzen, XP/h-Fix für das laufende Level, Einblendungen gestalten (Banner, Größe, Dauer, Ton, Position, Warteschlange), Buttons im Addon-Stil, Stat-Gruppen und Voreinstellungen, scrollende Einstellungen, Charakterliste der Historie; Review-Funde 161–217 zu großen Teilen behoben (geheime Werte, geschützte Migrationen und Listener, Profil-Import mit Wertebereichen, Texte in allen Sprachen, Befehle mit Rückmeldung, Chroma-Cyan für Splits); offen: 175, 180, 186, 194, 215 und Clean-Code/Wiederverwendbarkeit 218–235
