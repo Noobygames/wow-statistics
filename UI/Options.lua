@@ -354,6 +354,15 @@ if ns.CampFire.IsAvailable() or ns.FoodTimer.IsAvailable() then
       toggle("CAMP_HINT_TOGGLE", "campHint"),
       toggle("CAMP_SOUND", "campSound"),
     })
+    addSlider({
+      label = "CAMP_HINT_PAUSE",
+      min = ns.CampFire.MIN_HINT_PAUSE,
+      max = ns.CampFire.MAX_HINT_PAUSE,
+      step = 1,
+      get = function(db) return db.campHintPause end,
+      set = function(value) ns.Set("campHintPause", value) end,
+      format = function(value) return string.format(L.MINUTES, value) end,
+    })
     addTimerDisplayControls("CAMP", ns.CampDisplay, "campScale")
   end
 

@@ -1292,3 +1292,21 @@ Quadrate.
 Symbole alle sichtbar (ja/nein):
 Fehler:
 ```
+
+### 60. Lagerfeuer-Hinweis nur kurz (Roadmap 245)
+
+- [ ] geprüft
+
+In WoW Forever zu einem Lagerfeuer gehen, ohne sich zu setzen. Weggehen und wiederkommen. Regler „Hinweis wieder nach“
+im Reiter Timer ändern.
+
+**Erwartet:** Hinweis steht ca. 8 s und verschwindet; erscheint erst nach der eingestellten Pause wieder, auch wenn
+man zwischendurch weggeht. Countdown und „Lagervorteile aktiv“ sind nicht betroffen.
+
+**Antwort:**
+
+```text
+Hinweis verschwindet (ja/nein):
+Pause wirkt (ja/nein):
+Fehler:
+```

@@ -36,6 +36,25 @@ wow.state.buffs = { nearby(), benefits(GetTime() + 3000) }
 Camp.Check()
 expect("mit Lagervorteilen kein Hinweis", camp:IsShown(), false)
 
+-- Hinweis steht nur kurz und kommt erst nach der Pause wieder
+wow.state.buffs = { nearby() }
+Camp.Check()
+expect("Hinweis erscheint", camp:IsShown(), true)
+wow.advance(9)
+Camp.Check()
+expect("Hinweis verschwindet nach ein paar Sekunden", camp:IsShown(), false)
+wow.advance(60)
+Camp.Check()
+expect("Pause läuft noch", camp:IsShown(), false)
+wow.state.buffs = {}
+Camp.Check()
+wow.state.buffs = { nearby() }
+Camp.Check()
+expect("Wiederkommen in der Pause: kein Hinweis", camp:IsShown(), false)
+wow.advance(5 * 60)
+Camp.Check()
+expect("nach der Pause wieder da", camp:IsShown(), true)
+
 addon.Set("campHint", false)
 wow.state.buffs = { nearby() }
 Camp.Check()
