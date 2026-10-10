@@ -1155,6 +1155,27 @@ Fehler:
 
 ---
 
+### 58. Reiter Timer und Munition nur für Jäger (Roadmap 243)
+
+- [ ] geprüft
+
+Einstellungen öffnen: Reiter Hinweise und Reiter Timer ansehen, mit einem Jäger und mit einer anderen Klasse. In
+fr/es die Breite der Reiterzeile prüfen (neun Reiter).
+
+**Erwartet:** Hinweise = Level-Up, Erinnerungen, Warnungen; Timer = Lagerfeuer (nur Forever) und Essen mit
+Vorschau/Verschieben/Zurücksetzen; „Munition knapp“ mit seinen drei Reglern nur beim Jäger; die Reiterzeile passt
+in jeder Sprache ins Fenster.
+
+**Antwort:**
+
+```text
+Reiterzeile passt (de/en/fr/es):
+Munition nur beim Jäger (ja/nein):
+Fehler:
+```
+
+---
+
 ### 57. Essen-Timer (Roadmap 242)
 
 - [ ] geprüft
@@ -1253,3 +1274,39 @@ Stack:
 [Interface/AddOns/LevelTimer/Core/LevelTimer.lua]:116: in function <Interface/AddOns/LevelTimer/Core/LevelTimer.lua:109>
 
 Locals:
+
+### 59. Einblendungen als Karten (Roadmap 244)
+
+- [ ] geprüft
+
+Reiter Einblendungen: Vorschau mehrfach klicken (Level-Up, Rare, Elite, Beute, Beinahe-Tod), danach Position
+verschieben. Stil „Text“ zum Vergleich.
+
+**Erwartet:** im Stil „Banner“ jede Einblendung als Karte mit Symbol und Farbleiste wie die Hinweise (Lagerfeuer,
+Taschen); Größe, Dauer, Ton und Position wirken weiter; „Text“ zeigt nur die Schrift. Symbole sind keine grünen
+Quadrate.
+
+**Antwort:**
+
+```text
+Symbole alle sichtbar (ja/nein):
+Fehler:
+```
+
+### 60. Lagerfeuer-Hinweis nur kurz (Roadmap 245)
+
+- [ ] geprüft
+
+In WoW Forever zu einem Lagerfeuer gehen, ohne sich zu setzen. Weggehen und wiederkommen. Regler „Hinweis wieder nach“
+im Reiter Timer ändern.
+
+**Erwartet:** Hinweis steht ca. 8 s und verschwindet; erscheint erst nach der eingestellten Pause wieder, auch wenn
+man zwischendurch weggeht. Countdown und „Lagervorteile aktiv“ sind nicht betroffen.
+
+**Antwort:**
+
+```text
+Hinweis verschwindet (ja/nein):
+Pause wirkt (ja/nein):
+Fehler:
+```

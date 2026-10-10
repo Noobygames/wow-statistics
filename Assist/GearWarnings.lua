@@ -44,6 +44,11 @@ function GearWarnings.HasAmmo()
   return not ns.Client.IsRetail()
 end
 
+-- Einstellungen zur Munition zeigen wir nur Jägern (andere Klassen mit Fernkampfwaffe warnen wir nicht)
+function GearWarnings.ShowsAmmoOptions()
+  return GearWarnings.HasAmmo() and select(2, UnitClass("player")) == HUNTER
+end
+
 -- WoW Forever sagt selbst, ob der Charakter Munition nutzt (UnitUsesAmmo, wie Blizzards Munitionsplatz
 -- im Charakterfenster); sonst alle Jäger
 local function usesAmmo()

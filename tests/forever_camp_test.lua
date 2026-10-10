@@ -36,6 +36,25 @@ wow.state.buffs = { nearby(), benefits(GetTime() + 3000) }
 Camp.Check()
 expect("mit Lagervorteilen kein Hinweis", camp:IsShown(), false)
 
+-- Hinweis steht nur kurz und kommt erst nach der Pause wieder
+wow.state.buffs = { nearby() }
+Camp.Check()
+expect("Hinweis erscheint", camp:IsShown(), true)
+wow.advance(9)
+Camp.Check()
+expect("Hinweis verschwindet nach ein paar Sekunden", camp:IsShown(), false)
+wow.advance(60)
+Camp.Check()
+expect("Pause läuft noch", camp:IsShown(), false)
+wow.state.buffs = {}
+Camp.Check()
+wow.state.buffs = { nearby() }
+Camp.Check()
+expect("Wiederkommen in der Pause: kein Hinweis", camp:IsShown(), false)
+wow.advance(5 * 60)
+Camp.Check()
+expect("nach der Pause wieder da", camp:IsShown(), true)
+
 addon.Set("campHint", false)
 wow.state.buffs = { nearby() }
 Camp.Check()
@@ -163,11 +182,24 @@ addon.Set("campScale", 1)
 -- Einstellungen
 ---------------------------------------------------------------------------
 SlashCmdList.LEVELTIMER("config")
-expectTrue("Reiter Hinweise", wow.click(L.OPTIONS_TAB_NOTIFICATIONS))
+expectTrue("Reiter Timer", wow.click(L.OPTIONS_TAB_TIMERS))
 expectTrue("Button Vorschau", wow.click(L.CAMP_PREVIEW))
 expect("Vorschau zeigt Anzeige", camp:IsShown(), true)
 expectTrue("Button Verschieben", wow.click(L.CAMP_MOVE))
 expect("Button schaltet Verschiebemodus", Display.IsMoving(), true)
 expectTrue("Button Verschieben beendet", wow.click(L.CAMP_MOVE))
 expect("Verschiebemodus aus", Display.IsMoving(), false)
+-- Schließen der Einstellungen beendet den Verschiebemodus, die Beispielanzeige verschwindet
+expectTrue("Button Verschieben", wow.click(L.CAMP_MOVE))
+LevelTimerOptions:Hide()
+expect("Einstellungen zu: Modus aus", Display.IsMoving(), false)
+expect("Einstellungen zu: Anzeige weg", camp:IsShown(), false)
+-- Ein zweiter Verschiebemodus löst den ersten ab
+SlashCmdList.LEVELTIMER("config")
+Display.SetMoving(true)
+local alerts = addon.Alerts
+alerts.SetMoving(true)
+expect("anderer Modus löst ab", Display.IsMoving(), false)
+expect("anderer Modus: Anzeige weg", camp:IsShown(), false)
+alerts.SetMoving(false)
 expectTrue("Button Zurücksetzen", wow.click(L.CAMP_RESET_POSITION))

@@ -289,29 +289,11 @@ addToggles({
   toggle("WARN_BAGS_FULL_TOGGLE", "warnBagsFull"),
   toggle("WARN_DURABILITY_TOGGLE", "warnDurability"),
   toggle("REMIND_TRAINER_TOGGLE", "remindTrainer", ns.TrainerReminder.IsAvailable),
-  toggle("WARN_AMMO_TOGGLE", "warnAmmo", ns.GearWarnings.HasAmmo),
+  toggle("WARN_AMMO_TOGGLE", "warnAmmo", ns.GearWarnings.ShowsAmmoOptions),
   toggle("WARN_INSTANCE_LIMIT_TOGGLE", "warnInstanceLimit"),
 })
--- Größe, Vorschau, Verschieben und Zurücksetzen einer Zeit-Anzeige (Lib/TimerDisplay.lua); Texte <PREFIX>_SCALE, _PREVIEW, _MOVE, _RESET_POSITION
-local function addTimerDisplayControls(prefix, display, scaleSetting)
-  addSlider({
-    label = prefix .. "_SCALE",
-    min = toPercent(display.MIN_SCALE),
-    max = toPercent(display.MAX_SCALE),
-    step = 5,
-    get = function(db) return toPercent(db[scaleSetting]) end,
-    set = function(value) ns.Set(scaleSetting, value / 100) end,
-    format = percent,
-  })
-  builder.AddButtonRow({
-    { label = prefix .. "_PREVIEW", onClick = function() display.Preview() end },
-    { label = prefix .. "_MOVE", onClick = function() display.SetMoving(not display.IsMoving()) end },
-    { label = prefix .. "_RESET_POSITION", onClick = function() display.ResetPosition() end },
-  })
-end
-
-
-if ns.GearWarnings.HasAmmo() then
+-- Munition: nur für Jäger
+if ns.GearWarnings.ShowsAmmoOptions() then
   addSlider({
     label = "WARN_AMMO_BELOW",
     min = ns.GearWarnings.MIN_AMMO,
@@ -340,27 +322,61 @@ if ns.GearWarnings.HasAmmo() then
     format = function(value) return value == 0 and L.AMMO_ONCE or string.format(L.MINUTES, value) end,
   })
 end
--- Lagerfeuer-Anzeige: nur in WoW Forever (dort gibt es den Lagerfeuer-Buff)
-if ns.CampFire.IsAvailable() then
-  addSection("SECTION_CAMP")
-  addToggles({
-    toggle("CAMP_COUNTDOWN_TOGGLE", "campCountdown"),
-    toggle("CAMP_HINT_TOGGLE", "campHint"),
-    toggle("CAMP_SOUND", "campSound"),
-  })
-  addTimerDisplayControls("CAMP", ns.CampDisplay, "campScale")
-end
-
--- Essen-Timer: überall, wo der Client die Buffs "Essen" und "Satt" kennt
-if ns.FoodTimer.IsAvailable() then
-  addSection("SECTION_FOOD")
-  addToggles({
-    toggle("FOOD_TIMER_TOGGLE", "foodTimer"),
-    toggle("FOOD_SOUND", "foodSound"),
-  })
-  addTimerDisplayControls("FOOD", ns.FoodDisplay, "foodScale")
-end
 finishPage()
+
+-- Timer: Lagerfeuer (nur WoW Forever) und Essen
+if ns.CampFire.IsAvailable() or ns.FoodTimer.IsAvailable() then
+  addPage("OPTIONS_TAB_TIMERS")
+  -- Größe, Vorschau, Verschieben und Zurücksetzen einer Zeit-Anzeige (Lib/TimerDisplay.lua); Texte <PREFIX>_SCALE, _PREVIEW, _MOVE, _RESET_POSITION
+  local function addTimerDisplayControls(prefix, display, scaleSetting)
+    addSlider({
+      label = prefix .. "_SCALE",
+      min = toPercent(display.MIN_SCALE),
+      max = toPercent(display.MAX_SCALE),
+      step = 5,
+      get = function(db) return toPercent(db[scaleSetting]) end,
+      set = function(value) ns.Set(scaleSetting, value / 100) end,
+      format = percent,
+    })
+    builder.AddButtonRow({
+      { label = prefix .. "_PREVIEW", onClick = function() display.Preview() end },
+      { label = prefix .. "_MOVE", onClick = function() display.SetMoving(not display.IsMoving()) end },
+      { label = prefix .. "_RESET_POSITION", onClick = function() display.ResetPosition() end },
+    })
+  end
+
+
+  -- Lagerfeuer-Anzeige: nur in WoW Forever (dort gibt es den Lagerfeuer-Buff)
+  if ns.CampFire.IsAvailable() then
+    addSection("SECTION_CAMP")
+    addToggles({
+      toggle("CAMP_COUNTDOWN_TOGGLE", "campCountdown"),
+      toggle("CAMP_HINT_TOGGLE", "campHint"),
+      toggle("CAMP_SOUND", "campSound"),
+    })
+    addSlider({
+      label = "CAMP_HINT_PAUSE",
+      min = ns.CampFire.MIN_HINT_PAUSE,
+      max = ns.CampFire.MAX_HINT_PAUSE,
+      step = 1,
+      get = function(db) return db.campHintPause end,
+      set = function(value) ns.Set("campHintPause", value) end,
+      format = function(value) return string.format(L.MINUTES, value) end,
+    })
+    addTimerDisplayControls("CAMP", ns.CampDisplay, "campScale")
+  end
+
+  -- Essen-Timer: überall, wo der Client die Buffs "Essen" und "Satt" kennt
+  if ns.FoodTimer.IsAvailable() then
+    addSection("SECTION_FOOD")
+    addToggles({
+      toggle("FOOD_TIMER_TOGGLE", "foodTimer"),
+      toggle("FOOD_SOUND", "foodSound"),
+    })
+    addTimerDisplayControls("FOOD", ns.FoodDisplay, "foodScale")
+  end
+  finishPage()
+end
 
 -- Komfort: Automatik bei Händlern, Quests und Gesprächen
 addPage("OPTIONS_TAB_COMFORT")

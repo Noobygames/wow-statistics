@@ -4,7 +4,8 @@
 --   1229741 "Lagervorteile"            1 h (wird bei jedem Durchlauf erneuert)
 -- Zwei Anzeigen (UI/CampDisplay.lua), je einzeln schaltbar:
 --   campCountdown  Countdown mit der Restzeit des einladenden Lagerfeuers, danach kurz "Lagervorteile aktiv"
---   campHint       Hinweis, wenn ein Feuer in der Nähe ist und die Lagervorteile fehlen: hinsetzen
+--   campHint       Hinweis, wenn ein Feuer in der Nähe ist und die Lagervorteile fehlen: hinsetzen; steht
+--                  HINT_SECONDS und kommt frühestens nach campHintPause Minuten wieder
 -- Geprüft wird alle CHECK_INTERVAL Sekunden; bei gesperrten Auren (Kampf, Bosskampf) passiert nichts.
 local _, ns = ...
 local Auras = ns.Auras
@@ -15,7 +16,11 @@ ns.CampFire = CampFire
 CampFire.NEARBY_SPELL_ID = 1283391
 CampFire.INVITING_SPELL_ID = 1229739
 CampFire.BENEFITS_SPELL_ID = 1229741
+CampFire.MIN_HINT_PAUSE = 1  -- Grenzen des Reglers (Minuten)
+CampFire.MAX_HINT_PAUSE = 30
 local CHECK_INTERVAL = 0.5
+local HINT_SECONDS = 8        -- so lange steht der Hinweis
+local SECONDS_PER_MINUTE = 60
 
 function CampFire.IsAvailable()
   return ns.Client.IsForever()
@@ -55,6 +60,27 @@ local previousKind          -- Art des letzten Zustands
 local NO_BENEFITS, UNKNOWN_EXPIRATION = false, "unknown"
 local benefitsAtStart = NO_BENEFITS  -- Lagervorteile beim Start des Countdowns: keine, Ablaufzeit oder unbekannt
 local countdownEndedAt      -- GetTime(), seit der Countdown nicht mehr läuft, bis das Ergebnis feststeht
+local hintShownAt           -- GetTime(), seit der Hinweis steht (nil = steht nicht)
+local hintNextAt = 0        -- GetTime(), ab wann der Hinweis wieder erscheinen darf
+
+-- Hinweis nur kurz zeigen und danach pausieren; die Pause gilt auch nach Weggehen und Wiederkommen
+local function hintVisible(isHint)
+  if not isHint then
+    hintShownAt = nil
+    return false
+  end
+  local now = GetTime()
+  if not hintShownAt then
+    if now < hintNextAt then return false end
+    hintShownAt = now
+  end
+  if now - hintShownAt >= HINT_SECONDS then
+    hintShownAt = nil
+    hintNextAt = now + ns.db.campHintPause * SECONDS_PER_MINUTE
+    return false
+  end
+  return true
+end
 
 -- Hat der Countdown die Lagervorteile gebracht? Sie sind neu oder wurden erneuert (spätere Ablaufzeit).
 -- Wer vorher aufsteht, hat sie nicht bekommen.
@@ -95,7 +121,8 @@ function CampFire.Check()
   end
 
   if kind == "countdown" and not ns.db.campCountdown then state = nil end
-  if kind == "hint" and not ns.db.campHint then state = nil end
+  if kind == "hint" and not (ns.db.campHint and hintVisible(true)) then state = nil end
+  if kind ~= "hint" then hintVisible(false) end
   ns.CampDisplay.Show(state)
   if finished and ns.db.campCountdown then
     ns.Debug("camp", "campfire benefits granted")
@@ -111,4 +138,5 @@ end
 
 ns.OnLogin(function()
   previousKind, benefitsAtStart, countdownEndedAt = nil, NO_BENEFITS, nil
+  hintShownAt, hintNextAt = nil, 0
 end)

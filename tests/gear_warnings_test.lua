@@ -111,6 +111,16 @@ GearWarnings.Check()
 expect("Forever mit Munitionsbedarf: Warnung", count(L.WARN_AMMO), 3)
 UnitUsesAmmo = nil
 
+-- Munitions-Einstellungen nur für Jäger, nicht in Retail
+wow.state.interface = 11509
+wow.state.class = "WARRIOR"
+expect("Krieger: keine Munitions-Optionen", GearWarnings.ShowsAmmoOptions(), false)
+wow.state.class = "HUNTER"
+expect("Jäger: Munitions-Optionen", GearWarnings.ShowsAmmoOptions(), true)
+wow.state.interface = 120100
+expect("Retail: keine Munitions-Optionen", GearWarnings.ShowsAmmoOptions(), false)
+wow.state.interface = 11509
+
 -- Einstellbare Grenze
 wow.state.interface = 11509
 wow.state.inventoryCounts = { [0] = 1000 }

@@ -4,6 +4,7 @@ local Journal = addon.Journal
 local alert = LevelTimerAlert
 
 local function shownText()
+  if LevelTimerNotice:IsShown() then return LevelTimerNotice.title:GetText() end  -- Banner = Karte
   return alert:IsShown() and alert.text:GetText() or nil
 end
 
@@ -71,9 +72,10 @@ Journal.AddNearDeath(4, {})
 expect("Beinahe-Tod", shownText(), string.format(L.ALERT_NEAR_DEATH, 4))
 
 -- Ausblenden: erst nach Haltezeit durchsichtiger, dann weg
+local card = LevelTimerNotice
 wow.advance(3.5)
-alert._scripts.OnUpdate(alert, 0.1)
-expect("blendet aus, noch sichtbar", alert:IsShown(), true)
+card._scripts.OnUpdate(card, 0.1)
+expect("blendet aus, noch sichtbar", card:IsShown(), true)
 wow.advance(1)
-alert._scripts.OnUpdate(alert, 0.1)
-expect("nach Ablauf versteckt", alert:IsShown(), false)
+card._scripts.OnUpdate(card, 0.1)
+expect("nach Ablauf versteckt", card:IsShown(), false)

@@ -53,6 +53,7 @@ local SETTINGS_DEFAULTS = {
   -- Lagerfeuer in WoW Forever (siehe CampFire.lua, CampDisplay.lua)
   campCountdown = true,  -- Countdown beim einladenden Lagerfeuer
   campHint = true,       -- Hinweis, wenn ein Feuer in der Nähe ist und die Lagervorteile fehlen
+  campHintPause = 5,     -- Minuten, bevor der Lagerfeuer-Hinweis wieder erscheinen darf
   campSound = false,     -- Ton, wenn die Lagervorteile da sind
   campScale = 1,
   foodTimer = true,      -- Essen-Timer (FoodTimer.lua): Restzeit beim Essen, danach "Satt aktiv"
@@ -305,6 +306,7 @@ local SETTING_RANGES = {
   ammoRepeat = { 0, 30 },
   alertScale = { 0.5, 2 },
   alertDuration = { 1, 10 },
+  campHintPause = { 1, 30 },
   campScale = { 0.5, 2 },
   foodScale = { 0.5, 2 },
   questMarkScale = { 0.5, 2 },

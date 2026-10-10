@@ -11,16 +11,17 @@ function PlaySound(id) table.insert(played, id) end
 expect("Stil Banner", LevelTimerDB.alertStyle, "banner")
 expect("Größe", alert:GetScale(), 1)
 Alerts.ShowSample("levelUp")
-expectTrue("Banner hat Mindestbreite", alert:GetWidth() >= 280)
+expect("Banner ist eine Karte", LevelTimerNotice:IsShown(), true)
+expect("Karte: Titel", LevelTimerNotice.title:GetText(), string.format(L.ALERT_LEVEL_UP, 11))
+expect("Banner ohne Text-Rahmen", alert:IsShown(), false)
 expect("kein Ton im Standard", #played, 0)
+addon.Set("alertStyle", "text")
 
 -- Größe und Stil wirken sofort
 addon.Set("alertScale", 1.5)
 expect("Größe 150 %", alert:GetScale(), 1.5)
-addon.Set("alertStyle", "text")
 Alerts.ShowSample("levelUp")
-expectTrue("Text-Stil ohne Mindestbreite", alert:GetWidth() < 280)
-addon.Set("alertStyle", "banner")
+expectTrue("Text-Stil zeigt Schrift", alert:IsShown() and not LevelTimerNotice:IsShown())
 
 -- Ton
 addon.Set("alertSound", true)
