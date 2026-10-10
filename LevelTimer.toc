@@ -28,6 +28,7 @@ Lib\Items.lua
 Lib\Widgets.lua
 Lib\Auras.lua
 Lib\Card.lua
+Lib\TimerDisplay.lua
 
 # Erfassung: Zähler und Ereignisse (Tracking)
 Tracking\Stats.lua
@@ -69,8 +70,10 @@ UI\StatLines.lua
 UI\LevelUpSummary.lua
 UI\Alerts.lua
 UI\CampDisplay.lua
+UI\FoodDisplay.lua
 Assist\BuffReminder.lua
 Assist\CampFire.lua
+Assist\FoodTimer.lua
 Assist\GearWarnings.lua
 Assist\TrainerReminder.lua
 Assist\Comfort.lua

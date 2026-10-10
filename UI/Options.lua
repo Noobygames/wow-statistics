@@ -292,6 +292,25 @@ addToggles({
   toggle("WARN_AMMO_TOGGLE", "warnAmmo", ns.GearWarnings.HasAmmo),
   toggle("WARN_INSTANCE_LIMIT_TOGGLE", "warnInstanceLimit"),
 })
+-- Größe, Vorschau, Verschieben und Zurücksetzen einer Zeit-Anzeige (Lib/TimerDisplay.lua); Texte <PREFIX>_SCALE, _PREVIEW, _MOVE, _RESET_POSITION
+local function addTimerDisplayControls(prefix, display, scaleSetting)
+  addSlider({
+    label = prefix .. "_SCALE",
+    min = toPercent(display.MIN_SCALE),
+    max = toPercent(display.MAX_SCALE),
+    step = 5,
+    get = function(db) return toPercent(db[scaleSetting]) end,
+    set = function(value) ns.Set(scaleSetting, value / 100) end,
+    format = percent,
+  })
+  builder.AddButtonRow({
+    { label = prefix .. "_PREVIEW", onClick = function() display.Preview() end },
+    { label = prefix .. "_MOVE", onClick = function() display.SetMoving(not display.IsMoving()) end },
+    { label = prefix .. "_RESET_POSITION", onClick = function() display.ResetPosition() end },
+  })
+end
+
+
 if ns.GearWarnings.HasAmmo() then
   addSlider({
     label = "WARN_AMMO_BELOW",
@@ -329,20 +348,17 @@ if ns.CampFire.IsAvailable() then
     toggle("CAMP_HINT_TOGGLE", "campHint"),
     toggle("CAMP_SOUND", "campSound"),
   })
-  addSlider({
-    label = "CAMP_SCALE",
-    min = toPercent(ns.CampDisplay.MIN_SCALE),
-    max = toPercent(ns.CampDisplay.MAX_SCALE),
-    step = 5,
-    get = function(db) return toPercent(db.campScale) end,
-    set = function(value) ns.Set("campScale", value / 100) end,
-    format = percent,
+  addTimerDisplayControls("CAMP", ns.CampDisplay, "campScale")
+end
+
+-- Essen-Timer: überall, wo der Client die Buffs "Essen" und "Satt" kennt
+if ns.FoodTimer.IsAvailable() then
+  addSection("SECTION_FOOD")
+  addToggles({
+    toggle("FOOD_TIMER_TOGGLE", "foodTimer"),
+    toggle("FOOD_SOUND", "foodSound"),
   })
-  builder.AddButtonRow({
-    { label = "CAMP_PREVIEW", onClick = function() ns.CampDisplay.Preview() end },
-    { label = "CAMP_MOVE", onClick = function() ns.CampDisplay.SetMoving(not ns.CampDisplay.IsMoving()) end },
-    { label = "CAMP_RESET_POSITION", onClick = function() ns.CampDisplay.ResetPosition() end },
-  })
+  addTimerDisplayControls("FOOD", ns.FoodDisplay, "foodScale")
 end
 finishPage()
 

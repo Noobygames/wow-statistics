@@ -72,11 +72,11 @@ expect("ungültige Position fliegt raus", addon.Database.SanitizeSettings({ aler
 -- Optionen: Reiter und Buttons vorhanden
 SlashCmdList.LEVELTIMER("config")
 expectTrue("Reiter Einblendungen", wow.click(L.OPTIONS_TAB_ALERTS))
-expectTrue("Button Vorschau", wow.click(L.ALERT_PREVIEW))
+expectTrue("Button Vorschau", wow.click(L.ALERT_PREVIEW, true))
 expect("Vorschau zeigt Level-Up", alert:IsShown(), true)
-expectTrue("Button Verschieben", wow.click(L.ALERT_MOVE))
+expectTrue("Button Verschieben", wow.click(L.ALERT_MOVE, true))
 expect("Button schaltet Verschiebemodus", Alerts.IsMoving(), true)
-expectTrue("Button Verschieben beendet", wow.click(L.ALERT_MOVE))
+expectTrue("Button Verschieben beendet", wow.click(L.ALERT_MOVE, true))
 expect("Verschiebemodus aus", Alerts.IsMoving(), false)
 
 -- Warteschlange: eine zweite Einblendung wartet hinter der laufenden und erscheint danach

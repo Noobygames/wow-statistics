@@ -1155,6 +1155,27 @@ Fehler:
 
 ---
 
+### 57. Essen-Timer (Roadmap 242)
+
+- [ ] geprüft
+
+Einstellungen → Hinweise → Abschnitt „Essen“: Timer an. Etwas essen, das „Satt“ gibt, und sitzen bleiben. Danach
+mitten im Essen aufstehen. Einmal als Satt schon aktiv war und noch einmal essen. Vorschau, Verschieben, Größe.
+
+**Erwartet:** Karte „Sitzen bleiben!“ mit Zahl und leerlaufendem Balken (18 s); „Satt aktiv!“ erscheint, sobald
+der Buff „Satt“ da ist (wann genau: vor oder nach Ende des Essens?); beim Aufstehen ohne „Satt“ keine Meldung;
+Getränke lösen nichts aus; die Karte sitzt unter der Lagerfeuer-Anzeige und lässt sich verschieben.
+
+**Antwort:**
+
+```text
+Satt kommt nach wie vielen Sekunden Essen:
+Countdown und „Satt aktiv“ wie erwartet (ja/nein):
+Fehler:
+```
+
+---
+
 ### 56. Kill-Quest-Markierung (Roadmap 240)
 
 - [ ] geprüft
