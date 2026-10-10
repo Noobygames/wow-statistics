@@ -78,6 +78,8 @@ local SETTINGS_DEFAULTS = {
   declineDuels = false,
   chatCopyButton = false,   -- Button zum Kopieren an jedem Chatfenster (ChatCopy.lua)
   moveFrames = false,       -- Standardfenster des Spiels verschiebbar machen (MoveFrames.lua)
+  questMarks = false,       -- Symbol über Gegnern und NPCs einer aktiven Quest (QuestMarks.lua)
+  questMarkScale = 1,
   levelUpSummary = true,
   levelUpAnnounce = "off",  -- Level-Up-Zusammenfassung an "party" oder "guild" (siehe LevelUpSummary.lua)  -- Chatzeile beim Level-Up (siehe LevelUpSummary.lua)
   showPveKills = true,
@@ -295,6 +297,7 @@ local SETTING_RANGES = {
   alertScale = { 0.5, 2 },
   alertDuration = { 1, 10 },
   campScale = { 0.5, 2 },
+  questMarkScale = { 0.5, 2 },
 }
 
 local function isFiniteNumber(value)
