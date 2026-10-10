@@ -4,7 +4,7 @@ Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt 
 
 ## v2.13: Quest-Markierung
 
-- [x] 240. **Questziele über der Namensplakette markieren** (M): Einstellung `questMarks` (Komfort → Quest-Markierung, aus) mit Größe `questMarkScale`: ein Symbol links neben dem Lebensbalken (so hoch wie dieser) von Gegnern und NPCs einer aktiven Quest (`C_QuestLog.UnitIsRelatedToActiveQuest`, in WoW Forever per `/dump` geprüft: true für Questmobs). Nach erfülltem Ziel meldet die API selbst false, die Markierung verschwindet also von allein. Geheime Werte werden übergangen. Nur sichtbar, wenn Namensplaketten an sind und in Reichweite. Offen: Welt-Objekte (Kisten, Hebel) lassen sich nicht markieren (keine Einheit); Quest-Items in den Taschen (Karte beim Looten, `C_Container.GetContainerItemQuestInfo`); eigenes Symbol statt des Gossip-Ausrufezeichens; Wirkung in Retail und Classic Era prüfen.
+- [x] 240. **Kill-Quest-Mobs markieren** (M): Einstellung `questMarks` (Komfort → Quest-Markierung, aus) mit Größe `questMarkScale`: ein Symbol links neben dem Lebensbalken (so hoch wie dieser) von Gegnern und NPCs einer aktiven Quest (`C_QuestLog.UnitIsRelatedToActiveQuest`, in WoW Forever per `/dump` geprüft: true für Questmobs). Nach erfülltem Ziel meldet die API selbst false, die Markierung verschwindet also von allein. Geheime Werte werden übergangen. Nur sichtbar, wenn Namensplaketten an sind und in Reichweite. Offen: Welt-Objekte (Kisten, Hebel) lassen sich nicht markieren (keine Einheit); Quest-Items in den Taschen (Karte beim Looten, `C_Container.GetContainerItemQuestInfo`); eigenes Symbol statt des Gossip-Ausrufezeichens; Wirkung in Retail und Classic Era prüfen.
 
 ## v2.12: Wünsche aus der Community
 
