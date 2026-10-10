@@ -351,6 +351,7 @@ Schwerpunkt: Werte, die Zuschauer im Spielbild sehen und verstehen. Addons haben
 
 ## Erledigt
 
+- v2.14.0: 241. Munitionswarnung einstellbar, mit zweiter Schwelle „fast leer“ und Wiederholung; 242. Essen-Timer (Restzeit beim Essen, „Satt aktiv“), neuer Baustein `Lib/TimerDisplay.lua`; Fix: Lagerfeuer meldete erste Lagervorteile nicht
 - v2.13.0: 240. Kill-Quest-Mobs markieren (Symbol links vom Lebensbalken der Namensplakette, über `C_QuestLog.UnitIsRelatedToActiveQuest`)
 - v2.12.0: 239. „Kills/Quests bis Level-Up“ getrennt schaltbar (Community-Wunsch für No-Quest-Läufe)
 - v2.11.0: 238. Fenster verschieben („Move Anything“): Standardfenster des Spiels ziehbar, Positionen gemerkt, Reset-Button
