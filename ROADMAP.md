@@ -2,6 +2,10 @@
 
 Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt und unter „Erledigt“ mit Version vermerkt. Nummern laufen über alle Versionen weiter.
 
+## v2.12: Wünsche aus der Community
+
+- [x] 239. **„Kills/Quests bis Level-Up“ getrennt schaltbar** (S): Die Zeile wurde in „Kills bis Level-Up“ (`showKillsToLevel`) und „Quests bis Level-Up“ (`showQuestsToLevel`) aufgeteilt, damit No-Quest-Läufe keine nutzlose Quest-Zeile sehen. Einstellungs-Migration 5 übernimmt den alten Zustand in beide, auch in Profilen und Stream-Sicherung.
+
 ## v2.11: Komfort
 
 - [x] 238. **Fenster verschieben („Move Anything“)** (M): Einstellung `moveFrames` (Komfort → Fenster, aus): Die Standardfenster des Spiels (Charakter, Zauberbuch, Talente, Questlog, Freunde, Händler, Gespräche, Handel, Post, Bank, Lehrer, Berufe, Auktionshaus, Inspizieren, Beute, Gilde, Gruppensuche, Sammlungen, ...) lassen sich mit der linken Maustaste ziehen; die Position wird gemerkt (`movedFrames`) und beim Öffnen wiederhergestellt, auch nach Blizzards eigener Anordnung. Nichts im Kampf. Später geladene Blizzard-Addons kommen über `ADDON_LOADED` dazu. Button „Fensterpositionen zurücksetzen“ (wirkt nach /reload). Offen: eigene Liste erweitern (`/lt move <Framename>`), Rechtsklick-Reset pro Fenster, Skalieren.

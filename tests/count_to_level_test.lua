@@ -18,12 +18,16 @@ expect("2 Quests (aufgerundet)", Experience.CountToLevel(Stats.XP_QUESTS, Stats.
 wow.levelUp(11, 1000)
 expect("neues Level: Session", Experience.CountToLevel(Stats.XP_KILLS, Stats.PVE_KILLS), 20)
 
-addon.Set("showCountToLevel", true)
-local line
-for _, entry in ipairs(addon.STAT_LINES) do
-  if entry.setting == "showCountToLevel" then line = entry end
+local function statLine(setting)
+  for _, entry in ipairs(addon.STAT_LINES) do
+    if entry.setting == setting then return entry end
+  end
 end
-expect("Zeile", line.rows[1].value(Stats.LEVEL), "~20")
+expect("Kills-Zeile", statLine("showKillsToLevel").rows[1].value(Stats.LEVEL), "~20")
+expect("Quests-Zeile ist eine eigene Zeile", #statLine("showQuestsToLevel").rows, 1)
+addon.Set("showQuestsToLevel", false)
+addon.Set("showKillsToLevel", true)
+expect("Kills an, Quests aus (No-Quest-Lauf)", addon.db.showQuestsToLevel, false)
 
 -- Verbleibende Erholt-XP
 local restedLine

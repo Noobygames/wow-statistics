@@ -164,10 +164,10 @@ ns.STAT_LINES = {
     rows = { { label = "ROW_RECENT_XP_RATE", value = recentXpRate } } },
   { setting = "showXpGained", group = "STAT_GROUP_XP", label = "STAT_XP_GAINED", rows = { { label = "ROW_XP_GAINED", value = xpGained } } },
   { setting = "showLevelEta", group = "STAT_GROUP_XP", label = "STAT_LEVEL_ETA", rows = { { label = "ROW_LEVEL_ETA", value = timeToLevel } } },
-  { setting = "showCountToLevel", group = "STAT_GROUP_XP", label = "STAT_COUNT_TO_LEVEL", rows = {
-    { label = "ROW_KILLS_TO_LEVEL", value = countToLevel(Stats.XP_KILLS, Stats.PVE_KILLS) },
-    { label = "ROW_QUESTS_TO_LEVEL", value = countToLevel(Stats.XP_QUESTS, Stats.QUESTS) },
-  } },
+  { setting = "showKillsToLevel", group = "STAT_GROUP_XP", label = "STAT_KILLS_TO_LEVEL",
+    rows = { { label = "ROW_KILLS_TO_LEVEL", value = countToLevel(Stats.XP_KILLS, Stats.PVE_KILLS) } } },
+  { setting = "showQuestsToLevel", group = "STAT_GROUP_XP", label = "STAT_QUESTS_TO_LEVEL",
+    rows = { { label = "ROW_QUESTS_TO_LEVEL", value = countToLevel(Stats.XP_QUESTS, Stats.QUESTS) } } },
   { setting = "showMaxLevelEta", group = "STAT_GROUP_XP", label = "STAT_MAX_LEVEL_ETA",
     rows = { { label = "ROW_MAX_LEVEL_ETA", value = timeToMaxLevel } } },
   { setting = "showSplits", group = "STAT_GROUP_PROGRESS", label = "STAT_SPLITS", rows = {
