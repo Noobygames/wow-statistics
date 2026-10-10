@@ -2,6 +2,10 @@
 
 Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt und unter „Erledigt“ mit Version vermerkt. Nummern laufen über alle Versionen weiter.
 
+## v2.14: Einstellbare Munitionswarnung
+
+- [x] 241. **Munitionswarnung einstellbar und wiederholt** (S): Regler „Munition knapp unter“ (`ammoLow`, 20 bis 1000, Standard 200), zweite dringendere Warnung „Munition fast leer“ unter `ammoCritical` (0 bis 500, Standard 50, 0 = aus) und Wiederholung alle `ammoRepeat` Minuten, solange die Munition knapp bleibt (0 bis 30, Standard 5, 0 = nur einmal). Im Abschnitt Warnungen, nur wo es Munition gibt. Beim Absinken kommt nur eine der beiden Warnungen.
+
 ## v2.13: Quest-Markierung
 
 - [x] 240. **Kill-Quest-Mobs markieren** (M): Einstellung `questMarks` (Komfort → Quest-Markierung, aus) mit Größe `questMarkScale`: ein Symbol links neben dem Lebensbalken (so hoch wie dieser) von Gegnern und NPCs einer aktiven Quest (`C_QuestLog.UnitIsRelatedToActiveQuest`, in WoW Forever per `/dump` geprüft: true für Questmobs). Nach erfülltem Ziel meldet die API selbst false, die Markierung verschwindet also von allein. Geheime Werte werden übergangen. Nur sichtbar, wenn Namensplaketten an sind und in Reichweite. Offen: Welt-Objekte (Kisten, Hebel) lassen sich nicht markieren (keine Einheit); Quest-Items in den Taschen (Karte beim Looten, `C_Container.GetContainerItemQuestInfo`); eigenes Symbol statt des Gossip-Ausrufezeichens; Wirkung in Retail und Classic Era prüfen.
