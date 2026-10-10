@@ -163,7 +163,7 @@ addon.Set("campScale", 1)
 -- Einstellungen
 ---------------------------------------------------------------------------
 SlashCmdList.LEVELTIMER("config")
-expectTrue("Reiter Hinweise", wow.click(L.OPTIONS_TAB_NOTIFICATIONS))
+expectTrue("Reiter Timer", wow.click(L.OPTIONS_TAB_TIMERS))
 expectTrue("Button Vorschau", wow.click(L.CAMP_PREVIEW))
 expect("Vorschau zeigt Anzeige", camp:IsShown(), true)
 expectTrue("Button Verschieben", wow.click(L.CAMP_MOVE))

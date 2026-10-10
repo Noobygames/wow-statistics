@@ -6,6 +6,10 @@ Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt 
 
 - [x] 242. **Essen-Timer** (M): Beim Essen zeigt eine Karte die Restzeit des Buffs „Essen“ (Spell 433, 18 s, im Spiel ermittelt) als Zahl mit Balken („Sitzen bleiben!“), danach kurz „Satt aktiv!“, auch schon während des Essens, sobald „Satt“ eintrifft (neu oder erneuert); Getränke zählen nicht. Einstellungen im Reiter Hinweise (Abschnitt Essen): Timer, Ton, Größe, Vorschau, Verschieben, Zurücksetzen. Neuer Baustein `Lib/TimerDisplay.lua` (Karte mit Zuständen, Position, Größe, Vorschau); `CampDisplay` nutzt ihn jetzt auch. Fund beim Test: `CampFire` meldete „Lagervorteile aktiv“ nicht, wenn man noch gar keine Lagervorteile hatte (`x and false or y`); behoben.
 
+## v2.15: Aufgeräumte Hinweise
+
+- [x] 243. **Reiter „Timer“ und Munition nur für Jäger** (S): Der Reiter Hinweise war überladen. Lagerfeuer-Anzeige und Essen-Timer wohnen jetzt im eigenen Reiter „Timer“ (Lagerfeuer nur in WoW Forever); „Hinweise“ behält Level-Up, Erinnerungen und Warnungen. Die Munitions-Einstellungen (Schalter und drei Regler) erscheinen nur noch bei Jägern (`GearWarnings.ShowsAmmoOptions`, nicht in Retail). Die Warnung selbst bleibt unverändert.
+
 ## v2.14: Einstellbare Munitionswarnung
 
 - [x] 241. **Munitionswarnung einstellbar und wiederholt** (S): Regler „Munition knapp unter“ (`ammoLow`, 20 bis 1000, Standard 200), zweite dringendere Warnung „Munition fast leer“ unter `ammoCritical` (0 bis 500, Standard 50, 0 = aus) und Wiederholung alle `ammoRepeat` Minuten, solange die Munition knapp bleibt (0 bis 30, Standard 5, 0 = nur einmal). Im Abschnitt Warnungen, nur wo es Munition gibt. Beim Absinken kommt nur eine der beiden Warnungen.

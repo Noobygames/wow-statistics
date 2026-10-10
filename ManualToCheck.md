@@ -1155,6 +1155,27 @@ Fehler:
 
 ---
 
+### 58. Reiter Timer und Munition nur für Jäger (Roadmap 243)
+
+- [ ] geprüft
+
+Einstellungen öffnen: Reiter Hinweise und Reiter Timer ansehen, mit einem Jäger und mit einer anderen Klasse. In
+fr/es die Breite der Reiterzeile prüfen (neun Reiter).
+
+**Erwartet:** Hinweise = Level-Up, Erinnerungen, Warnungen; Timer = Lagerfeuer (nur Forever) und Essen mit
+Vorschau/Verschieben/Zurücksetzen; „Munition knapp“ mit seinen drei Reglern nur beim Jäger; die Reiterzeile passt
+in jeder Sprache ins Fenster.
+
+**Antwort:**
+
+```text
+Reiterzeile passt (de/en/fr/es):
+Munition nur beim Jäger (ja/nein):
+Fehler:
+```
+
+---
+
 ### 57. Essen-Timer (Roadmap 242)
 
 - [ ] geprüft
