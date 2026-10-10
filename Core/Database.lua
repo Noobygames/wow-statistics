@@ -63,6 +63,8 @@ local SETTINGS_DEFAULTS = {
   remindTrainer = false,   -- Hinweis auf neue Zauber beim Lehrer (TrainerReminder.lua, nicht Retail)
   warnAmmo = false,        -- Jäger: Munition knapp (GearWarnings.lua, nicht Retail)
   ammoLow = 200,           -- Schuss, ab denen die Munitionswarnung kommt
+  ammoCritical = 50,       -- Schuss, ab denen "fast leer" kommt (0 = aus)
+  ammoRepeat = 5,          -- Minuten zwischen Wiederholungen der Munitionswarnung (0 = einmalig)
   warnInstanceLimit = false,  -- Hinweis beim Betreten der vorletzten und letzten erlaubten Instanz (InstanceLimit.lua)
   -- Komfort beim Leveln (siehe Comfort.lua), alles aus
   autoRepair = false,       -- beim Händler reparieren (Merchant.lua)
@@ -296,6 +298,8 @@ local SETTING_RANGES = {
   splitListRows = { 3, 15 },
   reminderInterval = { 1, 30 },
   ammoLow = { 20, 1000 },
+  ammoCritical = { 0, 500 },
+  ammoRepeat = { 0, 30 },
   alertScale = { 0.5, 2 },
   alertDuration = { 1, 10 },
   campScale = { 0.5, 2 },

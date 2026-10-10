@@ -302,6 +302,24 @@ if ns.GearWarnings.HasAmmo() then
     set = function(value) ns.Set("ammoLow", value) end,
     format = function(value) return string.format(L.AMMO_COUNT, value) end,
   })
+  addSlider({
+    label = "WARN_AMMO_CRITICAL_BELOW",
+    min = 0,
+    max = ns.GearWarnings.MAX_CRITICAL_AMMO,
+    step = 10,
+    get = function(db) return db.ammoCritical end,
+    set = function(value) ns.Set("ammoCritical", value) end,
+    format = function(value) return value == 0 and L.AMMO_OFF or string.format(L.AMMO_COUNT, value) end,
+  })
+  addSlider({
+    label = "WARN_AMMO_REPEAT",
+    min = 0,
+    max = ns.GearWarnings.MAX_AMMO_REPEAT,
+    step = 1,
+    get = function(db) return db.ammoRepeat end,
+    set = function(value) ns.Set("ammoRepeat", value) end,
+    format = function(value) return value == 0 and L.AMMO_ONCE or string.format(L.MINUTES, value) end,
+  })
 end
 -- Lagerfeuer-Anzeige: nur in WoW Forever (dort gibt es den Lagerfeuer-Buff)
 if ns.CampFire.IsAvailable() then

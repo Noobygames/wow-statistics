@@ -4,7 +4,7 @@ Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt 
 
 ## v2.14: Einstellbare Munitionswarnung
 
-- [x] 241. **Munitionswarnung einstellbar** (S): Regler „Munition knapp unter“ (`ammoLow`, 20 bis 1000, Standard 200) im Abschnitt Warnungen, nur wo es Munition gibt.
+- [x] 241. **Munitionswarnung einstellbar und wiederholt** (S): Regler „Munition knapp unter“ (`ammoLow`, 20 bis 1000, Standard 200), zweite dringendere Warnung „Munition fast leer“ unter `ammoCritical` (0 bis 500, Standard 50, 0 = aus) und Wiederholung alle `ammoRepeat` Minuten, solange die Munition knapp bleibt (0 bis 30, Standard 5, 0 = nur einmal). Im Abschnitt Warnungen, nur wo es Munition gibt. Beim Absinken kommt nur eine der beiden Warnungen.
 
 ## v2.13: Quest-Markierung
 

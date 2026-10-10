@@ -103,7 +103,7 @@ wow.state.interface = 16001
 wow.state.inventoryCounts = { [0] = 1000 }
 GearWarnings.Check()
 UnitUsesAmmo = function() return false end
-wow.state.inventoryCounts = { [0] = 0 }
+wow.state.inventoryCounts = { [0] = 150 }
 GearWarnings.Check()
 expect("Forever ohne Munitionsbedarf: still", count(L.WARN_AMMO), 2)
 UnitUsesAmmo = function() return true end
@@ -127,3 +127,41 @@ wow.state.inventoryCounts = { [0] = 150 }
 GearWarnings.Check()
 expect("Grenze 100: bei 150 still", count(L.WARN_AMMO), before + 1)
 expect("Grenze begrenzt", addon.Database.SanitizeSettings({ ammoLow = 5 }).ammoLow, 20)
+
+-- Zweite Schwelle "fast leer" und Wiederholung
+addon.Set("ammoLow", 200)
+addon.Set("ammoCritical", 50)
+addon.Set("ammoRepeat", 5)
+wow.state.inventoryCounts = { [0] = 1000 }
+GearWarnings.Check()
+local low, critical = count(L.WARN_AMMO), count(L.WARN_AMMO_CRITICAL)
+wow.state.inventoryCounts = { [0] = 150 }
+GearWarnings.Check()
+expect("knapp: Warnung", count(L.WARN_AMMO), low + 1)
+expect("knapp: noch nicht fast leer", count(L.WARN_AMMO_CRITICAL), critical)
+wow.advance(60)
+GearWarnings.Check()
+expect("nach 1 min noch keine Wiederholung", count(L.WARN_AMMO), low + 1)
+wow.advance(5 * 60)
+GearWarnings.Check()
+expect("nach 5 min Wiederholung", count(L.WARN_AMMO), low + 2)
+wow.state.inventoryCounts = { [0] = 40 }
+GearWarnings.Check()
+expect("fast leer: eigene Warnung", count(L.WARN_AMMO_CRITICAL), critical + 1)
+expect("fast leer: nicht zusätzlich knapp", count(L.WARN_AMMO), low + 2)
+wow.advance(5 * 60 + 1)
+GearWarnings.Check()
+expect("fast leer wiederholt", count(L.WARN_AMMO_CRITICAL), critical + 2)
+addon.Set("ammoRepeat", 0)
+wow.advance(60 * 60)
+GearWarnings.Check()
+expect("nur einmal: keine Wiederholung", count(L.WARN_AMMO_CRITICAL), critical + 2)
+
+-- Schwelle 0: kein "fast leer"
+addon.Set("ammoCritical", 0)
+wow.state.inventoryCounts = { [0] = 1000 }
+GearWarnings.Check()
+wow.state.inventoryCounts = { [0] = 3 }
+GearWarnings.Check()
+expect("ohne Schwelle: kein fast leer", count(L.WARN_AMMO_CRITICAL), critical + 2)
+expect("ohne Schwelle: normal knapp", count(L.WARN_AMMO), low + 3)
