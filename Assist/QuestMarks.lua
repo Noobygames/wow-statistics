@@ -13,7 +13,8 @@ QuestMarks.MAX_SCALE = 2
 
 local ICON = "Interface\\GossipFrame\\AvailableQuestIcon"
 local FALLBACK_SIZE = 16  -- ohne erkennbaren Lebensbalken (andere Plakettenaddons)
-local GAP = 2               -- Abstand zum Lebensbalken
+local GAP = 5               -- Abstand zum Lebensbalken
+local BAR_HEIGHT_FACTOR = 1.5  -- das Bild hat Rand, daher etwas höher als der Balken, damit es so hoch wirkt
 local REFRESH_SECONDS = 1
 
 local marks = {}  -- [Namensplakette] = Markierungs-Frame
@@ -43,14 +44,14 @@ local function healthBarOf(plate)
   return container and container.healthBar or unitFrame.healthBar
 end
 
--- Symbol direkt links vom Lebensbalken, so hoch wie dieser (Größe-Regler skaliert darüber hinaus);
+-- Symbol links vom Lebensbalken, etwas höher als dieser (Größe-Regler skaliert darüber hinaus);
 -- ohne Balken über der Plakette. Läuft bei jedem Update, weil sich der Balken ändert (z.B. Ziel größer).
 local function layout(mark, plate)
   local bar = healthBarOf(plate)
   local height = bar and bar:GetHeight()
   mark:ClearAllPoints()
   if type(height) == "number" and not ns.IsSecret(height) and height > 0 then
-    mark:SetSize(height, height)
+    mark:SetSize(height * BAR_HEIGHT_FACTOR, height * BAR_HEIGHT_FACTOR)
     mark:SetPoint("RIGHT", bar, "LEFT", -GAP, 0)
   else
     mark:SetSize(FALLBACK_SIZE, FALLBACK_SIZE)

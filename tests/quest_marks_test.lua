@@ -31,14 +31,15 @@ wow.update(1.1)
 local mark = created[plates.nameplate1]
 expectTrue("an: Markierung erstellt", mark ~= nil)
 expect("Markierung sichtbar", mark:IsShown(), true)
-expect("so hoch wie der Lebensbalken", mark:GetHeight(), 12)
+expect("etwas höher als der Lebensbalken", mark:GetHeight(), 18)
 local point = mark._points[#mark._points]
 expect("links vom Lebensbalken: Anker", point[1], "RIGHT")
 expect("links vom Lebensbalken: Bezug", point[2], bar)
 expect("links vom Lebensbalken: Seite", point[3], "LEFT")
+expect("Abstand", point[4], -5)
 bar:SetHeight(20)
 wow.update(1.1)
-expect("folgt dem Balken", mark:GetHeight(), 20)
+expect("folgt dem Balken", mark:GetHeight(), 30)
 bar:SetHeight(12)
 
 -- Nicht zugehörig: nichts
