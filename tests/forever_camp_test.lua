@@ -170,4 +170,17 @@ expectTrue("Button Verschieben", wow.click(L.CAMP_MOVE))
 expect("Button schaltet Verschiebemodus", Display.IsMoving(), true)
 expectTrue("Button Verschieben beendet", wow.click(L.CAMP_MOVE))
 expect("Verschiebemodus aus", Display.IsMoving(), false)
+-- Schließen der Einstellungen beendet den Verschiebemodus, die Beispielanzeige verschwindet
+expectTrue("Button Verschieben", wow.click(L.CAMP_MOVE))
+LevelTimerOptions:Hide()
+expect("Einstellungen zu: Modus aus", Display.IsMoving(), false)
+expect("Einstellungen zu: Anzeige weg", camp:IsShown(), false)
+-- Ein zweiter Verschiebemodus löst den ersten ab
+SlashCmdList.LEVELTIMER("config")
+Display.SetMoving(true)
+local alerts = addon.Alerts
+alerts.SetMoving(true)
+expect("anderer Modus löst ab", Display.IsMoving(), false)
+expect("anderer Modus: Anzeige weg", camp:IsShown(), false)
+alerts.SetMoving(false)
 expectTrue("Button Zurücksetzen", wow.click(L.CAMP_RESET_POSITION))

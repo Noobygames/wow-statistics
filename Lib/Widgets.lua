@@ -229,6 +229,13 @@ end
 -- config = { default = { Punkt, Bezugspunkt, x, y }, get() -> gespeicherte Position oder nil, set(Position oder nil) }
 -- Rückgabe: { Restore, Sync, SetScale, SetMoving, IsMoving, Reset }
 ---------------------------------------------------------------------------
+local activeMover  -- der Mover im Verschiebemodus; es gibt höchstens einen
+
+-- Beendet den Verschiebemodus (z.B. beim Schließen der Einstellungen), damit keine Beispielanzeige stehen bleibt
+function Widgets.EndMoving()
+  if activeMover then activeMover.SetMoving(false) end
+end
+
 function Widgets.CreateMover(frame, config)
   local mover = {}
   local moving = false
@@ -266,6 +273,12 @@ function Widgets.CreateMover(frame, config)
 
   function mover.SetMoving(enabled)
     moving = enabled and true or false
+    if moving then
+      if activeMover and activeMover ~= mover then activeMover.SetMoving(false) end
+      activeMover = mover
+    elseif activeMover == mover then
+      activeMover = nil
+    end
     frame:EnableMouse(moving)
     if config.onMovingChanged then config.onMovingChanged(moving) end
   end

@@ -138,7 +138,12 @@ local frameMethods = {
   GetEffectiveScale = function() return 1 end,
   IsShown = function(self) return self._shown end,
   Show = function(self) self._shown = true end,
-  Hide = function(self) self._shown = false end,
+  Hide = function(self)
+    local wasShown = self._shown
+    self._shown = false
+    local onHide = self._scripts and self._scripts.OnHide
+    if wasShown and onHide then onHide(self) end
+  end,
   SetShown = function(self, shown) self._shown = shown and true or false end,
   SetText = function(self, text) self._text = tostring(text) end,
   GetText = function(self) return self._text end,
