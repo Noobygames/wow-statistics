@@ -345,6 +345,19 @@ addToggles({ toggle("CHAT_COPY_TOGGLE", "chatCopyButton") })
 addSection("SECTION_WINDOWS")
 addToggles({ toggle("MOVE_FRAMES", "moveFrames") })
 addButton("MOVE_FRAMES_RESET", function() ns.MoveFrames.Reset() end)
+if ns.QuestMarks.IsAvailable() then
+  addSection("SECTION_QUEST_MARKS")
+  addToggles({ toggle("QUEST_MARKS_TOGGLE", "questMarks") })
+  addSlider({
+    label = "QUEST_MARK_SCALE",
+    min = toPercent(ns.QuestMarks.MIN_SCALE),
+    max = toPercent(ns.QuestMarks.MAX_SCALE),
+    step = 5,
+    get = function(db) return toPercent(db.questMarkScale) end,
+    set = function(value) ns.Set("questMarkScale", value / 100) end,
+    format = percent,
+  })
+end
 addHint("COMFORT_HINT")
 finishPage()
 

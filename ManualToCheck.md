@@ -1155,6 +1155,28 @@ Fehler:
 
 ---
 
+### 56. Quest-Markierung (Roadmap 240)
+
+- [ ] geprüft
+
+Einstellungen → Komfort → „Questziele markieren“ einschalten. Namensplaketten für Gegner und NPCs an
+(Esc → Optionen → Namensplaketten). Eine Quest mit Tötungsziel annehmen und in die Nähe der Ziele laufen.
+Ziele töten, bis das Ziel erfüllt ist. Größe-Regler verstellen.
+
+**Erwartet:** gelbes Ausrufezeichen über den Plaketten der Questmobs (nicht über anderen); verschwindet,
+sobald das Ziel erfüllt ist (auch wenn noch Mobs der Sorte stehen); Größe folgt dem Regler; kein Lua-Fehler,
+auch im Kampf und in Instanzen; Symbol sitzt sauber über der Plakette (Höhe, kein Überlappen mit Namen).
+
+**Antwort:**
+
+```text
+Symbol sichtbar und passend (ja/nein):
+Verschwindet bei erfülltem Ziel (ja/nein):
+Fehler:
+```
+
+---
+
 ### 55. Fenster verschieben (Roadmap 238)
 
 - [ ] geprüft
