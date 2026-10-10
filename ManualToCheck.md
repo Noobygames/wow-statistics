@@ -1274,3 +1274,21 @@ Stack:
 [Interface/AddOns/LevelTimer/Core/LevelTimer.lua]:116: in function <Interface/AddOns/LevelTimer/Core/LevelTimer.lua:109>
 
 Locals:
+
+### 59. Einblendungen als Karten (Roadmap 244)
+
+- [ ] geprüft
+
+Reiter Einblendungen: Vorschau mehrfach klicken (Level-Up, Rare, Elite, Beute, Beinahe-Tod), danach Position
+verschieben. Stil „Text“ zum Vergleich.
+
+**Erwartet:** im Stil „Banner“ jede Einblendung als Karte mit Symbol und Farbleiste wie die Hinweise (Lagerfeuer,
+Taschen); Größe, Dauer, Ton und Position wirken weiter; „Text“ zeigt nur die Schrift. Symbole sind keine grünen
+Quadrate.
+
+**Antwort:**
+
+```text
+Symbole alle sichtbar (ja/nein):
+Fehler:
+```

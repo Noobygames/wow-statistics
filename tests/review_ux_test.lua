@@ -1,6 +1,7 @@
 -- UX-Funde aus dem Review: Chroma-Farbe der Splits, Rechtsklick auf Reiter, Vorschau durch alle Arten.
 local L = addon.L
 wow.login({ level = 10 })
+addon.Set("alertStyle", "text")
 
 -- 198: auf grünem Chroma-Hintergrund sind schnellere Splits cyan statt grün
 local normal = addon.Format.SplitDelta(-60)

@@ -1,6 +1,6 @@
 -- Große Einblendungen oben in der Bildschirmmitte für Stream-Momente: Level-Up, Rare- und Elite-Kill,
 -- epische Beute, Beinahe-Tod. Jede Art ist einzeln schaltbar (Einstellungen alert*), alle aus.
--- Aussehen: alertStyle (Text oder Banner), alertScale, alertDuration, alertSound; Position alertPos
+-- Aussehen: alertStyle (Text oder Banner = Karte mit Symbol, Lib/Card.lua), alertScale, alertDuration, alertSound; Position alertPos
 -- (ziehen im Verschiebemodus, Alerts.SetMoving). Dieselbe Einblendung zeigt auch Hinweise (Alerts.Notify).
 -- Quellen: ns.OnLevelStarted und neue Journal-Einträge (Journal.OnAdd), kein eigenes Event-Parsing.
 -- In Dungeons und Raids ist fast jeder Gegner Elite: dort keine Elite-Einblendung (IsInInstance).
@@ -19,24 +19,17 @@ local FADE_SECONDS = 1       -- nach der Anzeigedauer ausblenden
 local DEFAULT_POSITION = { "TOP", "TOP", 0, -160 }
 local EPIC_QUALITY = 4
 local GROUP_INSTANCES = { party = true, raid = true }  -- Instanzarten von IsInInstance mit Elite-Gegnern
-local WHITE_TEXTURE = "Interface\\Buttons\\WHITE8x8"
 local RAID_WARNING_SOUND = 8959  -- SOUNDKIT.RAID_WARNING, in allen Clients gleich
--- Einstellung alertStyle: nur Text oder Banner (dunkler Grund mit Farbleisten)
+-- Einstellung alertStyle: nur Text oder Banner (Karte mit Symbol wie die Hinweise)
 Alerts.STYLE_TEXT = "text"
 Alerts.STYLE_BANNER = "banner"
 Alerts.MIN_SCALE = 0.5
 Alerts.MAX_SCALE = 2
 Alerts.MIN_DURATION = 1
 Alerts.MAX_DURATION = 10
-local BANNER_PADDING_X = 28
-local BANNER_PADDING_Y = 14
-local BANNER_MIN_WIDTH = 280
 local MAX_TEXT_WIDTH = 520   -- längere Texte brechen um
 local MAX_QUEUE = 4          -- wartende Einblendungen; bei mehr fällt die älteste weg
 local QUEUED_HOLD = 1.5      -- Anzeigedauer, solange weitere warten
-local BANNER_BACKGROUND_ALPHA = 0.78
-local ACCENT_WIDTH = 5       -- Leiste links und rechts
-local ACCENT_LINE_HEIGHT = 2 -- Linie unten
 local COLORS = {
   levelUp = { 1, 0.82, 0 },
   rare = { 0.75, 0.75, 1 },
@@ -52,27 +45,6 @@ frame:SetSize(1, 1)
 frame:SetPoint(DEFAULT_POSITION[1], UIParent, DEFAULT_POSITION[2], DEFAULT_POSITION[3], DEFAULT_POSITION[4])
 frame:SetFrameStrata("HIGH")
 frame:SetClampedToScreen(true)
-
--- Banner: Hintergrund, Leisten links und rechts und eine Linie unten in der Farbe der Art
-local background = frame:CreateTexture(nil, "BACKGROUND")
-background:SetTexture(WHITE_TEXTURE)
-background:SetAllPoints(frame)
-local accentLeft = frame:CreateTexture(nil, "BORDER")
-accentLeft:SetTexture(WHITE_TEXTURE)
-accentLeft:SetPoint("TOPLEFT")
-accentLeft:SetPoint("BOTTOMLEFT")
-accentLeft:SetWidth(ACCENT_WIDTH)
-local accentRight = frame:CreateTexture(nil, "BORDER")
-accentRight:SetTexture(WHITE_TEXTURE)
-accentRight:SetPoint("TOPRIGHT")
-accentRight:SetPoint("BOTTOMRIGHT")
-accentRight:SetWidth(ACCENT_WIDTH)
-local accentLine = frame:CreateTexture(nil, "BORDER")
-accentLine:SetTexture(WHITE_TEXTURE)
-accentLine:SetPoint("BOTTOMLEFT")
-accentLine:SetPoint("BOTTOMRIGHT")
-accentLine:SetHeight(ACCENT_LINE_HEIGHT)
-local bannerParts = { background, accentLeft, accentRight, accentLine }
 
 frame.text = frame:CreateFontString(nil, "OVERLAY", "GameFontNormalHuge")
 frame.text:SetPoint("CENTER")
@@ -97,6 +69,11 @@ Alerts.ICONS = {
   ammo = iconPath("INV_Ammo_Arrow_02"),
   trainer = iconPath("INV_Misc_Book_09"),
   instanceLimit = iconPath("INV_Misc_PocketWatch_01"),
+  levelUp = iconPath("Spell_Holy_HolyBolt"),
+  rare = iconPath("INV_Misc_Eye_01"),
+  elite = iconPath("INV_Misc_Head_Dragon_01"),
+  loot = iconPath("INV_Misc_Gem_Amethyst_02"),
+  nearDeath = iconPath("INV_Misc_Bone_HumanSkull_01"),
 }
 
 local shownAt
@@ -106,7 +83,7 @@ local function isBanner()
   return ns.db and ns.db.alertStyle == Alerts.STYLE_BANNER
 end
 
--- Größe aus dem Text; Banner mit Rand und Mindestbreite, Text-Stil nur so groß wie der Text
+-- Text-Stil: der Rahmen ist nur so groß wie der Text
 local function layout()
   frame.text:SetWidth(0)  -- erst natürliche Breite, dann bei Bedarf umbrechen
   local width = frame.text:GetStringWidth() or 0
@@ -114,25 +91,12 @@ local function layout()
     frame.text:SetWidth(MAX_TEXT_WIDTH)
     width = MAX_TEXT_WIDTH
   end
-  local height = frame.text:GetStringHeight() or 0
-  local banner = isBanner()
-  for _, part in ipairs(bannerParts) do part:SetShown(banner) end
-  if banner then
-    frame.text:SetShadowOffset(1, -1)
-    frame:SetSize(math.max(BANNER_MIN_WIDTH, width + 2 * BANNER_PADDING_X), height + 2 * BANNER_PADDING_Y)
-  else
-    frame.text:SetShadowOffset(2, -2)
-    frame:SetSize(math.max(1, width), math.max(1, height))
-  end
+  frame.text:SetShadowOffset(2, -2)
+  frame:SetSize(math.max(1, width), math.max(1, frame.text:GetStringHeight() or 0))
 end
 
 local function setColor(color)
   frame.text:SetTextColor(unpack(color))
-  local r, g, b = unpack(color)
-  background:SetColorTexture(0.03, 0.04, 0.08, BANNER_BACKGROUND_ALPHA)
-  for _, part in ipairs({ accentLeft, accentRight, accentLine }) do
-    part:SetColorTexture(r, g, b, 1)
-  end
 end
 
 local function duration()
@@ -249,7 +213,8 @@ function Alerts.SetMoving(enabled)
   enabled = enabled and true or false
   if enabled == (moving or false) then return end
   if enabled then
-    Alerts.Show(L.ALERT_MOVE_HINT, COLORS.levelUp, { immediate = true })  -- noch nicht im Modus: wird gezeigt
+    local card = isBanner() and { title = L.ALERT_MOVE_HINT } or nil
+    Alerts.Show(L.ALERT_MOVE_HINT, COLORS.levelUp, { immediate = true, notice = card })  -- noch nicht im Modus: wird gezeigt
   end
   mover.SetMoving(enabled)
 end
@@ -274,7 +239,7 @@ function Alerts.Notify(notices, color)
   end
 end
 
--- Arten: Einstellung, Farbe, Text aus einem Wert (Level, Name, Link, Prozent) und Beispielwert
+-- Arten: Einstellung, Farbe, Symbol (Alerts.ICONS), Text aus einem Wert (Level, Name, Link, Prozent) und Beispielwert
 -- für /lt debug alert
 Alerts.KINDS = {
   levelUp = { setting = "alertLevelUp", color = COLORS.levelUp, format = "ALERT_LEVEL_UP",
@@ -289,9 +254,12 @@ Alerts.KINDS = {
     sample = function() return 4 end },
 }
 
+-- Im Stil "Banner" als Karte mit Symbol (wie die Hinweise), im Stil "Text" nur als Schrift
 local function showKind(kind, value)
   local definition = Alerts.KINDS[kind]
-  Alerts.Show(string.format(L[definition.format], value), definition.color, { sound = true })
+  local message = string.format(L[definition.format], value)
+  local card = isBanner() and { icon = Alerts.ICONS[kind], title = message } or nil
+  Alerts.Show(message, definition.color, { sound = true, notice = card })
 end
 
 -- Nur, wenn die Art eingeschaltet ist

@@ -9,6 +9,7 @@ Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt 
 ## v2.15: Aufgeräumte Hinweise
 
 - [x] 243. **Reiter „Timer“ und Munition nur für Jäger** (S): Der Reiter Hinweise war überladen. Lagerfeuer-Anzeige und Essen-Timer wohnen jetzt im eigenen Reiter „Timer“ (Lagerfeuer nur in WoW Forever); „Hinweise“ behält Level-Up, Erinnerungen und Warnungen. Die Munitions-Einstellungen (Schalter und drei Regler) erscheinen nur noch bei Jägern (`GearWarnings.ShowsAmmoOptions`, nicht in Retail). Die Warnung selbst bleibt unverändert.
+- [x] 244. **Einblendungen als Karten** (S): Level-Up, Rare, Elite, epische Beute und Beinahe-Tod erscheinen im Stil „Banner“ als Karte mit Symbol, Farbleiste und dunklem Grund wie die Hinweise (`Alerts.ICONS`, `Lib/Card.lua`); der alte Banner mit Leisten entfällt, „Text“ bleibt.
 
 ## v2.14: Einstellbare Munitionswarnung
 

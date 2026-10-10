@@ -15,6 +15,7 @@ local function printedSince(index, ...)
 end
 
 wow.login({ level = 10, playedSeconds = 600 })
+addon.Set("alertStyle", "text")
 
 -- Logging: nur eingeschaltet
 local before = #wow.printed
