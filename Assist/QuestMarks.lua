@@ -1,7 +1,12 @@
 -- Quest-Markierung: ein Symbol links vom Lebensbalken der Namensplakette von Gegnern und NPCs, die zu einer aktiven Quest gehören
 -- (Einstellung questMarks im Reiter "Komfort", aus; Größe questMarkScale).
--- Quelle ist C_QuestLog.UnitIsRelatedToActiveQuest (in WoW Forever im Spiel geprüft: true für Questmobs, false
--- nach erfülltem Ziel). Der Wert kann in eingeschränkten Situationen geheim sein; dann gibt es keine Markierung.
+-- Zwei Quellen:
+--  1. C_QuestLog.UnitIsRelatedToActiveQuest (in WoW Forever im Spiel geprüft: true für Questmobs, false nach
+--     erfülltem Ziel). Bei Zielen vom Typ "Gegenstand" (z.B. "Flatterfliegenstaub: 2/5", Item auf den Mob
+--     anwenden) kennt das Spiel keine Beziehung zum Mob und liefert false, auch der Tooltip nennt nichts.
+--  2. Deshalb zusätzlich: steht der Name des Gegners in einem unerfüllten Questziel (C_QuestLog.GetQuestObjectives),
+--     wird er markiert. Das ist ein Textvergleich und kann daneben liegen (zu kurze Namen werden ignoriert).
+-- Werte können in eingeschränkten Situationen geheim sein; dann gibt es keine Markierung durch diese Quelle.
 -- Welt-Objekte (Kisten, Hebel) haben keine Einheit und keine Namensplakette und lassen sich so nicht markieren.
 local _, ns = ...
 
@@ -14,9 +19,12 @@ QuestMarks.MAX_SCALE = 2
 local ICON = "Interface\\GossipFrame\\AvailableQuestIcon"
 local FALLBACK_SIZE = 16  -- ohne erkennbaren Lebensbalken (andere Plakettenaddons)
 local GAP = 2               -- Abstand zum Lebensbalken
+local MIN_NAME_LENGTH = 4   -- kürzere Namen kämen zu leicht zufällig im Zieltext vor
 local REFRESH_SECONDS = 1
 
 local marks = {}  -- [Namensplakette] = Markierungs-Frame
+local objectiveTexts = {}      -- Texte der unerfüllten Questziele aller Quests im Log
+local objectivesDirty = true  -- QUEST_LOG_UPDATE: vor der nächsten Prüfung neu lesen
 local units = {}  -- sichtbare Namensplaketten: [Einheit] = Plakette (beim Entfernen liefert das Spiel sie evtl. nicht mehr)
 
 function QuestMarks.IsAvailable()
@@ -25,9 +33,47 @@ function QuestMarks.IsAvailable()
 end
 
 -- Nach erfülltem Ziel meldet das Spiel selbst false (im Spiel geprüft)
+local function rebuildObjectives()
+  objectivesDirty = false
+  objectiveTexts = {}
+  local log = C_QuestLog
+  if not (log.GetNumQuestLogEntries and log.GetQuestIDForLogIndex and log.GetQuestObjectives) then return end
+  for index = 1, log.GetNumQuestLogEntries() do
+    local questID = log.GetQuestIDForLogIndex(index)
+    if not ns.IsSecret(questID) and (questID or 0) > 0 then
+      for _, objective in ipairs(log.GetQuestObjectives(questID) or {}) do
+        if not objective.finished and type(objective.text) == "string" and not ns.IsSecret(objective.text) then
+          table.insert(objectiveTexts, objective.text)
+        end
+      end
+    end
+  end
+end
+
+local function nameInObjectives(unit)
+  if objectivesDirty then rebuildObjectives() end
+  if #objectiveTexts == 0 then return false end
+  local name = UnitName(unit)
+  if ns.IsSecret(name) or type(name) ~= "string" or #name < MIN_NAME_LENGTH then return false end
+  for _, text in ipairs(objectiveTexts) do
+    if string.find(text, name, 1, true) then return true end
+  end
+  return false
+end
+
+-- Spieler und tote Gegner bekommen keine Markierung (geheime Werte: lieber keine)
+local function isUnmarkable(unit)
+  local isPlayer = UnitIsPlayer(unit)
+  local isDead = UnitIsDead and UnitIsDead(unit)
+  if ns.IsSecret(isPlayer) or ns.IsSecret(isDead) then return true end
+  return isPlayer or isDead
+end
+
 local function isQuestUnit(unit)
+  if isUnmarkable(unit) then return false end
   local related = C_QuestLog.UnitIsRelatedToActiveQuest(unit)
-  return not ns.IsSecret(related) and related == true
+  if not ns.IsSecret(related) and related == true then return true end
+  return nameInObjectives(unit)
 end
 
 function QuestMarks.CurrentScale()
@@ -98,6 +144,8 @@ ns.RegisterEvent("NAME_PLATE_UNIT_ADDED", function(unit)
   units[unit] = plateOf(unit)
   update(unit)
 end)
+
+ns.RegisterEvent("QUEST_LOG_UPDATE", function() objectivesDirty = true end)
 
 ns.RegisterEvent("NAME_PLATE_UNIT_REMOVED", function(unit)
   if not unit then return end
