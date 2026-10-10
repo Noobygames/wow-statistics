@@ -58,6 +58,12 @@ local countdownEndedAt      -- GetTime(), seit der Countdown nicht mehr läuft, 
 
 -- Hat der Countdown die Lagervorteile gebracht? Sie sind neu oder wurden erneuert (spätere Ablaufzeit).
 -- Wer vorher aufsteht, hat sie nicht bekommen.
+-- Ausgangslage der Lagervorteile: keine, Ablaufzeit oder unbekannt (kein "x and false or y": false wäre hier ein Wert)
+local function baselineOf(benefits)
+  if not benefits then return NO_BENEFITS end
+  return benefitsExpiration(benefits) or UNKNOWN_EXPIRATION
+end
+
 local function benefitsGranted(benefits)
   if not benefits then return false end
   if benefitsAtStart == NO_BENEFITS then return true end
@@ -72,7 +78,7 @@ function CampFire.Check()
   local kind = state and state.kind or nil
 
   if kind == "countdown" and previousKind ~= "countdown" then
-    benefitsAtStart = not benefits and NO_BENEFITS or benefitsExpiration(benefits) or UNKNOWN_EXPIRATION
+    benefitsAtStart = baselineOf(benefits)
     countdownEndedAt = nil
   elseif kind ~= "countdown" and previousKind == "countdown" then
     countdownEndedAt = GetTime()

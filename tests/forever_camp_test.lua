@@ -70,6 +70,16 @@ tick()
 expect("danach weg", camp:IsShown(), false)
 addon.Set("campSound", false)
 
+-- Zum ersten Mal am Feuer (noch keine Lagervorteile): die neuen Vorteile werden gemeldet
+wow.state.buffs = { nearby(), inviting(GetTime() + 60) }
+Camp.Check()
+wow.advance(60)
+wow.state.buffs = { nearby(), benefits(GetTime() + 3600) }
+Camp.Check()
+expectTrue("erste Lagervorteile gemeldet", shownText(L.CAMP_DONE) and camp:IsShown())
+wow.advance(5)
+tick()
+
 -- Vorzeitig aufgestanden: keine Meldung, Lagervorteile unverändert
 local unchanged = GetTime() + 3000
 wow.state.buffs = { nearby(), benefits(unchanged), inviting(GetTime() + 60) }

@@ -49,7 +49,7 @@ wow = {
     afk = false,             -- UnitIsAFK
     resting = false,
     buffs = {},              -- aktive Buffs: Name oder { name, spellId } (C_UnitAuras.GetAuraDataByIndex)
-    spellNames = { [19705] = "Satt", [1229741] = "Lagervorteile" },  -- C_Spell.GetSpellName
+    spellNames = { [433] = "Essen", [19705] = "Satt", [1229741] = "Lagervorteile" },  -- C_Spell.GetSpellName
     interface = (SCENARIO or ""):match("^forever_") and 16001 or 120100,  -- Interface-Version (GetBuildInfo); Szenarien forever_* laden als WoW Forever (16001)
     health = 1000,
     healthMax = 1000,
@@ -202,9 +202,11 @@ function wow.login(options)
   end
 end
 
--- Klickt den Button/Reiter mit dieser Beschriftung (Text-Buttons aus Widgets.CreateTab/CreateButton)
-function wow.click(text)
-  for _, frame in ipairs(frames) do
+-- Klickt den Button/Reiter mit dieser Beschriftung (Text-Buttons aus Widgets.CreateTab/CreateButton);
+-- gleiche Beschriftungen auf mehreren Seiten: der erste Treffer, mit last = true der letzte
+function wow.click(text, last)
+  for i = 1, #frames do
+    local frame = frames[last and #frames - i + 1 or i]
     local label = rawget(frame, "label")
     local caption = label and label._text or frame._text
     if caption == text and frame._scripts.OnClick then

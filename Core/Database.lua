@@ -55,6 +55,9 @@ local SETTINGS_DEFAULTS = {
   campHint = true,       -- Hinweis, wenn ein Feuer in der Nähe ist und die Lagervorteile fehlen
   campSound = false,     -- Ton, wenn die Lagervorteile da sind
   campScale = 1,
+  foodTimer = true,      -- Essen-Timer (FoodTimer.lua): Restzeit beim Essen, danach "Satt aktiv"
+  foodSound = false,     -- Ton, wenn "Satt" da ist
+  foodScale = 1,
   remindFood = false,  -- Hinweis, wenn beim Leveln "Satt" fehlt (siehe BuffReminder.lua)
   remindCamp = false,  -- Hinweis, wenn beim Leveln der Camp-Buff fehlt (WoW Forever)
   reminderInterval = 5,  -- Minuten zwischen zwei Hinweisen auf denselben fehlenden Buff
@@ -297,6 +300,7 @@ local SETTING_RANGES = {
   alertScale = { 0.5, 2 },
   alertDuration = { 1, 10 },
   campScale = { 0.5, 2 },
+  foodScale = { 0.5, 2 },
   questMarkScale = { 0.5, 2 },
 }
 
@@ -309,6 +313,7 @@ local OPTIONAL_SETTINGS = {
   splitListPos = isPosition,  -- Split-Liste (SplitList.lua)
   alertPos = isPosition,      -- Einblendungen (Alerts.lua); fehlt = oben in der Mitte
   campPos = isPosition,       -- Lagerfeuer-Anzeige (CampDisplay.lua)
+  foodPos = isPosition,       -- Essen-Timer (FoodDisplay.lua)
   movedFrames = function(value)  -- gemerkte Fensterpositionen (MoveFrames.lua), Name -> Position
     if type(value) ~= "table" then return false end
     for name, pos in pairs(value) do  -- ungültige Einträge einzeln entfernen, gültige behalten

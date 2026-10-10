@@ -2,6 +2,10 @@
 
 Aufwand: **S** = klein, **M** = mittel, **L** = groß. Erledigtes wird abgehakt und unter „Erledigt“ mit Version vermerkt. Nummern laufen über alle Versionen weiter.
 
+## v2.14: Essen-Timer
+
+- [x] 242. **Essen-Timer** (M): Beim Essen zeigt eine Karte die Restzeit des Buffs „Essen“ (Spell 433, 18 s, im Spiel ermittelt) als Zahl mit Balken („Sitzen bleiben!“), danach kurz „Satt aktiv!“, auch schon während des Essens, sobald „Satt“ eintrifft (neu oder erneuert); Getränke zählen nicht. Einstellungen im Reiter Hinweise (Abschnitt Essen): Timer, Ton, Größe, Vorschau, Verschieben, Zurücksetzen. Neuer Baustein `Lib/TimerDisplay.lua` (Karte mit Zuständen, Position, Größe, Vorschau); `CampDisplay` nutzt ihn jetzt auch. Fund beim Test: `CampFire` meldete „Lagervorteile aktiv“ nicht, wenn man noch gar keine Lagervorteile hatte (`x and false or y`); behoben.
+
 ## v2.13: Quest-Markierung
 
 - [x] 240. **Kill-Quest-Mobs markieren** (M): Einstellung `questMarks` (Komfort → Quest-Markierung, aus) mit Größe `questMarkScale`: ein Symbol links neben dem Lebensbalken (so hoch wie dieser) von Gegnern und NPCs einer aktiven Quest (`C_QuestLog.UnitIsRelatedToActiveQuest`, in WoW Forever per `/dump` geprüft: true für Questmobs). Nach erfülltem Ziel meldet die API selbst false, die Markierung verschwindet also von allein. Geheime Werte werden übergangen. Nur sichtbar, wenn Namensplaketten an sind und in Reichweite. Offen: Welt-Objekte (Kisten, Hebel) lassen sich nicht markieren (keine Einheit); Quest-Items in den Taschen (Karte beim Looten, `C_Container.GetContainerItemQuestInfo`); eigenes Symbol statt des Gossip-Ausrufezeichens; Wirkung in Retail und Classic Era prüfen.
