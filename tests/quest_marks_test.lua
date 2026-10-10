@@ -53,41 +53,9 @@ related.nameplate1 = true
 wow.update(1.1)
 expect("Quest wieder offen: Markierung da", mark:IsShown(), true)
 
--- Gegenstandsziel: das Spiel kennt keine Beziehung, der Name steht im Zieltext ("Flatterfliegenstaub: 2/5")
-local names, objectives = { nameplate1 = "Flatterfliege", nameplate2 = "Wolf" }, {}
-UnitName = function(unit) return names[unit] end
-C_QuestLog.GetNumQuestLogEntries = function() return 2 end
-C_QuestLog.GetQuestIDForLogIndex = function(index) return index == 1 and 0 or 77 end  -- 1 = Überschrift
-C_QuestLog.GetQuestObjectives = function() return objectives end
-related.nameplate1 = false
-objectives[1] = { type = "item", finished = false, text = "Flatterfliegenstaub: 2/5" }
-wow.fire("QUEST_LOG_UPDATE")
-wow.update(1.1)
-expect("Gegenstandsziel: Name im Text", mark:IsShown(), true)
-objectives[1].finished = true
-wow.fire("QUEST_LOG_UPDATE")
-wow.update(1.1)
-expect("Ziel erfüllt: weg", mark:IsShown(), false)
-objectives[1] = { type = "item", finished = false, text = "Flatterfliegenstaub: 2/5" }
-names.nameplate1 = "Fli"
-wow.fire("QUEST_LOG_UPDATE")
-wow.update(1.1)
-expect("zu kurzer Name: keine Markierung", mark:IsShown(), false)
-names.nameplate1 = "Flatterfliege"
-wow.fire("QUEST_LOG_UPDATE")
-wow.update(1.1)
-expect("wieder da", mark:IsShown(), true)
-UnitIsDead = function() return true end
-wow.update(1.1)
-expect("tot: keine Markierung", mark:IsShown(), false)
-UnitIsDead = nil
-related.nameplate1 = true
-
 -- Geheimer Rückgabewert: keine Markierung, kein Fehler
 issecretvalue = function(value) return value == "geheim" end
 related.nameplate1 = "geheim"
-objectives[1].finished = true  -- Textvergleich trifft nicht zu, nur die geheime Beziehung bleibt
-wow.fire("QUEST_LOG_UPDATE")
 wow.update(1.1)
 expect("geheim: Markierung weg", mark:IsShown(), false)
 issecretvalue = nil

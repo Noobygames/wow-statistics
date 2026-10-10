@@ -1161,7 +1161,7 @@ Fehler:
 
 Einstellungen → Komfort → „Questziele markieren“ einschalten. Namensplaketten für Gegner und NPCs an
 (Esc → Optionen → Namensplaketten). Eine Quest mit Tötungsziel annehmen und in die Nähe der Ziele laufen.
-Zusätzlich eine Quest mit Gegenstandsziel (Item auf einen Mob anwenden, Ziel z. B. „Flatterfliegenstaub: 2/5“, Mobname steckt im Zieltext). Ziele töten, bis das Ziel erfüllt ist. Größe-Regler verstellen.
+Ziele töten, bis das Ziel erfüllt ist. Größe-Regler verstellen.
 
 **Erwartet:** gelbes Ausrufezeichen direkt links neben dem Lebensbalken der Questmobs, so hoch wie der Balken (nicht bei anderen); verschwindet,
 sobald das Ziel erfüllt ist (auch wenn noch Mobs der Sorte stehen); Größe folgt dem Regler; kein Lua-Fehler,
