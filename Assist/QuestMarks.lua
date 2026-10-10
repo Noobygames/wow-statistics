@@ -20,7 +20,7 @@ local REFRESH_SECONDS = 1
 local QUEST_OBJECTIVE_LINE = Enum and Enum.TooltipDataLineType and Enum.TooltipDataLineType.QuestObjective or 8
 
 local marks = {}  -- [Namensplakette] = Markierungs-Frame
-local units = {}  -- sichtbare Namensplaketten: [Einheit] = true
+local units = {}  -- sichtbare Namensplaketten: [Einheit] = Plakette (beim Entfernen liefert das Spiel sie evtl. nicht mehr)
 
 function QuestMarks.IsAvailable()
   return C_QuestLog ~= nil and C_QuestLog.UnitIsRelatedToActiveQuest ~= nil
@@ -49,6 +49,11 @@ local function isQuestUnit(unit)
   return not objectivesDone(unit)
 end
 
+function QuestMarks.CurrentScale()
+  local scale = ns.db and ns.db.questMarkScale or 1
+  return math.max(QuestMarks.MIN_SCALE, math.min(QuestMarks.MAX_SCALE, scale))
+end
+
 local function markFor(plate)
   if marks[plate] then return marks[plate] end
   local mark = CreateFrame("Frame", nil, plate)
@@ -57,7 +62,7 @@ local function markFor(plate)
   mark.icon = mark:CreateTexture(nil, "OVERLAY")
   mark.icon:SetAllPoints()
   mark.icon:SetTexture(ICON)
-  mark:SetScale(ns.db and ns.db.questMarkScale or 1)
+  mark:SetScale(QuestMarks.CurrentScale())
   marks[plate] = mark
   return mark
 end
@@ -80,30 +85,28 @@ local function update(unit)
 end
 
 local function refreshAll()
-  if not QuestMarks.IsAvailable() then return end
+  if not (ns.db and ns.db.questMarks) or not QuestMarks.IsAvailable() then return end
   for unit in pairs(units) do update(unit) end
 end
 
 ns.RegisterEvent("NAME_PLATE_UNIT_ADDED", function(unit)
   if not unit or not QuestMarks.IsAvailable() then return end
-  units[unit] = true
+  units[unit] = plateOf(unit)
   update(unit)
 end)
 
 ns.RegisterEvent("NAME_PLATE_UNIT_REMOVED", function(unit)
   if not unit then return end
+  local plate = units[unit]
   units[unit] = nil
-  if QuestMarks.IsAvailable() then
-    local plate = plateOf(unit)
-    if plate and marks[plate] then marks[plate]:Hide() end
-  end
+  if plate and marks[plate] then marks[plate]:Hide() end
 end)
 
 -- Questziele ändern sich beim Spielen (Ziel erfüllt, Quest abgegeben): regelmäßig nachsehen
 ns.Every(REFRESH_SECONDS, refreshAll)
 
 ns.RegisterApply(function(db)
-  local scale = math.max(QuestMarks.MIN_SCALE, math.min(QuestMarks.MAX_SCALE, db.questMarkScale))
-  for _, mark in pairs(marks) do mark:SetScale(scale) end
+  for _, mark in pairs(marks) do mark:SetScale(QuestMarks.CurrentScale()) end
+  for _, mark in pairs(marks) do if not db.questMarks then mark:Hide() end end
   refreshAll()
 end)
