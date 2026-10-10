@@ -1,11 +1,10 @@
--- Quest-Markierung: Symbol über der Namensplakette von Questzielen, weg wenn alle Ziele erfüllt sind.
+-- Quest-Markierung: Symbol über der Namensplakette von Questzielen, weg wenn das Ziel erfüllt ist.
 local QuestMarks = addon.QuestMarks
 
-local related, tooltip = {}, {}
+local related = {}
 local plates = { nameplate1 = CreateFrame("Frame"), nameplate2 = CreateFrame("Frame") }
 C_NamePlate = { GetNamePlateForUnit = function(unit) return plates[unit] end }
 C_QuestLog = { UnitIsRelatedToActiveQuest = function(unit) return related[unit] or false end }
-C_TooltipInfo = { GetUnit = function(unit) return tooltip[unit] end }
 
 
 wow.login({ level = 10 })
@@ -34,20 +33,13 @@ expect("Markierung sichtbar", mark:IsShown(), true)
 wow.fire("NAME_PLATE_UNIT_ADDED", "nameplate2")
 expect("kein Questziel: keine Markierung", created[plates.nameplate2], nil)
 
--- Alle Ziele erfüllt: weg
-tooltip.nameplate1 = { lines = { { type = 8, completed = true }, { type = 8, completed = true } } }
+-- Ziel erfüllt: das Spiel meldet false, Markierung weg
+related.nameplate1 = false
 wow.update(1.1)
-expect("Ziele erfüllt: Markierung weg", mark:IsShown(), false)
-
--- Ein Ziel offen: wieder da
-tooltip.nameplate1 = { lines = { { type = 8, completed = true }, { type = 8, completed = false } } }
+expect("Ziel erfüllt: Markierung weg", mark:IsShown(), false)
+related.nameplate1 = true
 wow.update(1.1)
-expect("Ziel offen: Markierung da", mark:IsShown(), true)
-
--- Ohne lesbaren Tooltip entscheidet die Quest-Beziehung
-tooltip.nameplate1 = nil
-wow.update(1.1)
-expect("Tooltip unbekannt: Markierung bleibt", mark:IsShown(), true)
+expect("Quest wieder offen: Markierung da", mark:IsShown(), true)
 
 -- Geheimer Rückgabewert: keine Markierung, kein Fehler
 issecretvalue = function(value) return value == "geheim" end
