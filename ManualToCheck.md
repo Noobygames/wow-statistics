@@ -1163,9 +1163,9 @@ Einstellungen → Komfort → „Questziele markieren“ einschalten. Namensplak
 (Esc → Optionen → Namensplaketten). Eine Quest mit Tötungsziel annehmen und in die Nähe der Ziele laufen.
 Ziele töten, bis das Ziel erfüllt ist. Größe-Regler verstellen.
 
-**Erwartet:** gelbes Ausrufezeichen über den Plaketten der Questmobs (nicht über anderen); verschwindet,
+**Erwartet:** gelbes Ausrufezeichen direkt links neben dem Lebensbalken der Questmobs, so hoch wie der Balken (nicht bei anderen); verschwindet,
 sobald das Ziel erfüllt ist (auch wenn noch Mobs der Sorte stehen); Größe folgt dem Regler; kein Lua-Fehler,
-auch im Kampf und in Instanzen; Symbol sitzt sauber über der Plakette (Höhe, kein Überlappen mit Namen).
+auch im Kampf und in Instanzen; Symbol sitzt sauber links am Balken (Höhe, kein Überlappen); bei anderen Plakettenaddons (Plater o. ä.) Fallback über der Plakette.
 
 **Antwort:**
 

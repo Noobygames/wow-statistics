@@ -3,6 +3,9 @@ local QuestMarks = addon.QuestMarks
 
 local related = {}
 local plates = { nameplate1 = CreateFrame("Frame"), nameplate2 = CreateFrame("Frame") }
+local bar = CreateFrame("Frame")
+bar:SetHeight(12)
+plates.nameplate1.UnitFrame = { healthBar = bar }
 C_NamePlate = { GetNamePlateForUnit = function(unit) return plates[unit] end }
 C_QuestLog = { UnitIsRelatedToActiveQuest = function(unit) return related[unit] or false end }
 
@@ -28,6 +31,15 @@ wow.update(1.1)
 local mark = created[plates.nameplate1]
 expectTrue("an: Markierung erstellt", mark ~= nil)
 expect("Markierung sichtbar", mark:IsShown(), true)
+expect("so hoch wie der Lebensbalken", mark:GetHeight(), 12)
+local point = mark._points[#mark._points]
+expect("links vom Lebensbalken: Anker", point[1], "RIGHT")
+expect("links vom Lebensbalken: Bezug", point[2], bar)
+expect("links vom Lebensbalken: Seite", point[3], "LEFT")
+bar:SetHeight(20)
+wow.update(1.1)
+expect("folgt dem Balken", mark:GetHeight(), 20)
+bar:SetHeight(12)
 
 -- Nicht zugehörig: nichts
 wow.fire("NAME_PLATE_UNIT_ADDED", "nameplate2")

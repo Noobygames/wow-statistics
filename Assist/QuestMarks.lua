@@ -1,4 +1,4 @@
--- Quest-Markierung: ein Symbol über der Namensplakette von Gegnern und NPCs, die zu einer aktiven Quest gehören
+-- Quest-Markierung: ein Symbol links vom Lebensbalken der Namensplakette von Gegnern und NPCs, die zu einer aktiven Quest gehören
 -- (Einstellung questMarks im Reiter "Komfort", aus; Größe questMarkScale).
 -- Quelle ist C_QuestLog.UnitIsRelatedToActiveQuest (in WoW Forever im Spiel geprüft: true für Questmobs, false
 -- nach erfülltem Ziel). Der Wert kann in eingeschränkten Situationen geheim sein; dann gibt es keine Markierung.
@@ -12,8 +12,8 @@ QuestMarks.MIN_SCALE = 0.5  -- Grenzen des Reglers in den Einstellungen
 QuestMarks.MAX_SCALE = 2
 
 local ICON = "Interface\\GossipFrame\\AvailableQuestIcon"
-local BASE_SIZE = 28
-local OFFSET_Y = 2
+local FALLBACK_SIZE = 16  -- ohne erkennbaren Lebensbalken (andere Plakettenaddons)
+local GAP = 2               -- Abstand zum Lebensbalken
 local REFRESH_SECONDS = 1
 
 local marks = {}  -- [Namensplakette] = Markierungs-Frame
@@ -35,11 +35,32 @@ function QuestMarks.CurrentScale()
   return math.max(QuestMarks.MIN_SCALE, math.min(QuestMarks.MAX_SCALE, scale))
 end
 
+-- Lebensbalken der Blizzard-Plakette (Retail/Forever: im Container, ältere Clients: direkt am UnitFrame)
+local function healthBarOf(plate)
+  local unitFrame = plate.UnitFrame
+  if not unitFrame then return nil end
+  local container = unitFrame.HealthBarsContainer
+  return container and container.healthBar or unitFrame.healthBar
+end
+
+-- Symbol direkt links vom Lebensbalken, so hoch wie dieser (Größe-Regler skaliert darüber hinaus);
+-- ohne Balken über der Plakette. Läuft bei jedem Update, weil sich der Balken ändert (z.B. Ziel größer).
+local function layout(mark, plate)
+  local bar = healthBarOf(plate)
+  local height = bar and bar:GetHeight()
+  mark:ClearAllPoints()
+  if type(height) == "number" and not ns.IsSecret(height) and height > 0 then
+    mark:SetSize(height, height)
+    mark:SetPoint("RIGHT", bar, "LEFT", -GAP, 0)
+  else
+    mark:SetSize(FALLBACK_SIZE, FALLBACK_SIZE)
+    mark:SetPoint("BOTTOM", plate, "TOP", 0, GAP)
+  end
+end
+
 local function markFor(plate)
   if marks[plate] then return marks[plate] end
   local mark = CreateFrame("Frame", nil, plate)
-  mark:SetSize(BASE_SIZE, BASE_SIZE)
-  mark:SetPoint("BOTTOM", plate, "TOP", 0, OFFSET_Y)
   mark.icon = mark:CreateTexture(nil, "OVERLAY")
   mark.icon:SetAllPoints()
   mark.icon:SetTexture(ICON)
@@ -59,7 +80,9 @@ local function update(unit)
   if not plate then return end
   local show = ns.db and ns.db.questMarks and isQuestUnit(unit)
   if show then
-    markFor(plate):Show()
+    local mark = markFor(plate)
+    layout(mark, plate)
+    mark:Show()
   elseif marks[plate] then
     marks[plate]:Hide()
   end
