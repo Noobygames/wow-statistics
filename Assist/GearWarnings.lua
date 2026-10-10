@@ -1,7 +1,7 @@
 -- Hinweise beim Leveln, bevor es Zeit kostet; jeder einzeln schaltbar (Standard aus):
 --   warnBagsFull   weniger als BAGS_LOW freie Plätze in normalen Taschen (Beute geht verloren)
 --   warnDurability ein ausgerüsteter Gegenstand unter DURABILITY_LOW Haltbarkeit
---   warnAmmo       Jäger mit weniger als AMMO_LOW Schuss im Munitionsplatz (nicht in Retail,
+--   warnAmmo       Jäger mit weniger als ammoLow Schuss (Einstellung, Standard 200) im Munitionsplatz (nicht in Retail,
 --                  dort gibt es keine Munition; GearWarnings.HasAmmo)
 -- Gewarnt wird einmal, wenn der Zustand eintritt (Einblendung + Chat), und erst wieder, nachdem er
 -- vorbei war. Geprüft wird alle CHECK_INTERVAL Sekunden statt auf viele Einzel-Events zu hören.
@@ -19,7 +19,8 @@ local BAGS_LOW = 2              -- freie Plätze, ab denen gewarnt wird
 local DURABILITY_LOW = 0.2      -- Anteil der Haltbarkeit, ab dem gewarnt wird
 local FIRST_EQUIPPED_SLOT = 1
 local DEFAULT_LAST_EQUIPPED_SLOT = 19
-local AMMO_LOW = 200            -- Schuss, ab denen gewarnt wird
+GearWarnings.MIN_AMMO = 20      -- Grenzen des Reglers in den Einstellungen
+GearWarnings.MAX_AMMO = 1000
 local AMMO_SLOT = INVSLOT_AMMO or 0
 local HUNTER = "HUNTER"
 
@@ -48,7 +49,7 @@ end
 
 local function isAmmoLow()
   if not GearWarnings.HasAmmo() or not usesAmmo() then return false end
-  return GetInventoryItemCount("player", AMMO_SLOT) < AMMO_LOW
+  return GetInventoryItemCount("player", AMMO_SLOT) < ns.db.ammoLow
 end
 
 -- Je Hinweis: Einstellung, Prüfung (true = warnen), Text; active = Zustand bei der letzten Prüfung

@@ -110,3 +110,20 @@ UnitUsesAmmo = function() return true end
 GearWarnings.Check()
 expect("Forever mit Munitionsbedarf: Warnung", count(L.WARN_AMMO), 3)
 UnitUsesAmmo = nil
+
+-- Einstellbare Grenze
+wow.state.interface = 11509
+wow.state.inventoryCounts = { [0] = 1000 }
+GearWarnings.Check()
+local before = count(L.WARN_AMMO)
+addon.Set("ammoLow", 500)
+wow.state.inventoryCounts = { [0] = 450 }
+GearWarnings.Check()
+expect("Grenze 500: bei 450 Warnung", count(L.WARN_AMMO), before + 1)
+wow.state.inventoryCounts = { [0] = 1000 }
+GearWarnings.Check()
+addon.Set("ammoLow", 100)
+wow.state.inventoryCounts = { [0] = 150 }
+GearWarnings.Check()
+expect("Grenze 100: bei 150 still", count(L.WARN_AMMO), before + 1)
+expect("Grenze begrenzt", addon.Database.SanitizeSettings({ ammoLow = 5 }).ammoLow, 20)

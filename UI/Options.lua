@@ -292,6 +292,17 @@ addToggles({
   toggle("WARN_AMMO_TOGGLE", "warnAmmo", ns.GearWarnings.HasAmmo),
   toggle("WARN_INSTANCE_LIMIT_TOGGLE", "warnInstanceLimit"),
 })
+if ns.GearWarnings.HasAmmo() then
+  addSlider({
+    label = "WARN_AMMO_BELOW",
+    min = ns.GearWarnings.MIN_AMMO,
+    max = ns.GearWarnings.MAX_AMMO,
+    step = 20,
+    get = function(db) return db.ammoLow end,
+    set = function(value) ns.Set("ammoLow", value) end,
+    format = function(value) return string.format(L.AMMO_COUNT, value) end,
+  })
+end
 -- Lagerfeuer-Anzeige: nur in WoW Forever (dort gibt es den Lagerfeuer-Buff)
 if ns.CampFire.IsAvailable() then
   addSection("SECTION_CAMP")
