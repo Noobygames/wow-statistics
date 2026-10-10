@@ -25,7 +25,8 @@ local SETTINGS_DEFAULTS = {
   showRecentXpRate = false,  -- XP/h der letzten 15 min (siehe RecentXpRate.lua)
   showXpGained = true,  -- gewonnene XP im Bereich
   showLevelEta = true,
-  showCountToLevel = false,  -- Kills und Quests bis zum Level-Up
+  showKillsToLevel = false,   -- Kills bis zum Level-Up
+  showQuestsToLevel = false,  -- Quests bis zum Level-Up
   showMaxLevelEta = false,
   showSplits = false,  -- Splits gegen einen Vergleich (siehe Splits.lua)
   splitComparison = "best",  -- "best", "pb" oder "run" (db.splitReference, siehe Splits.lua)
@@ -188,7 +189,7 @@ local characterMigrations = {
 }
 
 -- Migrationen für die Einstellungen, Schlüssel = Zielversion
-local SETTINGS_SCHEMA_VERSION = 4
+local SETTINGS_SCHEMA_VERSION = 5
 local OLD_DEFAULT_FONT_SIZE = 16
 
 -- Wendet fn auf die Einstellungen und alle darin gespeicherten Kopien an (Profile, Stream-Sicherung)
@@ -230,6 +231,16 @@ local settingsMigrations = {
   [4] = function(settings)
     forEachSettingsCopy(settings, function(values)
       if values.levelUpAnnounce == "say" then values.levelUpAnnounce = "off" end
+    end)
+  end,
+  -- "Kills/Quests bis Level-Up" aufgeteilt (wer keine Quests macht, will die Zeile nicht sehen): beide übernehmen den alten Zustand
+  [5] = function(settings)
+    forEachSettingsCopy(settings, function(values)
+      if values.showCountToLevel ~= nil then
+        values.showKillsToLevel = values.showCountToLevel
+        values.showQuestsToLevel = values.showCountToLevel
+      end
+      values.showCountToLevel = nil
     end)
   end,
 }

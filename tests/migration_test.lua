@@ -7,7 +7,8 @@ LevelTimerCharDB = {  -- Schema 1: flach, nur PvE-Kills als "kills"
   kills = 4,
   history = { [9] = { level = 9, seconds = 3000, xp = 900, counters = { pveKills = 30 } } },
 }
-LevelTimerDB = { locked = true, showKills = false, showDeaths = true, fontSize = 24 }
+LevelTimerDB = { locked = true, showKills = false, showDeaths = true, fontSize = 24, showCountToLevel = true,
+  profiles = { Alt = { showCountToLevel = false } } }
 
 wow.login({ level = 10 })
 
@@ -30,6 +31,10 @@ expect("Kills aus -> PvE aus", LevelTimerDB.showPveKills, false)
 expect("Kills aus -> PvP aus", LevelTimerDB.showPvpKills, false)
 expect("alter Kills-Schalter entfernt", LevelTimerDB.showKills, nil)
 expect("Tode an -> Kills pro Tod an", LevelTimerDB.showKillsPerDeath, true)
+expect("Kills/Quests bis Level-Up: Kills übernimmt", LevelTimerDB.showKillsToLevel, true)
+expect("Kills/Quests bis Level-Up: Quests übernimmt", LevelTimerDB.showQuestsToLevel, true)
+expect("alter Schalter entfernt", LevelTimerDB.showCountToLevel, nil)
+expect("auch im Profil", LevelTimerDB.profiles.Alt.showQuestsToLevel, false)
 expect("neue Einstellung bekommt Default", LevelTimerDB.windowScope, "level")
 expect("Schriftgröße wird zu Fenstergröße", LevelTimerDB.scale, 1.5)
 expect("alte Schriftgröße entfernt", LevelTimerDB.fontSize, nil)
