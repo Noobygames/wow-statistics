@@ -17,7 +17,7 @@ Content of `description.md`.
 
 ## Relations
 
-- **Required dependency:** Level Time (the CurseForge project of this repository). Matches `## Dependencies: LevelTimer` in `StreamGoal.toc`.
+- **Required dependency:** `level-time` (set via `required-dependencies` in `StreamGoal/.pkgmeta`; matches `
 
 ## License
 
