@@ -40,3 +40,12 @@ func TestWriteTGA(t *testing.T) {
 		t.Errorf("Maße = %dx%d", w, h)
 	}
 }
+
+func TestGoalArtwork(t *testing.T) {
+	if a := renderGoal(32, logoStyle).NRGBAAt(0, 0).A; a != 255 {
+		t.Errorf("Logo-Hintergrund sollte deckend sein, Alpha = %d", a)
+	}
+	if a := renderGoal(iconSize, iconStyle).NRGBAAt(0, 0).A; a != 0 {
+		t.Errorf("Icon-Ecke sollte transparent sein, Alpha = %d", a)
+	}
+}
