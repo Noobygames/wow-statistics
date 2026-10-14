@@ -42,11 +42,18 @@ jobs:
       - uses: BigWigsMods/packager@v2
         with:
           args: -n "{package-name}-{project-version}:{package-name}-{project-version}.zip"
-      # Zweites Addon aus dem Unterordner StreamGoal/, eigenes CurseForge-Projekt (ID in StreamGoal/StreamGoal.toc).
+      # Zweites Addon (StreamGoal/, eigenes CurseForge-Projekt, ID in StreamGoal/StreamGoal.toc). Der Packager erwartet
+      # das Addon im Wurzelverzeichnis eines Git-Repos (-t verlangt ein .git darin): ein Klon, dessen Wurzel StreamGoal/ ist
+      # und dessen Verlauf nur die Commits dieses Ordners enthält (das gibt auch das Changelog). Tags werden mit umgeschrieben.
+      - name: Split StreamGoal history
+        run: |
+          git clone -q . sg-repo
+          cd sg-repo
+          git filter-branch -f --subdirectory-filter StreamGoal --tag-name-filter cat -- --all
+          git checkout -q "$GITHUB_REF_NAME"
       # Ohne GITHUB_OAUTH legt dieser Lauf kein zweites GitHub-Release für denselben Tag an.
       - uses: BigWigsMods/packager@v2
         env:
           GITHUB_OAUTH: ""
         with:
-          # -t: Ordner mit .pkgmeta und .toc (der Packager kennt keine Eingabe "workdir")
-          args: -t StreamGoal -n "{package-name}-{project-version}:{package-name}-{project-version}.zip"
+          args: -t sg-repo -n "{package-name}-{project-version}:{package-name}-{project-version}.zip"
