@@ -56,6 +56,7 @@ wow = {
     health = 1000,
     healthMax = 1000,
     powerMax = 0,
+    trainer = { services = {} },  -- Klassenlehrer (GetTrainerServiceInfo)
     statBuffs = {},          -- UnitStat: Buff (+) oder Debuff (-) je Wert
     stats = {},              -- UnitStat: Gesamtwerte 1 = Stärke, 2 = Beweglichkeit, 3 = Ausdauer, 4 = Intelligenz
     -- Händler: Reparatur (CanMerchantRepair, GetRepairAllCost) und Gildenbank
@@ -403,6 +404,19 @@ C_ChatInfo = {
   SendChatMessage = function(message, chatType) table.insert(wow.sentChat, { message = message, chatType = chatType }) end,
   InChatMessagingLockdown = function() return state.chatLockdown end,
 }
+-- Klassenlehrer: state.trainer.services = { { name, serviceType, texture, reqLevel, subText } }
+-- Forever liefert name, serviceType, texture, reqLevel, subText; Era/TBC name, subText, serviceType und Level/Symbol einzeln
+function GetNumTrainerServices() return #state.trainer.services end
+function GetTrainerServiceInfo(index)
+  local service = state.trainer.services[index]
+  if state.interface == 16001 then
+    return service.name, service.serviceType, service.texture, service.reqLevel, service.subText
+  end
+  return service.name, service.subText, service.serviceType, false
+end
+function GetTrainerServiceLevelReq(index) return state.trainer.services[index].reqLevel end
+function GetTrainerServiceIcon(index) return state.trainer.services[index].texture end
+function IsTradeskillTrainer() return state.trainer.tradeskill or false end
 function UnitHealthMax() return state.healthMax end
 function UnitPowerMax() return state.powerMax end
 -- UnitStat: Basiswert, Gesamtwert, positive und negative Buffs

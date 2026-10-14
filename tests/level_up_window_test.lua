@@ -1,0 +1,66 @@
+-- Level-Up-Fenster: erscheint nach der Verzögerung mit den Zuwächsen, wartet im Kampf, Kompaktmodus, Theme, Vorschau.
+local L = addon.L
+local Window = addon.LevelUpWindow
+
+wow.login({ level = 10 })
+addon.Alerts.Clear()
+expect("startet versteckt", LevelTimerLevelUp:IsShown(), false)
+
+wow.state.healthMax = 1290
+wow.state.stats = { 83, 40, 95, 61 }
+local gains = { health = 90, strength = 3, stamina = 5, talents = 1 }
+
+-- Level-Up: Fenster nach der Verzögerung, Titel mit Level
+wow.levelUp(11, nil, gains)
+expect("wartet auf die Werte", LevelTimerLevelUp:IsShown(), false)
+wow.runTimers()
+expect("Fenster sichtbar", LevelTimerLevelUp:IsShown(), true)
+expect("Standardtheme", addon.db.levelUpTheme, "modern")
+
+-- Aus: kein Fenster
+LevelTimerLevelUp:Hide()
+addon.Set("levelUpWindow", false)
+wow.levelUp(12, nil, gains)
+wow.runTimers()
+expect("aus: kein Fenster", LevelTimerLevelUp:IsShown(), false)
+addon.Set("levelUpWindow", true)
+
+-- Im Kampf wartet das Fenster
+wow.state.inCombat = true
+wow.levelUp(13, nil, gains)
+wow.runTimers()
+expect("Kampf: kein Fenster", LevelTimerLevelUp:IsShown(), false)
+wow.state.inCombat = false
+wow.fire("PLAYER_REGEN_ENABLED")
+expect("nach dem Kampf: Fenster", LevelTimerLevelUp:IsShown(), true)
+
+-- blendet nach der Anzeigedauer aus
+addon.Set("levelUpDuration", 3)
+wow.advance(3.1)
+wow.update(0.1)
+expectTrue("blendet aus (Alpha sinkt)", LevelTimerLevelUp:GetAlpha() < 1)
+wow.advance(1)
+wow.update(0.1)
+expect("weg", LevelTimerLevelUp:IsShown(), false)
+
+-- Kompaktmodus, Theme, Vorschau
+addon.Set("levelUpCompact", true)
+addon.Set("levelUpTheme", "horde")
+Window.Preview()
+expect("Vorschau sichtbar", LevelTimerLevelUp:IsShown(), true)
+addon.Set("levelUpTheme", "alliance")
+addon.Set("levelUpCompact", false)
+
+-- Verschiebemodus bleibt stehen
+Window.SetMoving(true)
+expect("Verschieben: sichtbar", Window.IsMoving(), true)
+wow.advance(30)
+wow.update(0.1)
+expect("Verschieben: bleibt", LevelTimerLevelUp:IsShown(), true)
+Window.SetMoving(false)
+expect("Verschieben beendet", LevelTimerLevelUp:IsShown(), false)
+
+-- Blizzards Banner: Ereignis abgemeldet, solange das Fenster es ersetzt
+addon.Set("levelUpHideBlizzard", false)
+addon.Set("levelUpHideBlizzard", true)
+expect("Fehlerfrei", #wow.errors, 0)

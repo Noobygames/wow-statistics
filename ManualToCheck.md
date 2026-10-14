@@ -1368,3 +1368,21 @@ Taschenwarnung nach dem Kampf (ja/nein):
 Lagerfeuer-Hinweis nach dem Kampf (ja/nein):
 Fehler:
 ```
+
+### 64. Level-Up-Fenster (Roadmap 249)
+
+- [ ] geprüft
+
+Klassenlehrer einmal besuchen (Liste wird gemerkt). Reiter Einblendungen > Level-Up-Fenster: „Vorschau“, „Verschieben“, Farbschema und „Kompakte Ansicht“ ausprobieren. Dann ein echtes Level-Up (gerades Level, damit der Lehrer neue Fähigkeiten hat).
+
+**Erwartet:** Eigenes Fenster mit Level, Tabelle der Zuwächse, Talentpunkten und Symbolen der neuen Lehrerfähigkeiten (Tooltip mit Name, Rang, Level). Blizzards großes Banner erscheint nicht, solange „Blizzard-Banner ausblenden“ an ist; mit der Einstellung aus kommt es wieder (dazu ggf. /reload). Linksklick schließt das Fenster, unter der Maus bleibt es stehen. Im Kampf erscheint es erst danach.
+
+**Antwort:**
+
+```text
+Client (Retail/Era/TBC/Forever):
+Blizzard-Banner weg (ja/nein):
+Fähigkeiten stimmen mit dem Lehrer überein (ja/nein/nicht gemerkt):
+Tooltip der Fähigkeiten (ja/nein):
+Fehler:
+```
