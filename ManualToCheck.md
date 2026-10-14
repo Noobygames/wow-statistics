@@ -1351,3 +1351,20 @@ Zeilen stimmen mit dem Charakterfenster (ja/nein):
 Werte nach 1 s schon neu (ja/nein):
 Fehler:
 ```
+
+### 63. Keine Hinweise im Kampf (Roadmap 248)
+
+- [ ] geprüft
+
+Einblendung „Level-Up“ an. Im Kampf (z.B. gegen einen Gegner) das Level erreichen; außerdem im Kampf die Taschen fast voll machen und in die Nähe eines Lagerfeuers laufen (Forever).
+
+**Erwartet:** Im Kampf erscheint nichts. Nach dem Kampf kommt die Level-Up-Karte (mit Zuwachs), danach die Taschenwarnung bzw. der Lagerfeuer-Hinweis.
+
+**Antwort:**
+
+```text
+Level-Up kommt nach dem Kampf (ja/nein):
+Taschenwarnung nach dem Kampf (ja/nein):
+Lagerfeuer-Hinweis nach dem Kampf (ja/nein):
+Fehler:
+```

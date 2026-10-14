@@ -36,6 +36,12 @@ function ns.Debug(area, format, ...)
 end
 
 -- Retail kann Werte als "secret" markieren; die dürfen Addons nicht auswerten
+-- Kämpft der Spieler gerade? Anzeigen, die stören würden, warten damit bis nach dem Kampf
+function ns.InCombat()
+  local inCombat = UnitAffectingCombat("player")
+  return not ns.IsSecret(inCombat) and inCombat == true
+end
+
 function ns.IsSecret(value)
   return issecretvalue ~= nil and issecretvalue(value)
 end
