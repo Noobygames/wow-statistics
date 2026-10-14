@@ -48,5 +48,5 @@ jobs:
         env:
           GITHUB_OAUTH: ""
         with:
-          workdir: StreamGoal
-          args: -n "{package-name}-{project-version}:{package-name}-{project-version}.zip"
+          # -t: Ordner mit .pkgmeta und .toc (der Packager kennt keine Eingabe "workdir")
+          args: -t StreamGoal -n "{package-name}-{project-version}:{package-name}-{project-version}.zip"

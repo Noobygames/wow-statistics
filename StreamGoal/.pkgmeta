@@ -1,4 +1,4 @@
-# Konfiguration für den BigWigs-Packager (Schritt "Stream Goal" in .github/workflows/release.yml, workdir StreamGoal).
+# Konfiguration für den BigWigs-Packager (zweiter Schritt in .github/workflows/release.yml, Packager-Argument -t StreamGoal).
 package-as: StreamGoal
 
 # Pflicht-Abhängigkeit auf CurseForge (Slug des Level-Time-Projekts)
