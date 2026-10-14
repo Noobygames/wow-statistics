@@ -7,6 +7,7 @@ end
 
 wow.login({ level = 10 })
 addon.Set("alertLevelUp", true)
+addon.Set("levelUpWindow", false)  -- sonst ersetzt das Fenster die Karte
 addon.Alerts.Clear()
 
 -- Level-Up im Kampf: nichts zu sehen, nach dem Kampf erscheint es

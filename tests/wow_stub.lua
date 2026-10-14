@@ -448,9 +448,11 @@ C_QuestLog = {
 function GetQuestID() return state.questID or 0 end
 function strtrim(text) return (text:gsub("^%s+", ""):gsub("%s+$", "")) end
 -- Wie im Client: Funktion ersetzen, Original zuerst, dann der Hook
-function hooksecurefunc(name, hook)
-  local original = _G[name]
-  _G[name] = function(...)
+function hooksecurefunc(target, nameOrHook, maybeHook)
+  local owner, name, hook = _G, target, nameOrHook
+  if type(target) == "table" then owner, name, hook = target, nameOrHook, maybeHook end
+  local original = owner[name]
+  owner[name] = function(...)
     local results = { original(...) }
     hook(...)
     return unpack(results)

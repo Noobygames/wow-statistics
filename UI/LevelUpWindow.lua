@@ -427,6 +427,42 @@ local function updateBlizzardBanner()
   end
 end
 
+---------------------------------------------------------------------------
+-- WoW Forever: Das Level-Up-Banner ist dort ein Toast des EventToastManager (Titel "Stufe 4"), kein LevelUpDisplay.
+-- Alle Toasts abzuschalten ginge zu weit; deshalb wird nur der Toast ausgeblendet, der kurz nach dem Level-Up
+-- erscheint und die neue Stufe im Titel trägt.
+---------------------------------------------------------------------------
+local TOAST_MAX_AGE = 5  -- Sekunden nach PLAYER_LEVEL_UP, in denen ein Toast als Level-Up-Banner gilt
+local lastLevelUp        -- { level, time }
+local toastHooked = false
+
+ns.RegisterEvent("PLAYER_LEVEL_UP", function(level)
+  lastLevelUp = { level = level, time = GetTime() }
+end)
+
+local function isLevelUpToast(info)
+  if not info or not lastLevelUp or GetTime() - lastLevelUp.time > TOAST_MAX_AGE then return false end
+  local titleDisplay = Enum and Enum.EventToastDisplayType and Enum.EventToastDisplayType.NormalTitleAndSubTitle
+  if info.displayType ~= titleDisplay then return false end
+  return type(info.title) == "string" and info.title:find(tostring(lastLevelUp.level), 1, true) ~= nil
+end
+
+local function hookBlizzardToast()
+  local manager = EventToastManagerFrame
+  if toastHooked or not manager or not manager.Show then return end
+  toastHooked = true
+  hooksecurefunc(manager, "Show", function(self)
+    local toast = self.currentDisplayingToast
+    if ns.db.levelUpWindow and ns.db.levelUpHideBlizzard and isLevelUpToast(toast and toast.toastInfo) then
+      self:SetAlpha(0)
+      ns.Debug("levelup", "Blizzard toast hidden")
+    end
+  end)
+  hooksecurefunc(manager, "Hide", function(self) self:SetAlpha(1) end)
+end
+
+ns.OnLogin(hookBlizzardToast)
+
 ns.RegisterApply(function(db)
   mover.SetScale(math.max(LevelUpWindow.MIN_SCALE, math.min(LevelUpWindow.MAX_SCALE, db.levelUpScale)))
   mover.Sync()

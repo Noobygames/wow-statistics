@@ -5,6 +5,7 @@ local LevelGains = addon.LevelGains
 wow.login({ level = 10 })
 addon.Alerts.Clear()
 addon.Set("alertLevelUp", true)
+addon.Set("levelUpWindow", false)  -- sonst ersetzt das Fenster die Karte
 
 -- Ohne Zuwächse im Ereignis (ältere Clients): sofort, ohne Zeilen
 local readyLevel, readyGains

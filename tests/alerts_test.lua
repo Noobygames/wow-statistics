@@ -9,6 +9,7 @@ local function shownText()
 end
 
 wow.login({ level = 10 })
+addon.Set("levelUpWindow", false)  -- sonst ersetzt das Fenster die Level-Up-Einblendung
 expect("startet versteckt", shownText(), nil)
 
 -- Standard: alles aus
