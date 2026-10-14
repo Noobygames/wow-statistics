@@ -1331,5 +1331,6 @@ Karten und Einblendung (ja/nein):
 BG-Sieg zählt einmal (Client):
 Shift-Klick-Link (ja/nein):
 Reload im fertigen Schlachtfeld zählt doppelt (ja/nein):
+Sieger-Wert: `/dump C_PvP.GetActiveMatchWinner and C_PvP.GetActiveMatchWinner(), GetBattlefieldWinner and GetBattlefieldWinner()` am Ende eines Spiels (Retail/Forever: 0/1 = Horde/Allianz, 255 = Unentschieden?):
 Fehler:
 ```

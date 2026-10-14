@@ -90,7 +90,9 @@ expect("fremde Beute zählt nicht", bladeGoal.progress, 0)
 wow.fire("CHAT_MSG_LOOT", "Ihr erhaltet Beute: " .. cloth .. "x2.")
 expect("zwei Stück", clothGoal.progress, 2)
 expect("anderes Item bleibt", bladeGoal.progress, 0)
-wow.fire("CHAT_MSG_LOOT", "Ihr erhaltet einen Gegenstand: " .. cloth .. ".")
+wow.fire("CHAT_MSG_LOOT", "Ihr erhaltet einen Gegenstand: " .. cloth .. ".")  -- Kauf, Post oder Quest
+expect("erhaltener Gegenstand ist keine Beute", clothGoal.progress, 2)
+wow.fire("CHAT_MSG_LOOT", "Ihr erhaltet Beute: " .. cloth .. ".")
 expect("Leinenstoff-Ziel erreicht", clothGoal.status, Goals.DONE)
 wow.fire("CHAT_MSG_LOOT", "Ihr erhaltet Beute: " .. blade .. ".")
 expect("Klinge erreicht", bladeGoal.status, Goals.DONE)
@@ -197,3 +199,24 @@ expect("Größe begrenzt", StreamGoalDB.settings.scale, 2)
 SlashCmdList.STREAMGOAL("move")
 SlashCmdList.STREAMGOAL("help")
 expect("Hilfe", lastPrint():find(L.SG_HELP, 1, true) ~= nil, true)
+
+---------------------------------------------------------------------------
+-- Obergrenze und Reload im fertigen Schlachtfeld
+---------------------------------------------------------------------------
+for _ = 1, Goals.MAX_ACTIVE do SlashCmdList.STREAMGOAL("add bgwin 5") end
+expect("Obergrenze erreicht", #Goals.Active(), Goals.MAX_ACTIVE)
+SlashCmdList.STREAMGOAL("add bgwin 5")
+expect("Obergrenze: kein weiteres Ziel", #Goals.Active(), Goals.MAX_ACTIVE)
+expect("Obergrenze: Meldung", lastPrint():find(string.format(L.SG_ERR_TOO_MANY, Goals.MAX_ACTIVE), 1, true) ~= nil, true)
+
+wow.state.instance = nil
+wow.fire("PLAYER_ENTERING_WORLD")
+wow.state.instance = { name = "Arathibecken", type = "pvp" }
+wow.state.battlefieldWinner = 1
+wow.fire("UPDATE_BATTLEFIELD_SCORE")
+local firstActive = Goals.Active()[1]
+expect("Sieg gezählt", firstActive.progress, 1)
+wow.fire("PLAYER_ENTERING_WORLD")  -- /reload im fertigen Schlachtfeld
+wow.fire("UPDATE_BATTLEFIELD_SCORE")
+expect("Reload zählt nicht doppelt", firstActive.progress, 1)
+wow.state.instance = nil

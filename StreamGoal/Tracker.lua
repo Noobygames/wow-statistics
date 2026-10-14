@@ -123,13 +123,17 @@ Goals.OnChange(function(event, goal)
   if event == "done" then
     local title = Goals.Title(goal)
     ns.Print(string.format(L.SG_CHAT_DONE, title))
+    -- Ton hängt an der eigenen Einstellung, nicht an alertSound von Level Time (Standard aus)
+    if ns.db.settings.sound then Alerts.PlaySound() end
     Alerts.Show(title, DONE_COLOR, {
-      sound = ns.db.settings.sound,
       notice = { icon = Goals.GetKind(goal.kind).icon, title = L.SG_NOTICE_DONE, body = title },
     })
   end
   Tracker.Refresh()
 end)
+
+-- Sprachwechsel in Level Time: Karten neu aufbauen
+LT.RegisterApply(Tracker.Refresh)
 
 LT.OnLogin(function()
   mover.SetScale(ns.db.settings.scale)

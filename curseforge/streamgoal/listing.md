@@ -17,7 +17,7 @@ Content of `description.md`.
 
 ## Relations
 
-- **Required dependency:** `level-time` (set via `required-dependencies` in `StreamGoal/.pkgmeta`; matches `
+- **Required dependency:** `level-time` (set via `required-dependencies` in `StreamGoal/.pkgmeta`; matches `## Dependencies: LevelTimer` in `StreamGoal.toc`).
 
 ## License
 
@@ -29,7 +29,4 @@ Pick the versions listed under `## Interface:` in `StreamGoal/StreamGoal.toc`.
 
 ## After approval
 
-Uploads run on `v*` tags once the release pipeline for this addon is set up (still open). Meanwhile:
-
-1. Put the project ID into `StreamGoal/StreamGoal.toc`: `## X-Curse-Project-ID: <id>`
-2. For the first upload use `make package` and upload `dist/StreamGoal-<version>.zip` by hand.
+Uploads run on `v*` tags (second packager step in `.github/workflows/release.yml`, config `StreamGoal/.pkgmeta`). The project ID is already in `StreamGoal.toc`. For a manual first upload use `make package` and upload `dist/StreamGoal-<version>.zip` by hand.

@@ -12,6 +12,7 @@ local Goals = {}
 ns.Goals = Goals
 
 Goals.ACTIVE, Goals.DONE, Goals.CANCELLED = "active", "done", "cancelled"
+Goals.MAX_ACTIVE = 6    -- gleichzeitig laufende Ziele je Charakter (so viele Zeilen zeigt das Fenster)
 Goals.MAX_HISTORY = 500  -- abgeschlossene Ziele; die ältesten fallen weg
 
 local kinds = {}
@@ -45,6 +46,7 @@ function Goals.Create(kind, params, target)
   params = params or {}
   local err = def.validate(params, target)
   if err then return nil, err end
+  if #Goals.Active() >= Goals.MAX_ACTIVE then return nil, string.format(ns.L.SG_ERR_TOO_MANY, Goals.MAX_ACTIVE) end
 
   local start = def.initial and def.initial() or 0
   local goal = {

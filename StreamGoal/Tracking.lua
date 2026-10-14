@@ -40,14 +40,12 @@ LT.Journal.OnAdd(function(logName, entry)
 end)
 
 ---------------------------------------------------------------------------
--- Items: eigene Beute (wie Loot.lua von Level Time, aber jede Qualität)
+-- Items: eigene Beute (wie Loot.lua von Level Time, aber jede Qualität); LOOT_ITEM_PUSHED_SELF (Kauf, Post, Quest) zählt nicht
 ---------------------------------------------------------------------------
 -- Speziellere Formate (mit Anzahl) zuerst, sonst passt das einfache Format auch auf sie
 local lootFormats = ChatPatterns.CompileGlobals({
   "LOOT_ITEM_SELF_MULTIPLE",
   "LOOT_ITEM_SELF",
-  "LOOT_ITEM_PUSHED_SELF_MULTIPLE",
-  "LOOT_ITEM_PUSHED_SELF",
 }, ChatPatterns.LINK)
 
 if #lootFormats > 0 then
@@ -67,20 +65,25 @@ end
 -- Das Ergebnis steht erst am Ende fest und wird von mehreren Ereignissen gemeldet (Retail/Forever:
 -- PVP_MATCH_COMPLETE, alle Clients: UPDATE_BATTLEFIELD_SCORE); pro Schlachtfeld zählt es einmal.
 ---------------------------------------------------------------------------
-local resultCounted = false
+-- Sieger: C_PvP.GetActiveMatchWinner (Retail/Forever), sonst GetBattlefieldWinner; nil = läuft noch oder keine API
+local function getWinner()
+  if C_PvP and C_PvP.GetActiveMatchWinner then return C_PvP.GetActiveMatchWinner() end
+  if GetBattlefieldWinner then return GetBattlefieldWinner() end
+  return nil
+end
 
-local function playerWon()
-  if not GetBattlefieldWinner then return false end
-  local winner = GetBattlefieldWinner()
-  if winner == nil or winner == DRAW then return false end
+local function playerWon(winner)
+  if winner == DRAW then return false end
   return winner == WINNER_BY_FACTION[UnitFactionGroup("player")]
 end
 
+-- "Schon gezählt" steht in StreamGoalDB, damit ein /reload im fertigen Schlachtfeld nichts doppelt zählt
 local function checkBattlegroundResult()
-  if resultCounted or not inBattleground() then return end
-  if GetBattlefieldWinner and GetBattlefieldWinner() == nil then return end  -- läuft noch
-  resultCounted = true
-  if not playerWon() then return end
+  if not ns.db or ns.db.bgResultCounted or not inBattleground() then return end
+  local winner = getWinner()
+  if winner == nil then return end  -- läuft noch
+  ns.db.bgResultCounted = true
+  if not playerWon(winner) then return end
   local name = (GetInstanceInfo()) or ""
   Goals.Add("bgwin", function(goal)
     local wanted = goal.params.battleground
@@ -90,7 +93,7 @@ end
 
 LT.RegisterEvent("PVP_MATCH_COMPLETE", checkBattlegroundResult)
 LT.RegisterEvent("UPDATE_BATTLEFIELD_SCORE", checkBattlegroundResult)
--- Neues Schlachtfeld: Ergebnis wieder zählen (außerhalb zurücksetzen, damit ein Reload mitten drin nichts doppelt zählt)
+-- Neues Schlachtfeld: Ergebnis wieder zählen (erst außerhalb zurücksetzen, damit ein Reload mitten drin nichts doppelt zählt)
 LT.RegisterEvent("PLAYER_ENTERING_WORLD", function()
-  if not inBattleground() then resultCounted = false end
+  if ns.db and not inBattleground() then ns.db.bgResultCounted = false end
 end)

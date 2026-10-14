@@ -107,7 +107,7 @@ Requirements: [Go](https://go.dev/) 1.23+ and `make`.
 make install    # interactive wizard
 ```
 
-The wizard finds your WoW folder, lists the installed game versions, shows what it will copy, update or remove, and asks for confirmation. It only writes to `Interface/AddOns/LevelTimer`. Your settings (`WTF/` SavedVariables) are never touched. Older manual installs are migrated automatically.
+The wizard finds your WoW folder, lists the installed game versions, shows what it will copy, update or remove, and asks for confirmation. It only writes to `Interface/AddOns/LevelTimer` and `Interface/AddOns/StreamGoal` (pass `ARGS="-addons LevelTimer"` to skip Stream Goal). Your settings (`WTF/` SavedVariables) are never touched. Older manual installs are migrated automatically.
 
 Other targets:
 
