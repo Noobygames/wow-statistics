@@ -2,6 +2,7 @@
 ## Title: Stream Goal
 ## Version: @project-version@
 ## Author: Nerzal
+## X-Curse-Project-ID: 1744370
 ## IconTexture: Interface\AddOns\StreamGoal\Media\Icon
 ## Dependencies: LevelTimer
 ## Notes: Set goals for your stream (reach a level, loot an item, kill enemies, win battlegrounds) with live tracker cards and a history

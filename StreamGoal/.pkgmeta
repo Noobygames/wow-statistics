@@ -1,0 +1,2 @@
+# Konfiguration für den BigWigs-Packager (Schritt "Stream Goal" in .github/workflows/release.yml, workdir StreamGoal).
+package-as: StreamGoal

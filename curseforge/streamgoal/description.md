@@ -2,7 +2,7 @@
 
 Set goals for your stream and show them as cards on screen. Viewers see at a glance what you are working on and how far along you are; when a goal is reached you get a big on-screen alert.
 
-**Requires [Level Time](LEVEL_TIME_PROJECT_URL).** Stream Goal builds on its cards, alerts and tables, so install both.
+**Requires [Level Time](https://www.curseforge.com/wow/addons/level-time).** Stream Goal builds on its cards, alerts and tables, so install both.
 
 ## Goal types
 
@@ -22,16 +22,16 @@ Set goals for your stream and show them as cards on screen. Viewers see at a gla
 
 ## Commands
 
-| Command | Effect |
-|---|---|
-| `/sg` | Open the window |
-| `/sg help` | List all commands |
-| `/sg add level 20` | Goal: reach level 20 |
-| `/sg add kills 50 pve` | Goal: 50 PvE kills |
-| `/sg add item <link> 3` | Goal: loot an item three times |
-| `/sg add bgwin 3 Arathi` | Goal: win 3 Arathi Basin battlegrounds |
-| `/sg list` / `/sg cancel <Nr>` / `/sg history` | List active goals, cancel one, show the history |
-| `/sg tracker` / `/sg move` / `/sg scale <0.5-2>` | Show or hide, move and resize the cards |
+| Command                                          | Effect                                          |
+| ------------------------------------------------ | ----------------------------------------------- |
+| `/sg`                                            | Open the window                                 |
+| `/sg help`                                       | List all commands                               |
+| `/sg add level 20`                               | Goal: reach level 20                            |
+| `/sg add kills 50 pve`                           | Goal: 50 PvE kills                              |
+| `/sg add item <link> 3`                          | Goal: loot an item three times                  |
+| `/sg add bgwin 3 Arathi`                         | Goal: win 3 Arathi Basin battlegrounds          |
+| `/sg list` / `/sg cancel <Nr>` / `/sg history`   | List active goals, cancel one, show the history |
+| `/sg tracker` / `/sg move` / `/sg scale <0.5-2>` | Show or hide, move and resize the cards         |
 
 `/streamgoal` works as an alias for `/sg`.
 
