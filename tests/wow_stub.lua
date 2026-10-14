@@ -56,6 +56,7 @@ wow = {
     health = 1000,
     healthMax = 1000,
     powerMax = 0,
+    statBuffs = {},          -- UnitStat: Buff (+) oder Debuff (-) je Wert
     stats = {},              -- UnitStat: Gesamtwerte 1 = Stärke, 2 = Beweglichkeit, 3 = Ausdauer, 4 = Intelligenz
     -- Händler: Reparatur (CanMerchantRepair, GetRepairAllCost) und Gildenbank
     merchant = { canRepair = false, repairCost = 0, guildRepair = false, guildFunds = 0 },
@@ -405,7 +406,11 @@ C_ChatInfo = {
 function UnitHealthMax() return state.healthMax end
 function UnitPowerMax() return state.powerMax end
 -- UnitStat: Basiswert, Gesamtwert, positive und negative Buffs
-function UnitStat(_, index) local value = state.stats and state.stats[index] or 0; return value, value, 0, 0 end
+function UnitStat(_, index)
+  local value = state.stats[index] or 0
+  local buff = state.statBuffs[index] or 0
+  return value, value + buff, math.max(buff, 0), math.min(buff, 0)
+end
 function GetPVPSessionStats() return state.honorableKills end
 function IsShiftKeyDown() return state.shiftDown end
 function RequestTimePlayed() end

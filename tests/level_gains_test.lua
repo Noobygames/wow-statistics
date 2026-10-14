@@ -37,10 +37,22 @@ expect("Talentpunkte", lines[7], string.format(L.GAIN_TALENTS, 1))
 expect("Karte: Titel", LevelTimerNotice.title:GetText(), string.format(L.ALERT_LEVEL_UP, 12))
 expect("Karte: Zeilen", LevelTimerNotice.body:GetText(), table.concat(lines, "\n"))
 
+-- Buffs zählen nicht: Werte ohne Buffs; Leben und Mana nur den Zuwachs, solange Ausdauer bzw. Intelligenz gebufft sind
+wow.state.stats = { 83, 40, 95, 61 }
+wow.state.statBuffs = { 20, 0, 12, 0 }  -- Stärke und Ausdauer gebufft
+wow.levelUp(13, nil, { health = 90, power = 40, strength = 3, stamina = 5 })
+wow.runTimers()
+local buffed = LevelGains.Lines(readyGains)
+expect("Buff: Leben nur Zuwachs", buffed[1], L.GAIN_HEALTH .. " +90")
+expect("Buff: Mana ohne Intelligenzbuff vollständig", buffed[2], L.GAIN_MANA .. " 500 → 540 (+40)")
+expect("Buff: Stärke ohne Buff", buffed[3], L.GAIN_STRENGTH .. " 80 → 83 (+3)")
+expect("Buff: Ausdauer ohne Buff", buffed[4], L.GAIN_STAMINA .. " 90 → 95 (+5)")
+wow.state.statBuffs = {}
+
 -- Einstellung aus: Karte ohne Zeilen
 addon.Alerts.Clear()
 addon.Set("levelUpGains", false)
-wow.levelUp(13, nil, { health = 90, strength = 3 })
+wow.levelUp(16, nil, { health = 90, strength = 3 })
 wow.runTimers()
 expect("aus: Karte ohne Zeilen", LevelTimerNotice.body:GetText() or "", "")
 addon.Set("levelUpGains", true)

@@ -1341,7 +1341,7 @@ Fehler:
 
 Level-Up ausgelöst (echtes Level oder `/lt debug levelup` für ein Beispiel). Einstellung „Level-Up: Zuwachs anzeigen“ im Reiter Hinweise, Einblendung „Level-Up“ an.
 
-**Erwartet:** Chatzeile mit Leben, Mana, Stärke, Beweglichkeit, Ausdauer, Intelligenz als „vorher → nachher (+Zuwachs)“ und Talentpunkten; die Level-Up-Karte zeigt dieselben Zeilen. Die Werte stimmen mit dem Charakterfenster überein (Gesamtwerte, auch mit Buffs).
+**Erwartet:** Chatzeile mit Leben, Mana, Stärke, Beweglichkeit, Ausdauer, Intelligenz als „vorher → nachher (+Zuwachs)“ und Talentpunkten; die Level-Up-Karte zeigt dieselben Zeilen. Die Werte stimmen mit dem Charakterfenster überein (Werte ohne Buffs). Mit Ausdauer-Buff (z.B. Essen, Segen) steht beim Leben nur „+Zuwachs“, mit Intelligenz-Buff beim Mana.
 
 **Antwort:**
 
