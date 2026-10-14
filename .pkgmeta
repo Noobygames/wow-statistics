@@ -5,6 +5,7 @@ package-as: LevelTimer
 
 ignore:
   - tests
+  - StreamGoal
   - tools
   - curseforge
   - Makefile

@@ -40,6 +40,8 @@ wow = {
     questTitle = nil,        -- Titel im offenen Quest-Abgabe-Dialog (GetTitleText)
     questTitles = {},        -- C_QuestLog.GetTitleForQuestID je Quest-ID
     instance = nil,          -- { name, type } wenn in einer Instanz (IsInInstance)
+    faction = "Alliance",    -- UnitFactionGroup("player")
+    battlefieldWinner = nil, -- GetBattlefieldWinner: nil = läuft noch, 0 Horde, 1 Allianz, 255 Unentschieden
     units = {},              -- weitere Einheiten: units.target = { name, classification, isPlayer }
     inGuild = false,
     inGroup = false,         -- Gruppe (IsInGroup)
@@ -407,6 +409,8 @@ function IsInInstance()
   if state.instance then return true, state.instance.type end
   return false, "none"
 end
+function UnitFactionGroup() return state.faction end
+function GetBattlefieldWinner() return state.battlefieldWinner end
 function GetInstanceInfo()
   if not state.instance then return GetZoneText() end
   return state.instance.name, state.instance.type, state.instance.difficulty or 1
@@ -533,5 +537,18 @@ for line in io.lines(ADDON_DIR .. "/LevelTimer.toc") do
     local chunk, err = loadfile(ADDON_DIR .. "/" .. line)
     if not chunk then error(err, 0) end
     chunk("LevelTimer", addon)
+  end
+end
+
+-- Schwester-Addon StreamGoal (Szenarien streamgoal_*): eigener Namespace, hängt wie im Client von LevelTimer ab
+if (SCENARIO or ""):match("^streamgoal_") then
+  streamGoal = {}
+  for line in io.lines(ADDON_DIR .. "/StreamGoal/StreamGoal.toc") do
+    line = line:gsub("\r", ""):gsub("\\", "/")
+    if line ~= "" and not line:match("^#") then
+      local chunk, err = loadfile(ADDON_DIR .. "/StreamGoal/" .. line)
+      if not chunk then error(err, 0) end
+      chunk("StreamGoal", streamGoal)
+    end
   end
 end

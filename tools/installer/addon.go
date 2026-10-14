@@ -123,3 +123,58 @@ func parseTocFiles(tocPath string) ([]string, error) {
 	}
 	return files, scanner.Err()
 }
+
+// LoadAddons lädt das Hauptaddon aus dir (dessen .toc dort liegt) und jedes Schwester-Addon, das in einem
+// Unterordner mit gleichnamiger .toc liegt (z.B. StreamGoal/StreamGoal.toc). Das Hauptaddon steht vorn.
+// Der Installer nimmt dabei nur die in der jeweiligen .toc genannten Dateien, das Hauptaddon enthält die
+// Schwester-Addons also nicht.
+func LoadAddons(dir, version string) ([]*Addon, error) {
+	main, err := LoadAddon(dir, version)
+	if err != nil {
+		return nil, err
+	}
+	addons := []*Addon{main}
+
+	entries, err := os.ReadDir(dir)
+	if err != nil {
+		return nil, err
+	}
+	for _, entry := range entries {
+		if !entry.IsDir() || strings.HasPrefix(entry.Name(), ".") {
+			continue
+		}
+		sub := filepath.Join(dir, entry.Name())
+		if _, err := os.Stat(filepath.Join(sub, entry.Name()+".toc")); err != nil {
+			continue
+		}
+		addon, err := LoadAddon(sub, version)
+		if err != nil {
+			return nil, err
+		}
+		addons = append(addons, addon)
+	}
+	return addons, nil
+}
+
+// SelectAddons filtert nach kommagetrennten Namen ("all" oder leer = alle, ohne Beachtung der Schreibweise)
+func SelectAddons(addons []*Addon, names string) ([]*Addon, error) {
+	names = strings.TrimSpace(names)
+	if names == "" || strings.EqualFold(names, "all") {
+		return addons, nil
+	}
+	var selected []*Addon
+	for _, name := range strings.Split(names, ",") {
+		name = strings.TrimSpace(name)
+		found := false
+		for _, a := range addons {
+			if strings.EqualFold(a.Name, name) {
+				selected = append(selected, a)
+				found = true
+			}
+		}
+		if !found {
+			return nil, fmt.Errorf("unbekanntes Addon: %s", name)
+		}
+	}
+	return selected, nil
+}

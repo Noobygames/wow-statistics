@@ -95,6 +95,10 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 
 `/leveltimer` works as an alias for `/lt`.
 
+## Stream Goal
+
+A second addon in this repository for streamers: set goals and show them as cards on screen, with a history. Goal types: reach a level, kill N enemies (all, PvE or PvP, optionally only in battlegrounds), loot an item, win N battlegrounds. It reuses the building blocks of Level Time (cards, alerts, tables), so **Level Time must be installed too**. Open it with `/sg`; `/sg help` lists the commands (for example `/sg add level 20`, `/sg add item <link> 3`, `/sg add bgwin 3 Arathi`).
+
 ## Installation
 
 Requirements: [Go](https://go.dev/) 1.23+ and `make`.

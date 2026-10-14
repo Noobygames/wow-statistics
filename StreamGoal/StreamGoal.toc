@@ -1,0 +1,24 @@
+## Interface: 120100, 11509, 20506, 16001
+## Title: Stream Goal
+## Version: @project-version@
+## Author: Nerzal
+## Dependencies: LevelTimer
+## Notes: Set goals for your stream (reach a level, loot an item, kill enemies, win battlegrounds) with live tracker cards and a history
+## Notes-deDE: Setze dir Ziele für deinen Stream (Level erreichen, Item looten, Gegner besiegen, Schlachtfelder gewinnen) mit Live-Karten und Historie
+## Notes-frFR: Fixez des objectifs pour votre stream (niveau, objet, victimes, champs de bataille) avec cartes en direct et historique
+## Notes-esES: Fija metas para tu stream (nivel, objeto, bajas, campos de batalla) con tarjetas en vivo e historial
+## SavedVariables: StreamGoalDB
+
+# Grundlagen: Texte (in die Sprachen von Level Time eingehängt), Kern, Ziel-Modell
+Locales.lua
+Core.lua
+Goals.lua
+Kinds.lua
+
+# Erfassung: Ereignisse -> Fortschritt
+Tracking.lua
+
+# Anzeige: Karten am Bildschirm, Fenster mit Formular und Historie, Befehle
+Tracker.lua
+Manager.lua
+Commands.lua

@@ -22,9 +22,10 @@ update:
 dry-run:
 	$(RUN) -dry-run -yes $(ARGS)
 
-# ZIP für CurseForge oder manuelle Installation: dist/LevelTimer-<version>.zip
+# ZIPs für CurseForge oder manuelle Installation: dist/LevelTimer-<version>.zip und dist/StreamGoal-<version>.zip
 package:
 	$(RUN) -package "$(CURDIR)/dist/LevelTimer-$(VERSION).zip"
+	$(RUN) -addons StreamGoal -package "$(CURDIR)/dist/StreamGoal-$(VERSION).zip"
 
 # CurseForge-Logo und Addon-Icon aus tools/artwork neu erzeugen
 artwork:

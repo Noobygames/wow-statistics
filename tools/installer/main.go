@@ -21,6 +21,7 @@ type options struct {
 	yes     bool
 	dryRun  bool
 	pkgPath string
+	addons  string
 }
 
 func main() {
@@ -31,6 +32,7 @@ func main() {
 	flag.StringVar(&o.version, "version", "dev", "Versionskennung fürs Manifest")
 	flag.BoolVar(&o.yes, "yes", false, "Keine Rückfragen, Defaults übernehmen")
 	flag.BoolVar(&o.dryRun, "dry-run", false, "Nur anzeigen, nichts schreiben")
+	flag.StringVar(&o.addons, "addons", "", "Kommagetrennte Addons (Ordnername), z.B. StreamGoal; Standard: alle beim Installieren, das Hauptaddon beim Packen")
 	flag.StringVar(&o.pkgPath, "package", "", "Statt zu installieren eine ZIP für CurseForge/manuelle Installation schreiben")
 	flag.Parse()
 
@@ -48,11 +50,23 @@ func main() {
 }
 
 func runPackage(o options) error {
-	addon, err := LoadAddon(o.src, o.version)
+	addons, err := LoadAddons(o.src, o.version)
 	if err != nil {
 		return err
 	}
-	if err := WritePackage(addon, o.pkgPath); err != nil {
+	// Pro ZIP ein Addon: ohne -addons das Hauptaddon
+	names := o.addons
+	if names == "" {
+		names = addons[0].Name
+	}
+	selected, err := SelectAddons(addons, names)
+	if err != nil {
+		return err
+	}
+	if len(selected) != 1 {
+		return errors.New("-package packt genau ein Addon, bitte mit -addons wählen")
+	}
+	if err := WritePackage(selected[0], o.pkgPath); err != nil {
 		return err
 	}
 	fmt.Printf("Paket erstellt: %s\n", o.pkgPath)
@@ -69,12 +83,24 @@ func (w *wizard) printf(format string, args ...any) {
 	fmt.Fprintf(w.out, format, args...)
 }
 
+// job ist ein Addon in einer Spielversion
+type job struct {
+	addon *Addon
+	plan  *Plan
+}
+
 func (w *wizard) run() error {
-	addon, err := LoadAddon(w.opts.src, w.opts.version)
+	all, err := LoadAddons(w.opts.src, w.opts.version)
 	if err != nil {
 		return err
 	}
-	w.printf("%s Installer (Version %s)\n\n", addon.Name, addon.Version)
+	addons, err := SelectAddons(all, w.opts.addons)
+	if err != nil {
+		return err
+	}
+	// Den Installationsstand der Spielversionen zeigt das erste Addon (das Hauptaddon, falls gewählt)
+	lead := addons[0]
+	w.printf("%s Installer (Version %s)\n\n", lead.Name, lead.Version)
 
 	root, err := w.chooseRoot()
 	if err != nil {
@@ -90,7 +116,7 @@ func (w *wizard) run() error {
 
 	plans := make([]*Plan, len(flavors))
 	for i, f := range flavors {
-		if plans[i], err = BuildPlan(addon, f); err != nil {
+		if plans[i], err = BuildPlan(lead, f); err != nil {
 			return err
 		}
 	}
@@ -104,10 +130,23 @@ func (w *wizard) run() error {
 		return nil
 	}
 
-	anyChanges := false
+	var jobs []job
 	for _, p := range selected {
-		w.printPlan(p)
-		anyChanges = anyChanges || p.HasChanges()
+		for _, a := range addons {
+			plan := p
+			if a != lead {
+				if plan, err = BuildPlan(a, p.Flavor); err != nil {
+					return err
+				}
+			}
+			jobs = append(jobs, job{addon: a, plan: plan})
+		}
+	}
+
+	anyChanges := false
+	for _, j := range jobs {
+		w.printPlan(j)
+		anyChanges = anyChanges || j.plan.HasChanges()
 	}
 	if !anyChanges {
 		w.printf("Alles aktuell, nichts zu tun.\n")
@@ -124,18 +163,18 @@ func (w *wizard) run() error {
 		return err
 	}
 
-	for _, p := range selected {
-		if !p.HasChanges() {
+	for _, j := range jobs {
+		if !j.plan.HasChanges() {
 			continue
 		}
-		if err := p.Apply(addon); err != nil {
-			return fmt.Errorf("%s: %w", p.Flavor.Name, err)
+		if err := j.plan.Apply(j.addon); err != nil {
+			return fmt.Errorf("%s %s: %w", j.addon.Name, j.plan.Flavor.Name, err)
 		}
 		hint := "/reload im Spiel genügt"
-		if p.NeedsRestart() {
+		if j.plan.NeedsRestart() {
 			hint = "WoW-Client neu starten (neue/geänderte .toc)"
 		}
-		w.printf("✓ %s installiert – %s\n", p.Flavor.Name, hint)
+		w.printf("✓ %s in %s installiert – %s\n", j.addon.Name, j.plan.Flavor.Name, hint)
 	}
 	return nil
 }
@@ -288,8 +327,9 @@ func parseSelection(input string, plans []*Plan, defaults []int) ([]int, error) 
 	return out, nil
 }
 
-func (w *wizard) printPlan(p *Plan) {
-	w.printf("\n%s → %s\n", p.Flavor.Name, p.Target)
+func (w *wizard) printPlan(j job) {
+	p := j.plan
+	w.printf("\n%s %s → %s\n", j.addon.Name, p.Flavor.Name, p.Target)
 	for _, m := range p.Migrations {
 		w.printf("  Migration %s: %s\n", m.id, m.description)
 	}

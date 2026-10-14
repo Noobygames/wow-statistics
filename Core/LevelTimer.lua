@@ -5,6 +5,11 @@ local _, ns = ...
 -- (Ordner, .toc, SavedVariables, Frame-Namen, /lt) bleiben LevelTimer, sonst gingen Daten verloren.
 ns.DISPLAY_NAME = "Level Time"
 
+-- Schnittstelle für Schwester-Addons (z.B. StreamGoal, per "## Dependencies: LevelTimer"): der Namespace mit allen
+-- Bausteinen (Card, Widgets, TableView, Alerts, Journal, Format, ...), Events, Login und Level-Up. Die Tabelle ist
+-- dieselbe, die die Module füllen; sie steht beim Laden des anderen Addons vollständig bereit.
+LevelTimerAPI = ns
+
 local PREFIX = "|cfff4c95d" .. ns.DISPLAY_NAME .. ":|r "
 
 function ns.Print(msg)
