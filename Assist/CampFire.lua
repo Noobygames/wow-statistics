@@ -121,7 +121,8 @@ function CampFire.Check()
   end
 
   if kind == "countdown" and not ns.db.campCountdown then state = nil end
-  if kind == "hint" and not (ns.db.campHint and hintVisible(true)) then state = nil end
+  -- Im Kampf kein Hinweis; die Anzeigezeit läuft erst danach
+  if kind == "hint" and (ns.InCombat() or not (ns.db.campHint and hintVisible(true))) then state = nil end
   if kind ~= "hint" then hintVisible(false) end
   ns.CampDisplay.Show(state)
   if finished and ns.db.campCountdown then

@@ -6,7 +6,7 @@
 --   wow.state              Spielzustand, den die API-Funktionen zurückgeben
 --   wow.login(options)     Login simulieren (options überschreiben wow.state, playedSeconds = /played-Antwort)
 --   wow.logout()           Logout oder /reload simulieren (PLAYER_LOGOUT)
---   wow.levelUp(level, xpMax)  Level-Up wie im Client
+--   wow.levelUp(level, xpMax, gains)  Level-Up wie im Client; gains = { health, power, talents, strength, agility, stamina, intellect }
 --   wow.fire(event, ...)   Event an alle registrierten Frames senden
 --   wow.advance(seconds)   Spielzeit (GetTime) und Uhrzeit (time) vorstellen
 --   wow.runTimers()        geplante C_Timer.After-Callbacks ausführen
@@ -55,6 +55,10 @@ wow = {
     interface = (SCENARIO or ""):match("^forever_") and 16001 or 120100,  -- Interface-Version (GetBuildInfo); Szenarien forever_* laden als WoW Forever (16001)
     health = 1000,
     healthMax = 1000,
+    powerMax = 0,
+    trainer = { services = {} },  -- Klassenlehrer (GetTrainerServiceInfo)
+    statBuffs = {},          -- UnitStat: Buff (+) oder Debuff (-) je Wert
+    stats = {},              -- UnitStat: Gesamtwerte 1 = Stärke, 2 = Beweglichkeit, 3 = Ausdauer, 4 = Intelligenz
     -- Händler: Reparatur (CanMerchantRepair, GetRepairAllCost) und Gildenbank
     merchant = { canRepair = false, repairCost = 0, guildRepair = false, guildFunds = 0 },
     -- Taschen: bags[bag][slot] = { itemID, quality, stackCount, hasNoValue, isLocked } (C_Container)
@@ -264,8 +268,10 @@ function wow.logout()
 end
 
 -- Level-Up wie im Client: Event mit neuem Level, danach neue XP-Werte
-function wow.levelUp(newLevel, newXpMax)
-  wow.fire("PLAYER_LEVEL_UP", newLevel)
+function wow.levelUp(newLevel, newXpMax, gains)
+  gains = gains or {}
+  wow.fire("PLAYER_LEVEL_UP", newLevel, gains.health, gains.power, gains.talents, gains.pvpSlots,
+    gains.strength, gains.agility, gains.stamina, gains.intellect)
   wow.state.level = newLevel
   wow.state.xp = 0
   wow.state.xpMax = newXpMax or wow.state.xpMax
@@ -398,7 +404,27 @@ C_ChatInfo = {
   SendChatMessage = function(message, chatType) table.insert(wow.sentChat, { message = message, chatType = chatType }) end,
   InChatMessagingLockdown = function() return state.chatLockdown end,
 }
+-- Klassenlehrer: state.trainer.services = { { name, serviceType, texture, reqLevel, subText } }
+-- Forever liefert name, serviceType, texture, reqLevel, subText; Era/TBC name, subText, serviceType und Level/Symbol einzeln
+function GetNumTrainerServices() return #state.trainer.services end
+function GetTrainerServiceInfo(index)
+  local service = state.trainer.services[index]
+  if state.interface == 16001 then
+    return service.name, service.serviceType, service.texture, service.reqLevel, service.subText
+  end
+  return service.name, service.subText, service.serviceType, false
+end
+function GetTrainerServiceLevelReq(index) return state.trainer.services[index].reqLevel end
+function GetTrainerServiceIcon(index) return state.trainer.services[index].texture end
+function IsTradeskillTrainer() return state.trainer.tradeskill or false end
 function UnitHealthMax() return state.healthMax end
+function UnitPowerMax() return state.powerMax end
+-- UnitStat: Basiswert, Gesamtwert, positive und negative Buffs
+function UnitStat(_, index)
+  local value = state.stats[index] or 0
+  local buff = state.statBuffs[index] or 0
+  return value, value + buff, math.max(buff, 0), math.min(buff, 0)
+end
 function GetPVPSessionStats() return state.honorableKills end
 function IsShiftKeyDown() return state.shiftDown end
 function RequestTimePlayed() end

@@ -48,6 +48,7 @@ end
 function actions.levelup()
   ns.LevelUpSummary.Preview()
   ns.Alerts.ShowSample("levelUp")
+  ns.LevelUpWindow.Preview()
 end
 
 -- /lt debug alert <art>: Beispiel-Einblendung, auch wenn die Art ausgeschaltet ist

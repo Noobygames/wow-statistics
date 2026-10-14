@@ -104,6 +104,7 @@ local function duration()
 end
 
 local queue = {}  -- { message, color, sound } der wartenden Einblendungen, älteste zuerst
+local held = {}   -- Einblendungen aus dem Kampf: { message, color, options }, kommen nach dem Kampf
 
 -- Der Raid-Warnton; auch für andere Anzeigen (z.B. Lagerfeuer), wenn der Spieler Ton eingeschaltet hat
 function Alerts.PlaySound()
@@ -161,10 +162,18 @@ notice.frame:SetScript("OnUpdate", fade)
 
 -- Einblendung zeigen; läuft schon eine, wartet die neue (höchstens MAX_QUEUE). options = { immediate = ersetzt die
 -- laufende und leert die Warteschlange, sound = Ton, falls eingeschaltet, notice = { icon, title, body } zeigt eine
--- Karte statt des Banners }. Im Verschiebemodus erscheint nichts Neues.
+-- Karte statt des Banners, combat = "hold" (im Kampf zurückhalten, nach dem Kampf zeigen) oder "skip" (im Kampf
+-- verwerfen) }. Im Verschiebemodus erscheint nichts Neues.
 function Alerts.Show(message, color, options)
   ns.Debug("alert", "%s", message)
   options = options or {}
+  if options.combat and ns.InCombat() then
+    if options.combat == "hold" then
+      if #held >= MAX_QUEUE then table.remove(held, 1) end
+      table.insert(held, { message, color, options })
+    end
+    return
+  end
   if options.immediate then queue = {} end
   -- Im Verschiebemodus wartet alles Neue (auch die erste Einblendung) und erscheint nach dem Verschieben
   if moving or (isShowing() and not options.immediate) then
@@ -178,6 +187,7 @@ end
 -- Laufende und wartende Einblendungen verwerfen
 function Alerts.Clear()
   queue = {}
+  held = {}
   if not moving then
     frame:Hide()
     notice.frame:Hide()
@@ -239,11 +249,12 @@ function Alerts.Notify(notices, color)
   end
 end
 
--- Arten: Einstellung, Farbe, Symbol (Alerts.ICONS), Text aus einem Wert (Level, Name, Link, Prozent) und Beispielwert
+-- Arten: Einstellung, inCombat ("hold" = im Kampf zurückhalten und danach zeigen), Farbe, Symbol (Alerts.ICONS), Text aus einem Wert (Level, Name, Link, Prozent) und Beispielwert
 -- für /lt debug alert
 Alerts.KINDS = {
-  levelUp = { setting = "alertLevelUp", color = COLORS.levelUp, format = "ALERT_LEVEL_UP",
-    sample = function() return ns.level + 1 end },
+  levelUp = { setting = "alertLevelUp", color = COLORS.levelUp, format = "ALERT_LEVEL_UP", inCombat = "hold",
+    sample = function() return ns.level + 1 end,
+    sampleBody = function() local gains = ns.LevelGains.Sample(); return gains and table.concat(ns.LevelGains.Lines(gains), "\n") end },
   rare = { setting = "alertRareKill", color = COLORS.rare, format = "ALERT_RARE_KILL",
     sample = function() return "Hogger" end },
   elite = { setting = "alertEliteKill", color = COLORS.elite, format = "ALERT_ELITE_KILL",
@@ -255,16 +266,16 @@ Alerts.KINDS = {
 }
 
 -- Im Stil "Banner" als Karte mit Symbol (wie die Hinweise), im Stil "Text" nur als Schrift
-local function showKind(kind, value)
+local function showKind(kind, value, body, combat)
   local definition = Alerts.KINDS[kind]
   local message = string.format(L[definition.format], value)
-  local card = isBanner() and { icon = Alerts.ICONS[kind], title = message } or nil
-  Alerts.Show(message, definition.color, { sound = true, notice = card })
+  local card = isBanner() and { icon = Alerts.ICONS[kind], title = message, body = body } or nil
+  Alerts.Show(message, definition.color, { sound = true, notice = card, combat = combat })
 end
 
 -- Nur, wenn die Art eingeschaltet ist
-local function alert(kind, value)
-  if ns.db[Alerts.KINDS[kind].setting] then showKind(kind, value) end
+local function alert(kind, value, body)
+  if ns.db[Alerts.KINDS[kind].setting] then showKind(kind, value, body, Alerts.KINDS[kind].inCombat) end
 end
 
 -- Beispiel unabhängig von der Einstellung (Fehlersuche); false bei unbekannter Art
@@ -272,12 +283,14 @@ function Alerts.ShowSample(kind)
   local definition = Alerts.KINDS[kind]
   if not definition then return false end
   Alerts.Clear()
-  showKind(kind, definition.sample())
+  showKind(kind, definition.sample(), ns.db.levelUpGains and definition.sampleBody and definition.sampleBody() or nil)
   return true
 end
 
-ns.OnLevelStarted(function(newLevel)
-  alert("levelUp", newLevel)
+-- Erst wenn der Zuwachs feststeht (LevelGains), damit die Karte Leben und Werte zeigen kann
+ns.LevelGains.OnReady(function(level, gains)
+  local lines = ns.db.levelUpGains and gains and ns.LevelGains.Lines(gains)
+  alert("levelUp", level, lines and table.concat(lines, "\n") or nil)
 end)
 
 local function instanceType()
@@ -337,3 +350,13 @@ end)
 
 ns.OnLogin(mover.Restore)
 ns.OnLogout(function() moving = false end)
+
+-- Kampf vorbei: zurückgehaltene Einblendungen zeigen (Reihenfolge bleibt)
+ns.RegisterEvent("PLAYER_REGEN_ENABLED", function()
+  local waiting = held
+  held = {}
+  for _, entry in ipairs(waiting) do
+    local options = entry[3]
+    Alerts.Show(entry[1], entry[2], { sound = options.sound, notice = options.notice })
+  end
+end)

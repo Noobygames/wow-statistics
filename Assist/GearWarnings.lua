@@ -102,8 +102,9 @@ local WARNINGS = {
     detail = ammoDetail, repeatMinutes = function() return ns.db.ammoRepeat end },
 }
 
+-- Im Kampf nichts prüfen: der Zustand bleibt unbeachtet, die Hinweise kommen nach dem Kampf von selbst
 function GearWarnings.Check()
-  if not ns.db then return end
+  if not ns.db or ns.InCombat() then return end
   for _, warning in ipairs(WARNINGS) do
     local due = ns.db[warning.setting] and warning.isDue() or false
     local interval = warning.repeatMinutes and warning.repeatMinutes() or 0

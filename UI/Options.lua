@@ -267,7 +267,7 @@ finishPage()
 -- Hinweise: Level-Up im Chat und Erinnerungen an Buffs
 addPage("OPTIONS_TAB_NOTIFICATIONS")
 addSection("SECTION_LEVEL_UP")
-addToggles({ toggle("LEVEL_UP_SUMMARY_TOGGLE", "levelUpSummary") })
+addToggles({ toggle("LEVEL_UP_SUMMARY_TOGGLE", "levelUpSummary"), toggle("LEVEL_UP_GAINS_TOGGLE", "levelUpGains") })
 addAnnounceChooser()
 addSection("SECTION_REMINDERS")
 addToggles({
@@ -444,6 +444,42 @@ addToggles({
   toggle("ALERT_TOGGLE_LOOT", "alertEpicLoot"),
   toggle("ALERT_TOGGLE_NEAR_DEATH", "alertNearDeath", ns.NearDeath.IsAvailable),
 })
+addSection("SECTION_LEVEL_UP_WINDOW")
+addToggles({
+  toggle("LEVEL_UP_WINDOW_TOGGLE", "levelUpWindow"),
+  toggle("LEVEL_UP_HIDE_BLIZZARD", "levelUpHideBlizzard"),
+  toggle("LEVEL_UP_COMPACT", "levelUpCompact"),
+  toggle("LEVEL_UP_SOUND", "levelUpSound"),
+})
+addChooser({ label = "LEVEL_UP_THEME", setting = "levelUpTheme", choices = {
+  { value = "modern", name = localized("THEME_MODERN") },
+  { value = "alliance", name = localized("THEME_ALLIANCE") },
+  { value = "horde", name = localized("THEME_HORDE") },
+} })
+addSlider({
+  label = "LEVEL_UP_SCALE",
+  min = toPercent(ns.LevelUpWindow.MIN_SCALE),
+  max = toPercent(ns.LevelUpWindow.MAX_SCALE),
+  step = 5,
+  get = function(db) return toPercent(db.levelUpScale) end,
+  set = function(value) ns.Set("levelUpScale", value / 100) end,
+  format = percent,
+})
+addSlider({
+  label = "LEVEL_UP_DURATION",
+  min = ns.LevelUpWindow.MIN_DURATION,
+  max = ns.LevelUpWindow.MAX_DURATION,
+  step = 1,
+  get = function(db) return db.levelUpDuration end,
+  set = function(value) ns.Set("levelUpDuration", value) end,
+  format = function(value) return string.format(L.SECONDS_SHORT, value) end,
+})
+builder.AddButtonRow({
+  { label = "LEVEL_UP_PREVIEW", onClick = function() ns.LevelUpWindow.Preview() end },
+  { label = "LEVEL_UP_MOVE", onClick = function() ns.LevelUpWindow.SetMoving(not ns.LevelUpWindow.IsMoving()) end },
+  { label = "LEVEL_UP_RESET_POSITION", onClick = function() ns.LevelUpWindow.ResetPosition() end },
+})
+if ns.TrainerCache.IsAvailable() then addHint("LEVEL_UP_TRAINER_HINT") end
 addSection("SECTION_ALERT_LOOK")
 addChooser({ label = "ALERT_STYLE", setting = "alertStyle", choices = {
   { value = Alerts.STYLE_BANNER, name = localized("ALERT_STYLE_BANNER") },

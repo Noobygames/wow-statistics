@@ -1334,3 +1334,55 @@ Reload im fertigen Schlachtfeld zählt doppelt (ja/nein):
 Sieger-Wert: `/dump C_PvP.GetActiveMatchWinner and C_PvP.GetActiveMatchWinner(), GetBattlefieldWinner and GetBattlefieldWinner()` am Ende eines Spiels (Retail/Forever: 0/1 = Horde/Allianz, 255 = Unentschieden?):
 Fehler:
 ```
+
+### 62. Level-Up-Zuwachs (Roadmap 247)
+
+- [ ] geprüft
+
+Level-Up ausgelöst (echtes Level oder `/lt debug levelup` für ein Beispiel). Einstellung „Level-Up: Zuwachs anzeigen“ im Reiter Hinweise, Einblendung „Level-Up“ an.
+
+**Erwartet:** Chatzeile mit Leben, Mana, Stärke, Beweglichkeit, Ausdauer, Intelligenz als „vorher → nachher (+Zuwachs)“ und Talentpunkten; die Level-Up-Karte zeigt dieselben Zeilen. Die Werte stimmen mit dem Charakterfenster überein (Werte ohne Buffs). Mit Ausdauer-Buff (z.B. Essen, Segen) steht beim Leben nur „+Zuwachs“, mit Intelligenz-Buff beim Mana.
+
+**Antwort:**
+
+```text
+Client (Retail/Era/TBC/Forever):
+Zeilen stimmen mit dem Charakterfenster (ja/nein):
+Werte nach 1 s schon neu (ja/nein):
+Fehler:
+```
+
+### 63. Keine Hinweise im Kampf (Roadmap 248)
+
+- [ ] geprüft
+
+Einblendung „Level-Up“ an. Im Kampf (z.B. gegen einen Gegner) das Level erreichen; außerdem im Kampf die Taschen fast voll machen und in die Nähe eines Lagerfeuers laufen (Forever).
+
+**Erwartet:** Im Kampf erscheint nichts. Nach dem Kampf kommt die Level-Up-Karte (mit Zuwachs), danach die Taschenwarnung bzw. der Lagerfeuer-Hinweis.
+
+**Antwort:**
+
+```text
+Level-Up kommt nach dem Kampf (ja/nein):
+Taschenwarnung nach dem Kampf (ja/nein):
+Lagerfeuer-Hinweis nach dem Kampf (ja/nein):
+Fehler:
+```
+
+### 64. Level-Up-Fenster (Roadmap 249)
+
+- [ ] geprüft
+
+Klassenlehrer einmal besuchen (Liste wird gemerkt). Reiter Einblendungen > Level-Up-Fenster: „Vorschau“, „Verschieben“, Farbschema und „Kompakte Ansicht“ ausprobieren. Dann ein echtes Level-Up (gerades Level, damit der Lehrer neue Fähigkeiten hat).
+
+**Erwartet:** Eigenes Fenster mit Level, Tabelle der Zuwächse, Talentpunkten und Symbolen der neuen Lehrerfähigkeiten (Tooltip mit Name, Rang, Level). Blizzards großes Banner erscheint nicht, solange „Blizzard-Banner ausblenden“ an ist; mit der Einstellung aus kommt es wieder (dazu ggf. /reload). Linksklick schließt das Fenster, unter der Maus bleibt es stehen. Im Kampf erscheint es erst danach.
+
+**Antwort:**
+
+```text
+Client (Retail/Era/TBC/Forever):
+Blizzard-Banner weg (ja/nein):
+Fähigkeiten stimmen mit dem Lehrer überein (ja/nein/nicht gemerkt):
+Tooltip der Fähigkeiten (ja/nein):
+Fehler:
+```

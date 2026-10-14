@@ -38,6 +38,8 @@ Tracking\InstanceCopy.lua
 Tracking\PlayedTime.lua
 Tracking\Session.lua
 Tracking\Experience.lua
+Tracking\LevelGains.lua
+Tracking\TrainerCache.lua
 Tracking\KillCounter.lua
 Tracking\DeathRecap.lua
 Tracking\DeathCounter.lua
@@ -69,6 +71,7 @@ Speedrun\WorldRecords.lua
 UI\StatLines.lua
 UI\LevelUpSummary.lua
 UI\Alerts.lua
+UI\LevelUpWindow.lua
 UI\CampDisplay.lua
 UI\FoodDisplay.lua
 Assist\BuffReminder.lua
