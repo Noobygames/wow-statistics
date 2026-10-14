@@ -19,9 +19,15 @@ func main() {
 	logoPath := flag.String("logo", "curseforge/logo.png", "Ziel für das CurseForge-Logo (PNG)")
 	iconPath := flag.String("icon", "Media/Icon.tga", "Ziel für das Addon-Icon (TGA)")
 	previewPath := flag.String("preview", "", "Optional: Icon zusätzlich als PNG zum Ansehen")
+	goalLogoPath := flag.String("goal-logo", "curseforge/streamgoal/logo.png", "Ziel für das Stream-Goal-Logo (PNG)")
+	goalIconPath := flag.String("goal-icon", "StreamGoal/Media/Icon.tga", "Ziel für das Stream-Goal-Icon (TGA)")
 	flag.Parse()
 
 	if err := run(*logoPath, *iconPath, *previewPath); err != nil {
+		fmt.Fprintln(os.Stderr, "Fehler:", err)
+		os.Exit(1)
+	}
+	if err := runGoal(*goalLogoPath, *goalIconPath); err != nil {
 		fmt.Fprintln(os.Stderr, "Fehler:", err)
 		os.Exit(1)
 	}
@@ -44,6 +50,19 @@ func run(logoPath, iconPath, previewPath string) error {
 		}
 	}
 	fmt.Printf("Logo: %s\nIcon: %s\n", logoPath, iconPath)
+	return nil
+}
+
+func runGoal(logoPath, iconPath string) error {
+	logo := renderGoal(logoSize, logoStyle)
+	if err := writeFile(logoPath, func(f *os.File) error { return png.Encode(f, logo) }); err != nil {
+		return err
+	}
+	icon := renderGoal(iconSize, iconStyle)
+	if err := writeFile(iconPath, func(f *os.File) error { return writeTGA(f, icon) }); err != nil {
+		return err
+	}
+	fmt.Printf("Stream-Goal-Logo: %s\nStream-Goal-Icon: %s\n", logoPath, iconPath)
 	return nil
 }
 

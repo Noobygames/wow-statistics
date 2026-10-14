@@ -1310,3 +1310,27 @@ Hinweis verschwindet (ja/nein):
 Pause wirkt (ja/nein):
 Fehler:
 ```
+
+### 61. Stream Goal (Roadmap 246)
+
+- [ ] geprüft
+
+Beide Addons installiert (`make install`), Client neu gestartet. `/sg` öffnet das Fenster. Ziele anlegen: Level (Formular),
+`/sg add kills 5 pve`, `/sg add item 2589 3` (Leinenstoff), `/sg add bgwin 1`. Auf ein Schlachtfeld gehen und gewinnen,
+dann Level-Up bzw. Item looten. Im Formular „Item“ ein Item per Shift-Klick in das Feld einfügen.
+
+**Erwartet:** Karten rechts oben mit Titel, „x / y“ und Balken, Position per „Verschieben“ änderbar. Beim Erreichen
+Einblendung „Ziel erreicht!“ wie bei Level Time plus Chatzeile; das Ziel erscheint in der Historie. Sieg im
+Schlachtfeld zählt genau einmal (auch in Classic Era, Retail, Forever); Niederlage, Unentschieden und Arena zählen nicht.
+Shift-Klick fügt den Link ein. Ohne Level Time lädt Stream Goal nicht (Abhängigkeit).
+
+**Antwort:**
+
+```text
+Karten und Einblendung (ja/nein):
+BG-Sieg zählt einmal (Client):
+Shift-Klick-Link (ja/nein):
+Reload im fertigen Schlachtfeld zählt doppelt (ja/nein):
+Sieger-Wert: `/dump C_PvP.GetActiveMatchWinner and C_PvP.GetActiveMatchWinner(), GetBattlefieldWinner and GetBattlefieldWinner()` am Ende eines Spiels (Retail/Forever: 0/1 = Horde/Allianz, 255 = Unentschieden?):
+Fehler:
+```

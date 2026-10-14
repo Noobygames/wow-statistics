@@ -95,6 +95,10 @@ Works across several game versions (Retail, Classic Era, Anniversary, ...) from 
 
 `/leveltimer` works as an alias for `/lt`.
 
+## Stream Goal
+
+A second addon in this repository for streamers: set goals and show them as cards on screen, with a history. Goal types: reach a level, kill N enemies (all, PvE or PvP, optionally only in battlegrounds), loot an item, win N battlegrounds. It reuses the building blocks of Level Time (cards, alerts, tables), so **Level Time must be installed too**. Open it with `/sg`; `/sg help` lists the commands (for example `/sg add level 20`, `/sg add item <link> 3`, `/sg add bgwin 3 Arathi`).
+
 ## Installation
 
 Requirements: [Go](https://go.dev/) 1.23+ and `make`.
@@ -103,7 +107,7 @@ Requirements: [Go](https://go.dev/) 1.23+ and `make`.
 make install    # interactive wizard
 ```
 
-The wizard finds your WoW folder, lists the installed game versions, shows what it will copy, update or remove, and asks for confirmation. It only writes to `Interface/AddOns/LevelTimer`. Your settings (`WTF/` SavedVariables) are never touched. Older manual installs are migrated automatically.
+The wizard finds your WoW folder, lists the installed game versions, shows what it will copy, update or remove, and asks for confirmation. It only writes to `Interface/AddOns/LevelTimer` and `Interface/AddOns/StreamGoal` (pass `ARGS="-addons LevelTimer"` to skip Stream Goal). Your settings (`WTF/` SavedVariables) are never touched. Older manual installs are migrated automatically.
 
 Other targets:
 
@@ -145,5 +149,7 @@ One-time setup for the CurseForge upload:
 
 1. Add the project ID from the CurseForge project page to `LevelTimer.toc`: `## X-Curse-Project-ID: 123456`
 2. Create an API token at <https://legacy.curseforge.com/account/api-tokens> and save it in the GitHub repository as secret `CF_API_KEY` (Settings → Secrets and variables → Actions).
+
+Stream Goal has its own CurseForge project (ID in `StreamGoal/StreamGoal.toc`, config in `StreamGoal/.pkgmeta`) and is packaged by a second packager step with `workdir: StreamGoal` on the same tag, using the same `CF_API_KEY`.
 
 Without these, the action still creates the GitHub release with the zip.

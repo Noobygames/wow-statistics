@@ -78,17 +78,28 @@ local function isAmmoCritical()
   return count ~= nil and count < criticalLimit()
 end
 
--- Je Hinweis: Einstellung, Prüfung (true = warnen), Text; active = Zustand bei der letzten Prüfung;
+-- Verbleibende Schuss als Zusatz hinter dem Warntext, z.B. "Munition knapp! (150 Schuss)"
+local function ammoDetail()
+  local count = ammoCount()
+  return count and string.format(L.AMMO_COUNT, count) or nil
+end
+
+-- Freie Plätze als Zusatz, z.B. "Taschen fast voll! (1 frei)"
+local function bagsDetail()
+  return string.format(L.BAGS_FREE_COUNT, ns.Bags.GetFreeSlots())
+end
+
+-- Je Hinweis: Einstellung, Prüfung (true = warnen), Text, detail() (optional, Zusatz hinter dem Text); active = Zustand bei der letzten Prüfung;
 -- repeatMinutes() (optional) wiederholt den Hinweis in diesem Abstand, solange der Zustand anhält (0 = nie)
 local WARNINGS = {
   { setting = "warnBagsFull", message = "WARN_BAGS_FULL", title = "NOTICE_BAGS", icon = "bags",
-    isDue = function() return ns.Bags.GetFreeSlots() < BAGS_LOW end },
+    isDue = function() return ns.Bags.GetFreeSlots() < BAGS_LOW end, detail = bagsDetail },
   { setting = "warnDurability", message = "WARN_DURABILITY", title = "NOTICE_DURABILITY", icon = "durability",
     isDue = function() return GearWarnings.GetLowestDurability() < DURABILITY_LOW end },
   { setting = "warnAmmo", message = "WARN_AMMO", title = "NOTICE_AMMO", icon = "ammo", isDue = isAmmoLow,
-    repeatMinutes = function() return ns.db.ammoRepeat end },
+    detail = ammoDetail, repeatMinutes = function() return ns.db.ammoRepeat end },
   { setting = "warnAmmo", message = "WARN_AMMO_CRITICAL", title = "NOTICE_AMMO", icon = "ammo", isDue = isAmmoCritical,
-    repeatMinutes = function() return ns.db.ammoRepeat end },
+    detail = ammoDetail, repeatMinutes = function() return ns.db.ammoRepeat end },
 }
 
 function GearWarnings.Check()
@@ -101,7 +112,9 @@ function GearWarnings.Check()
     if (due and not warning.active) or repeating then
       ns.Debug("warnings", "%s", warning.message)
       warning.lastShown = GetTime()
-      ns.Alerts.Notify({ title = L[warning.title], text = L[warning.message], icon = ns.Alerts.ICONS[warning.icon] },
+      local detail = warning.detail and warning.detail()
+      local text = detail and string.format("%s (%s)", L[warning.message], detail) or L[warning.message]
+      ns.Alerts.Notify({ title = L[warning.title], text = text, icon = ns.Alerts.ICONS[warning.icon] },
         ns.Alerts.WARNING_COLOR)
     end
     warning.active = due

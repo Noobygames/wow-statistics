@@ -42,3 +42,11 @@ jobs:
       - uses: BigWigsMods/packager@v2
         with:
           args: -n "{package-name}-{project-version}:{package-name}-{project-version}.zip"
+      # Zweites Addon aus dem Unterordner StreamGoal/, eigenes CurseForge-Projekt (ID in StreamGoal/StreamGoal.toc).
+      # Ohne GITHUB_OAUTH legt dieser Lauf kein zweites GitHub-Release für denselben Tag an.
+      - uses: BigWigsMods/packager@v2
+        env:
+          GITHUB_OAUTH: ""
+        with:
+          workdir: StreamGoal
+          args: -n "{package-name}-{project-version}:{package-name}-{project-version}.zip"

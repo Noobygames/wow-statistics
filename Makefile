@@ -22,13 +22,14 @@ update:
 dry-run:
 	$(RUN) -dry-run -yes $(ARGS)
 
-# ZIP für CurseForge oder manuelle Installation: dist/LevelTimer-<version>.zip
+# ZIPs für CurseForge oder manuelle Installation: dist/LevelTimer-<version>.zip und dist/StreamGoal-<version>.zip
 package:
 	$(RUN) -package "$(CURDIR)/dist/LevelTimer-$(VERSION).zip"
+	$(RUN) -addons StreamGoal -package "$(CURDIR)/dist/StreamGoal-$(VERSION).zip"
 
 # CurseForge-Logo und Addon-Icon aus tools/artwork neu erzeugen
 artwork:
-	go -C $(ARTWORK) run . -logo "$(CURDIR)/curseforge/logo.png" -icon "$(CURDIR)/Media/Icon.tga"
+	go -C $(ARTWORK) run . -logo "$(CURDIR)/curseforge/logo.png" -icon "$(CURDIR)/Media/Icon.tga" -goal-logo "$(CURDIR)/curseforge/streamgoal/logo.png" -goal-icon "$(CURDIR)/StreamGoal/Media/Icon.tga"
 
 # Speedrun-Rekorde von speedrun.com holen und Speedrun/SpeedrunRecords.lua neu schreiben (braucht Internet)
 records:

@@ -118,8 +118,13 @@ func sample(x, y float64, s style) (rgb, float64) {
 	return c, alpha
 }
 
-// render zeichnet mit Supersampling (Kantenglättung) in der gewünschten Größe
+// render zeichnet die Stoppuhr (Level Time) in der gewünschten Größe
 func render(size int, s style) *image.NRGBA {
+	return renderWith(size, func(x, y float64) (rgb, float64) { return sample(x, y, s) })
+}
+
+// renderWith zeichnet mit Supersampling (Kantenglättung); sampler liefert Farbe und Deckkraft je Punkt der 512er-Leinwand
+func renderWith(size int, sampler func(x, y float64) (rgb, float64)) *image.NRGBA {
 	const supersample = 4
 	img := image.NewNRGBA(image.Rect(0, 0, size, size))
 	scale := canvas / float64(size)
@@ -131,7 +136,7 @@ func render(size int, s style) *image.NRGBA {
 				for sx := 0; sx < supersample; sx++ {
 					x := (float64(px) + (float64(sx)+0.5)/supersample) * scale
 					y := (float64(py) + (float64(sy)+0.5)/supersample) * scale
-					c, alpha := sample(x, y, s)
+					c, alpha := sampler(x, y)
 					r += c.r * alpha
 					g += c.g * alpha
 					b += c.b * alpha

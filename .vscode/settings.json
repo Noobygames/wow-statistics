@@ -17,6 +17,24 @@
   "Lua.diagnostics.globals": [
     "RAID_CLASS_COLORS",
     "LE_PARTY_CATEGORY_INSTANCE",
-    "LOCALIZED_CLASS_NAMES_MALE"
+    "LOCALIZED_CLASS_NAMES_MALE",
+    "StaticPopupDialogs",
+    "UISpecialFrames",
+    "YES",
+    "NO",
+    "StaticPopup_Show",
+    "NUM_TOTAL_EQUIPPED_BAG_SLOTS",
+    "NUM_BAG_SLOTS",
+    "StaticPopup_Hide",
+    "INVSLOT_LAST_EQUIPPED",
+    "INVSLOT_AMMO",
+    "GuildInviteFrame",
+    "INSTANCE_RESET_SUCCESS",
+    "IsPlayerAtEffectiveMaxLevel",
+    "LFGInvitePopup",
+    "StaticPopupSpecial_Hide",
+    "SELECTED_CHAT_FRAME",
+    "DEFAULT_CHAT_FRAME",
+    "ChatFrame1"
   ]
 }
