@@ -150,6 +150,6 @@ One-time setup for the CurseForge upload:
 1. Add the project ID from the CurseForge project page to `LevelTimer.toc`: `## X-Curse-Project-ID: 123456`
 2. Create an API token at <https://legacy.curseforge.com/account/api-tokens> and save it in the GitHub repository as secret `CF_API_KEY` (Settings → Secrets and variables → Actions).
 
-Stream Goal has its own CurseForge project (ID in `StreamGoal/StreamGoal.toc`, config in `StreamGoal/.pkgmeta`) and is packaged by a second packager step with `workdir: StreamGoal` on the same tag, using the same `CF_API_KEY`.
+Stream Goal has its own CurseForge project (ID in `StreamGoal/StreamGoal.toc`, config in `StreamGoal/.pkgmeta`) and is packaged by a second packager step with `-t StreamGoal` on the same tag, using the same `CF_API_KEY`.
 
 Without these, the action still creates the GitHub release with the zip.
