@@ -23,7 +23,8 @@ expect("aus: still", count(L.WARN_BAGS_FULL), 0)
 addon.Set("warnBagsFull", true)
 GearWarnings.Check()
 expect("Warnung", count(L.WARN_BAGS_FULL), 1)
-expect("Karte: Text", LevelTimerNotice.body:GetText(), L.WARN_BAGS_FULL)
+expect("Karte: Text mit freien Plätzen", LevelTimerNotice.body:GetText(),
+  L.WARN_BAGS_FULL .. " (" .. string.format(L.BAGS_FREE_COUNT, 1) .. ")")
 expect("Karte: Titel", LevelTimerNotice.title:GetText(), L.NOTICE_BAGS)
 GearWarnings.Check()
 expect("nur einmal", count(L.WARN_BAGS_FULL), 1)
@@ -92,6 +93,7 @@ expect("Krieger: still", count(L.WARN_AMMO), 0)
 wow.state.class = "HUNTER"
 GearWarnings.Check()
 expect("Jäger: Warnung", count(L.WARN_AMMO), 1)
+expect("Chat: Text mit Schusszahl", count(L.WARN_AMMO .. " (" .. string.format(L.AMMO_COUNT, 150) .. ")"), 1)
 wow.state.inventoryCounts = { [0] = 1000 }
 GearWarnings.Check()
 wow.state.inventoryCounts = { [0] = 199 }
