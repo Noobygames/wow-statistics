@@ -267,7 +267,7 @@ finishPage()
 -- Hinweise: Level-Up im Chat und Erinnerungen an Buffs
 addPage("OPTIONS_TAB_NOTIFICATIONS")
 addSection("SECTION_LEVEL_UP")
-addToggles({ toggle("LEVEL_UP_SUMMARY_TOGGLE", "levelUpSummary") })
+addToggles({ toggle("LEVEL_UP_SUMMARY_TOGGLE", "levelUpSummary"), toggle("LEVEL_UP_GAINS_TOGGLE", "levelUpGains") })
 addAnnounceChooser()
 addSection("SECTION_REMINDERS")
 addToggles({

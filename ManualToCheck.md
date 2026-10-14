@@ -1334,3 +1334,20 @@ Reload im fertigen Schlachtfeld zählt doppelt (ja/nein):
 Sieger-Wert: `/dump C_PvP.GetActiveMatchWinner and C_PvP.GetActiveMatchWinner(), GetBattlefieldWinner and GetBattlefieldWinner()` am Ende eines Spiels (Retail/Forever: 0/1 = Horde/Allianz, 255 = Unentschieden?):
 Fehler:
 ```
+
+### 62. Level-Up-Zuwachs (Roadmap 247)
+
+- [ ] geprüft
+
+Level-Up ausgelöst (echtes Level oder `/lt debug levelup` für ein Beispiel). Einstellung „Level-Up: Zuwachs anzeigen“ im Reiter Hinweise, Einblendung „Level-Up“ an.
+
+**Erwartet:** Chatzeile mit Leben, Mana, Stärke, Beweglichkeit, Ausdauer, Intelligenz als „vorher → nachher (+Zuwachs)“ und Talentpunkten; die Level-Up-Karte zeigt dieselben Zeilen. Die Werte stimmen mit dem Charakterfenster überein (Gesamtwerte, auch mit Buffs).
+
+**Antwort:**
+
+```text
+Client (Retail/Era/TBC/Forever):
+Zeilen stimmen mit dem Charakterfenster (ja/nein):
+Werte nach 1 s schon neu (ja/nein):
+Fehler:
+```

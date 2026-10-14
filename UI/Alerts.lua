@@ -243,7 +243,8 @@ end
 -- für /lt debug alert
 Alerts.KINDS = {
   levelUp = { setting = "alertLevelUp", color = COLORS.levelUp, format = "ALERT_LEVEL_UP",
-    sample = function() return ns.level + 1 end },
+    sample = function() return ns.level + 1 end,
+    sampleBody = function() local gains = ns.LevelGains.Sample(); return gains and table.concat(ns.LevelGains.Lines(gains), "\n") end },
   rare = { setting = "alertRareKill", color = COLORS.rare, format = "ALERT_RARE_KILL",
     sample = function() return "Hogger" end },
   elite = { setting = "alertEliteKill", color = COLORS.elite, format = "ALERT_ELITE_KILL",
@@ -255,16 +256,16 @@ Alerts.KINDS = {
 }
 
 -- Im Stil "Banner" als Karte mit Symbol (wie die Hinweise), im Stil "Text" nur als Schrift
-local function showKind(kind, value)
+local function showKind(kind, value, body)
   local definition = Alerts.KINDS[kind]
   local message = string.format(L[definition.format], value)
-  local card = isBanner() and { icon = Alerts.ICONS[kind], title = message } or nil
+  local card = isBanner() and { icon = Alerts.ICONS[kind], title = message, body = body } or nil
   Alerts.Show(message, definition.color, { sound = true, notice = card })
 end
 
 -- Nur, wenn die Art eingeschaltet ist
-local function alert(kind, value)
-  if ns.db[Alerts.KINDS[kind].setting] then showKind(kind, value) end
+local function alert(kind, value, body)
+  if ns.db[Alerts.KINDS[kind].setting] then showKind(kind, value, body) end
 end
 
 -- Beispiel unabhängig von der Einstellung (Fehlersuche); false bei unbekannter Art
@@ -272,12 +273,14 @@ function Alerts.ShowSample(kind)
   local definition = Alerts.KINDS[kind]
   if not definition then return false end
   Alerts.Clear()
-  showKind(kind, definition.sample())
+  showKind(kind, definition.sample(), ns.db.levelUpGains and definition.sampleBody and definition.sampleBody() or nil)
   return true
 end
 
-ns.OnLevelStarted(function(newLevel)
-  alert("levelUp", newLevel)
+-- Erst wenn der Zuwachs feststeht (LevelGains), damit die Karte Leben und Werte zeigen kann
+ns.LevelGains.OnReady(function(level, gains)
+  local lines = ns.db.levelUpGains and gains and ns.LevelGains.Lines(gains)
+  alert("levelUp", level, lines and table.concat(lines, "\n") or nil)
 end)
 
 local function instanceType()
