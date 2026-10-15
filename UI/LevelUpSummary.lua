@@ -90,9 +90,7 @@ ns.OnLevelCompleted(function(completedLevel)
   announce(text)
 end)
 
--- Zuwachs (Leben, Mana, Werte) als eigene Chatzeile kurz nach der Zusammenfassung; das Level-Up-Fenster zeigt
--- dasselbe und ersetzt sie
+-- Zuwachs (Leben, Mana, Werte) als eigene Chatzeile kurz nach der Zusammenfassung
 ns.LevelGains.OnReady(function(_, gains)
-  if ns.db.levelUpWindow then return end
   if gains and ns.db.levelUpGains then ns.Print(table.concat(ns.LevelGains.Lines(gains), "  |  ")) end
 end)

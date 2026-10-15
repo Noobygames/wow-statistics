@@ -18,8 +18,12 @@ end
 ns.OnLevelStarted(function(newLevel)
   if not ns.db.remindTrainer or not TrainerReminder.IsAvailable() then return end
   if not TrainerReminder.HasNewSpells(newLevel) then return end
-  -- Das Level-Up-Fenster zeigt die neuen Fähigkeiten des Lehrers selbst und ersetzt den Hinweis (sofern sie bekannt sind)
-  if ns.db.levelUpWindow and #ns.TrainerCache.ForLevel(newLevel) > 0 then return end
-  ns.Alerts.Notify({ title = L.NOTICE_TRAINER, text = string.format(L.REMIND_TRAINER, newLevel),
+  local text = string.format(L.REMIND_TRAINER, newLevel)
+  -- Das Level-Up-Fenster zeigt die neuen Fähigkeiten des Lehrers selbst (sofern bekannt): nur die Chatzeile, kein Popup
+  if ns.db.levelUpWindow and #ns.TrainerCache.ForLevel(newLevel) > 0 then
+    ns.Print(text)
+    return
+  end
+  ns.Alerts.Notify({ title = L.NOTICE_TRAINER, text = text,
     icon = ns.Alerts.ICONS.trainer }, ns.Alerts.REMINDER_COLOR)
 end)
