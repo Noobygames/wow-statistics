@@ -32,3 +32,11 @@ addon.Alerts.Clear()
 wow.levelUp(8, nil, gains)
 expect("Fähigkeiten bekannt: Chatzeile", printed("neue Zauber beim Lehrer"), true)
 expect("Fähigkeiten bekannt: kein Popup", LevelTimerNotice:IsShown(), false)
+
+-- Im Kampf: Chatzeile, dass das Fenster nach dem Kampf kommt
+wow.printed = {}
+wow.state.inCombat = true
+wow.levelUp(14, nil, gains)
+wow.runTimers()
+expect("Kampf: Hinweis im Chat", printed(addon.L.LEVEL_UP_AFTER_COMBAT), true)
+wow.state.inCombat = false

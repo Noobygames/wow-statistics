@@ -91,6 +91,9 @@ talentsText:SetJustifyH("LEFT")
 local abilitiesLabel = frame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 abilitiesLabel:SetJustifyH("LEFT")
 
+local trainerHintText = frame:CreateFontString(nil, "OVERLAY", "GameFontDisableSmall")
+trainerHintText:SetJustifyH("LEFT")
+
 local rows = {}  -- { label, value, delta } je Zeile, werden wiederverwendet
 
 local function rowAt(index)
@@ -253,6 +256,7 @@ local function layout(level, gains, abilities)
   divider:ClearAllPoints()
   compactText:Hide()
   talentsText:Hide()
+  trainerHintText:Hide()
   hideRows()
   divider:SetShown(not compact and #gainRows > 0)
 
@@ -270,6 +274,15 @@ local function layout(level, gains, abilities)
   end
 
   top = layoutAbilities(abilities, top)
+  -- Lehrerliste noch nie gelesen: erklären, warum keine Fähigkeiten erscheinen
+  if #abilities == 0 and ns.TrainerCache.IsAvailable() and ns.TrainerCache.Count() == 0 then
+    trainerHintText:SetText(L.LEVEL_UP_TRAINER_UNKNOWN)
+    trainerHintText:SetWidth(width - 2 * PADDING)
+    trainerHintText:ClearAllPoints()
+    trainerHintText:SetPoint("TOPLEFT", PADDING, -top)
+    trainerHintText:Show()
+    top = top + (trainerHintText:GetStringHeight() or ROW_HEIGHT) + LINE_GAP
+  end
   width = math.max(width, 2 * PADDING + math.min(#abilities, ABILITIES_PER_ROW) * (ABILITY_SIZE + ABILITY_GAP))
   frame:SetSize(width, top + PADDING - LINE_GAP)
 end
@@ -331,6 +344,7 @@ ns.LevelGains.OnReady(function(level, gains)
   if not ns.db.levelUpWindow then return end
   if ns.InCombat() then
     pending = { level = level, gains = gains }
+    ns.Print(L.LEVEL_UP_AFTER_COMBAT)
     return
   end
   show(level, gains)
@@ -364,6 +378,14 @@ frame:SetScript("OnMouseUp", function(_, mouseButton)
     hide()
   end
 end)
+
+frame:SetScript("OnEnter", function(self)
+  if mover.IsMoving() then return end
+  GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
+  GameTooltip:AddLine(L.LEVEL_UP_CLOSE_HINT, 1, 1, 1)
+  GameTooltip:Show()
+end)
+frame:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
 -- Beispieldaten: Zuwächse auf die aktuellen Werte, Fähigkeiten aus dem Lehrer-Cache (sonst drei Beispiele)
 local function sampleData()
@@ -426,6 +448,42 @@ local function updateBlizzardBanner()
     ns.Debug("levelup", "Blizzard banner on")
   end
 end
+
+---------------------------------------------------------------------------
+-- WoW Forever: Das Level-Up-Banner ist dort ein Toast des EventToastManager (Titel "Stufe 4"), kein LevelUpDisplay.
+-- Alle Toasts abzuschalten ginge zu weit; deshalb wird nur der Toast geschlossen, der kurz nach dem Level-Up
+-- erscheint und die neue Stufe im Titel trägt. Geschlossen wird mit Blizzards eigener Funktion (wie der Rechtsklick
+-- auf den Toast); Alpha und Sichtbarkeit des Frames bleiben unangetastet.
+---------------------------------------------------------------------------
+local TOAST_MAX_AGE = 5  -- Sekunden nach PLAYER_LEVEL_UP, in denen ein Toast als Level-Up-Banner gilt
+local lastLevelUp        -- { level, time }
+local toastHooked = false
+
+ns.RegisterEvent("PLAYER_LEVEL_UP", function(level)
+  lastLevelUp = { level = level, time = GetTime() }
+end)
+
+local function isLevelUpToast(info)
+  if not info or not lastLevelUp or GetTime() - lastLevelUp.time > TOAST_MAX_AGE then return false end
+  local titleDisplay = Enum and Enum.EventToastDisplayType and Enum.EventToastDisplayType.NormalTitleAndSubTitle
+  if info.displayType ~= titleDisplay then return false end
+  return type(info.title) == "string" and info.title:find(tostring(lastLevelUp.level), 1, true) ~= nil
+end
+
+local function hookBlizzardToast()
+  local manager = EventToastManagerFrame
+  if toastHooked or not manager or not manager.Show or not manager.CloseActiveToasts then return end
+  toastHooked = true
+  hooksecurefunc(manager, "Show", function(self)
+    local toast = self.currentDisplayingToast
+    if ns.db.levelUpWindow and ns.db.levelUpHideBlizzard and isLevelUpToast(toast and toast.toastInfo) then
+      self:CloseActiveToasts()
+      ns.Debug("levelup", "Blizzard toast closed")
+    end
+  end)
+end
+
+ns.OnLogin(hookBlizzardToast)
 
 ns.RegisterApply(function(db)
   mover.SetScale(math.max(LevelUpWindow.MIN_SCALE, math.min(LevelUpWindow.MAX_SCALE, db.levelUpScale)))
