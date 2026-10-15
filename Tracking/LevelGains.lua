@@ -81,7 +81,7 @@ function LevelGains.Lines(gains)
   local lines = {}
   for _, row in ipairs(gains.rows) do
     if row.to then
-      table.insert(lines, string.format("%s %s → %s (+%s)",
+      table.insert(lines, string.format("%s %s -> %s (+%s)",
         row.label, exact(row.from), exact(row.to), exact(row.delta)))
     else
       table.insert(lines, string.format("%s +%s", row.label, exact(row.delta)))

@@ -43,7 +43,7 @@ local THEME_COLORS = {
 }
 
 local frame = CreateFrame("Frame", "LevelTimerLevelUp", UIParent)
-frame:SetFrameStrata("HIGH")
+frame:SetFrameStrata("FULLSCREEN_DIALOG")
 frame:SetClampedToScreen(true)
 frame:Hide()
 
@@ -162,7 +162,7 @@ local function fillRow(index, gain)
   local row = rowAt(index)
   row.label:SetText(gain.label)
   if gain.to then
-    row.value:SetText(string.format("%d → %d", gain.from, gain.to))
+    row.value:SetText(string.format("%d -> %d", gain.from, gain.to))
   else
     row.value:SetText("")
   end

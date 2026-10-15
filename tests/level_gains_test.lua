@@ -5,6 +5,7 @@ local LevelGains = addon.LevelGains
 wow.login({ level = 10 })
 addon.Alerts.Clear()
 addon.Set("alertLevelUp", true)
+addon.Set("levelUpWindow", false)  -- sonst ersetzt das Fenster die Karte
 
 -- Ohne Zuwächse im Ereignis (ältere Clients): sofort, ohne Zeilen
 local readyLevel, readyGains
@@ -25,12 +26,12 @@ wow.runTimers()
 expect("mit Zuwächsen: bereit", readyLevel, 12)
 
 local lines = LevelGains.Lines(readyGains)
-expect("Leben vorher -> nachher", lines[1], L.GAIN_HEALTH .. " 1200 → 1290 (+90)")
-expect("Mana", lines[2], L.GAIN_MANA .. " 500 → 540 (+40)")
-expect("Stärke", lines[3], L.GAIN_STRENGTH .. " 80 → 83 (+3)")
-expect("Beweglichkeit", lines[4], L.GAIN_AGILITY .. " 39 → 40 (+1)")
-expect("Ausdauer", lines[5], L.GAIN_STAMINA .. " 90 → 95 (+5)")
-expect("Intelligenz", lines[6], L.GAIN_INTELLECT .. " 59 → 61 (+2)")
+expect("Leben vorher -> nachher", lines[1], L.GAIN_HEALTH .. " 1200 -> 1290 (+90)")
+expect("Mana", lines[2], L.GAIN_MANA .. " 500 -> 540 (+40)")
+expect("Stärke", lines[3], L.GAIN_STRENGTH .. " 80 -> 83 (+3)")
+expect("Beweglichkeit", lines[4], L.GAIN_AGILITY .. " 39 -> 40 (+1)")
+expect("Ausdauer", lines[5], L.GAIN_STAMINA .. " 90 -> 95 (+5)")
+expect("Intelligenz", lines[6], L.GAIN_INTELLECT .. " 59 -> 61 (+2)")
 expect("Talentpunkte", lines[7], string.format(L.GAIN_TALENTS, 1))
 
 -- Karte mit allen Zeilen, Titel bleibt das Level
@@ -44,9 +45,9 @@ wow.levelUp(13, nil, { health = 90, power = 40, strength = 3, stamina = 5 })
 wow.runTimers()
 local buffed = LevelGains.Lines(readyGains)
 expect("Buff: Leben nur Zuwachs", buffed[1], L.GAIN_HEALTH .. " +90")
-expect("Buff: Mana ohne Intelligenzbuff vollständig", buffed[2], L.GAIN_MANA .. " 500 → 540 (+40)")
-expect("Buff: Stärke ohne Buff", buffed[3], L.GAIN_STRENGTH .. " 80 → 83 (+3)")
-expect("Buff: Ausdauer ohne Buff", buffed[4], L.GAIN_STAMINA .. " 90 → 95 (+5)")
+expect("Buff: Mana ohne Intelligenzbuff vollständig", buffed[2], L.GAIN_MANA .. " 500 -> 540 (+40)")
+expect("Buff: Stärke ohne Buff", buffed[3], L.GAIN_STRENGTH .. " 80 -> 83 (+3)")
+expect("Buff: Ausdauer ohne Buff", buffed[4], L.GAIN_STAMINA .. " 90 -> 95 (+5)")
 wow.state.statBuffs = {}
 
 -- Einstellung aus: Karte ohne Zeilen

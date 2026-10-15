@@ -289,6 +289,7 @@ end
 
 -- Erst wenn der Zuwachs feststeht (LevelGains), damit die Karte Leben und Werte zeigen kann
 ns.LevelGains.OnReady(function(level, gains)
+  if ns.db.levelUpWindow then return end  -- das Level-Up-Fenster zeigt dieselben Zuwächse
   local lines = ns.db.levelUpGains and gains and ns.LevelGains.Lines(gains)
   alert("levelUp", level, lines and table.concat(lines, "\n") or nil)
 end)
