@@ -50,12 +50,24 @@ local function save(frame, name)
   ns.db.movedFrames[name] = { point, relativePoint or point, x, y }
 end
 
+-- Retail-Unterbau (Retail, WoW Forever): Fenster in UIPanelWindows ordnet der UIParentPanelManager selbst an und
+-- berechnet daraus auch die Plätze von Aktionsleisten und Castbar. Setzen wir dort Positionen, verschwinden Leisten
+-- (gemeldet: Controller-Leiste weg, Castbar oben links). Diese Fenster bleiben unangetastet.
+local function isManagedByClient(name)
+  if not (ns.Client.IsForever() or ns.Client.IsRetail()) then return false end
+  return type(UIPanelWindows) == "table" and UIPanelWindows[name] ~= nil
+end
+
 -- Die Griffe bleiben auch nach dem Ausschalten am Fenster (Verschieben, Maus, Bildschirmrand); nur das Ziehen
 -- und Wiederherstellen prüft die Einstellung.
 local function attach(name)
   local frame = _G[name]
   if attached[name] or type(frame) ~= "table" or not frame.HookScript then return end
   attached[name] = true
+  if isManagedByClient(name) then
+    ns.Debug("moveframes", "skipped %s (managed by the client)", name)
+    return
+  end
   frame:SetMovable(true)
   frame:EnableMouse(true)
   frame:SetClampedToScreen(true)
