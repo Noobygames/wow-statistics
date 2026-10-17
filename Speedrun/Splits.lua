@@ -54,16 +54,23 @@ function Splits.ComparableRange()
   return firstOwnLevel(), ns.level
 end
 
--- Zeiten des schnellsten anderen Charakters bis einschließlich des aktuellen Levels
-local function personalBest()
-  local from = firstOwnLevel()
+-- Zeiten des anderen Charakters mit der kleinsten Summe über die Level from..to (nur wer alle hat); nil ohne Treffer
+local function fastestRun(from, to)
   local bestTimes, bestSum
   for _, key in ipairs(otherCharacters()) do
     local times = Runs.LevelTimes(key)
-    local sum = Runs.SumOfLevels(times, from, ns.level)
+    local sum = Runs.SumOfLevels(times, from, to)
     if sum and (not bestSum or sum < bestSum) then bestTimes, bestSum = times, sum end
   end
-  return bestTimes or {}
+  return bestTimes
+end
+
+-- Zeiten des schnellsten anderen Charakters bis einschließlich des aktuellen Levels. Hat kein anderer eine Zeit
+-- für das laufende Level (Levelcap, oder man ist Erster auf diesem Level), zählen nur die abgeschlossenen Level,
+-- damit der Vergleich dort nicht ganz verschwindet.
+local function personalBest()
+  local from = firstOwnLevel()
+  return fastestRun(from, ns.level) or fastestRun(from, ns.level - 1) or {}
 end
 
 -- Gewählter Lauf: beim Wählen kopierte Zeiten, bleiben fest, auch wenn der Charakter weiterlevelt.
@@ -149,6 +156,7 @@ function Splits.SetReferenceRun(run)
   local times = {}
   for level, seconds in pairs(run.times) do times[level] = seconds end
   ns.db.splitReference = { id = run.id, name = run.name, times = times }
+  cachedTimes = nil  -- auch bei gleicher Wahl neu lesen (der Lauf kann sich seit dem letzten Mal geändert haben)
   ns.Set("splitComparison", Splits.RUN)
 end
 

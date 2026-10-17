@@ -40,13 +40,19 @@ local function bookTime()
   enteredAt = GetTime()
 end
 
+-- Die laufende Zone steht sofort in der Liste, auch ohne XP, Kill oder Tod
+local function enterZone()
+  currentZone = zoneName()
+  if currentZone then entryFor(currentZone) end
+end
+
 local function onZoneChanged()
   bookTime()
-  currentZone = zoneName()
+  enterZone()
 end
 
 ns.OnLogin(function()
-  currentZone = zoneName()
+  enterZone()
   enteredAt = GetTime()
 end)
 ns.OnLogout(bookTime)

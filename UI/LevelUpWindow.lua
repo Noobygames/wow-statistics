@@ -332,11 +332,15 @@ frame:SetScript("OnUpdate", function(self)
   end
 end)
 
+-- Fähigkeiten, die der Lehrer ab diesem Level anbietet (leer, wo es keine Lehrerliste gibt)
+local function abilitiesFor(level)
+  return ns.TrainerCache.IsAvailable() and ns.TrainerCache.ForLevel(level) or {}
+end
+
 local pending  -- { level, gains }, wenn das Fenster im Kampf nicht erscheinen durfte
 
 local function show(level, gains)
-  local abilities = ns.TrainerCache.IsAvailable() and ns.TrainerCache.ForLevel(level) or {}
-  display(level, gains, abilities, nil)
+  display(level, gains, abilitiesFor(level), nil)
   if ns.db.levelUpSound then ns.Alerts.PlaySound() end
 end
 
@@ -379,18 +383,13 @@ frame:SetScript("OnMouseUp", function(_, mouseButton)
   end
 end)
 
-frame:SetScript("OnEnter", function(self)
-  if mover.IsMoving() then return end
-  GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
-  GameTooltip:AddLine(L.LEVEL_UP_CLOSE_HINT, 1, 1, 1)
-  GameTooltip:Show()
-end)
-frame:SetScript("OnLeave", function() GameTooltip:Hide() end)
+Widgets.AttachTooltip(frame, function() return ns.DISPLAY_NAME end,
+  function() return not mover.IsMoving() and L.LEVEL_UP_CLOSE_HINT or nil end)
 
 -- Beispieldaten: Zuwächse auf die aktuellen Werte, Fähigkeiten aus dem Lehrer-Cache (sonst drei Beispiele)
 local function sampleData()
   local level = ns.level + 1
-  local abilities = ns.TrainerCache.IsAvailable() and ns.TrainerCache.ForLevel(level) or {}
+  local abilities = abilitiesFor(level)
   if #abilities == 0 then
     for index = 1, 3 do
       abilities[index] = { name = string.format(L.LEVEL_UP_SAMPLE_ABILITY, index), rank = "", level = level }
@@ -467,7 +466,8 @@ local function isLevelUpToast(info)
   if not info or not lastLevelUp or GetTime() - lastLevelUp.time > TOAST_MAX_AGE then return false end
   local titleDisplay = Enum and Enum.EventToastDisplayType and Enum.EventToastDisplayType.NormalTitleAndSubTitle
   if info.displayType ~= titleDisplay then return false end
-  return type(info.title) == "string" and info.title:find(tostring(lastLevelUp.level), 1, true) ~= nil
+  -- Ganze Zahl im Titel: Stufe 4 passt nicht auf "Stufe 14" (mit Leerzeichen als Rand, damit Anfang und Ende zählen)
+  return type(info.title) == "string" and (" " .. info.title .. " "):find("%D" .. lastLevelUp.level .. "%D") ~= nil
 end
 
 local function hookBlizzardToast()

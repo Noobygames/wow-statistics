@@ -21,6 +21,7 @@ local WHEEL_STEP = 3  -- Zeilen pro Mausrad-Raste
 local WHITE = { 1, 1, 1 }
 local LEFT, RIGHT = "LEFT", "RIGHT"
 local TOOLBAR_HEIGHT = 22     -- Zeile mit dem Suchfeld über der Tabelle
+local HINT_HEIGHT = 12       -- eigene Zeile unter der Summenzeile für den Hinweis (sonst überdeckt er die Summen)
 local FILTER_WIDTH = 150
 local FILTER_HEIGHT = 18
 local EXPORT_BUTTON_WIDTH = 70
@@ -152,7 +153,7 @@ function TableView.Create(definition)
     frame:SetAllPoints(parent)
     frame.offset = 0  -- Index vor dem ersten sichtbaren Eintrag
 
-    local visibleRows = math.floor((height - TOOLBAR_HEIGHT) / ROW_HEIGHT) - 2  -- ohne Kopf- und Summenzeile
+    local visibleRows = math.floor((height - TOOLBAR_HEIGHT - HINT_HEIGHT) / ROW_HEIGHT) - 2  -- ohne Kopf- und Summenzeile
     local allRecords, records = {}, {}  -- alle Einträge bzw. gefiltert und sortiert
     local filterText = ""
     local sort  -- { column, index, descending } oder nil (ursprüngliche Reihenfolge)
@@ -168,7 +169,7 @@ function TableView.Create(definition)
     local headerRow = createRow(frame, columns, "GameFontNormalSmall")
     headerRow:SetPoint("TOPLEFT", 0, -TOOLBAR_HEIGHT)
     local footerRow = createRow(frame, columns, "GameFontNormalSmall")
-    footerRow:SetPoint("BOTTOMLEFT")
+    footerRow:SetPoint("BOTTOMLEFT", 0, HINT_HEIGHT)
 
     local rows = {}
     local apply  -- unten definiert
@@ -195,10 +196,10 @@ function TableView.Create(definition)
     emptyText:SetPoint("CENTER", frame, "CENTER", 0, 0)
     emptyText:Hide()
 
-    -- Hinweis unten rechts neben der Summenzeile, z.B. was ein Klick bewirkt
+    -- Hinweis unter der Summenzeile, z.B. was ein Klick bewirkt
     local hint = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     hint:SetTextColor(unpack(Widgets.COLORS.muted))
-    hint:SetPoint("BOTTOMRIGHT", -SCROLLBAR_GAP, 2)
+    hint:SetPoint("BOTTOMRIGHT", -SCROLLBAR_GAP, 0)
 
     -- Weitere Buttons der Ansicht rechts neben dem Export-Button
     local extraButtons = {}

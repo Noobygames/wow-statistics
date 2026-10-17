@@ -154,7 +154,7 @@ function Profiles.Import(text)
   local data = Serializer.Decode(KIND, text)
   if type(data) ~= "table" or type(data.name) ~= "string" or data.name == ""
     or type(data.settings) ~= "table" then return nil end
-  local name = freeName(data.name)
+  local name = freeName(storedName(data.name))  -- "Standard" meint das Standardprofil, hieße der Import sonst unerreichbar
   -- Nur bekannte Einstellungen mit passendem Typ: ein falscher Wert würde sonst bei jedem Login
   -- das Anwenden der Einstellungen abbrechen
   local settings = ns.Database.SanitizeSettings(data.settings)

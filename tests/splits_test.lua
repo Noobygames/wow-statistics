@@ -95,3 +95,19 @@ LevelTimerDB.splitReference = { id = addon.characterKey, name = "Neu", times = {
 addon.Set("splitComparison", "best")
 addon.Set("splitComparison", "run")
 expect("eigener Lauf: Bestzeit statt eigener Kopie", Splits.GetReference(11), 100)
+
+-- PB am Levelcap / als Erster auf einem Level: kein anderer hat eine Zeit für das laufende Level, die
+-- abgeschlossenen Level vergleichen weiter
+LevelTimerStatsDB.characters = { [addon.characterKey] = LevelTimerStatsDB.characters[addon.characterKey] }
+otherCharacter("Veteran", { [10] = { level = 10, seconds = 3400 } })
+addon.character.levelHistory[10] = { level = 10, seconds = 3000 }  -- eigenes abgeschlossenes Level 10
+addon.Set("splitComparison", "best")
+addon.Set("splitComparison", "pb")
+expect("PB ohne Zeit fürs laufende Level: abgeschlossenes Level vergleicht", Splits.GetReference(10), 3400)
+
+-- Dieselbe Wahl noch einmal: der Vergleich wird neu gelesen
+otherCharacter("Schnell", { [10] = { level = 10, seconds = 3200 } })
+SlashCmdList.LEVELTIMER("compare schnell")
+LevelTimerStatsDB.characters["Schnell-Testrealm"].levelHistory[10].seconds = 3100
+SlashCmdList.LEVELTIMER("compare schnell")
+expect("gleiche Wahl liest neu", Splits.GetReference(10), 3100)

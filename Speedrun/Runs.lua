@@ -135,7 +135,9 @@ local function sanitize(run)
   if type(run) ~= "table" or type(run.name) ~= "string" or type(run.times) ~= "table" then return nil end
   local times = {}
   for level, seconds in pairs(run.times) do
-    if type(level) ~= "number" or type(seconds) ~= "number" then return nil end
+    -- Zeiten von außen: nur endliche, positive Zahlen (inf oder negativ würde Summen und Vergleiche zerstören)
+    if type(level) ~= "number" or type(seconds) ~= "number" or seconds ~= seconds or seconds <= 0
+      or seconds == math.huge then return nil end
     times[level] = seconds
   end
   return {

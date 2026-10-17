@@ -71,6 +71,8 @@ end
 -- Laufende Session archivieren und eine neue beginnen, z.B. zu Stream-Beginn
 function Session.StartNew()
   ns.Debug("session", "started new session manually")
+  -- Zeitaufteilung (Kampf/AFK/Flug) gehört noch in die alte Session; TimeBreakdown lädt nach dieser Datei
+  if ns.TimeBreakdown then ns.TimeBreakdown.Flush() end
   closeCurrent()
   archive(current())
   startNew()

@@ -126,3 +126,19 @@ saveButton._scripts.OnClick(saveButton)
 expectTrue("leerer Name gemeldet", wow.printed[#wow.printed]:find(L.PROFILE_NAME_EMPTY, 1, true) ~= nil)
 expect("Profil-Exists", Profiles.Exists("Default"), true)
 expect("Profil-Exists (unbekannt)", Profiles.Exists("Gibtsnicht"), false)
+
+-- Import unter dem Anzeigenamen des Standardprofils ("Standard") wird nicht unerreichbar abgelegt
+local fromDefaultName = Profiles.Import(addon.Serializer.Encode("profile", { name = addon.L.PROFILE_DEFAULT, settings = {} }))
+expectTrue("Import 'Standard': eigener Name", fromDefaultName ~= nil and fromDefaultName ~= addon.L.PROFILE_DEFAULT)
+expectTrue("Import 'Standard': wählbar", Profiles.Exists(fromDefaultName))
+
+-- Positionen: nur gültige Ankerpunkte und endliche Offsets; die Größe der Split-Liste bleibt erhalten (begrenzt)
+local sane = addon.Database.SanitizeSettings({
+  pos = { "FOO", "CENTER", 0, 0 }, alertPos = { "CENTER", "CENTER", math.huge, 0 },
+  campPos = { "TOP", "TOP", 5, -10 }, splitListScale = 9,
+})
+expect("unbekannter Anker verworfen", sane.pos, nil)
+expect("unendlicher Offset verworfen", sane.alertPos, nil)
+expect("gültige Position bleibt", sane.campPos[3], 5)
+expect("splitListScale bleibt, begrenzt", sane.splitListScale, 2)
+expect("splitListScale ohne Zahl verworfen", addon.Database.SanitizeSettings({ splitListScale = "groß" }).splitListScale, nil)

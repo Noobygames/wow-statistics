@@ -204,9 +204,19 @@ local mover = Widgets.CreateMover(frame, {
   onMovingChanged = function(isMoving)
     moving = isMoving
     if isMoving then
-      frame:SetAlpha(1)
+      if notice.frame:IsShown() then
+        -- Banner-Stil: Das sichtbare Beispiel ist die Karte; der (sonst versteckte) Rahmen bekommt ihre Größe und
+        -- unsichtbar die Ziehgriffe, die Karte hängt an ihm
+        notice.frame:SetAlpha(1)
+        frame:SetSize(notice.frame:GetWidth(), notice.frame:GetHeight())
+        frame:SetAlpha(0)
+        frame:Show()
+      else
+        frame:SetAlpha(1)
+      end
       return
     end
+    frame:SetSize(1, 1)
     frame:Hide()
     notice.frame:Hide()
     local waiting = table.remove(queue, 1)

@@ -191,12 +191,17 @@ end)
 addButton:SetPoint("TOPRIGHT", 0, FIELD_Y - 3 * ROW - 2)
 
 -- Shift-Klick auf ein Item (Taschen, Beute, Chat) fügt den Link ins Feld ein, solange es den Fokus hat
-if ChatEdit_InsertLink then
-  hooksecurefunc("ChatEdit_InsertLink", function(link)
-    if link and text1Box:IsVisible() and text1Box:HasFocus() and selectedKind == "item" then
-      text1Box:Insert(link)
-    end
-  end)
+-- Blizzards Chat ruft ChatFrameUtil.InsertLink; ChatEdit_InsertLink ist nur ein Deprecation-Alias (fehlt ohne
+-- CVar loadDeprecationFallbacks) und wird nie aufgerufen
+local function insertLinkIntoField(link)
+  if link and text1Box:IsVisible() and text1Box:HasFocus() and selectedKind == "item" then
+    text1Box:Insert(link)
+  end
+end
+if ChatFrameUtil and ChatFrameUtil.InsertLink then
+  hooksecurefunc(ChatFrameUtil, "InsertLink", insertLinkIntoField)
+elseif ChatEdit_InsertLink then
+  hooksecurefunc("ChatEdit_InsertLink", insertLinkIntoField)
 end
 
 ---------------------------------------------------------------------------

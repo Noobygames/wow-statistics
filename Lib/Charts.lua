@@ -97,7 +97,10 @@ function Charts.CreateColumnChart(parent, width, height)
       column.hit:SetSize(slot, plotHeight)
       local barHeight = maxValue > 0 and item.value / maxValue * plotHeight or 0
       column.bar:SetSize(math.max(2, slot * COLUMN_FILL), math.max(1, barHeight))
-      column.bar:SetColorTexture(unpack(barColor(item)))
+      -- Unter der Maus bleibt die Säule hervorgehoben und der Tooltip zeigt den neuen Wert (sonst springt beides zurück)
+      local hovered = column.hit:IsMouseOver()
+      column.bar:SetColorTexture(unpack(hovered and BAR_HOVER_COLOR or barColor(item)))
+      if hovered then showTooltip(column.hit, item) end
       column.label:SetText(item.label)
       column.label:SetShown((i - 1) % labelStep == 0)
       column.hit:Show()
