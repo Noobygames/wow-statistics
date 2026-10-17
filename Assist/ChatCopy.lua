@@ -60,17 +60,8 @@ local function createButton(chatFrame)
   return button
 end
 
-local function chatFrames()
-  local list = {}
-  for index = 1, NUM_CHAT_WINDOWS or 0 do
-    local chatFrame = _G["ChatFrame" .. index]
-    if chatFrame then table.insert(list, chatFrame) end
-  end
-  return list
-end
-
 ns.RegisterApply(function(db)
-  for _, chatFrame in ipairs(chatFrames()) do
+  for _, chatFrame in ipairs(ns.ChatFrames()) do
     if db.chatCopyButton and not buttons[chatFrame] then
       buttons[chatFrame] = createButton(chatFrame)
     end

@@ -308,10 +308,11 @@ LOOT_ITEM_PUSHED_SELF = "Ihr erhaltet einen Gegenstand: %s."
 wow.timers = {}
 C_Timer = { After = function(_, callback) table.insert(wow.timers, callback) end }
 -- Chatfenster wie im Client: schreiben /played in ihrem TIME_PLAYED_MSG-Handler (wow.playedLines)
-NUM_CHAT_WINDOWS = 2
+-- Wie im Client ohne loadDeprecationFallbacks: nur die Konstante, nicht der Alias NUM_CHAT_WINDOWS
+Constants = { ChatFrameConstants = { MaxChatWindows = 2 } }
 wow.playedLines = 0
 -- Zeilen wie Blizzards ScrollingMessageFrame: GetMessageInfo(1) ist die älteste (chatFrame._messages)
-for index = 1, NUM_CHAT_WINDOWS do
+for index = 1, Constants.ChatFrameConstants.MaxChatWindows do
   local chatFrame = newFrame()
   chatFrame._events.TIME_PLAYED_MSG = true
   chatFrame._scripts.OnEvent = function() wow.playedLines = wow.playedLines + 1 end

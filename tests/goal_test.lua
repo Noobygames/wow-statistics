@@ -55,3 +55,12 @@ expectTrue("kein Ziel gemeldet", wow.printed[#wow.printed]:find(addon.L.GOAL_NON
 
 -- Kommazahlen sind kein Level
 expect("Kommazahl abgelehnt", addon.Goal.Set(addon.level + 1.5), false)
+
+-- Ziel-Level ohne Level-Up-Ereignis erreicht (z. B. anderer Client): beim nächsten Login gilt es als erreicht
+local key = addon.characterKey
+LevelTimerStatsDB.characters[key].goal = { level = 40, startProgress = 39 }
+LevelTimerStatsDB.characters[key].currentLevel.level = 40
+wow.logout()
+wow.login({ level = 40 })
+local saved = LevelTimerStatsDB.characters[addon.characterKey].goal
+expectTrue("Login: Ziel erreicht", saved ~= nil and saved.reached == true)

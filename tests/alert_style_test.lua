@@ -60,6 +60,21 @@ expect("Wartende erscheint danach", alert.text:GetText(), string.format(L.ALERT_
 Alerts.Clear()
 expect("danach versteckt", alert:IsShown(), false)
 
+-- Verschiebemodus im Banner-Stil: die Karte ist das sichtbare Beispiel, der unsichtbare Rahmen trägt die Ziehgriffe
+addon.Set("alertStyle", "banner")
+Alerts.SetMoving(true)
+expect("Banner: Karte steht", LevelTimerNotice:IsShown(), true)
+expect("Banner: Karte sichtbar", LevelTimerNotice:GetAlpha(), 1)
+expectTrue("Banner: Ziehfläche da", alert:IsShown())
+expect("Banner: Ziehfläche unsichtbar", alert:GetAlpha(), 0)
+alert._scripts.OnDragStart(alert)
+alert._scripts.OnDragStop(alert)
+expectTrue("Banner: Position gespeichert", LevelTimerDB.alertPos ~= nil)
+alert._scripts.OnMouseUp(alert, "RightButton")
+expect("Banner: Rechtsklick beendet", Alerts.IsMoving(), false)
+Alerts.Clear()
+addon.Set("alertStyle", "text")
+
 -- Zurücksetzen
 Alerts.ResetPosition()
 expect("Position zurückgesetzt", LevelTimerDB.alertPos, nil)

@@ -42,6 +42,19 @@ function ns.InCombat()
   return not ns.IsSecret(inCombat) and inCombat == true
 end
 
+-- Alle vorhandenen Chatfenster (ChatFrame1..n). NUM_CHAT_WINDOWS gibt es nur als Deprecation-Alias (CVar
+-- loadDeprecationFallbacks); Blizzards Chat-Code nutzt Constants.ChatFrameConstants.MaxChatWindows.
+local DEFAULT_MAX_CHAT_WINDOWS = 10
+function ns.ChatFrames()
+  local constants = Constants and Constants.ChatFrameConstants
+  local list = {}
+  for index = 1, (constants and constants.MaxChatWindows) or NUM_CHAT_WINDOWS or DEFAULT_MAX_CHAT_WINDOWS do
+    local chatFrame = _G["ChatFrame" .. index]
+    if chatFrame then table.insert(list, chatFrame) end
+  end
+  return list
+end
+
 function ns.IsSecret(value)
   return issecretvalue ~= nil and issecretvalue(value)
 end

@@ -288,16 +288,26 @@ local function applyDefaults(data, defaults)
   return data
 end
 
+local function isFiniteNumber(value)
+  return type(value) == "number" and value == value and value ~= math.huge and value ~= -math.huge
+end
+
+-- Gültige Ankerpunkte (FramePoint): SetPoint mit etwas anderem wirft bei jedem Anwenden einen Fehler
+local FRAME_POINTS = {
+  TOPLEFT = true, TOP = true, TOPRIGHT = true, LEFT = true, CENTER = true, RIGHT = true,
+  BOTTOMLEFT = true, BOTTOM = true, BOTTOMRIGHT = true,
+}
+
 -- Einstellungen ohne Default, mit Prüfung ihrer Form
 local function isPosition(value)
-  return type(value) == "table" and type(value[1]) == "string" and type(value[2]) == "string"
-    and type(value[3]) == "number" and type(value[4]) == "number"
+  return type(value) == "table" and FRAME_POINTS[value[1]] == true and FRAME_POINTS[value[2]] == true
+    and isFiniteNumber(value[3]) and isFiniteNumber(value[4])
 end
 
 local function isLevelTimes(value)
   if type(value) ~= "table" then return false end
   for level, seconds in pairs(value) do
-    if type(level) ~= "number" or type(seconds) ~= "number" then return false end
+    if type(level) ~= "number" or not isFiniteNumber(seconds) or seconds <= 0 then return false end
   end
   return true
 end
@@ -322,11 +332,8 @@ local SETTING_RANGES = {
   questMarkScale = { 0.5, 2 },
 }
 
-local function isFiniteNumber(value)
-  return value == value and value ~= math.huge and value ~= -math.huge
-end
-
 local OPTIONAL_SETTINGS = {
+  splitListScale = isFiniteNumber,  -- eigene Größe der Split-Liste, sonst die des Hauptfensters (SplitList.lua)
   pos = isPosition,           -- Hauptfenster (TimerWindow.lua)
   splitListPos = isPosition,  -- Split-Liste (SplitList.lua)
   alertPos = isPosition,      -- Einblendungen (Alerts.lua); fehlt = oben in der Mitte
@@ -356,7 +363,10 @@ local function sanitizeValue(key, value)
       return type(value) == "table" and sanitizeSettings(value) or nil
     end
     local check = OPTIONAL_SETTINGS[key]
-    return check and check(value) and value or nil
+    if not (check and check(value)) then return nil end
+    local range = SETTING_RANGES[key]
+    if range and type(value) == "number" then return math.max(range[1], math.min(range[2], value)) end
+    return value
   end
   if type(value) ~= type(default) then return nil end
   if type(value) == "number" then

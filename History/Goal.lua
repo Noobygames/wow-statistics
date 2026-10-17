@@ -53,6 +53,12 @@ function Goal.GetSecondsLeft()
   return ns.Forecast.SecondsToLevel(goal.level)
 end
 
+-- Das Ziel-Level kann auch ohne Level-Up-Ereignis erreicht worden sein (anderer Client, Addon aus)
+ns.OnLogin(function()
+  local goal = Goal.Get()
+  if goal and not goal.reached and ns.level >= goal.level then goal.reached = true end
+end)
+
 ns.OnLevelStarted(function(newLevel)
   local goal = Goal.Get()
   if goal and not goal.reached and newLevel >= goal.level then

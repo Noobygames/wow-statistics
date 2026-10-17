@@ -48,9 +48,8 @@ end
 local function muteChat()
   if mutedFrames then return end
   mutedFrames = {}
-  for index = 1, NUM_CHAT_WINDOWS or 0 do
-    local frame = _G["ChatFrame" .. index]
-    if frame and frame:IsEventRegistered("TIME_PLAYED_MSG") then
+  for _, frame in ipairs(ns.ChatFrames()) do
+    if frame:IsEventRegistered("TIME_PLAYED_MSG") then
       frame:UnregisterEvent("TIME_PLAYED_MSG")
       table.insert(mutedFrames, frame)
     end

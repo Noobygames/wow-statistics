@@ -65,10 +65,12 @@ end
 -- Das Ergebnis steht erst am Ende fest und wird von mehreren Ereignissen gemeldet (Retail/Forever:
 -- PVP_MATCH_COMPLETE, alle Clients: UPDATE_BATTLEFIELD_SCORE); pro Schlachtfeld zählt es einmal.
 ---------------------------------------------------------------------------
--- Sieger: C_PvP.GetActiveMatchWinner (Retail/Forever), sonst GetBattlefieldWinner; nil = läuft noch oder keine API
+-- Sieger: GetBattlefieldWinner (nil bis das Ergebnis feststeht, wie bei Blizzards eigenen Schlachtfeld-Filtern).
+-- C_PvP.GetActiveMatchWinner liefert immer eine Zahl (laut Dokumentation nie nil) und taugt deshalb nicht als
+-- "fertig"-Prüfung; es gilt nur, wo es GetBattlefieldWinner nicht gibt. nil = läuft noch oder keine API.
 local function getWinner()
-  if C_PvP and C_PvP.GetActiveMatchWinner then return C_PvP.GetActiveMatchWinner() end
   if GetBattlefieldWinner then return GetBattlefieldWinner() end
+  if C_PvP and C_PvP.GetActiveMatchWinner then return C_PvP.GetActiveMatchWinner() end
   return nil
 end
 
