@@ -53,6 +53,11 @@ func run(dir, guideDir, bossNpcsPath, handPath string, qualities map[int]int) (*
 	if err != nil {
 		return nil, "", st, err
 	}
+	fixes, err := readFactionFixes(dir)
+	if err != nil {
+		return nil, "", st, err
+	}
+	fixes.apply(db)
 	zones, err := readZones(dir)
 	if err != nil {
 		return nil, "", st, err
@@ -115,8 +120,13 @@ func printSummary(res *result, guide guideStats, luaOut string) {
 		perQuality[3], perQuality[4], perQuality[5], rated, res.NoQuality)
 	fmt.Printf("Führer: %d Items ergänzt, %d schon bekannt, %d nicht in ItemSparse, %d unter rar; %d Bosse auf Rang 3\n",
 		guide.Added, guide.Duplicate, guide.NotFound, guide.BelowRare, guide.Ranked)
+	fmt.Printf("Führer: %d Forever-Items mit Führer-Qualität, %d Bosse aus QuestieDB in ihre Instanz aufgenommen\n",
+		guide.ForeverOnly, guide.NpcsAdded)
 	for _, u := range guide.Unmatched {
 		fmt.Println("  Führer-NPC ohne Zuordnung:", u)
+	}
+	for _, m := range guide.Missing {
+		fmt.Println("  Führer-Item ohne ItemSparse:", m)
 	}
 	fmt.Printf("%s: %d KB\n", luaOut, size/1024)
 }

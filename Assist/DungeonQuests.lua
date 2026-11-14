@@ -22,7 +22,7 @@ local GIVER_KINDS = { n = "npc", o = "object", i = "item" }
 local SINGLE_WORD_LENGTH = 3  -- Kurzname einwortiger Instanzen ("Gno")
 local UTF8_CHAR = "[\1-\127\194-\244][\128-\191]*"
 
-local instanceOf     -- [questID] = Karten-ID (kleinste, falls mehrere); nil = noch nicht aufgebaut
+local instancesOf    -- [questID] = { Karten-ID, ... } aufsteigend; nil = noch nicht aufgebaut
 local revision = 0
 local takeCache = {}  -- [questID] = true/false für die aktuelle Revision
 local shortNames = {}  -- [Karten-ID] = Kurzname
@@ -41,13 +41,14 @@ end
 local chainsOf  -- [Karten-ID] = { questID, ... } der Kettenschritte, die zu dieser Instanz führen
 
 local function buildInstances()
-  instanceOf, chainsOf = {}, {}
+  instancesOf, chainsOf = {}, {}
   local mapIDs = {}
   for mapID in pairs(db().quests) do table.insert(mapIDs, mapID) end
   table.sort(mapIDs)
   for _, mapID in ipairs(mapIDs) do
     for _, questID in ipairs(db().quests[mapID]) do
-      instanceOf[questID] = instanceOf[questID] or mapID
+      instancesOf[questID] = instancesOf[questID] or {}
+      table.insert(instancesOf[questID], mapID)
     end
   end
   for questID, chain in pairs(db().questChains) do
@@ -57,11 +58,17 @@ local function buildInstances()
   end
 end
 
--- Instanz-Karten-ID einer Dungeonquest, sonst nil
-function DungeonQuests.Instance(questID)
+-- Alle Instanz-Karten-IDs einer Dungeonquest, aufsteigend (nicht verändern); nil ohne Instanz
+function DungeonQuests.Instances(questID)
   if not db() or type(questID) ~= "number" then return nil end
-  if not instanceOf then buildInstances() end
-  return instanceOf[questID]
+  if not instancesOf then buildInstances() end
+  return instancesOf[questID]
+end
+
+-- Instanz-Karten-ID einer Dungeonquest (die kleinste, falls mehrere), sonst nil
+function DungeonQuests.Instance(questID)
+  local mapIDs = DungeonQuests.Instances(questID)
+  return mapIDs and mapIDs[1]
 end
 
 -- Kette zu einer Dungeonquest: Karten-ID, Ziel-questID, Stufe, Gesamt; nil, wenn die Quest in keine führt
@@ -170,7 +177,7 @@ end
 function DungeonQuests.InstanceQuests(mapID)
   local list, seen = {}, {}
   if not db() then return list end
-  if not instanceOf then buildInstances() end
+  if not instancesOf then buildInstances() end
   local function add(questID)
     local info = db().questInfo[questID]
     if seen[questID] or not info or not isOpen(questID, info) then return end
@@ -239,14 +246,27 @@ end
 
 local questsByMap  -- [uiMapID] = { questID, ... } mit Geber-Ort auf dieser Karte; nil = noch nicht aufgebaut
 
+-- Geber einer Quest: Art, ID, uiMapID, x, y; für die Horde ihr eigener Geber (giverH), falls die Quest einen hat
+local function giverOf(info)
+  local horde = info.giverH
+  if horde and readable(UnitFactionGroup("player")) == "Horde" then
+    return horde[1], horde[2], horde[3], horde[4], horde[5]
+  end
+  return info[GIVER_KIND], info[GIVER_ID], info[GIVER_MAP], info[GIVER_X], info[GIVER_Y]
+end
+
+local function addToMap(questID, uiMapID, x)
+  if not (uiMapID and x) then return end
+  questsByMap[uiMapID] = questsByMap[uiMapID] or {}
+  table.insert(questsByMap[uiMapID], questID)
+end
+
+-- Beide Geber-Orte (auch giverH): die Fraktion steht beim ersten Aufruf vielleicht noch nicht fest
 local function buildQuestsByMap()
   questsByMap = {}
   for questID, info in pairs(db().questInfo) do
-    local uiMapID = info[GIVER_MAP]
-    if uiMapID and info[GIVER_X] then
-      questsByMap[uiMapID] = questsByMap[uiMapID] or {}
-      table.insert(questsByMap[uiMapID], questID)
-    end
+    addToMap(questID, info[GIVER_MAP], info[GIVER_X])
+    if info.giverH then addToMap(questID, info.giverH[3], info.giverH[4]) end
   end
 end
 
@@ -270,11 +290,11 @@ function DungeonQuests.OffersOnMap(uiMapID)
   if not questsByMap then buildQuestsByMap() end
   for _, questID in ipairs(questsByMap[uiMapID] or {}) do
     local offer = DungeonQuests.Offer(questID)
-    if offer then
-      local info = db().questInfo[questID]
-      local place = info[GIVER_X] .. ":" .. info[GIVER_Y]
+    local giver = offer and DungeonQuests.GiverPlace(questID)
+    if giver and giver.uiMapID == uiMapID then
+      local place = giver.x .. ":" .. giver.y
       if not byPlace[place] then
-        byPlace[place] = { x = info[GIVER_X], y = info[GIVER_Y], offers = {} }
+        byPlace[place] = { x = giver.x, y = giver.y, offers = {} }
         table.insert(points, byPlace[place])
       end
       table.insert(byPlace[place].offers, offer)
@@ -288,14 +308,17 @@ end
 function DungeonQuests.Giver(questID)
   local info = db() and db().questInfo[questID]
   if not info then return nil end
-  return GIVER_KINDS[info[GIVER_KIND]], info[GIVER_ID]
+  local kind, giverID = giverOf(info)
+  return GIVER_KINDS[kind], giverID
 end
 
 -- Ort des Gebers: { uiMapID, x, y } (x, y 0-1); nil, wenn unbekannt oder in einer Instanz
 function DungeonQuests.GiverPlace(questID)
   local info = db() and db().questInfo[questID]
-  if not (info and info[GIVER_MAP] and info[GIVER_X]) then return nil end
-  return { uiMapID = info[GIVER_MAP], x = info[GIVER_X], y = info[GIVER_Y] }
+  if not info then return nil end
+  local _, _, uiMapID, x, y = giverOf(info)
+  if not (uiMapID and x) then return nil end
+  return { uiMapID = uiMapID, x = x, y = y }
 end
 
 local function clientTitle(questID, functionName)

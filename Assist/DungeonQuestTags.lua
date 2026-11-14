@@ -23,6 +23,8 @@ ns.DungeonQuestTags = DungeonQuestTags
 
 local TAG_COLOR = "info"  -- Theme-Farbe des Kurznamens und der Tooltipzeile
 local CHAIN_COLOR = "muted"  -- Vorquests: leiser als die Dungeonquest selbst
+local TAG_SEPARATOR = "/"  -- mehrere Instanzen im Kurznamen ("[RAQ/AQ]")
+local NAME_SEPARATOR = ", "  -- mehrere Instanzen in der Tooltipzeile
 local NPC_UNIT = "npc"
 local QUEST_LINK_PATTERN = "quest:(%d+)"
 local TOOLTIPS = { "GameTooltip", "ItemRefTooltip" }
@@ -41,10 +43,20 @@ local function endsWith(text, suffix)
   return suffix ~= "" and text:sub(-#suffix) == suffix
 end
 
--- Farbiger Kurzname der Instanz einer Dungeonquest ("[BS]"), bei Vorquests mit Schritt ("[BS 2/7]"); nil ohne Bezug
+-- Namen aller Instanzen einer Dungeonquest, verbunden mit separator (name = Funktion mapID -> Text); nil ohne Instanz
+local function instanceNames(questID, name, separator)
+  local mapIDs = DungeonQuests.Instances(questID)
+  if not mapIDs then return nil end
+  local names = {}
+  for _, mapID in ipairs(mapIDs) do table.insert(names, name(mapID)) end
+  return table.concat(names, separator)
+end
+
+-- Farbiger Kurzname der Instanz einer Dungeonquest ("[BS]", mehrere Instanzen "[BS/TM]"), bei Vorquests mit Schritt
+-- ("[BS 2/7]"); nil ohne Bezug
 function DungeonQuestTags.Tag(questID)
-  local mapID = DungeonQuests.Instance(questID)
-  if mapID then return string.format("%s[%s]|r", ns.Theme.Hex(TAG_COLOR), DungeonQuests.ShortName(mapID)) end
+  local short = instanceNames(questID, DungeonQuests.ShortName, TAG_SEPARATOR)
+  if short then return string.format("%s[%s]|r", ns.Theme.Hex(TAG_COLOR), short) end
   local chainMap, _, step, total = DungeonQuests.Chain(questID)
   if not chainMap then return nil end
   return string.format("%s[%s %d/%d]|r", ns.Theme.Hex(CHAIN_COLOR), DungeonQuests.ShortName(chainMap), step, total)
@@ -69,10 +81,11 @@ function DungeonQuestTags.Decorate(text, quest)
   return text .. " " .. tag
 end
 
--- Tooltipzeile "Dungeon: Burg Schattenfang" bzw. "Führt zu Burg Schattenfang (Schritt 2/7)"; nil ohne Bezug
+-- Tooltipzeile "Dungeon: Burg Schattenfang" (mehrere Instanzen mit Komma) bzw. "Führt zu Burg Schattenfang
+-- (Schritt 2/7)"; nil ohne Bezug
 function DungeonQuestTags.TooltipLine(questID)
-  local mapID = DungeonQuests.Instance(questID)
-  if mapID then return string.format(L.DUNGEON_QUEST_LINE, ns.InstanceInfo.MapName(mapID)) end
+  local names = instanceNames(questID, ns.InstanceInfo.MapName, NAME_SEPARATOR)
+  if names then return string.format(L.DUNGEON_QUEST_LINE, names) end
   local chainMap, _, step, total = DungeonQuests.Chain(questID)
   if not chainMap then return nil end
   return string.format(L.DUNGEON_QUEST_CHAIN_LINE, ns.InstanceInfo.MapName(chainMap), step, total)

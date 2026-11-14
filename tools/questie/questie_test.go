@@ -79,7 +79,12 @@ func TestBuildMoltenCore(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	qualities := map[int]int{17204: 5, 2589: 1, 18000: 4, 18001: 3}
+	fixes, err := readFactionFixes("testdata")
+	if err != nil {
+		t.Fatal(err)
+	}
+	fixes.apply(db)
+	qualities := map[int]int{17204: 5, 2589: 1, 18000: 4, 18001: 3, 18002: 3}
 	res := build(db, zones, rates, qualities)
 	// Hand-Daten: Quest 50 zusätzlich in Molten Core (mit Korrektur), Quest 7777 ohne QuestieDB in neuer Instanz
 	hand := &handQuests{Quests: map[int][]int{409: {50}, 3065: {7777}}, Data: map[int]*questOut{
@@ -95,12 +100,16 @@ func TestBuildMoltenCore(t *testing.T) {
 	res.addGivers(db)
 	guides := []guideInstance{{Name: "Molten Core", MapID: 409, Bosses: []guideNpc{
 		// schon bekannt, unter rar, nicht in ItemSparse, neu (Qualität 4 aus ItemSparse statt Führer)
-		{Name: "Ragnaros", NpcID: 11502, Loot: []guideItem{{17204, "Eye"}, {2589, "Cloth"}, {99999, "Fake"}, {18000, "New"}}},
-		{Name: "Garr", NpcID: 1, Loot: []guideItem{{18001, "Garr Drop"}}}, // falsche npcID: Zuordnung über den Namen
+		{Name: "Ragnaros", NpcID: 11502, Loot: []guideItem{{ItemID: 17204, Name: "Eye"}, {ItemID: 2589, Name: "Cloth"}, {ItemID: 99999, Name: "Fake"}, {ItemID: 18000, Name: "New"}}},
+		{Name: "Garr", NpcID: 1, Loot: []guideItem{{ItemID: 18001, Name: "Garr Drop"}}}, // falsche npcID: Zuordnung über den Namen
 		{Name: "Niemand", NpcID: 2},
+		// in QuestieDB ohne Spawn in der Instanz: kommt über die npcID dazu; Forever-Item mit Führer-Qualität
+		{Name: "Draußen A", NpcID: 998, Loot: []guideItem{{ItemID: 18002, Name: "Rar"},
+			{ItemID: 300000, Name: "Server-Item", Quality: "epic", Flavor: "forever"}}},
 	}}}
 	st := mergeGuide(res, db, guides, qualities, map[int]bool{12056: true})
-	if st.Added != 2 || st.Duplicate != 1 || st.BelowRare != 1 || st.NotFound != 1 || st.Ranked != 2 || len(st.Unmatched) != 1 {
+	if st.Added != 4 || st.Duplicate != 1 || st.BelowRare != 1 || st.NotFound != 1 || st.Ranked != 3 ||
+		len(st.Unmatched) != 1 || st.ForeverOnly != 1 || st.NpcsAdded != 1 {
 		t.Fatalf("Führer-Zählung: %+v", st)
 	}
 	path := filepath.Join(t.TempDir(), "dungeon_db.lua")
@@ -127,7 +136,7 @@ func TestBuildMoltenCore(t *testing.T) {
 	}
 
 	for expr, want := range map[string]string{
-		`table.concat(ns.DungeonDB.quests[409], ",")`:                               "50,52,53,100",
+		`table.concat(ns.DungeonDB.quests[409], ",")`:                               "50,52,53,54,100",
 		`table.concat(ns.DungeonDB.quests[3065], ",")`:                              "7777",
 		`ns.DungeonDB.questInfo[7777][1] .. "/" .. ns.DungeonDB.questInfo[7777][2]`: "15/10",
 		`ns.DungeonDB.questInfo[7777].name`:                                         "Nur von Hand",
@@ -142,17 +151,27 @@ func TestBuildMoltenCore(t *testing.T) {
 		`ns.DungeonDB.questInfo[100][5] .. ns.DungeonDB.questInfo[100][6]`:          "n14387",
 		`ns.DungeonDB.questInfo[100][7] .. "/" .. ns.DungeonDB.questInfo[100][8]`:   "1428/0.321",
 		`ns.DungeonDB.questInfo[52][7]`:                                             "232",
-		`table.concat(ns.DungeonDB.givers.npc[14387], ",")`:                         "98,99,100",
+		`table.concat(ns.DungeonDB.givers.npc[14387], ",")`:                         "53,98,99,100",
 		`table.concat(ns.DungeonDB.npcs[409][11502], ",")`:                          "63,63,3",
 		`tostring(ns.DungeonDB.npcs[409][12056] ~= nil)`:                            "true",
 		`tostring(ns.DungeonDB.npcs[409][12057] ~= nil)`:                            "true",
 		`tostring(ns.DungeonDB.npcs[409][997] == nil)`:                              "true",
-		`table.concat(ns.DungeonDB.loot[11502][1], ",")`:                            "17204,5,12.5",
+		`table.concat(ns.DungeonDB.loot[11502][1], ",")`:                            "17204,5,25",
 		`tostring(#ns.DungeonDB.loot[11502])`:                                       "2",
 		`table.concat(ns.DungeonDB.loot[11502][2], ",")`:                            "18000,4",
 		`table.concat(ns.DungeonDB.loot[12057][1], ",")`:                            "18001,3",
 		`ns.DungeonDB.npcs[409][12057][3]`:                                          "3",
 		`ns.DungeonDB.npcs[409][12056][3]`:                                          "3",
+		// Fraktions-Korrekturen: Geber je Fraktion, Folgequest je Klasse, Item-Quelle
+		`ns.DungeonDB.questInfo[53][6] .. "/" .. table.concat(ns.DungeonDB.questInfo[53].giverH, ",")`: "14387/n,999,1428,0.05,0.05",
+		`table.concat(ns.DungeonDB.givers.npc[999], ",")`:                                              "53",
+		`table.concat(ns.DungeonDB.questChains[50], ",")`:                                              "409,100,1,2",
+		`table.concat(ns.DungeonDB.loot[12056][1], ",")`:                                               "17204,5",
+		// Item-Geber mit dem Ort seiner Drop-Quelle (NPC 999 draußen)
+		`table.concat(ns.DungeonDB.questInfo[54], ",", 5, 9)`: "i,2589,1428,0.05,0.05",
+		// Führer-Boss über die npcID aufgenommen
+		`table.concat(ns.DungeonDB.npcs[409][998], ",")`: "0,0,3",
+		`table.concat(ns.DungeonDB.loot[998][2], ",")`:   "300000,4",
 	} {
 		if err := L.DoString("result = tostring(" + expr + ")"); err != nil {
 			t.Fatalf("%s: %v", expr, err)
@@ -204,7 +223,7 @@ func fixtureTOC() string {
 	add("Item-2589-S", row(itemName, "Linen Cloth"))
 	add("Item-2589-2", []any{int64(11502), int64(998), int64(999)})
 
-	ids("Quest", 50, 51, 52, 53, 98, 99, 100)
+	ids("Quest", 50, 51, 52, 53, 54, 98, 99, 100)
 	giver := map[any]any{int64(1): []any{int64(14387)}}
 	add("Quest-100-S", row(questName, "Ragnaros", questLevel, int64(60), questReqLevel, int64(55), questRaces, int64(178)))
 	add("Quest-100-2", giver)
@@ -222,6 +241,8 @@ func fixtureTOC() string {
 	add("Quest-52-S", row(questName, "Zone", questZoneOrSort, int64(2717)))
 	add("Quest-52-2", map[any]any{int64(1): []any{int64(11502)}})
 	add("Quest-53-S", row(questName, "Alias-Zone", questZoneOrSort, int64(10099)))
+	add("Quest-54-S", row(questName, "Item-Start", questZoneOrSort, int64(2717)))
+	add("Quest-54-2", map[any]any{int64(3): []any{int64(2589)}})
 	return b.String()
 }
 

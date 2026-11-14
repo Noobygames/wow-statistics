@@ -167,24 +167,54 @@ var (
 	dropNpcLine  = regexp.MustCompile(`^\s*\[(\d+)\]\s*=\s*([\d.]+),`)
 )
 
-// readDropRates liest QuestieClassicItemDrops.wowheadData: Item -> NPC -> Dropchance in Prozent.
-// shortcut: itemDropCorrections.lua (fast nur Verweise auf dieselben Wowhead-Werte) wird nicht gelesen;
-// einbauen, falls dort echte Zahlen-Korrekturen für Instanz-Items auftauchen.
+// readDropRates liest QuestieClassicItemDrops.wowheadData: Item -> NPC -> Dropchance in Prozent, danach die
+// Zahlen-Korrekturen aus itemDropCorrections.lua (nur der Era-Block, auf dem Forever aufbaut; Verweise
+// "DropKeys.WOWHEAD" meinen dieselben Wowhead-Werte und ändern nichts).
 func readDropRates(root string) (map[int]map[int]float64, error) {
-	lines, err := readFileLines(filepath.Join(root, "support", "Forever", "DropTables", "classicItemDrops.lua"))
+	dir := filepath.Join(root, "support", "Forever", "DropTables")
+	lines, err := readFileLines(filepath.Join(dir, "classicItemDrops.lua"))
 	if err != nil {
 		return nil, err
 	}
 	out := map[int]map[int]float64{}
+	addDropLines(out, lines)
+	corrections, err := readFileLines(filepath.Join(dir, "itemDropCorrections.lua"))
+	if err != nil {
+		return nil, err
+	}
+	addDropLines(out, eraBlock(corrections))
+	return out, nil
+}
+
+// addDropLines liest "[item] = {" und "[npc] = Zahl," Zeilen; spätere Werte überschreiben frühere.
+func addDropLines(out map[int]map[int]float64, lines []string) {
 	item := 0
 	for _, line := range lines {
 		if m := dropItemLine.FindStringSubmatch(line); m != nil {
 			item, _ = strconv.Atoi(m[1])
-			out[item] = map[int]float64{}
+			if out[item] == nil {
+				out[item] = map[int]float64{}
+			}
 		} else if m := dropNpcLine.FindStringSubmatch(line); m != nil && item != 0 {
 			npc, _ := strconv.Atoi(m[1])
 			out[item][npc], _ = strconv.ParseFloat(m[2], 64)
 		}
 	}
-	return out, nil
+}
+
+// eraBlock: Zeilen von "QuestieItemDropCorrections.Era = {" bis zum nächsten Erweiterungs-Block.
+func eraBlock(lines []string) []string {
+	start := -1
+	for i, line := range lines {
+		switch {
+		case strings.HasPrefix(line, "QuestieItemDropCorrections.Era"):
+			start = i + 1
+		case start >= 0 && strings.HasPrefix(line, "QuestieItemDropCorrections."):
+			return lines[start:i]
+		}
+	}
+	if start < 0 {
+		return nil
+	}
+	return lines[start:]
 }

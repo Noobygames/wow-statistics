@@ -19,10 +19,9 @@
      "name": "Rivenspike"
     },
     {
-     "itemID": 25481,
+     "itemID": 12608,
      "quality": "rare",
-     "name": "Butcher's Apron",
-     "unverified": true
+     "name": "Butcher's Apron"
     }
    ],
    "rare": true
@@ -273,10 +272,9 @@
      "name": "Beaststalker's Gloves"
     },
     {
-     "itemID": 28972,
+     "itemID": 13173,
      "quality": "rare",
-     "name": "Flightblade Throwing Axe",
-     "unverified": true
+     "name": "Flightblade Throwing Axe"
     }
    ]
   },

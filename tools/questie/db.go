@@ -54,6 +54,7 @@ type quest struct {
 	Start, End                                            [4][]int // Index giverNpc/giverObject/giverItem
 	PreGroup, PreSingle, Excl, Breadcrumbs                []int
 	ObjNpcs, ObjObjects, ObjItems                         []int
+	NextAlt                                               []int // weitere Folgequests aus den Fraktions-Korrekturen
 }
 
 type spawn struct{ X, Y float64 }
@@ -75,6 +76,8 @@ type questieDB struct {
 	npcs    map[int]*entity
 	objects map[int]*entity
 	items   map[int]*item
+
+	factionStart map[int]map[string][4][]int // Questgeber je Fraktion aus den Fraktions-Korrekturen
 }
 
 func loadDB(s *tocStore) (*questieDB, error) {

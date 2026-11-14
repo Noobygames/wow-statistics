@@ -64,13 +64,17 @@ where given; matched by dungeon and boss name, else by the unique English boss n
 local addon QuestieDB (Forever build, `QuestieDB_Forever.toc` metadata, licensed under the WTFPL; its data originates
 from Questie; thanks to the Questie and QuestieDB authors) by
 `tools/questie` (`make questie`; full JSON with names in `dist/questie/{quests,npcs,loot}.json`). The tool decodes the
-"baked" TOC metadata (base64 CBOR rows, zlib-compressed ID lists, chunked values) and the zone and drop tables in
-`support/Forever/`, and writes for every Classic dungeon and raid and the WoW Forever dungeons QuestieDB knows
+"baked" TOC metadata (base64 CBOR rows, zlib-compressed ID lists, chunked values), the zone and drop tables in
+`support/Forever/` (drop chances plus the number corrections of the Era block of `itemDropCorrections.lua`) and the
+faction corrections Questie applies at runtime (`src/corrections/Forever/legacy/classic{Quest,Item}Fixes.lua`,
+`LoadFactionFixes`, run for both factions and every class: quest givers per faction, follow-up quests, item drop
+sources), and writes for every Classic dungeon and raid and the WoW Forever dungeons QuestieDB knows
 (keyed by instance map ID):
 
 - quests with objectives, turn-in or quest sorting inside the instance, plus their complete prerequisite chain
   (`preQuestGroup`, `preQuestSingle`, breadcrumbs, `nextQuestInChain`, `exclusiveTo` alternatives) with quest giver,
-  zone (uiMapID, x/y), quest level, required level, faction, class mask and English quest name (fallback for
+  zone (uiMapID, x/y; item givers get the location of their drop source; a separate Horde giver where the faction
+  corrections name one), quest level, required level, faction, class mask and English quest name (fallback for
   uncached titles)
 - quest givers (NPC, object, item) to quest IDs
 - English names of object quest givers (QuestieDB has no translations), used to recognize objects in world tooltips
@@ -91,7 +95,9 @@ The tool also merges the boss loot of our own dungeon guide research (`docs/rese
 instance; own research of public facts, mainly warcraft.wiki.gg, each file lists its sources) into the same `loot`
 table: guide bosses are matched to QuestieDB NPCs of the instance by NPC ID, else by English name; every item is
 checked against `ItemSparse` (must exist, quality from `ItemSparse`, rare or better only), duplicates are skipped and
-guide drops have no chance. Guide bosses and the NPCs of `Assist/InstanceData/boss_npcs.lua` get rank boss (QuestieDB
+guide drops have no chance. WoW Forever server items of the guide (`"flavor": "forever"`) missing from the client
+`ItemSparse` keep the guide quality. Guide bosses whose NPC ID QuestieDB knows without a spawn in the instance are added
+to the instance. Guide bosses and the NPCs of `Assist/InstanceData/boss_npcs.lua` get rank boss (QuestieDB
 lists some end bosses as rare elite). Forever-only items stay in; Classic Era skips unknown item IDs at runtime.
 
 ## 6. Guide research (boss and trash mechanics)

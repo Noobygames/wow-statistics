@@ -3648,3 +3648,12 @@ Einstellung „Quest-Check beim Betreten einer Instanz“ (Komfort, Quests) an.
 - Classic Era: Todesminen mit passendem Level betreten: eine Chatzeile mit fehlenden Dungeonquests (z.B. „Oh Brother...“), Startort stimmt.
 - WoW Forever: Halle der Thanen, Burg Schattenfang (Paladin: „The Test of Righteousness“, Horde-Paladin „Old Fire-Eye“) und eine Forever-Instanz ohne QuestieDB-Gebiet (z.B. 2974, 3039): Quests erscheinen in Chatzeile und Eingangs-Tooltip.
 - Halle der Thanen als Horde: „Important Heirlooms“ (96403) laut QuestieDB nur Allianz (frühere Handdaten: beide Fraktionen); prüfen, ob die Horde sie annehmen kann.
+
+### 520. Generator-Lücken: Bossbeute, Horde-Geber, mehrere Dungeons (LT-46)
+
+- [ ] geprüft
+
+- Boss-Tooltip und Eingangs-Tooltip: Sapphiron (Naxxramas), Majordomus Exekutus (Geschmolzener Kern), Gri'lek/Hazza'rah/Renataki/Wushoolay/Gahz'ranka (Zul'Gurub), Lady Anacondra (Höhlen des Wehklagens) zeigen Beute.
+- WoW Forever: Verlies, Gnomeregan, Kral: Forever-eigene Drops (z.B. „Blackrock Harness“, „Thermaplugg Medal of Honor“) erscheinen mit richtiger Qualität.
+- Horde: Kartenpunkt von „Tabetha's Task“ (2861) in Unterstadt statt Eisenschmiede; Allianz weiter in Eisenschmiede.
+- Questlog: Paladinquest „The Test of Righteousness“ (1806) trägt alle drei Kurznamen („[BS/TM/TG]“ o. ä.), Tooltip nennt alle drei Dungeons.

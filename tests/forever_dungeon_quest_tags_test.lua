@@ -60,6 +60,18 @@ expect("Link ohne Dungeonquest", #GameTooltip._lines, 0)
 QuestMapLogTitleButton_OnEnter({ info = { questID = 167 } })
 expect("Questlog-Tooltip", GameTooltip._lines[1], string.format(L.DUNGEON_QUEST_LINE, "Die Todesminen"))
 
+-- Quest mit mehreren Zielinstanzen (Paladin 1806: Burg Schattenfang, Todesminen, Tiefschwarze Grotte): alle genannt
+expect("drei Instanzen", table.concat(addon.DungeonQuests.Instances(1806), ","), "33,36,48")
+local _, slashes = Tags.Tag(1806):gsub("/", "")
+expect("Kurzname mit allen Instanzen", slashes, 2)
+expectTrue("Tooltipzeile mit allen Instanzen", Tags.TooltipLine(1806):find(", ", 1, true) ~= nil)
+
+-- Fraktions-Korrektur der Questgeber (2861 für beide Fraktionen): Allianz in Eisenschmiede, Horde in Unterstadt
+expect("Allianz-Geber", addon.DungeonQuests.GiverPlace(2861).uiMapID, 1455)
+wow.state.faction = "Horde"
+expect("Horde-Geber", addon.DungeonQuests.GiverPlace(2861).uiMapID, 1458)
+wow.state.faction = "Alliance"
+
 -- Aus: nichts angehängt
 addon.Set("dungeonQuestTags", false)
 gossip:Setup({ title = "Gesammelte Erinnerungen", questLevel = 18, questID = 168 })

@@ -5,6 +5,7 @@ package main
 
 import (
 	"math"
+	"reflect"
 	"sort"
 )
 
@@ -32,19 +33,20 @@ type chainOut struct {
 }
 
 type questOut struct {
-	ID        int       `json:"id"`
-	Name      string    `json:"name"`
-	Level     int       `json:"level"`
-	ReqLevel  int       `json:"requiredLevel"`
-	Faction   string    `json:"faction,omitempty"` // A | H | leer = beide
-	Races     int       `json:"raceMask"`
-	Classes   int       `json:"classMask"`
-	Giver     *giverOut `json:"giver,omitempty"`
-	Pre       []int     `json:"preQuestGroup,omitempty"`
-	PreAny    []int     `json:"preQuestSingle,omitempty"`
-	Excl      []int     `json:"exclusiveTo,omitempty"`
-	Instances []int     `json:"instances,omitempty"` // Karten-IDs, in denen die Quest spielt
-	Chain     *chainOut `json:"chain,omitempty"`
+	ID         int       `json:"id"`
+	Name       string    `json:"name"`
+	Level      int       `json:"level"`
+	ReqLevel   int       `json:"requiredLevel"`
+	Faction    string    `json:"faction,omitempty"` // A | H | leer = beide
+	Races      int       `json:"raceMask"`
+	Classes    int       `json:"classMask"`
+	Giver      *giverOut `json:"giver,omitempty"`
+	GiverHorde *giverOut `json:"giverHorde,omitempty"` // nur Quests für beide Fraktionen mit eigenem Horde-Geber
+	Pre        []int     `json:"preQuestGroup,omitempty"`
+	PreAny     []int     `json:"preQuestSingle,omitempty"`
+	Excl       []int     `json:"exclusiveTo,omitempty"`
+	Instances  []int     `json:"instances,omitempty"` // Karten-IDs, in denen die Quest spielt
+	Chain      *chainOut `json:"chain,omitempty"`
 }
 
 type npcOut struct {
@@ -80,18 +82,21 @@ type result struct {
 	Givers      map[string]map[int][]int // npc | object | item -> ID -> Quest-IDs
 	ObjectNames map[int]string           // Objekt-Geber -> Name (enUS, QuestieDB hat keine Übersetzungen)
 	NoQuality   int                      // Drops ohne Eintrag in ItemSparse (fehlen in loot)
+
+	npcItems  map[int][]int // NPC -> Items, die er fallen lässt (für addNpc)
+	rates     map[int]map[int]float64
+	qualities map[int]int
 }
 
 func build(db *questieDB, z *zoneData, rates map[int]map[int]float64, qualities map[int]int) *result {
 	res := &result{Instances: map[int]*instanceOut{}, Quests: map[int]*questOut{}, Npcs: map[int]*npcOut{},
 		Loot: map[int][]dropOut{}, Givers: map[string]map[int][]int{"npc": {}, "object": {}, "item": {}},
-		ObjectNames: map[int]string{}}
+		ObjectNames: map[int]string{}, npcItems: map[int][]int{}, rates: rates, qualities: qualities}
 	prev := predecessors(db)
 	depth := map[int]int{}
-	npcItems := map[int][]int{}
 	for _, it := range db.items {
 		for _, n := range it.Npcs {
-			npcItems[n] = append(npcItems[n], it.ID)
+			res.npcItems[n] = append(res.npcItems[n], it.ID)
 		}
 	}
 
@@ -122,32 +127,37 @@ func build(db *questieDB, z *zoneData, rates map[int]map[int]float64, qualities 
 		res.addChains(db, z, prev, depth, mapID, inst.Quests)
 
 		for id := range instNpcs {
-			n := db.npcs[id]
-			inst.Npcs = append(inst.Npcs, id)
-			if res.Npcs[id] != nil {
-				continue // NPC steht schon in einer anderen Instanz (gleiche Drops)
-			}
-			res.Npcs[id] = &npcOut{ID: id, Name: n.Name, MinLevel: n.MinLevel, MaxLevel: n.MaxLevel, Rank: n.Rank}
-			for _, itemID := range npcItems[id] {
-				quality, known := qualities[itemID]
-				if !known {
-					res.NoQuality++
-				}
-				if quality < minLootQuality {
-					continue
-				}
-				chance := float64(unknown)
-				if c, ok := rates[itemID][id]; ok {
-					chance = c
-				}
-				it := db.items[itemID]
-				res.Loot[id] = append(res.Loot[id], dropOut{Item: itemID, Name: it.Name, Class: it.Class, Quality: quality, Chance: chance})
-			}
-			sort.Slice(res.Loot[id], func(a, b int) bool { return res.Loot[id][a].Item < res.Loot[id][b].Item })
+			res.addNpc(db, inst, id)
 		}
-		sort.Ints(inst.Npcs)
 	}
 	return res
+}
+
+// addNpc nimmt einen QuestieDB-NPC in die Instanz auf, beim ersten Mal mit seinen Drops ab rar.
+func (res *result) addNpc(db *questieDB, inst *instanceOut, id int) {
+	inst.Npcs = appendUnique(inst.Npcs, id)
+	sort.Ints(inst.Npcs)
+	if res.Npcs[id] != nil {
+		return // NPC steht schon in einer anderen Instanz (gleiche Drops)
+	}
+	n := db.npcs[id]
+	res.Npcs[id] = &npcOut{ID: id, Name: n.Name, MinLevel: n.MinLevel, MaxLevel: n.MaxLevel, Rank: n.Rank}
+	for _, itemID := range res.npcItems[id] {
+		quality, known := res.qualities[itemID]
+		if !known {
+			res.NoQuality++
+		}
+		if quality < minLootQuality {
+			continue
+		}
+		chance := float64(unknown)
+		if c, ok := res.rates[itemID][id]; ok {
+			chance = c
+		}
+		it := db.items[itemID]
+		res.Loot[id] = append(res.Loot[id], dropOut{Item: itemID, Name: it.Name, Class: it.Class, Quality: quality, Chance: chance})
+	}
+	sort.Slice(res.Loot[id], func(a, b int) bool { return res.Loot[id][a].Item < res.Loot[id][b].Item })
 }
 
 // addGivers füllt givers und objectNames aus den Questgebern aller Ausgabe-Quests (nach allen Ergänzungen aufrufen).
@@ -157,9 +167,15 @@ func (res *result) addGivers(db *questieDB) {
 		if src == nil {
 			continue // Hand-Quest ohne QuestieDB-Eintrag
 		}
+		starts := [][4][]int{src.Start}
+		for _, start := range db.factionStart[id] {
+			starts = append(starts, start)
+		}
 		for kind, name := range map[int]string{giverNpc: "npc", giverObject: "object", giverItem: "item"} {
-			for _, g := range src.Start[kind] {
-				res.Givers[name][g] = appendUnique(res.Givers[name][g], q.ID)
+			for _, start := range starts {
+				for _, g := range start[kind] {
+					res.Givers[name][g] = appendUnique(res.Givers[name][g], q.ID)
+				}
 			}
 		}
 	}
@@ -193,8 +209,10 @@ func predecessors(db *questieDB) map[int][]int {
 		for _, p := range q.Breadcrumbs {
 			add(q.ID, p)
 		}
-		if q.Next > 0 && db.quests[q.Next] != nil {
-			add(q.Next, q.ID)
+		for _, next := range append([]int{q.Next}, q.NextAlt...) {
+			if next > 0 && db.quests[next] != nil {
+				add(next, q.ID)
+			}
 		}
 	}
 	for _, ids := range prev {
@@ -260,7 +278,23 @@ func (res *result) quest(db *questieDB, z *zoneData, id int) *questOut {
 	}
 	q := db.quests[id]
 	out := &questOut{ID: id, Name: q.Name, Level: q.Level, ReqLevel: q.ReqLevel, Races: q.Races, Classes: q.Classes,
-		Faction: faction(q.Races), Excl: q.Excl, PreAny: q.PreSingle, Giver: giver(db, z, q)}
+		Faction: faction(q.Races), Excl: q.Excl, PreAny: q.PreSingle, Giver: giver(db, z, q.Start)}
+	// Fraktions-Korrektur der Questgeber: passend zur Quest-Fraktion; Quests für beide bekommen den Allianz-Geber
+	// und, falls anders, den der Horde zusätzlich
+	if starts := db.factionStart[id]; starts != nil {
+		if start, ok := starts[out.Faction]; ok {
+			out.Giver = giver(db, z, start)
+		} else if out.Faction == "" {
+			if start, ok := starts[factionAlliance]; ok {
+				out.Giver = giver(db, z, start)
+			}
+			if start, ok := starts[factionHorde]; ok {
+				if h := giver(db, z, start); !reflect.DeepEqual(h, out.Giver) {
+					out.GiverHorde = h
+				}
+			}
+		}
+	}
 	for _, p := range q.PreGroup {
 		if p > 0 {
 			out.Pre = append(out.Pre, p)
@@ -281,8 +315,9 @@ func faction(races int) string {
 	return ""
 }
 
-// giver: erster Questgeber mit Ort (Zone mit den meisten Spawns, erster Punkt).
-func giver(db *questieDB, z *zoneData, q *quest) *giverOut {
+// giver: erster Questgeber mit Ort (Zone mit den meisten Spawns, erster Punkt). Item-Geber haben keinen eigenen Ort;
+// sie bekommen den ihrer Drop-Quelle mit den meisten Spawns (NPC oder Objekt; x/y fehlen, liegt sie in einer Instanz).
+func giver(db *questieDB, z *zoneData, start [4][]int) *giverOut {
 	pick := func(kind string, id int, e *entity) *giverOut {
 		g := &giverOut{Kind: kind, ID: id, X: unknown, Y: unknown}
 		if e == nil {
@@ -304,14 +339,43 @@ func giver(db *questieDB, z *zoneData, q *quest) *giverOut {
 		return g
 	}
 	switch {
-	case len(q.Start[giverNpc]) > 0:
-		return pick("npc", q.Start[giverNpc][0], db.npcs[q.Start[giverNpc][0]])
-	case len(q.Start[giverObject]) > 0:
-		return pick("object", q.Start[giverObject][0], db.objects[q.Start[giverObject][0]])
-	case len(q.Start[giverItem]) > 0:
-		return pick("item", q.Start[giverItem][0], nil)
+	case len(start[giverNpc]) > 0:
+		return pick("npc", start[giverNpc][0], db.npcs[start[giverNpc][0]])
+	case len(start[giverObject]) > 0:
+		return pick("object", start[giverObject][0], db.objects[start[giverObject][0]])
+	case len(start[giverItem]) > 0:
+		return pick("item", start[giverItem][0], dropSource(db, start[giverItem][0]))
 	}
 	return nil
+}
+
+// dropSource: NPC oder Objekt mit den meisten Spawns, das das Item fallen lässt; nil ohne bekannte Quelle.
+func dropSource(db *questieDB, itemID int) *entity {
+	it := db.items[itemID]
+	if it == nil {
+		return nil
+	}
+	var best *entity
+	bestCount := -1
+	consider := func(e *entity) {
+		if e == nil {
+			return
+		}
+		count := 0
+		for _, pts := range e.Spawns {
+			count += len(pts)
+		}
+		if count > bestCount || count == bestCount && e.ID < best.ID {
+			best, bestCount = e, count
+		}
+	}
+	for _, id := range it.Npcs {
+		consider(db.npcs[id])
+	}
+	for _, id := range it.Objects {
+		consider(db.objects[id])
+	}
+	return best
 }
 
 func round3(v float64) float64 { return math.Round(v*1000) / 1000 }

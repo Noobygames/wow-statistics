@@ -43,7 +43,9 @@ const luaHeader = `-- GENERIERT von tools/questie ("make questie"), nicht von Ha
 --   questInfo  = { [questID] = { Questlevel, Mindestlevel, Fraktion ("A"/"H", nil = beide), Klassenmaske (0 = alle),
 --                  Geber-Art ("n" NPC, "o" Objekt, "i" Item, nil = unbekannt), Geber-ID, uiMapID, x, y (0-1, nil wenn
 --                  unbekannt oder in einer Instanz), pre = { alle diese Vorquests }, preAny = { eine davon },
---                  excl = { schließen sie aus }, name = Questname (enUS, Rückfall für ungecachte Titel) } }
+--                  excl = { schließen sie aus }, giverH = { Geber-Art, Geber-ID, uiMapID, x, y } (Horde-Geber einer
+--                  Quest für beide Fraktionen, wenn er laut Fraktions-Korrektur ein anderer ist), name = Questname
+--                  (enUS, Rückfall für ungecachte Titel) } }   Item-Geber mit dem Ort ihrer Drop-Quelle
 --                  für alle Instanz- und Kettenquests,
 --   questChains = { [questID] = { Karten-ID, Ziel-questID, Stufe, Gesamt } }   Vorquest-Kette bis zum Kettenanfang
 --                  (Stufe 1 = Anfang, Gesamt = Stufe der Instanz-Quest; Vorquests, Breadcrumbs, nextQuestInChain rückwärts,
@@ -57,7 +59,8 @@ const luaHeader = `-- GENERIERT von tools/questie ("make questie"), nicht von Ha
 --                  QuestieDB plus Boss-Beute der eigenen Führer-Recherche (docs/research/mechanics, öffentliche Fakten;
 --                  enthält Forever-eigene Items, Era filtert unbekannte IDs zur Laufzeit); keine vollständigen
 --                  Beutetabellen; jedes Item gegen ItemSparse geprüft, Qualität aus ItemSparse
---                  (wago.tools: %s);
+--                  (wago.tools: %s;
+--                  Forever-Server-Items ohne ItemSparse-Eintrag mit der Führer-Qualität);
 --                  Chance in Prozent oder nil (QuestieDB kennt sie nur für Quest-Items, Führer-Drops immer nil),
 -- }
 local _, ns = ...
@@ -81,16 +84,7 @@ func writeLua(path, version, itemBuild string, res *result) error {
 	for _, id := range sortedKeys(res.Quests) {
 		q := res.Quests[id]
 		fields := []string{strconv.Itoa(q.Level), strconv.Itoa(q.ReqLevel), luaStr(q.Faction), strconv.Itoa(q.Classes)}
-		if g := q.Giver; g != nil {
-			kind := g.Kind
-			if kind != "" {
-				kind = kind[:1]
-			}
-			fields = append(fields, luaStr(kind), luaInt(g.ID), luaInt(g.UiMapID), luaNum(g.X), luaNum(g.Y))
-		} else {
-			fields = append(fields, "nil", "nil", "nil", "nil", "nil")
-		}
-		fields = trimNil(fields)
+		fields = trimNil(append(fields, giverFields(q.Giver)...))
 		for _, list := range []struct {
 			key string
 			ids []int
@@ -98,6 +92,9 @@ func writeLua(path, version, itemBuild string, res *result) error {
 			if len(list.ids) > 0 {
 				fields = append(fields, fmt.Sprintf("%s={%s}", list.key, ints(list.ids)))
 			}
+		}
+		if q.GiverHorde != nil {
+			fields = append(fields, fmt.Sprintf("giverH={%s}", strings.Join(trimNil(giverFields(q.GiverHorde)), ",")))
 		}
 		if q.Name != "" {
 			fields = append(fields, "name="+luaStr(q.Name))
@@ -145,6 +142,18 @@ func writeLua(path, version, itemBuild string, res *result) error {
 	}
 	b.WriteString("  },\n}\n")
 	return os.WriteFile(path, []byte(b.String()), 0o644)
+}
+
+// giverFields: Geber-Art (erster Buchstabe), ID, uiMapID, x, y; fünfmal nil ohne Geber.
+func giverFields(g *giverOut) []string {
+	if g == nil {
+		return []string{"nil", "nil", "nil", "nil", "nil"}
+	}
+	kind := g.Kind
+	if kind != "" {
+		kind = kind[:1]
+	}
+	return []string{luaStr(kind), luaInt(g.ID), luaInt(g.UiMapID), luaNum(g.X), luaNum(g.Y)}
 }
 
 func ints(ids []int) string {
