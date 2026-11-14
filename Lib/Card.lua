@@ -28,9 +28,7 @@ local FALLBACK_ICON = "Interface\\Icons\\INV_Misc_QuestionMark"
 -- Pfad bleibt, eine Zahl ist eine Spell-ID (Textur aus dem Client); fehlt sie, das Fragezeichen
 local function iconTexture(icon)
   if type(icon) == "number" then
-    local texture = C_Spell and C_Spell.GetSpellTexture and C_Spell.GetSpellTexture(icon)
-    if not texture and GetSpellTexture then texture = GetSpellTexture(icon) end  -- ältere Clients
-    return texture or FALLBACK_ICON
+    return ns.Widgets.SpellTexture(icon) or FALLBACK_ICON
   end
   return icon
 end

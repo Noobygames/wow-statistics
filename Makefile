@@ -6,13 +6,14 @@ FLIGHTS   := tools/flights
 LOCALE    := tools/locale
 EXTRACTOR := tools/extractor
 QUESTIE   := tools/questie
+MECHANICS := tools/mechanics
 VERSION   := $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 RUN       := go -C $(INSTALLER) run . -src "$(CURDIR)" -version "$(VERSION)"
 
 # Zusätzliche Flags, z.B. make install ARGS="-flavors retail -wow 'D:/Games/World of Warcraft'"
 ARGS ?=
 
-.PHONY: install update dry-run debuglog extract extract-check package artwork records flights locale questie test test-addon test-installer test-artwork test-records test-flights test-locale test-extractor test-questie test-site vet
+.PHONY: install update dry-run debuglog extract extract-check package artwork records flights locale questie mechanics test test-addon test-installer test-artwork test-records test-flights test-locale test-extractor test-questie test-mechanics test-site vet
 
 # Interaktiver Wizard: Flavors wählen, Plan ansehen, bestätigen
 install:
@@ -69,7 +70,11 @@ questie:
 	go -C $(QUESTIE) run . -out "$(CURDIR)/dist/questie" -lua "$(CURDIR)/Assist/InstanceData/dungeon_db.lua" \
 		-guide "$(CURDIR)/docs/research/mechanics" -bossnpcs "$(CURDIR)/Assist/InstanceData/boss_npcs.lua" $(ARGS)
 
-test: test-addon test-installer test-artwork test-records test-flights test-locale test-extractor test-questie test-site
+# Boss- und Trash-Mechaniken aus der Guide-Recherche (docs/research/mechanics/*.json) nach Assist/InstanceData/mechanics.lua
+mechanics:
+	go -C $(MECHANICS) run . -dir "$(CURDIR)/docs/research/mechanics" -lua "$(CURDIR)/Assist/InstanceData/mechanics.lua"
+
+test: test-addon test-installer test-artwork test-records test-flights test-locale test-extractor test-questie test-mechanics test-site
 
 # Lua-Szenarien aus tests/ gegen eine nachgebaute WoW-API.
 # -count=1: Go kennt die Lua-Dateien nicht und würde sonst veraltete Ergebnisse aus dem Cache zeigen.
@@ -97,6 +102,9 @@ test-extractor:
 test-questie:
 	go -C $(QUESTIE) test ./...
 
+test-mechanics:
+	go -C $(MECHANICS) test ./...
+
 # Auswertungs-Seite (docs/site): LT1-Decoder und CSV-Lesen gegen die Testdaten aus tests/site_fixtures_test.lua
 test-site:
 	node docs/site/site.test.js
@@ -110,6 +118,7 @@ vet:
 	go -C $(LOCALE) vet ./...
 	go -C $(EXTRACTOR) vet ./...
 	go -C $(QUESTIE) vet ./...
+	go -C $(MECHANICS) vet ./...
 
 code-graph-build:
 	code-review-graph build 			# parse the codebase

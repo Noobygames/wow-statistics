@@ -1419,3 +1419,16 @@ check("LT38.tooltip.object", function()
   end
   return info
 end)
+
+-- LT-10/LT-11 (/lt debug check, Maus über einem Dungeon-Gegner, in und außerhalb von Instanzen): ist die GUID lesbar
+-- (sonst keine Mechanik-Zeilen), welche NPC-ID, wie viele Mechaniken kennt der Datensatz?
+check("LT10.mechanics.mouseover", function()
+  local unit = "mouseover"
+  local guid = api("UnitGUID") and UnitGUID(unit)
+  local npcID = ns.MechanicTips.NpcOf(unit)
+  local mechanics = ns.MechanicTips.ForNpc(npcID)
+  local _, instanceType = GetInstanceInfo()
+  return { exists = read("UnitExists", unit), name = read("UnitName", unit), guidSecret = ns.IsSecret(guid),
+    npcID = npcID, mechanics = mechanics and #mechanics or 0, available = ns.MechanicTips.IsAvailable(),
+    instanceType = readable(instanceType) }
+end)

@@ -7,6 +7,14 @@ ns.Widgets = Widgets
 -- Eigenes Addon-Icon (Media/Icon.tga, erzeugt mit "make artwork"); auch als IconTexture in der .toc
 Widgets.ICON = "Interface\\AddOns\\" .. addonName .. "\\Media\\Icon"
 
+-- Symbol eines Zaubers (C_Spell.GetSpellTexture, ältere Clients GetSpellTexture); nil ohne Treffer oder bei geheimer ID
+function Widgets.SpellTexture(spellID)
+  if not spellID or ns.IsSecret(spellID) then return nil end
+  local texture = C_Spell and C_Spell.GetSpellTexture and C_Spell.GetSpellTexture(spellID)
+  if not texture and GetSpellTexture then texture = GetSpellTexture(spellID) end
+  return texture
+end
+
 -- Kurznamen für Farben aus Theme.lua (dieselben Tabellen, folgen also dem gewählten Preset)
 local Theme = ns.Theme
 Widgets.COLORS = {

@@ -2126,4 +2126,13 @@ ns.locales.enUS = {
   DUNGEON_QUEST_MINIMAP_EDGE_TOGGLE_TIP = "Givers just outside the minimap show small and faded at the edge in their direction.",
   DUNGEON_QUEST_MINIMAP_TOGGLE = "Givers on the minimap",
   DUNGEON_QUEST_MINIMAP_TOGGLE_TIP = "Shows nearby dungeon quest givers with the same icon on the minimap, even across the zone border.",
+  MECHANIC_ADDS = "Adds",
+  MECHANIC_AVOID = "Avoid",
+  MECHANIC_DISPEL = "Dispel",
+  MECHANIC_INTERRUPT = "Interrupt",
+  MECHANIC_POSITIONING = "Position",
+  MECHANIC_SURVIVE = "Survive",
+  MECHANIC_TANK = "Tank",
+  TOOLTIP_MECHANICS_TOGGLE = "Show boss and enemy abilities",
+  TOOLTIP_MECHANICS_TOGGLE_TIP = "Classic Era and WoW Forever: shows up to three important abilities with a tip (avoid, interrupt, dispel, ...) in the tooltip of dungeon and raid enemies. Tips are available in English and German.",
 }

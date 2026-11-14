@@ -2126,4 +2126,13 @@ ns.locales.deDE = {
   DUNGEON_QUEST_MINIMAP_EDGE_TOGGLE_TIP = "Geber knapp außerhalb der Minimap erscheinen klein und blass am Rand in ihrer Richtung.",
   DUNGEON_QUEST_MINIMAP_TOGGLE = "Geber auf der Minimap",
   DUNGEON_QUEST_MINIMAP_TOGGLE_TIP = "Zeigt Dungeonquest-Geber in deiner Nähe mit demselben Symbol auf der Minimap, auch jenseits der Zonengrenze.",
+  MECHANIC_ADDS = "Adds",
+  MECHANIC_AVOID = "Ausweichen",
+  MECHANIC_DISPEL = "Bannen",
+  MECHANIC_INTERRUPT = "Unterbrechen",
+  MECHANIC_POSITIONING = "Position",
+  MECHANIC_SURVIVE = "Überleben",
+  MECHANIC_TANK = "Tank",
+  TOOLTIP_MECHANICS_TOGGLE = "Boss- und Gegnerfähigkeiten zeigen",
+  TOOLTIP_MECHANICS_TOGGLE_TIP = "Classic Era und WoW Forever: Zeigt im Tooltip von Dungeon- und Schlachtzugsgegnern bis zu drei wichtige Fähigkeiten mit Tipp (Ausweichen, Unterbrechen, Bannen, ...). Die Tipps gibt es auf Deutsch und Englisch.",
 }

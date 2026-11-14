@@ -71,6 +71,7 @@ Assist\MapCoordsData\classic_era.lua
 Assist\InstanceData\forever.lua
 Assist\InstanceData\forever_guide.lua
 Assist\InstanceData\dungeon_db.lua
+Assist\InstanceData\mechanics.lua
 Assist\MapCoordsData\forever.lua
 Assist\InstanceData\retail.lua
 Assist\BossData\anniversary.lua
@@ -231,6 +232,7 @@ UI\LootRollDisplay.lua
 UI\InstanceRunTracker.lua
 Assist\DungeonQuests.lua
 Assist\DungeonQuestGivers.lua
+Assist\MechanicTips.lua
 Assist\DungeonQuestMinimap.lua
 Assist\DungeonQuestStarters.lua
 Assist\QuestLevels.lua

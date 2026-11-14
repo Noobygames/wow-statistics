@@ -166,6 +166,7 @@ Aufrufstapel. „Aktion blockiert“ (Taint) steht als event `ADDON_ACTION_BLOCK
 - **247. Gewählte Buffs bei eingeklappter Buffleiste (Roadmap 500)**: check `500.collapsedBuffs` mit eingeklappter Buffleiste und aktivem Wasser-/Blitzschlagschild, je Client (`collapsed` = true, `hasIsExpanded`, `buttonEnabled`, `matches` mit Ladungen und Restzeit, `shown` > 0; im Kampf `aurasReadable`; `cooldownViewer` = Verfügbarkeit des Cooldown-Managers). Sichtprüfung: Symbol mit Ladungszahl und Restzeit erscheint beim Einklappen, verschwindet beim Ausklappen, verschiebbar im Edit-Modus; Texte der Einstellung passen in allen vier Sprachen
 - **249. Dungeon-Flügel beim Betreten erkennen (Roadmap 493, WoW Forever/Classic Era)**: check `493.instances.wing` direkt nach dem Betreten jedes Flügels des Scharlachroten Klosters (und Düsterbruch): `uiMapID`, `zone`, `subZone`, `minimapZone` je Flügel; mit Gegnern in Sicht und einem Ziel: `plates`/`target` = Namen oder `secret` (Rückfall Trash-Namen je Flügel). Unterscheidet ein Wert die Flügel verlässlich, kann ein anderer Flügel als neue Kopie zählen
 - **512. Objekt-Tooltips für Dungeonquests, Datenteil (LT-38)**: check `LT38.tooltip.object` mit der Maus über einem Objekt der Spielwelt, je Client und Sprache (`worldCursorApi`, `data.type/id/guid` = liefert der Welt-Tooltip eine Objekt-ID? Dann Erkennung ohne englische Namen möglich; `title`, `offers`, `namesAvailable`)
+- **516. Boss- und Gegnerfähigkeiten im Tooltip, Datenteil (LT-10/LT-11)**: check `LT10.mechanics.mouseover` mit der Maus über einem Dungeon-Boss, in WoW Forever und Classic Era, je einmal in und außerhalb einer Instanz (`guidSecret` muss `false` sein, sonst fehlen die Zeilen in Instanzen; `npcID`, `mechanics` > 0)
 
 ---
 
@@ -3604,3 +3605,13 @@ Einstellung „Dungeonquest-Geber markieren“ an. Datenteil siehe „Per Debug-
 - Gegenstand, der eine Dungeonquest oder einen Kettenschritt startet (in der Tasche, als Beute, als Chat-Link): Tooltip zeigt „Dungeonquest: …“ bzw. „Vorquest: … (Schritt x/y)“, solange annehmbar; nach Annahme weg.
 - Englischer Client: Objekt der Spielwelt, das eine solche Quest startet (z.B. „Crumpled Map“, „Ruined Lifeboat“): Zeile im Tooltip beim Überfahren; Tooltip passt seine Größe an, keine doppelten Zeilen beim Wechsel zwischen zwei Objekten.
 - Deutscher/französischer/spanischer Client: Objekte bekommen (bekannte Grenze) keine Zeile, Gegenstände schon.
+
+### 516. Boss- und Gegnerfähigkeiten im Tooltip (LT-10/LT-11, Classic Era und WoW Forever)
+
+- [ ] geprüft
+
+Einstellung „Boss- und Gegnerfähigkeiten zeigen“ (Komfort, Tooltip) an. Datenteil siehe „Per Debug-Log abgedeckt“.
+
+- Maus über einem Dungeon-Boss (z.B. Todesminen: Rhahk'Zor, Edwin VanCleef): bis zu drei Zeilen „Symbol Typ: Tipp“, Typ farbig, Zaubersymbol passt, lange Tipps brechen um statt den Tooltip extrem breit zu machen.
+- Deutscher Client deutsche Tipps, englischer/französischer/spanischer Client englische Tipps; Typwörter in Clientsprache.
+- Einstellung aus: keine Zeilen; Retail: Option fehlt.

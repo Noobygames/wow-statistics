@@ -35,17 +35,7 @@ local iconPool = {}
 local lastCastGUID = nil
 local previewActive = false
 
-local function getTexture(spellID)
-  if not spellID or ns.IsSecret(spellID) then return nil end
-  if C_Spell and C_Spell.GetSpellTexture then
-    local texture = C_Spell.GetSpellTexture(spellID)
-    if texture then return texture end
-  end
-  if GetSpellTexture then
-    return GetSpellTexture(spellID)
-  end
-  return nil
-end
+local getTexture = ns.Widgets.SpellTexture
 
 local function getRank(spellID)
   local getSubtext = C_Spell and C_Spell.GetSpellSubtext or GetSpellSubtext

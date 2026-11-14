@@ -2126,4 +2126,13 @@ ns.locales.frFR = {
   DUNGEON_QUEST_MINIMAP_EDGE_TOGGLE_TIP = "Les donneurs juste hors de la minicarte apparaissent petits et pâles au bord, dans leur direction.",
   DUNGEON_QUEST_MINIMAP_TOGGLE = "Donneurs sur la minicarte",
   DUNGEON_QUEST_MINIMAP_TOGGLE_TIP = "Affiche les donneurs de quêtes de donjon proches avec la même icône sur la minicarte, même au-delà de la limite de zone.",
+  MECHANIC_ADDS = "Renforts",
+  MECHANIC_AVOID = "Éviter",
+  MECHANIC_DISPEL = "Dissiper",
+  MECHANIC_INTERRUPT = "Interrompre",
+  MECHANIC_POSITIONING = "Placement",
+  MECHANIC_SURVIVE = "Survivre",
+  MECHANIC_TANK = "Tank",
+  TOOLTIP_MECHANICS_TOGGLE = "Afficher les techniques des boss et ennemis",
+  TOOLTIP_MECHANICS_TOGGLE_TIP = "Classic Era et WoW Forever : affiche dans l'infobulle des ennemis de donjon et de raid jusqu'à trois techniques importantes avec un conseil (éviter, interrompre, dissiper, ...). Les conseils sont en anglais.",
 }

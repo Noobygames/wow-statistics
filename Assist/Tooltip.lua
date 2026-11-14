@@ -16,6 +16,7 @@
 --                        (GetGuildInfo(unit) -> Name, Rang; alle Clients). Geheime Werte werden übergangen.
 --   dungeonQuestGivers   Zeilen "Dungeonquest: Titel (Instanz)" an NPCs, die eine Dungeonquest anbieten
 --                        (Assist/DungeonQuestGivers.lua).
+--   tooltipMechanics     Boss- und Trash-Mechaniken an Gegnern aus den Guide-Daten (Assist/MechanicTips.lua).
 --   tooltipScale         Größe der Spiel-Tooltips (GameTooltip, ItemRefTooltip und ihre Vergleichs-Tooltips), 1 = Blizzard;
 --                        umkehrbar über Overrides (SetScale, Tooltips sind nicht geschützt).
 -- Anschluss: TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Unit) in allen Clients mit dem Tooltip-
@@ -133,6 +134,7 @@ local function onUnitTooltip(tooltip)
     if text then tooltip:AddLine(text, unpack(QUEST_COLOR)) end
   end
   if ns.db.dungeonQuestGivers then ns.DungeonQuestGivers.AddUnitLines(tooltip, unit) end
+  if ns.db.tooltipMechanics and ns.MechanicTips.IsAvailable() then ns.MechanicTips.AddUnitLines(tooltip, unit) end
 end
 
 -- Zeile mit dem Gildennamen (Blizzard schreibt sie ab Zeile 2) um den Rang ergänzen; true, wenn ergänzt
@@ -235,7 +237,8 @@ ns.RegisterApply(function(db)
   if Tooltip.ANCHORS[db.tooltipAnchor] then hookAnchor() end
   Tooltip.ApplyScale(db.tooltipScale)
   if db.tooltipClassColors or db.tooltipTarget or db.tooltipGuildRank or db.tooltipHideInCombat or db.tooltipKillsToLevel
-    or db.tooltipKillCount or db.questLearning or (db.dungeonQuestGivers and ns.DungeonQuestGivers.IsAvailable()) then
+    or db.tooltipKillCount or db.questLearning or (db.dungeonQuestGivers and ns.DungeonQuestGivers.IsAvailable())
+    or (db.tooltipMechanics and ns.MechanicTips.IsAvailable()) then
     hook()
   end
 end)

@@ -2126,4 +2126,13 @@ ns.locales.esES = {
   DUNGEON_QUEST_MINIMAP_EDGE_TOGGLE_TIP = "Los dadores justo fuera del minimapa aparecen pequeños y tenues en el borde, en su dirección.",
   DUNGEON_QUEST_MINIMAP_TOGGLE = "Dadores en el minimapa",
   DUNGEON_QUEST_MINIMAP_TOGGLE_TIP = "Muestra los dadores de misiones de mazmorra cercanos con el mismo icono en el minimapa, incluso al otro lado del límite de zona.",
+  MECHANIC_ADDS = "Esbirros",
+  MECHANIC_AVOID = "Esquivar",
+  MECHANIC_DISPEL = "Disipar",
+  MECHANIC_INTERRUPT = "Interrumpir",
+  MECHANIC_POSITIONING = "Posición",
+  MECHANIC_SURVIVE = "Sobrevivir",
+  MECHANIC_TANK = "Tanque",
+  TOOLTIP_MECHANICS_TOGGLE = "Mostrar habilidades de jefes y enemigos",
+  TOOLTIP_MECHANICS_TOGGLE_TIP = "Classic Era y WoW Forever: muestra en el tooltip de los enemigos de mazmorras y bandas hasta tres habilidades importantes con un consejo (esquivar, interrumpir, disipar, ...). Los consejos están en inglés.",
 }
