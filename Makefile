@@ -5,13 +5,14 @@ RECORDS   := tools/records
 FLIGHTS   := tools/flights
 LOCALE    := tools/locale
 EXTRACTOR := tools/extractor
+QUESTIE   := tools/questie
 VERSION   := $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 RUN       := go -C $(INSTALLER) run . -src "$(CURDIR)" -version "$(VERSION)"
 
 # Zusätzliche Flags, z.B. make install ARGS="-flavors retail -wow 'D:/Games/World of Warcraft'"
 ARGS ?=
 
-.PHONY: install update dry-run debuglog extract extract-check package artwork records flights locale test test-addon test-installer test-artwork test-records test-flights test-locale test-extractor test-site vet
+.PHONY: install update dry-run debuglog extract extract-check package artwork records flights locale questie test test-addon test-installer test-artwork test-records test-flights test-locale test-extractor test-questie test-site vet
 
 # Interaktiver Wizard: Flavors wählen, Plan ansehen, bestätigen
 install:
@@ -61,7 +62,13 @@ flights:
 locale:
 	go -C $(LOCALE) run . -dir "$(CURDIR)/Locales" $(ARGS)
 
-test: test-addon test-installer test-artwork test-records test-flights test-locale test-extractor test-site
+# Instanz-Quests mit Vorquest-Ketten, Instanz-NPCs und deren Beute aus dem lokalen Addon QuestieDB (Forever) nach
+# dist/questie/*.json und Assist/InstanceData/dungeon_db.lua; Item-Qualität von wago.tools (braucht Internet),
+# z.B. make questie ARGS="-questie 'D:/Games/World of Warcraft/_forever_/Interface/AddOns/QuestieDB'"
+questie:
+	go -C $(QUESTIE) run . -out "$(CURDIR)/dist/questie" -lua "$(CURDIR)/Assist/InstanceData/dungeon_db.lua" $(ARGS)
+
+test: test-addon test-installer test-artwork test-records test-flights test-locale test-extractor test-questie test-site
 
 # Lua-Szenarien aus tests/ gegen eine nachgebaute WoW-API.
 # -count=1: Go kennt die Lua-Dateien nicht und würde sonst veraltete Ergebnisse aus dem Cache zeigen.
@@ -86,6 +93,9 @@ test-locale:
 test-extractor:
 	go -C $(EXTRACTOR) test ./...
 
+test-questie:
+	go -C $(QUESTIE) test ./...
+
 # Auswertungs-Seite (docs/site): LT1-Decoder und CSV-Lesen gegen die Testdaten aus tests/site_fixtures_test.lua
 test-site:
 	node docs/site/site.test.js
@@ -98,6 +108,7 @@ vet:
 	go -C $(FLIGHTS) vet ./...
 	go -C $(LOCALE) vet ./...
 	go -C $(EXTRACTOR) vet ./...
+	go -C $(QUESTIE) vet ./...
 
 code-graph-build:
 	code-review-graph build 			# parse the codebase

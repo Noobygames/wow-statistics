@@ -64,3 +64,19 @@ The quest prerequisites and exclusions (`pre`, `preAny`, `excl`) and a few missi
 `Assist/InstanceData/forever_guide.lua` were imported once on 2026-11-14 from the addon QuestieDB 1.1.0 (Forever build,
 `QuestieDB_Forever.toc` metadata), licensed under the WTFPL; its data originates from Questie. Thanks to the Questie and
 QuestieDB authors. Since then the data is maintained by hand.
+
+`Assist/InstanceData/dungeon_db.lua` (`ns.DungeonDB`) is generated from the same local QuestieDB addon by
+`tools/questie` (`make questie`; full JSON with names in `dist/questie/{quests,npcs,loot}.json`). The tool decodes the
+"baked" TOC metadata (base64 CBOR rows, zlib-compressed ID lists, chunked values) and the zone and drop tables in
+`support/Forever/`, and writes for every Classic dungeon and raid (keyed by instance map ID):
+
+- quests with objectives, turn-in or quest sorting inside the instance, plus their complete prerequisite chain
+  (`preQuestGroup`, `preQuestSingle`, breadcrumbs, `nextQuestInChain`, `exclusiveTo` alternatives) with quest giver,
+  zone (uiMapID, x/y), quest level, required level, faction and class mask
+- quest givers (NPC, object, item) to quest IDs
+- NPCs per instance with level range and rank (normal, elite, rare, boss)
+- rare, epic and legendary drops of these NPCs, as far as QuestieDB lists them (not complete loot tables), with the
+  drop chance where QuestieDB has one (quest items only). QuestieDB has no item quality; it comes from the DB2 table
+  `ItemSparse` on wago.tools (WoW Forever build, Classic Era for items missing there), see section 2.
+
+The generated file names the QuestieDB version and the wago.tools builds it was made from.
