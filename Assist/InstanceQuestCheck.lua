@@ -1,6 +1,6 @@
--- Quest-Check beim Betreten einer Instanz (Einstellung instanceQuestCheck, an; nur mit ns.InstanceGuide, also
--- WoW Forever): eine kompakte Chatzeile mit den Dungeonquests, die der Charakter jetzt annehmen könnte, aber nicht im
--- Log hat. Verfügbar = Mindestlevel erreicht, Fraktion und Klasse passen, nicht abgegeben (DungeonEntrances.OpenQuests),
+-- Quest-Check beim Betreten einer Instanz (Einstellung instanceQuestCheck, an; nur mit ns.DungeonDB, also Classic Era
+-- und WoW Forever): eine kompakte Chatzeile mit den Dungeonquests, die der Charakter jetzt annehmen könnte, aber nicht
+-- im Log hat. Verfügbar = Mindestlevel erreicht, Fraktion und Klasse passen, nicht abgegeben (DungeonQuests.OwnQuests),
 -- Vorquests erfüllt (DungeonQuests.PrerequisitesMet: alle "pre", eine aus "preAny", keine aus "excl").
 -- Quests über dem eigenen Level fallen weg. Dieselbe Liste meldet es je Instanz nur einmal (kein Wiederholen nach
 -- Geisterlauf oder Wiedereintritt), erst wenn sie sich ändert wieder.
@@ -23,14 +23,14 @@ local SEPARATOR = ", "
 local lastReport = {}
 
 function InstanceQuestCheck.IsAvailable()
-  return ns.DungeonEntrances.IsAvailable()
+  return ns.DungeonQuests.IsAvailable()
 end
 
--- Verfügbare Dungeonquests der Instanz, die nicht im Log sind (Einträge wie DungeonEntrances.OpenQuests)
+-- Verfügbare Dungeonquests der Instanz, die nicht im Log sind (Einträge wie DungeonQuests.OwnQuests)
 function InstanceQuestCheck.Missing(mapID)
   local level = UnitLevel("player") or 0
   local missing = {}
-  for _, quest in ipairs(ns.DungeonEntrances.OpenQuests(mapID)) do
+  for _, quest in ipairs(ns.DungeonQuests.OwnQuests(mapID)) do
     if not quest.inLog and level >= quest.minLevel
       and ns.DungeonQuests.PrerequisitesMet(quest.pre, quest.preAny, quest.excl) then
       table.insert(missing, quest)

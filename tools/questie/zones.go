@@ -12,10 +12,11 @@ import (
 	"strings"
 )
 
-// Klassische Instanzen (Dungeons und Schlachtzüge), Schlüssel wie im Addon: Instanz-Karten-ID.
-var classicInstanceMapIDs = []int{
+// Klassische Instanzen (Dungeons und Schlachtzüge) und die Forever-eigenen, die QuestieDB kennt
+// (instanceIdToAreaId); Schlüssel wie im Addon: Instanz-Karten-ID. Weitere Forever-Instanzen: dungeon_quests.json.
+var instanceMapIDs = []int{
 	33, 34, 36, 43, 47, 48, 70, 90, 109, 129, 189, 209, 229, 230, 249, 289, 309, 329, 349, 389,
-	409, 429, 469, 509, 531, 533,
+	409, 429, 469, 509, 531, 533, 2959, 2998, 2999, 3065,
 }
 
 type zoneData struct {
@@ -93,6 +94,10 @@ func readZones(root string) (*zoneData, error) {
 		altAreas:     map[int][]int{},
 		parent:       intPairs(files["subzones"]),
 		uiMap:        intPairs(files["uimap"]),
+	}
+	// Forever-Instanzen stehen mit nackter AreaID darin ("[2959] = 16544,")
+	for id, area := range intPairs(files["instances"]) {
+		z.instanceArea[id] = area
 	}
 	for _, line := range files["instances"] {
 		if m := instanceLine.FindStringSubmatch(line); m != nil {

@@ -117,12 +117,16 @@ local function classFits(mask)
   return math.floor(mask / 2 ^ (classID - 1)) % 2 == 1
 end
 
--- Offen für diesen Charakter: Fraktion und Klasse passen, nicht abgegeben, nicht im Log, nicht ausgeschlossen
-local function isOpen(questID, info)
+-- Fraktion und Klasse passen zum Charakter
+local function fits(info)
   local faction = FACTION_CODES[readable(UnitFactionGroup("player"))]
   if info[FACTION] and info[FACTION] ~= faction then return false end
-  if not classFits(info[CLASS_MASK]) then return false end
-  return not isDone(questID) and not ns.QuestLog.Find(questID) and not excluded(info.excl)
+  return classFits(info[CLASS_MASK])
+end
+
+-- Offen für diesen Charakter: Fraktion und Klasse passen, nicht abgegeben, nicht im Log, nicht ausgeschlossen
+local function isOpen(questID, info)
+  return fits(info) and not isDone(questID) and not ns.QuestLog.Find(questID) and not excluded(info.excl)
 end
 
 local function computeCanTake(questID)
@@ -179,6 +183,29 @@ function DungeonQuests.InstanceQuests(mapID)
   for _, questID in ipairs(chainsOf[mapID] or {}) do add(questID) end
   table.sort(list, function(a, b)
     if a.available ~= b.available then return a.available end
+    if a.level ~= b.level then return a.level < b.level end
+    return a.questID < b.questID
+  end)
+  return list
+end
+
+-- Dungeonquests der Instanz selbst (ohne Kettenschritte), die zu Fraktion und Klasse passen und nicht abgegeben
+-- sind, auch die im Log; nach Questlevel:
+-- { { questID, title, level, minLevel, inLog, uiMapID, x, y, pre, preAny, excl }, ... } (Ort fehlt, wenn unbekannt
+-- oder in einer Instanz; pre/preAny/excl wie in questInfo, für DungeonQuests.PrerequisitesMet)
+function DungeonQuests.OwnQuests(mapID)
+  local list = {}
+  if not db() then return list end
+  for _, questID in ipairs(db().quests[mapID] or {}) do
+    local info = db().questInfo[questID]
+    if info and fits(info) and not isDone(questID) then
+      local place = DungeonQuests.GiverPlace(questID) or {}
+      table.insert(list, { questID = questID, title = DungeonQuests.Title(questID), level = info[LEVEL],
+        minLevel = info[MIN_LEVEL], inLog = ns.QuestLog.Find(questID) ~= nil, uiMapID = place.uiMapID, x = place.x,
+        y = place.y, pre = info.pre, preAny = info.preAny, excl = info.excl })
+    end
+  end
+  table.sort(list, function(a, b)
     if a.level ~= b.level then return a.level < b.level end
     return a.questID < b.questID
   end)
@@ -279,12 +306,15 @@ local function clientTitle(questID, functionName)
 end
 
 -- Questtitel aus dem Client (C_QuestLog.GetTitleForQuestID, in Classic Era C_QuestLog.GetQuestInfo; beide ohne
--- Gewähr, wenn der Client die Quest noch nicht kennt), sonst aus dem Log, sonst "#questID" (DungeonDB führt keine Namen)
+-- Gewähr, wenn der Client die Quest noch nicht kennt), sonst aus dem Log, sonst der englische Name aus der DungeonDB,
+-- sonst "#questID"
 function DungeonQuests.Title(questID)
   local title = clientTitle(questID, "GetTitleForQuestID") or clientTitle(questID, "GetQuestInfo")
   if title then return title end
   local entry = ns.QuestLog.Find(questID)
-  return entry and entry.title or ("#" .. questID)
+  if entry then return entry.title end
+  local info = db() and db().questInfo[questID]
+  return info and info.name or ("#" .. questID)
 end
 
 -- Kurzname der Instanz aus ihrem Namen in der Spielsprache: Anfangsbuchstaben der Wörter ("Burg Schattenfang" ->

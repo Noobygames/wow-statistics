@@ -1,0 +1,30 @@
+{
+  "_doc": "Von Hand gepflegte Dungeonquests für tools/questie (make questie): Zuordnung Instanz-Karten-ID -> questIDs, die QuestieDB nicht selbst herleitet (Klassenquests ohne Ziel in der Instanz, Quests, die in der Instanz beginnen, Forever-Instanzen ohne Eintrag in instanceIdToAreaId). Questdaten kommen aus QuestieDB; data korrigiert einzelne Felder (level, requiredLevel, faction, giver; wie dist/questie/quests.json) fehlender oder falscher QuestieDB-Werte und führt Quests, die QuestieDB gar nicht kennt, ganz. Ursprung: quests-Block von Assist/InstanceData/forever_guide.lua (Stand 2026-11-14).",
+  "quests": {
+    "33": [1806, 78307, 95140],
+    "36": [373, 1806, 95140],
+    "47": [6521],
+    "48": [1806, 95140],
+    "90": [2948, 2950],
+    "189": [1394, 78699],
+    "349": [93404],
+    "429": [5247, 5526],
+    "2970": [95776, 95789, 95791, 95798, 95799, 96078, 96774, 97130],
+    "2974": [92069, 92070, 92343, 92344, 97173, 97198, 97327],
+    "2994": [95483, 96332, 96334, 96772],
+    "3001": [95790, 95924, 95925, 95926, 95928, 97049],
+    "3039": [94968, 94972, 94974, 94975, 94981, 94982, 94983, 94984, 94998, 96771],
+    "3065": [98423]
+  },
+  "data": {
+    "4295": { "level": 55, "requiredLevel": 50 },
+    "78307": { "requiredLevel": 20, "giver": { "kind": "", "id": 0, "uiMapID": 1421, "x": 0.471, "y": 0.711 } },
+    "78699": { "giver": { "kind": "", "id": 0, "uiMapID": 1421, "x": 0.471, "y": 0.711 } },
+    "92069": { "requiredLevel": 45 },
+    "92070": { "name": "A Lost Memento", "level": 55, "requiredLevel": 47 },
+    "93404": { "requiredLevel": 35 },
+    "95682": { "giver": { "kind": "npc", "id": 13155, "uiMapID": 1437, "x": 0.478, "y": 0.563 } },
+    "96395": { "requiredLevel": 10 },
+    "97327": { "requiredLevel": 55 }
+  }
+}

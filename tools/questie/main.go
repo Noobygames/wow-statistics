@@ -19,6 +19,7 @@ func main() {
 	luaOut := flag.String("lua", "Assist/InstanceData/dungeon_db.lua", "Ziel-Datei (Lua)")
 	guideDir := flag.String("guide", "../../docs/research/mechanics", "Ordner der Führer-Recherche (JSON je Instanz)")
 	bossNpcsPath := flag.String("bossnpcs", "../../Assist/InstanceData/boss_npcs.lua", "Boss-NPC-Liste (ns.BossNpcs)")
+	handPath := flag.String("handquests", "../../docs/research/dungeon_quests.json", "von Hand gepflegte Dungeonquests")
 	itemSparse := flag.String("itemsparse", "", "lokale ItemSparse-CSVs (kommagetrennt, Vorrang in Reihenfolge) statt Download von wago.tools")
 	flag.Parse()
 
@@ -27,7 +28,7 @@ func main() {
 	var version string
 	var guide guideStats
 	if err == nil {
-		res, version, guide, err = run(*dir, *guideDir, *bossNpcsPath, qualities)
+		res, version, guide, err = run(*dir, *guideDir, *bossNpcsPath, *handPath, qualities)
 	}
 	if err == nil {
 		err = writeJSON(*out, res)
@@ -42,7 +43,7 @@ func main() {
 	printSummary(res, guide, *luaOut)
 }
 
-func run(dir, guideDir, bossNpcsPath string, qualities map[int]int) (*result, string, guideStats, error) {
+func run(dir, guideDir, bossNpcsPath, handPath string, qualities map[int]int) (*result, string, guideStats, error) {
 	var st guideStats
 	store, err := readTOC(filepath.Join(dir, "QuestieDB_Forever.toc"))
 	if err != nil {
@@ -68,7 +69,15 @@ func run(dir, guideDir, bossNpcsPath string, qualities map[int]int) (*result, st
 	if err != nil {
 		return nil, "", st, err
 	}
+	hand, err := readHandQuests(handPath)
+	if err != nil {
+		return nil, "", st, err
+	}
 	res := build(db, zones, rates, qualities)
+	if err := mergeHandQuests(res, db, zones, hand); err != nil {
+		return nil, "", st, err
+	}
+	res.addGivers(db)
 	st = mergeGuide(res, db, guides, qualities, bossNpcs)
 	return res, store.values["Version"], st, nil
 }

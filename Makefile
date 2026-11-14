@@ -68,7 +68,8 @@ locale:
 # z.B. make questie ARGS="-questie 'D:/Games/World of Warcraft/_forever_/Interface/AddOns/QuestieDB'"
 questie:
 	go -C $(QUESTIE) run . -out "$(CURDIR)/dist/questie" -lua "$(CURDIR)/Assist/InstanceData/dungeon_db.lua" \
-		-guide "$(CURDIR)/docs/research/mechanics" -bossnpcs "$(CURDIR)/Assist/InstanceData/boss_npcs.lua" $(ARGS)
+		-guide "$(CURDIR)/docs/research/mechanics" -bossnpcs "$(CURDIR)/Assist/InstanceData/boss_npcs.lua" \
+		-handquests "$(CURDIR)/docs/research/dungeon_quests.json" $(ARGS)
 
 # Boss- und Trash-Mechaniken aus der Guide-Recherche (docs/research/mechanics/*.json) nach Assist/InstanceData/mechanics.lua
 mechanics:
@@ -79,7 +80,7 @@ test: test-addon test-installer test-artwork test-records test-flights test-loca
 # Lua-Szenarien aus tests/ gegen eine nachgebaute WoW-API.
 # -count=1: Go kennt die Lua-Dateien nicht und würde sonst veraltete Ergebnisse aus dem Cache zeigen.
 test-addon:
-	go -C $(ADDONTEST) test -count=1 ./...
+	go -C $(ADDONTEST) test -count=1 -timeout 30m ./...
 
 test-installer:
 	go -C $(INSTALLER) test ./...

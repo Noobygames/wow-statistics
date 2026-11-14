@@ -1,5 +1,5 @@
 -- Forever-Dungeonführer (ns.InstanceGuide): Level-Bereiche für InstanceInfo, Boss-Level im Instanz-Tooltip und
--- Dungeon-Eingänge auf der Weltkarte mit den offenen Dungeonquests des Charakters.
+-- Dungeon-Eingänge auf der Weltkarte mit den offenen Dungeonquests des Charakters (aus ns.DungeonDB).
 local L = addon.L
 local Info = addon.InstanceInfo
 local DungeonEntrances = addon.DungeonEntrances
@@ -24,23 +24,25 @@ expect("ein Punkt am Schwarzfels", #points, 1)
 expect("zwei Instanzen am Punkt", table.concat(points[1].mapIDs, ","), "229,230")
 expect("anderswo keine Eingänge", #DungeonEntrances.PointsOn(1), 0)
 
--- Offene Quests: Allianz-Krieger, Quest 96395 abgegeben, 96403 im Log; Horde- und Klassenquests fallen weg
+-- Offene Quests der Halle der Thanen (Forever-eigene Instanz in der DungeonDB): Allianz-Krieger, Quest 96395
+-- abgegeben, 96403 im Log; Horde- und Klassenquests fallen weg
 C_QuestLog.IsQuestFlaggedCompleted = function(questID) return questID == 96395 end
 wow.state.questLog = { { questID = 96403, title = "Wichtige Erbstücke", objectives = {} } }
 wow.state.questTitles[96394] = "Die ruhelosen Toten"
 wow.login({ level = 9 })
 wow.fire("QUEST_LOG_UPDATE")
-local open = DungeonEntrances.OpenQuests(3065)
+local open = addon.DungeonQuests.OwnQuests(3065)
 local byID = {}
 for _, quest in ipairs(open) do byID[quest.questID] = quest end
 expect("abgegebene fehlt", byID[96395], nil)
 expectTrue("im Log", byID[96403].inLog)
 expect("Name aus dem Client", byID[96394].title, "Die ruhelosen Toten")
-expect("Rückfall-Name", byID[96393].title, "Old Ironforge Incursion")
+expect("Rückfall-Name aus der DungeonDB", byID[96393].title, "Old Ironforge Incursion")
+expect("von Hand ergänzt", byID[98423].title, "The Treaty of Understanding")
 expect("Mindestlevel", byID[96394].minLevel, 10)
 expect("Startkarte", byID[96394].uiMapID, 1455)
 wow.state.faction = "Horde"
-expect("Horde: nur Quests für beide", #DungeonEntrances.OpenQuests(3065), 1)
+expect("Horde: nur Allianz-Quests offen", #addon.DungeonQuests.OwnQuests(3065), 0)
 wow.state.faction = "Alliance"
 
 -- Weltkarte: aus = kein Rahmen; an = Symbol, Tooltip mit Name und Quests

@@ -1175,7 +1175,7 @@ check("497.dungeonEntrances", function()
   for _, point in ipairs(type(mapID) == "number" and ns.DungeonEntrances.PointsOn(mapID) or {}) do
     for _, instance in ipairs(point.mapIDs) do
       table.insert(entrances, { mapID = instance, x = point.x, y = point.y,
-        openQuests = #ns.DungeonEntrances.OpenQuests(instance) })
+        openQuests = #ns.DungeonQuests.OwnQuests(instance) })
     end
   end
   return {

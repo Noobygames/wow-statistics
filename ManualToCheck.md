@@ -3638,3 +3638,13 @@ Einstellung „Boss-Beute im Tooltip“ (Komfort) an.
 - Würfelkarte: Drüberfahren an Gegenständen zeigt weiter die Gegenstandsinfo (gemeinsamer Code).
 - Dungeon-Eingang auf der Karte mit zwei Instanzen und demselben noch ungeladenen Item: beide Zeilen tauschen den Platzhalter gegen den Link.
 - Einstellung aus: keine Symbole.
+
+### 519. Dungeonquests aus einer Quelle, Quest-Check auch in Classic Era (LT-45)
+
+- [ ] geprüft
+
+Einstellung „Quest-Check beim Betreten einer Instanz“ (Komfort, Quests) an.
+
+- Classic Era: Todesminen mit passendem Level betreten: eine Chatzeile mit fehlenden Dungeonquests (z.B. „Oh Brother...“), Startort stimmt.
+- WoW Forever: Halle der Thanen, Burg Schattenfang (Paladin: „The Test of Righteousness“, Horde-Paladin „Old Fire-Eye“) und eine Forever-Instanz ohne QuestieDB-Gebiet (z.B. 2974, 3039): Quests erscheinen in Chatzeile und Eingangs-Tooltip.
+- Halle der Thanen als Horde: „Important Heirlooms“ (96403) laut QuestieDB nur Allianz (frühere Handdaten: beide Fraktionen); prüfen, ob die Horde sie annehmen kann.

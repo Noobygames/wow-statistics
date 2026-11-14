@@ -40,8 +40,8 @@ The world records shown by the speedrun features come from the public API of <ht
 
 ## Hand-maintained data
 
-`Assist/InstanceData/forever_guide.lua` (WoW Forever dungeon level ranges, entrances, boss levels and dungeon quests)
-is maintained by hand. It is being checked against, and will be replaced by, data from our own extractor.
+`Assist/InstanceData/forever_guide.lua` (WoW Forever dungeon level ranges, entrances and boss levels) is maintained by
+hand. It is being checked against, and will be replaced by, data from our own extractor.
 
 `Tracking/ClassQuests.lua` (Classic Era / WoW Forever class quests: level, learned spell IDs, reward item IDs) is
 maintained by hand from the class quest pages on warcraft.wiki.gg (Druid, Hunter, Paladin, Rogue, Shaman, Warlock,
@@ -60,19 +60,18 @@ where given; matched by dungeon and boss name, else by the unique English boss n
 
 ## 5. QuestieDB (WoW Forever dungeon quests)
 
-The quest prerequisites and exclusions (`pre`, `preAny`, `excl`) and a few missing quests in the `quests` block of
-`Assist/InstanceData/forever_guide.lua` were imported once on 2026-11-14 from the addon QuestieDB 1.1.0 (Forever build,
-`QuestieDB_Forever.toc` metadata), licensed under the WTFPL; its data originates from Questie. Thanks to the Questie and
-QuestieDB authors. Since then the data is maintained by hand.
-
-`Assist/InstanceData/dungeon_db.lua` (`ns.DungeonDB`) is generated from the same local QuestieDB addon by
+`Assist/InstanceData/dungeon_db.lua` (`ns.DungeonDB`, the one source of all dungeon quests) is generated from the
+local addon QuestieDB (Forever build, `QuestieDB_Forever.toc` metadata, licensed under the WTFPL; its data originates
+from Questie; thanks to the Questie and QuestieDB authors) by
 `tools/questie` (`make questie`; full JSON with names in `dist/questie/{quests,npcs,loot}.json`). The tool decodes the
 "baked" TOC metadata (base64 CBOR rows, zlib-compressed ID lists, chunked values) and the zone and drop tables in
-`support/Forever/`, and writes for every Classic dungeon and raid (keyed by instance map ID):
+`support/Forever/`, and writes for every Classic dungeon and raid and the WoW Forever dungeons QuestieDB knows
+(keyed by instance map ID):
 
 - quests with objectives, turn-in or quest sorting inside the instance, plus their complete prerequisite chain
   (`preQuestGroup`, `preQuestSingle`, breadcrumbs, `nextQuestInChain`, `exclusiveTo` alternatives) with quest giver,
-  zone (uiMapID, x/y), quest level, required level, faction and class mask
+  zone (uiMapID, x/y), quest level, required level, faction, class mask and English quest name (fallback for
+  uncached titles)
 - quest givers (NPC, object, item) to quest IDs
 - English names of object quest givers (QuestieDB has no translations), used to recognize objects in world tooltips
   on English clients
@@ -82,6 +81,11 @@ QuestieDB authors. Since then the data is maintained by hand.
   `ItemSparse` on wago.tools (WoW Forever build, Classic Era for items missing there), see section 2.
 
 The generated file names the QuestieDB version and the wago.tools builds it was made from.
+
+Dungeon quests QuestieDB cannot assign itself (class quests without an objective in the instance, quests starting
+inside the instance, WoW Forever dungeons missing from QuestieDB's `instanceIdToAreaId`), corrections of missing or
+wrong QuestieDB values and quests QuestieDB lacks are maintained by hand in `docs/research/dungeon_quests.json`
+(taken over from the former hand-maintained `quests` block of `forever_guide.lua`, 2026-11-14) and merged by the tool.
 
 The tool also merges the boss loot of our own dungeon guide research (`docs/research/mechanics/*.json`, one file per
 instance; own research of public facts, mainly warcraft.wiki.gg, each file lists its sources) into the same `loot`

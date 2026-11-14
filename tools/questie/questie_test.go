@@ -81,6 +81,18 @@ func TestBuildMoltenCore(t *testing.T) {
 	}
 	qualities := map[int]int{17204: 5, 2589: 1, 18000: 4, 18001: 3}
 	res := build(db, zones, rates, qualities)
+	// Hand-Daten: Quest 50 zusätzlich in Molten Core (mit Korrektur), Quest 7777 ohne QuestieDB in neuer Instanz
+	hand := &handQuests{Quests: map[int][]int{409: {50}, 3065: {7777}}, Data: map[int]*questOut{
+		7777: {Name: "Nur von Hand", Level: 15, ReqLevel: 10},
+		50:   {ReqLevel: 12, Giver: &giverOut{UiMapID: 1455, X: 0.5, Y: 0.25}},
+	}}
+	if err := mergeHandQuests(res, db, zones, hand); err != nil {
+		t.Fatal(err)
+	}
+	if err := mergeHandQuests(res, db, zones, &handQuests{Quests: map[int][]int{409: {4242}}}); err == nil {
+		t.Error("unbekannte Hand-Quest ohne data muss scheitern")
+	}
+	res.addGivers(db)
 	guides := []guideInstance{{Name: "Molten Core", MapID: 409, Bosses: []guideNpc{
 		// schon bekannt, unter rar, nicht in ItemSparse, neu (Qualität 4 aus ItemSparse statt Führer)
 		{Name: "Ragnaros", NpcID: 11502, Loot: []guideItem{{17204, "Eye"}, {2589, "Cloth"}, {99999, "Fake"}, {18000, "New"}}},
@@ -115,26 +127,32 @@ func TestBuildMoltenCore(t *testing.T) {
 	}
 
 	for expr, want := range map[string]string{
-		`table.concat(ns.DungeonDB.quests[409], ",")`:                             "52,53,100",
-		`table.concat(ns.DungeonDB.questChains[99], ",")`:                         "409,100,1,2",
-		`table.concat(ns.DungeonDB.questChains[98], ",")`:                         "409,100,1,2",
-		`ns.DungeonDB.questChains[100] == nil`:                                    "true",
-		`table.concat(ns.DungeonDB.questInfo[100].preAny, ",")`:                   "99",
-		`ns.DungeonDB.questInfo[100][3]`:                                          "H",
-		`ns.DungeonDB.questInfo[100][5] .. ns.DungeonDB.questInfo[100][6]`:        "n14387",
-		`ns.DungeonDB.questInfo[100][7] .. "/" .. ns.DungeonDB.questInfo[100][8]`: "1428/0.321",
-		`ns.DungeonDB.questInfo[52][7]`:                                           "232",
-		`table.concat(ns.DungeonDB.givers.npc[14387], ",")`:                       "98,99,100",
-		`table.concat(ns.DungeonDB.npcs[409][11502], ",")`:                        "63,63,3",
-		`tostring(ns.DungeonDB.npcs[409][12056] ~= nil)`:                          "true",
-		`tostring(ns.DungeonDB.npcs[409][12057] ~= nil)`:                          "true",
-		`tostring(ns.DungeonDB.npcs[409][997] == nil)`:                            "true",
-		`table.concat(ns.DungeonDB.loot[11502][1], ",")`:                          "17204,5,12.5",
-		`tostring(#ns.DungeonDB.loot[11502])`:                                     "2",
-		`table.concat(ns.DungeonDB.loot[11502][2], ",")`:                          "18000,4",
-		`table.concat(ns.DungeonDB.loot[12057][1], ",")`:                          "18001,3",
-		`ns.DungeonDB.npcs[409][12057][3]`:                                        "3",
-		`ns.DungeonDB.npcs[409][12056][3]`:                                        "3",
+		`table.concat(ns.DungeonDB.quests[409], ",")`:                               "50,52,53,100",
+		`table.concat(ns.DungeonDB.quests[3065], ",")`:                              "7777",
+		`ns.DungeonDB.questInfo[7777][1] .. "/" .. ns.DungeonDB.questInfo[7777][2]`: "15/10",
+		`ns.DungeonDB.questInfo[7777].name`:                                         "Nur von Hand",
+		`ns.DungeonDB.questInfo[100].name`:                                          "Ragnaros",
+		`ns.DungeonDB.questInfo[50][2] .. "/" .. ns.DungeonDB.questInfo[50][7]`:     "12/1455",
+		`tostring(ns.DungeonDB.questInfo[50][5])`:                                   "nil",
+		`table.concat(ns.DungeonDB.questChains[99], ",")`:                           "409,100,1,2",
+		`table.concat(ns.DungeonDB.questChains[98], ",")`:                           "409,100,1,2",
+		`ns.DungeonDB.questChains[100] == nil`:                                      "true",
+		`table.concat(ns.DungeonDB.questInfo[100].preAny, ",")`:                     "99",
+		`ns.DungeonDB.questInfo[100][3]`:                                            "H",
+		`ns.DungeonDB.questInfo[100][5] .. ns.DungeonDB.questInfo[100][6]`:          "n14387",
+		`ns.DungeonDB.questInfo[100][7] .. "/" .. ns.DungeonDB.questInfo[100][8]`:   "1428/0.321",
+		`ns.DungeonDB.questInfo[52][7]`:                                             "232",
+		`table.concat(ns.DungeonDB.givers.npc[14387], ",")`:                         "98,99,100",
+		`table.concat(ns.DungeonDB.npcs[409][11502], ",")`:                          "63,63,3",
+		`tostring(ns.DungeonDB.npcs[409][12056] ~= nil)`:                            "true",
+		`tostring(ns.DungeonDB.npcs[409][12057] ~= nil)`:                            "true",
+		`tostring(ns.DungeonDB.npcs[409][997] == nil)`:                              "true",
+		`table.concat(ns.DungeonDB.loot[11502][1], ",")`:                            "17204,5,12.5",
+		`tostring(#ns.DungeonDB.loot[11502])`:                                       "2",
+		`table.concat(ns.DungeonDB.loot[11502][2], ",")`:                            "18000,4",
+		`table.concat(ns.DungeonDB.loot[12057][1], ",")`:                            "18001,3",
+		`ns.DungeonDB.npcs[409][12057][3]`:                                          "3",
+		`ns.DungeonDB.npcs[409][12056][3]`:                                          "3",
 	} {
 		if err := L.DoString("result = tostring(" + expr + ")"); err != nil {
 			t.Fatalf("%s: %v", expr, err)

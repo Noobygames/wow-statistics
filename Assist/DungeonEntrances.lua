@@ -1,9 +1,9 @@
 -- Dungeon-Eingänge auf der Weltkarte (Einstellung dungeonEntrances, aus; nur wo ns.InstanceGuide existiert, also
 -- WoW Forever): ein Dungeon-Symbol je Eingang auf der Zonenkarte, Instanzen mit demselben Eingang teilen sich eins.
 -- Tooltip je Instanz: Name, Spieler/Reset/Level (InstanceInfo.Describe) und die offenen Dungeonquests des Charakters
--- (passende Fraktion und Klasse, abgegebene fallen weg) mit Stand: im Log, ab Level X oder wo sie beginnt; darunter
--- die bekannte Boss-Beute ab rar (Assist/BossLoot.lua).
--- Zeichnen übernimmt Lib/MapPins.lua, Daten aus Assist/InstanceData/forever_guide.lua.
+-- (DungeonQuests.OwnQuests: passende Fraktion und Klasse, abgegebene fallen weg) mit Stand: im Log, ab Level X oder
+-- wo sie beginnt; darunter die bekannte Boss-Beute ab rar (Assist/BossLoot.lua).
+-- Zeichnen übernimmt Lib/MapPins.lua, Eingänge aus Assist/InstanceData/forever_guide.lua.
 -- Zeichnet ein Kartenaddon (OpenMap, Leatrix Maps) selbst Dungeon-Eingänge, bleiben unsere aus (Lib/MapCompat.lua).
 local _, ns = ...
 
@@ -22,17 +22,14 @@ local ICON_TEXTURE = "Interface\\Icons\\INV_Misc_Rune_01"  -- Rückfall, falls d
 local ICON_SIZE = 18
 local MAX_QUEST_LINES = 12
 local COORD_SCALE = 100
-local FACTION_CODES = { Alliance = "A", Horde = "H" }
 local TITLE_COLOR = { 1, 0.82, 0 }
 local TEXT_COLOR = { 1, 1, 1 }
 local IN_LOG_COLOR = { 0.25, 1, 0.25 }
 local LOW_LEVEL_COLOR = { 1, 0.3, 0.3 }
 local HINT_COLOR = { 0.7, 0.7, 0.7 }
 
--- Spalten in ns.InstanceGuide (siehe Kopf von forever_guide.lua)
+-- Spalten in ns.InstanceGuide.entrances (siehe Kopf von forever_guide.lua)
 local ENTRANCE_MAP, ENTRANCE_X, ENTRANCE_Y = 1, 2, 3
-local QUEST_ID, QUEST_LEVEL, QUEST_MIN_LEVEL, QUEST_FACTION, QUEST_CLASS, QUEST_NAME = 1, 2, 3, 4, 5, 6
-local QUEST_MAP, QUEST_X, QUEST_Y = 7, 8, 9
 
 local function readable(value)
   if value == nil or ns.IsSecret(value) then return nil end
@@ -66,34 +63,7 @@ function DungeonEntrances.PointsOn(uiMapID)
   return points
 end
 
-local function questTitle(quest)
-  local title = C_QuestLog and C_QuestLog.GetTitleForQuestID and readable(C_QuestLog.GetTitleForQuestID(quest[QUEST_ID]))
-  return (title and title ~= "") and title or quest[QUEST_NAME]
-end
-
--- Offene Dungeonquests des Charakters, nach Questlevel:
--- { { questID, title, level, minLevel, inLog, uiMapID, x, y, pre, preAny, excl }, ... } (Ort fehlt, wenn unbekannt;
--- pre/preAny/excl = Vorquests alle/eine davon und sich ausschließende Quests aus dem Führer, ungeprüft)
-function DungeonEntrances.OpenQuests(mapID)
-  local list = {}
-  local quests = ns.InstanceGuide and ns.InstanceGuide.quests[mapID]
-  if not quests then return list end
-  local faction = FACTION_CODES[readable(UnitFactionGroup("player"))]
-  local _, class = UnitClass("player")
-  for _, quest in ipairs(quests) do
-    local fits = (not quest[QUEST_FACTION] or quest[QUEST_FACTION] == faction)
-      and (not quest[QUEST_CLASS] or quest[QUEST_CLASS] == class)
-    if fits and not ns.QuestItemTooltip.IsQuestDone(quest[QUEST_ID]) then
-      table.insert(list, { questID = quest[QUEST_ID], title = questTitle(quest), level = quest[QUEST_LEVEL],
-        minLevel = quest[QUEST_MIN_LEVEL], inLog = ns.QuestLog.Find(quest[QUEST_ID]) ~= nil,
-        uiMapID = quest[QUEST_MAP], x = quest[QUEST_X], y = quest[QUEST_Y],
-        pre = quest.pre, preAny = quest.preAny, excl = quest.excl })
-    end
-  end
-  return list
-end
-
--- Wo eine Quest aus OpenQuests beginnt: "Zone (74, 36)" oder nil
+-- Wo eine Quest aus DungeonQuests.OwnQuests beginnt: "Zone (74, 36)" oder nil
 function DungeonEntrances.StartText(quest)
   if not quest.uiMapID then return nil end
   local info = C_Map and C_Map.GetMapInfo and C_Map.GetMapInfo(quest.uiMapID)
@@ -110,7 +80,7 @@ local function questStatus(quest, playerLevel)
 end
 
 local function addQuestLines(tooltip, mapID)
-  local quests = DungeonEntrances.OpenQuests(mapID)
+  local quests = ns.DungeonQuests.OwnQuests(mapID)
   if #quests == 0 then return end
   tooltip:AddLine(string.format(L.DUNGEON_QUESTS_OPEN, #quests), unpack(TITLE_COLOR))
   local playerLevel = UnitLevel("player") or 0

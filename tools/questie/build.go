@@ -95,7 +95,7 @@ func build(db *questieDB, z *zoneData, rates map[int]map[int]float64, qualities 
 		}
 	}
 
-	for _, mapID := range classicInstanceMapIDs {
+	for _, mapID := range instanceMapIDs {
 		area, ok := z.instanceArea[mapID]
 		if !ok {
 			continue
@@ -147,9 +147,16 @@ func build(db *questieDB, z *zoneData, rates map[int]map[int]float64, qualities 
 		}
 		sort.Ints(inst.Npcs)
 	}
+	return res
+}
 
+// addGivers füllt givers und objectNames aus den Questgebern aller Ausgabe-Quests (nach allen Ergänzungen aufrufen).
+func (res *result) addGivers(db *questieDB) {
 	for id, q := range res.Quests {
 		src := db.quests[id]
+		if src == nil {
+			continue // Hand-Quest ohne QuestieDB-Eintrag
+		}
 		for kind, name := range map[int]string{giverNpc: "npc", giverObject: "object", giverItem: "item"} {
 			for _, g := range src.Start[kind] {
 				res.Givers[name][g] = appendUnique(res.Givers[name][g], q.ID)
@@ -166,7 +173,6 @@ func build(db *questieDB, z *zoneData, rates map[int]map[int]float64, qualities 
 			res.ObjectNames[id] = o.Name
 		}
 	}
-	return res
 }
 
 // predecessors: Quest -> Quests, die direkt davor liegen (Vorquests, Breadcrumbs, nextQuestInChain rückwärts).
