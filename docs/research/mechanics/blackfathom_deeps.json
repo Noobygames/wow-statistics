@@ -1,0 +1,343 @@
+{
+  "instance": "Blackfathom Deeps",
+  "instanceMapID": 48,
+  "kind": "dungeon",
+  "levels": [
+    24,
+    32
+  ],
+  "bosses": [
+    {
+      "name": "Ghamoo-ra",
+      "npcID": 4887,
+      "level": 25,
+      "mechanics": [
+        {
+          "spellID": 5568,
+          "spell": "Trample",
+          "type": "positioning",
+          "en": "Trample also hits players next to the tank; melee spread a bit",
+          "de": "Trampeln trifft auch Spieler neben dem Tank; Nahkämpfer verteilen"
+        }
+      ],
+      "loot": [
+        {
+          "itemID": 6907,
+          "quality": "rare",
+          "name": "Tortoise Armor"
+        },
+        {
+          "itemID": 6908,
+          "quality": "rare",
+          "name": "Ghamoo-ra's Bind",
+          "flavor": "forever"
+        }
+      ]
+    },
+    {
+      "name": "Lady Sarevess",
+      "npcID": 4831,
+      "level": 24,
+      "mechanics": [
+        {
+          "spellID": 865,
+          "spell": "Frost Nova",
+          "type": "avoid",
+          "en": "Frost Nova roots everyone close; ranged and healers keep range",
+          "de": "Frostnova friert Nahe ein; Fernkämpfer und Heiler halten Abstand"
+        }
+      ],
+      "loot": [
+        {
+          "itemID": 888,
+          "quality": "rare",
+          "name": "Naga Battle Gloves"
+        },
+        {
+          "itemID": 11121,
+          "quality": "rare",
+          "name": "Darkwater Talwar",
+          "flavor": "forever"
+        },
+        {
+          "itemID": 3078,
+          "quality": "rare",
+          "name": "Naga Heartpiercer",
+          "flavor": "forever"
+        }
+      ]
+    },
+    {
+      "name": "Gelihast",
+      "npcID": 6243,
+      "level": 25,
+      "mechanics": [
+        {
+          "spellID": 6533,
+          "spell": "Net",
+          "type": "tank",
+          "en": "Nets a player for 2 sec; fleeing murlocs run to him, snare them",
+          "de": "Netz hält 2 Sek fest; fliehende Murlocs laufen zu ihm, verlangsamen"
+        }
+      ],
+      "loot": [
+        {
+          "itemID": 6906,
+          "quality": "rare",
+          "name": "Algae Fists"
+        },
+        {
+          "itemID": 6905,
+          "quality": "rare",
+          "name": "Reef Axe",
+          "flavor": "forever"
+        }
+      ]
+    },
+    {
+      "name": "Lorgus Jett",
+      "npcID": 12902,
+      "level": 26,
+      "mechanics": [
+        {
+          "spellID": 12550,
+          "spell": "Lightning Shield",
+          "type": "dispel",
+          "en": "Purge his Lightning Shield or melee get zapped on every hit",
+          "de": "Blitzschlagschild reinigen, sonst werden Nahkämpfer beim Treffen geschockt"
+        },
+        {
+          "spellID": 12167,
+          "spell": "Lightning Bolt",
+          "type": "interrupt",
+          "en": "Interrupt Lightning Bolt",
+          "de": "Blitzschlag unterbrechen"
+        }
+      ],
+      "loot": [
+        {
+          "itemID": 273843,
+          "quality": "rare",
+          "name": "Fallenroot Longbow",
+          "flavor": "forever"
+        },
+        {
+          "itemID": 0,
+          "quality": "rare",
+          "name": "Twilight Maul",
+          "flavor": "forever",
+          "unverified": true
+        }
+      ]
+    },
+    {
+      "name": "Baron Aquanis",
+      "npcID": 12876,
+      "level": 24,
+      "mechanics": [
+        {
+          "spellID": 15043,
+          "spell": "Frostbolt",
+          "type": "interrupt",
+          "en": "Interrupt Frostbolt, it hits hard and slows",
+          "de": "Frostblitz unterbrechen, trifft hart und verlangsamt"
+        },
+        {
+          "spellID": 15541,
+          "spell": "Frost Nova",
+          "type": "avoid",
+          "en": "Frost Nova roots players nearby; ranged stay back",
+          "de": "Frostnova friert Nahe ein; Fernkämpfer bleiben zurück"
+        }
+      ],
+      "loot": []
+    },
+    {
+      "name": "Old Serra'kis",
+      "npcID": 4830,
+      "level": 26,
+      "mechanics": [
+        {
+          "spellID": 8433,
+          "spell": "Leech Pulse",
+          "type": "survive",
+          "en": "Underwater fight: Leech Pulse drains everyone near him; watch breath",
+          "de": "Unterwasserkampf: Blutegelpuls entzieht allen Nahen Leben; Atem beachten"
+        }
+      ],
+      "loot": [
+        {
+          "itemID": 6904,
+          "quality": "rare",
+          "name": "Bite of Serra'kis"
+        },
+        {
+          "itemID": 6901,
+          "quality": "rare",
+          "name": "Glowing Thresher Cape"
+        },
+        {
+          "itemID": 6902,
+          "quality": "rare",
+          "name": "Bands of Serra'kis",
+          "flavor": "forever"
+        }
+      ]
+    },
+    {
+      "name": "Twilight Lord Kelris",
+      "npcID": 4832,
+      "level": 27,
+      "mechanics": [
+        {
+          "spellID": 8399,
+          "spell": "Sleep",
+          "type": "positioning",
+          "en": "Sleep hits players within 5 yd; healer and ranged stand farther",
+          "de": "Schlaf trifft Spieler im 5-m-Radius; Heiler und Fernkämpfer weiter weg"
+        },
+        {
+          "spellID": 15587,
+          "spell": "Mind Blast",
+          "type": "interrupt",
+          "en": "Interrupt Mind Blast",
+          "de": "Gedankenschlag unterbrechen"
+        }
+      ],
+      "loot": [
+        {
+          "itemID": 1155,
+          "quality": "rare",
+          "name": "Rod of the Sleepwalker"
+        },
+        {
+          "itemID": 6903,
+          "quality": "rare",
+          "name": "Gaze Dreamer Pants",
+          "flavor": "forever"
+        }
+      ]
+    },
+    {
+      "name": "Aku'mai",
+      "npcID": 4829,
+      "level": 28,
+      "mechanics": [
+        {
+          "spellID": 3815,
+          "spell": "Poison Cloud",
+          "type": "avoid",
+          "en": "Poison Cloud ticks nature damage around her; cure poison",
+          "de": "Giftwolke macht Naturschaden um sie herum; Gift entfernen"
+        },
+        {
+          "spellID": 3490,
+          "spell": "Frenzied Rage",
+          "type": "tank",
+          "en": "Frenzied Rage speeds her attacks a lot; tank uses cooldowns",
+          "de": "Rasende Wut erhöht ihr Angriffstempo stark; Tank nutzt Cooldowns"
+        }
+      ],
+      "loot": [
+        {
+          "itemID": 6910,
+          "quality": "rare",
+          "name": "Leech Pants"
+        },
+        {
+          "itemID": 6911,
+          "quality": "rare",
+          "name": "Moss Cinch"
+        },
+        {
+          "itemID": 6909,
+          "quality": "rare",
+          "name": "Strike of the Hydra"
+        }
+      ]
+    }
+  ],
+  "trash": [
+    {
+      "name": "Blackfathom Tide Priestess",
+      "npcID": 4802,
+      "elite": true,
+      "mechanics": [
+        {
+          "spellID": 11642,
+          "spell": "Heal",
+          "type": "interrupt",
+          "en": "Heals other naga; interrupt Heal",
+          "de": "Heilt andere Naga; Heilen unterbrechen"
+        }
+      ]
+    },
+    {
+      "name": "Blackfathom Oracle",
+      "npcID": 4803,
+      "elite": true,
+      "mechanics": [
+        {
+          "spellID": 0,
+          "spell": "Healing Wave",
+          "type": "interrupt",
+          "en": "Heals allies with Healing Wave; interrupt it",
+          "de": "Heilt Verbündete mit Welle der Heilung; unterbrechen",
+          "unverified": true
+        }
+      ]
+    },
+    {
+      "name": "Twilight Shadowmage",
+      "npcID": 4813,
+      "elite": true,
+      "mechanics": [
+        {
+          "spellID": 7645,
+          "spell": "Dominate Mind",
+          "type": "dispel",
+          "en": "Mind controls a player; dispel or crowd-control",
+          "de": "Übernimmt einen Spieler; bannen oder kontrollieren"
+        },
+        {
+          "spellID": 12746,
+          "spell": "Summon Voidwalker",
+          "type": "adds",
+          "en": "Summons a voidwalker; pull casters out of sight first",
+          "de": "Ruft Leerwandler; Zauberer zuerst um die Ecke ziehen"
+        }
+      ]
+    },
+    {
+      "name": "Twilight Aquamancer",
+      "npcID": 4811,
+      "elite": true,
+      "mechanics": [
+        {
+          "spellID": 8372,
+          "spell": "Summon Aqua Guardian",
+          "type": "adds",
+          "en": "Summons an Aqua Guardian; kill the caster first",
+          "de": "Ruft einen Wasserwächter; Beschwörer zuerst töten"
+        }
+      ]
+    }
+  ],
+  "rares": [],
+  "sources": [
+    "https://warcraft.wiki.gg/wiki/Blackfathom_Deeps_(Classic)",
+    "https://warcraft.wiki.gg/wiki/Ghamoo-ra",
+    "https://warcraft.wiki.gg/wiki/Lady_Sarevess",
+    "https://warcraft.wiki.gg/wiki/Gelihast",
+    "https://warcraft.wiki.gg/wiki/Lorgus_Jett",
+    "https://warcraft.wiki.gg/wiki/Baron_Aquanis",
+    "https://warcraft.wiki.gg/wiki/Old_Serra%27kis",
+    "https://warcraft.wiki.gg/wiki/Twilight_Lord_Kelris",
+    "https://warcraft.wiki.gg/wiki/Aku%27mai_(Classic)",
+    "https://warcraft.wiki.gg/wiki/Blackfathom_Tide_Priestess",
+    "https://warcraft.wiki.gg/wiki/Blackfathom_Oracle",
+    "https://warcraft.wiki.gg/wiki/Twilight_Shadowmage",
+    "https://warcraft.wiki.gg/wiki/Twilight_Aquamancer",
+    "https://warcraft.wiki.gg/api.php (item page Itemtip #Classic/#Forever blocks)"
+  ]
+}

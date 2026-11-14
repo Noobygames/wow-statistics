@@ -1,0 +1,581 @@
+{
+ "instance": "Maraudon",
+ "instanceMapID": 349,
+ "kind": "dungeon",
+ "levels": [
+  45,
+  52
+ ],
+ "bosses": [
+  {
+   "name": "Noxxion",
+   "npcID": 13282,
+   "level": 48,
+   "wing": "Orange",
+   "mechanics": [
+    {
+     "spellID": 21687,
+     "spell": "Toxic Volley",
+     "type": "dispel",
+     "en": "Poison volley hits the whole group; cure poisons",
+     "de": "Giftsalve trifft die Gruppe; Gifte entfernen"
+    },
+    {
+     "spellID": 21707,
+     "spell": "Summon Noxxion's Spawns",
+     "type": "adds",
+     "en": "Splits into small spawns while untouchable; AoE them",
+     "de": "Teilt sich in kleine Brut auf und ist unangreifbar; Brut per AoE töten"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 17745,
+     "quality": "rare",
+     "name": "Noxious Shooter"
+    },
+    {
+     "itemID": 17744,
+     "quality": "rare",
+     "name": "Heart of Noxxion"
+    },
+    {
+     "itemID": 17746,
+     "quality": "rare",
+     "name": "Noxxion's Shackles"
+    }
+   ]
+  },
+  {
+   "name": "Razorlash",
+   "npcID": 12258,
+   "level": 48,
+   "wing": "Orange",
+   "mechanics": [
+    {
+     "spellID": 11427,
+     "spell": "Cleave",
+     "type": "positioning",
+     "en": "Cleaves in front; only the tank faces him",
+     "de": "Spaltet nach vorn; nur der Tank steht vor ihm"
+    },
+    {
+     "spellID": 15976,
+     "spell": "Puncture",
+     "type": "tank",
+     "en": "Puncture shreds tank armor; heal the tank up",
+     "de": "Durchbohren senkt die Tank-Rüstung; Tank gut heilen"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 17749,
+     "quality": "rare",
+     "name": "Phytoskin Spaulders"
+    },
+    {
+     "itemID": 17748,
+     "quality": "rare",
+     "name": "Vinerot Sandals"
+    }
+   ]
+  },
+  {
+   "name": "Lord Vyletongue",
+   "npcID": 12236,
+   "level": 47,
+   "wing": "Purple",
+   "mechanics": [
+    {
+     "spellID": 21655,
+     "spell": "Blink",
+     "type": "positioning",
+     "en": "Blinks away and shoots; tank and melee chase him",
+     "de": "Teleportiert sich weg und schießt; Tank und Nahkampf folgen"
+    },
+    {
+     "spellID": 7964,
+     "spell": "Smoke Bomb",
+     "type": "survive",
+     "en": "Smoke Bomb stuns players near him",
+     "de": "Rauchbombe betäubt Spieler in seiner Nähe"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 17754,
+     "quality": "rare",
+     "name": "Infernal Trickster Leggings"
+    },
+    {
+     "itemID": 17752,
+     "quality": "rare",
+     "name": "Satyr's Lash"
+    },
+    {
+     "itemID": 17755,
+     "quality": "rare",
+     "name": "Satyrmane Sash"
+    }
+   ]
+  },
+  {
+   "name": "Meshlok the Harvester",
+   "npcID": 12237,
+   "level": 48,
+   "wing": "Purple",
+   "mechanics": [
+    {
+     "spellID": 24375,
+     "spell": "War Stomp",
+     "type": "survive",
+     "en": "War Stomp stuns everyone close; casters stay at range",
+     "de": "Kriegsdonner betäubt alle in der Nähe; Zauberer Abstand halten"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 17767,
+     "quality": "rare",
+     "name": "Bloomsprout Headpiece"
+    },
+    {
+     "itemID": 17742,
+     "quality": "rare",
+     "name": "Fungus Shroud Armor"
+    },
+    {
+     "itemID": 17741,
+     "quality": "rare",
+     "name": "Nature's Embrace"
+    }
+   ]
+  },
+  {
+   "name": "Celebras the Cursed",
+   "npcID": 12225,
+   "level": 49,
+   "wing": "Purple",
+   "mechanics": [
+    {
+     "spellID": 21793,
+     "spell": "Twisted Tranquility",
+     "type": "interrupt",
+     "en": "Channels Twisted Tranquility; interrupt the channel",
+     "de": "Kanalisiert Verderbte Gelassenheit; Kanalisierung unterbrechen"
+    },
+    {
+     "spellID": 12747,
+     "spell": "Entangling Roots",
+     "type": "dispel",
+     "en": "Roots players in place; dispel magic",
+     "de": "Wurzelt Spieler fest; Magie bannen"
+    },
+    {
+     "spellID": 21968,
+     "spell": "Corrupt Forces of Nature",
+     "type": "adds",
+     "en": "Summons corrupted plant adds; tank and kill them",
+     "de": "Ruft verderbte Pflanzen herbei; aufnehmen und töten"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 17738,
+     "quality": "rare",
+     "name": "Claw of Celebras"
+    },
+    {
+     "itemID": 17739,
+     "quality": "rare",
+     "name": "Grovekeeper's Drape"
+    },
+    {
+     "itemID": 17740,
+     "quality": "rare",
+     "name": "Soothsayer's Headdress"
+    }
+   ]
+  },
+  {
+   "name": "Landslide",
+   "npcID": 12203,
+   "level": 50,
+   "wing": "Inner",
+   "mechanics": [
+    {
+     "spellID": 18670,
+     "spell": "Knock Away",
+     "type": "tank",
+     "en": "Knocks the tank back and drops threat; second tank ready",
+     "de": "Schlägt den Tank weg und senkt Bedrohung; Ersatztank bereit"
+    },
+    {
+     "spellID": 21808,
+     "spell": "Summon Shardlings",
+     "type": "adds",
+     "en": "Calls rock shardlings; they die with him, AoE if needed",
+     "de": "Ruft Felssplitter; sie sterben mit ihm, notfalls AoE"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 17737,
+     "quality": "rare",
+     "name": "Cloud Stone"
+    },
+    {
+     "itemID": 17943,
+     "quality": "rare",
+     "name": "Fist of Stone"
+    },
+    {
+     "itemID": 17734,
+     "quality": "rare",
+     "name": "Helm of the Mountain"
+    },
+    {
+     "itemID": 17736,
+     "quality": "rare",
+     "name": "Rockgrip Gauntlets"
+    }
+   ]
+  },
+  {
+   "name": "Tinkerer Gizlock",
+   "npcID": 13601,
+   "level": 50,
+   "wing": "Inner",
+   "mechanics": [
+    {
+     "spellID": 21833,
+     "spell": "Goblin Dragon Gun",
+     "type": "avoid",
+     "en": "Fire cone in front of him; step out of it",
+     "de": "Feuerkegel vor ihm; aus dem Kegel gehen"
+    },
+    {
+     "spellID": 9143,
+     "spell": "Bomb",
+     "type": "survive",
+     "en": "Throws bombs that hit players in an area",
+     "de": "Wirft Bomben mit Flächenschaden"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 17718,
+     "quality": "rare",
+     "name": "Gizlock's Hypertech Buckler"
+    },
+    {
+     "itemID": 17719,
+     "quality": "rare",
+     "name": "Inventor's Focal Sword"
+    },
+    {
+     "itemID": 17717,
+     "quality": "rare",
+     "name": "Megashot Rifle"
+    }
+   ]
+  },
+  {
+   "name": "Rotgrip",
+   "npcID": 13596,
+   "level": 50,
+   "wing": "Inner",
+   "mechanics": [
+    {
+     "spellID": 16495,
+     "spell": "Fatal Bite",
+     "type": "tank",
+     "en": "Fatal Bite hits the tank very hard; heal through it",
+     "de": "Tödlicher Biss trifft den Tank sehr hart; durchheilen"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 17730,
+     "quality": "rare",
+     "name": "Gatorbite Axe"
+    },
+    {
+     "itemID": 17728,
+     "quality": "rare",
+     "name": "Albino Crocscale Boots"
+    },
+    {
+     "itemID": 17732,
+     "quality": "rare",
+     "name": "Rotgrip Mantle"
+    }
+   ]
+  },
+  {
+   "name": "Princess Theradras",
+   "npcID": 12201,
+   "level": 51,
+   "wing": "Inner",
+   "mechanics": [
+    {
+     "spellID": 21869,
+     "spell": "Repulsive Gaze",
+     "type": "survive",
+     "en": "Repulsive Gaze fears nearby players; Fear Ward or Tremor",
+     "de": "Abstoßender Blick lässt Spieler fliehen; Furchtschutz oder Erdstoß"
+    },
+    {
+     "spellID": 21909,
+     "spell": "Dust Field",
+     "type": "avoid",
+     "en": "Dust Field hurts players close to her; melee step out",
+     "de": "Staubfeld schadet in ihrer Nähe; Nahkampf kurz raus"
+    },
+    {
+     "spellID": 21832,
+     "spell": "Boulder",
+     "type": "survive",
+     "en": "Throws boulders at players at range",
+     "de": "Wirft Felsbrocken auf Spieler auf Distanz"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 17780,
+     "quality": "epic",
+     "name": "Blade of Eternal Darkness"
+    },
+    {
+     "itemID": 17713,
+     "quality": "rare",
+     "name": "Blackstone Ring"
+    },
+    {
+     "itemID": 17714,
+     "quality": "rare",
+     "name": "Bracers of the Stone Princess"
+    },
+    {
+     "itemID": 17710,
+     "quality": "rare",
+     "name": "Charstone Dirk"
+    },
+    {
+     "itemID": 17711,
+     "quality": "rare",
+     "name": "Elemental Rockridge Leggings"
+    },
+    {
+     "itemID": 17715,
+     "quality": "rare",
+     "name": "Eye of Theradras"
+    },
+    {
+     "itemID": 17707,
+     "quality": "rare",
+     "name": "Gemshard Heart"
+    },
+    {
+     "itemID": 17766,
+     "quality": "rare",
+     "name": "Princess Theradras' Scepter"
+    }
+   ]
+  }
+ ],
+ "trash": [
+  {
+   "name": "Putridus Satyr",
+   "npcID": 11790,
+   "elite": true,
+   "mechanics": [
+    {
+     "spellID": 12540,
+     "spell": "Gouge",
+     "type": "tank",
+     "en": "Gouges the tank; a second player with threat picks it up",
+     "de": "Solarplexus trifft den Tank; zweiter Spieler mit Bedrohung hilft"
+    }
+   ]
+  },
+  {
+   "name": "Putridus Trickster",
+   "npcID": 11791,
+   "elite": true,
+   "mechanics": [
+    {
+     "spellID": 15657,
+     "spell": "Backstab",
+     "type": "positioning",
+     "en": "Backstabs from behind; keep it facing the tank",
+     "de": "Meucheln von hinten; zum Tank gedreht halten"
+    }
+   ]
+  },
+  {
+   "name": "Putridus Shadowstalker",
+   "npcID": 11792,
+   "elite": true,
+   "mechanics": [
+    {
+     "spellID": 22766,
+     "spell": "Sneak",
+     "type": "positioning",
+     "en": "Stealthed around Vyletongue; move carefully",
+     "de": "Getarnt um Vyletongue; vorsichtig vorrücken"
+    }
+   ]
+  },
+  {
+   "name": "Primordial Behemoth",
+   "npcID": 12206,
+   "elite": true,
+   "mechanics": [
+    {
+     "spellID": 21071,
+     "spell": "Boulder",
+     "type": "survive",
+     "en": "Hurls boulders at range; pull it around a corner",
+     "de": "Wirft Felsbrocken auf Distanz; um die Ecke ziehen"
+    }
+   ]
+  },
+  {
+   "name": "Celebrian Dryad",
+   "npcID": 11793,
+   "elite": true,
+   "mechanics": [
+    {
+     "spellID": 7992,
+     "spell": "Slowing Poison",
+     "type": "dispel",
+     "en": "Slowing Poison on players; cure poison",
+     "de": "Verlangsamendes Gift auf Spielern; Gift entfernen"
+    },
+    {
+     "spellID": 17201,
+     "spell": "Dispel Magic",
+     "type": "survive",
+     "en": "Strips buffs from the group",
+     "de": "Entfernt Stärkungszauber der Gruppe"
+    }
+   ]
+  },
+  {
+   "name": "Deeprot Stomper",
+   "npcID": 13141,
+   "elite": true,
+   "mechanics": [
+    {
+     "spellID": 11876,
+     "spell": "War Stomp",
+     "type": "survive",
+     "en": "War Stomp stuns everyone close",
+     "de": "Kriegsdonner betäubt alle in der Nähe"
+    }
+   ]
+  },
+  {
+   "name": "Deeprot Tangler",
+   "npcID": 13142,
+   "elite": true,
+   "mechanics": [
+    {
+     "spellID": 21331,
+     "spell": "Entangling Roots",
+     "type": "dispel",
+     "en": "Roots players in place; dispel magic",
+     "de": "Wurzelt Spieler fest; Magie bannen"
+    }
+   ]
+  },
+  {
+   "name": "Subterranean Diemetradon",
+   "npcID": 13323,
+   "elite": true,
+   "mechanics": [
+    {
+     "spellID": 8281,
+     "spell": "Sonic Burst",
+     "type": "survive",
+     "en": "Sonic Burst silences players nearby",
+     "de": "Schallexplosion bringt Spieler in der Nähe zum Schweigen"
+    }
+   ]
+  },
+  {
+   "name": "Ambereye Basilisk",
+   "npcID": 11785,
+   "elite": true,
+   "mechanics": [
+    {
+     "spellID": 11020,
+     "spell": "Petrify",
+     "type": "survive",
+     "en": "Petrify turns a player to stone for a short time",
+     "de": "Versteinern macht einen Spieler kurz handlungsunfähig"
+    }
+   ]
+  },
+  {
+   "name": "Theradrim Guardian",
+   "npcID": 11784,
+   "elite": true,
+   "mechanics": [
+    {
+     "spellID": 21057,
+     "spell": "Summon Theradrim Shardling",
+     "type": "adds",
+     "en": "Spawns shardling adds; AoE them down",
+     "de": "Ruft Theradrimsplitter herbei; per AoE töten"
+    }
+   ]
+  },
+  {
+   "name": "Spewed Larva",
+   "npcID": 13533,
+   "elite": true,
+   "mechanics": [
+    {
+     "spellID": 21862,
+     "spell": "Radiation",
+     "type": "avoid",
+     "en": "Radiation aura hurts nearby players; kill from range",
+     "de": "Strahlungsaura schadet in der Nähe; auf Distanz töten"
+    }
+   ]
+  }
+ ],
+ "rares": [
+  {
+   "name": "Meshlok the Harvester",
+   "npcID": 12237
+  }
+ ],
+ "sources": [
+  "https://warcraft.wiki.gg/wiki/Maraudon",
+  "https://www.wowisclassic.com/en/dungeon-guide/maraudon/",
+  "https://www.warcrafttavern.com/forever/guides/maraudon/",
+  "https://classic.warcraftdb.com/data/npc/13282",
+  "https://classic.warcraftdb.com/data/npc/12258",
+  "https://classic.warcraftdb.com/data/npc/12236",
+  "https://classic.warcraftdb.com/data/npc/12237",
+  "https://classic.warcraftdb.com/data/npc/12225",
+  "https://classic.warcraftdb.com/data/npc/12203",
+  "https://classic.warcraftdb.com/data/npc/13601",
+  "https://classic.warcraftdb.com/data/npc/13596",
+  "https://classic.warcraftdb.com/data/npc/12201",
+  "https://classic.warcraftdb.com/data/npc/11790",
+  "https://classic.warcraftdb.com/data/npc/11791",
+  "https://classic.warcraftdb.com/data/npc/11792",
+  "https://classic.warcraftdb.com/data/npc/12206",
+  "https://classic.warcraftdb.com/data/npc/11793",
+  "https://classic.warcraftdb.com/data/npc/13141",
+  "https://classic.warcraftdb.com/data/npc/13142",
+  "https://classic.warcraftdb.com/data/npc/13323",
+  "https://classic.warcraftdb.com/data/npc/11785",
+  "https://classic.warcraftdb.com/data/npc/11784",
+  "https://classic.warcraftdb.com/data/npc/13533"
+ ]
+}

@@ -1,0 +1,1438 @@
+{
+ "instance": "Molten Core",
+ "instanceMapID": 409,
+ "kind": "raid",
+ "bosses": [
+  {
+   "name": "Lucifron",
+   "npcID": 12118,
+   "mechanics": [
+    {
+     "spellID": 19702,
+     "spell": "Impending Doom",
+     "type": "dispel",
+     "en": "Curse that deals shadow damage when it expires; remove curses fast",
+     "de": "Fluch, der beim Ablauf Schattenschaden macht; Flüche schnell entfernen"
+    },
+    {
+     "spellID": 19703,
+     "spell": "Lucifron's Curse",
+     "type": "dispel",
+     "en": "Curse doubles mana and rage costs; decurse the raid",
+     "de": "Fluch verdoppelt Mana- und Wutkosten; Raid entfluchen"
+    },
+    {
+     "spellID": 20604,
+     "spell": "Dominate Mind",
+     "type": "dispel",
+     "en": "Mind-controls a player; dispel or crowd-control the victim",
+     "de": "Übernimmt einen Spieler; bannen oder kontrollieren"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 16800,
+     "quality": "epic",
+     "name": "Arcanist Boots"
+    },
+    {
+     "itemID": 16805,
+     "quality": "epic",
+     "name": "Felheart Gloves"
+    },
+    {
+     "itemID": 16829,
+     "quality": "epic",
+     "name": "Cenarion Boots"
+    },
+    {
+     "itemID": 16837,
+     "quality": "epic",
+     "name": "Earthfury Boots"
+    },
+    {
+     "itemID": 16859,
+     "quality": "epic",
+     "name": "Lawbringer Boots"
+    },
+    {
+     "itemID": 16863,
+     "quality": "epic",
+     "name": "Gauntlets of Might"
+    },
+    {
+     "itemID": 17077,
+     "quality": "epic",
+     "name": "Crimson Shocker"
+    },
+    {
+     "itemID": 17109,
+     "quality": "epic",
+     "name": "Choker of Enlightenment"
+    },
+    {
+     "itemID": 18861,
+     "quality": "epic",
+     "name": "Flamewaker Legplates"
+    },
+    {
+     "itemID": 18870,
+     "quality": "epic",
+     "name": "Helm of the Lifegiver"
+    },
+    {
+     "itemID": 18872,
+     "quality": "epic",
+     "name": "Manastorm Leggings"
+    },
+    {
+     "itemID": 18875,
+     "quality": "epic",
+     "name": "Salamander Scale Pants"
+    },
+    {
+     "itemID": 18878,
+     "quality": "epic",
+     "name": "Sorcerous Dagger"
+    },
+    {
+     "itemID": 18879,
+     "quality": "epic",
+     "name": "Heavy Dark Iron Ring"
+    },
+    {
+     "itemID": 19145,
+     "quality": "epic",
+     "name": "Robe of Volatile Power"
+    },
+    {
+     "itemID": 19146,
+     "quality": "epic",
+     "name": "Wristguards of Stability"
+    },
+    {
+     "itemID": 19147,
+     "quality": "epic",
+     "name": "Ring of Spell Power"
+    }
+   ]
+  },
+  {
+   "name": "Magmadar",
+   "npcID": 11982,
+   "mechanics": [
+    {
+     "spellID": 19451,
+     "spell": "Frenzy",
+     "type": "tank",
+     "en": "Frenzies often; hunters must remove it with Tranquilizing Shot",
+     "de": "Gerät oft in Raserei; Jäger entfernen sie per Einlullender Schuss"
+    },
+    {
+     "spellID": 19408,
+     "spell": "Panic",
+     "type": "survive",
+     "en": "Raid-wide fear; Fear Ward or Tremor Totem on the tank",
+     "de": "Raidweite Furcht; Furchtzauberschutz oder Totem des Erdstoßes für den Tank"
+    },
+    {
+     "spellID": 19411,
+     "spell": "Lava Bomb",
+     "type": "avoid",
+     "en": "Leaves burning lava patches on the floor; step out",
+     "de": "Hinterlässt brennende Lavapfützen am Boden; heraustreten"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 16796,
+     "quality": "epic",
+     "name": "Arcanist Leggings"
+    },
+    {
+     "itemID": 16810,
+     "quality": "epic",
+     "name": "Felheart Pants"
+    },
+    {
+     "itemID": 16814,
+     "quality": "epic",
+     "name": "Pants of Prophecy"
+    },
+    {
+     "itemID": 16822,
+     "quality": "epic",
+     "name": "Nightslayer Pants"
+    },
+    {
+     "itemID": 16835,
+     "quality": "epic",
+     "name": "Cenarion Leggings"
+    },
+    {
+     "itemID": 16843,
+     "quality": "epic",
+     "name": "Earthfury Legguards"
+    },
+    {
+     "itemID": 16847,
+     "quality": "epic",
+     "name": "Giantstalker's Leggings"
+    },
+    {
+     "itemID": 16855,
+     "quality": "epic",
+     "name": "Lawbringer Legplates"
+    },
+    {
+     "itemID": 16867,
+     "quality": "epic",
+     "name": "Legplates of Might"
+    },
+    {
+     "itemID": 17065,
+     "quality": "epic",
+     "name": "Medallion of Steadfast Might"
+    },
+    {
+     "itemID": 17069,
+     "quality": "epic",
+     "name": "Striker's Mark"
+    },
+    {
+     "itemID": 17073,
+     "quality": "epic",
+     "name": "Earthshaker"
+    },
+    {
+     "itemID": 18203,
+     "quality": "epic",
+     "name": "Eskhandar's Right Claw"
+    },
+    {
+     "itemID": 18820,
+     "quality": "epic",
+     "name": "Talisman of Ephemeral Power"
+    },
+    {
+     "itemID": 18821,
+     "quality": "epic",
+     "name": "Quick Strike Ring"
+    },
+    {
+     "itemID": 18822,
+     "quality": "epic",
+     "name": "Obsidian Edged Blade"
+    },
+    {
+     "itemID": 18823,
+     "quality": "epic",
+     "name": "Aged Core Leather Gloves"
+    },
+    {
+     "itemID": 18824,
+     "quality": "epic",
+     "name": "Magma Tempered Boots"
+    },
+    {
+     "itemID": 18829,
+     "quality": "epic",
+     "name": "Deep Earth Spaulders"
+    },
+    {
+     "itemID": 18861,
+     "quality": "epic",
+     "name": "Flamewaker Legplates"
+    },
+    {
+     "itemID": 19136,
+     "quality": "epic",
+     "name": "Mana Igniting Cord"
+    },
+    {
+     "itemID": 19142,
+     "quality": "epic",
+     "name": "Fire Runed Grimoire"
+    },
+    {
+     "itemID": 19143,
+     "quality": "epic",
+     "name": "Flameguard Gauntlets"
+    },
+    {
+     "itemID": 19144,
+     "quality": "epic",
+     "name": "Sabatons of the Flamewalker"
+    }
+   ]
+  },
+  {
+   "name": "Gehennas",
+   "npcID": 12259,
+   "mechanics": [
+    {
+     "spellID": 19716,
+     "spell": "Gehennas' Curse",
+     "type": "dispel",
+     "en": "Curse cuts healing taken by 75%; decurse quickly",
+     "de": "Fluch senkt erhaltene Heilung um 75 %; schnell entfluchen"
+    },
+    {
+     "spellID": 19717,
+     "spell": "Rain of Fire",
+     "type": "avoid",
+     "en": "Fire rain on a group of players; move out at once",
+     "de": "Feuerregen auf Spielergruppe; sofort herauslaufen"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 16812,
+     "quality": "epic",
+     "name": "Gloves of Prophecy"
+    },
+    {
+     "itemID": 16826,
+     "quality": "epic",
+     "name": "Nightslayer Gloves"
+    },
+    {
+     "itemID": 16839,
+     "quality": "epic",
+     "name": "Earthfury Gauntlets"
+    },
+    {
+     "itemID": 16849,
+     "quality": "epic",
+     "name": "Giantstalker's Boots"
+    },
+    {
+     "itemID": 16860,
+     "quality": "epic",
+     "name": "Lawbringer Gauntlets"
+    },
+    {
+     "itemID": 16862,
+     "quality": "epic",
+     "name": "Sabatons of Might"
+    },
+    {
+     "itemID": 17077,
+     "quality": "epic",
+     "name": "Crimson Shocker"
+    },
+    {
+     "itemID": 18861,
+     "quality": "epic",
+     "name": "Flamewaker Legplates"
+    },
+    {
+     "itemID": 18870,
+     "quality": "epic",
+     "name": "Helm of the Lifegiver"
+    },
+    {
+     "itemID": 18872,
+     "quality": "epic",
+     "name": "Manastorm Leggings"
+    },
+    {
+     "itemID": 18875,
+     "quality": "epic",
+     "name": "Salamander Scale Pants"
+    },
+    {
+     "itemID": 18878,
+     "quality": "epic",
+     "name": "Sorcerous Dagger"
+    },
+    {
+     "itemID": 18879,
+     "quality": "epic",
+     "name": "Heavy Dark Iron Ring"
+    },
+    {
+     "itemID": 19145,
+     "quality": "epic",
+     "name": "Robe of Volatile Power"
+    },
+    {
+     "itemID": 19146,
+     "quality": "epic",
+     "name": "Wristguards of Stability"
+    },
+    {
+     "itemID": 19147,
+     "quality": "epic",
+     "name": "Ring of Spell Power"
+    }
+   ]
+  },
+  {
+   "name": "Garr",
+   "npcID": 12057,
+   "mechanics": [
+    {
+     "spellID": 19492,
+     "spell": "Antimagic Pulse",
+     "type": "survive",
+     "en": "Pulse strips magic buffs from nearby players; rebuff after",
+     "de": "Puls entfernt Magie-Buffs naher Spieler; danach neu buffen"
+    },
+    {
+     "spellID": 19496,
+     "spell": "Magma Shackles",
+     "type": "positioning",
+     "en": "Slows nearby players; keep ranged and healers spread out",
+     "de": "Verlangsamt nahe Spieler; Fernkämpfer und Heiler verteilen"
+    },
+    {
+     "spellID": 19516,
+     "spell": "Enrage",
+     "type": "adds",
+     "en": "Gains damage per Firesworn killed; tank or banish adds apart",
+     "de": "Wird pro getötetem Feuergeschworenen stärker; Adds getrennt halten"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 16795,
+     "quality": "epic",
+     "name": "Arcanist Crown"
+    },
+    {
+     "itemID": 16808,
+     "quality": "epic",
+     "name": "Felheart Horns"
+    },
+    {
+     "itemID": 16813,
+     "quality": "epic",
+     "name": "Circlet of Prophecy"
+    },
+    {
+     "itemID": 16821,
+     "quality": "epic",
+     "name": "Nightslayer Cover"
+    },
+    {
+     "itemID": 16834,
+     "quality": "epic",
+     "name": "Cenarion Helm"
+    },
+    {
+     "itemID": 16842,
+     "quality": "epic",
+     "name": "Earthfury Helmet"
+    },
+    {
+     "itemID": 16846,
+     "quality": "epic",
+     "name": "Giantstalker's Helmet"
+    },
+    {
+     "itemID": 16854,
+     "quality": "epic",
+     "name": "Lawbringer Helm"
+    },
+    {
+     "itemID": 16866,
+     "quality": "epic",
+     "name": "Helm of Might"
+    },
+    {
+     "itemID": 17066,
+     "quality": "epic",
+     "name": "Drillborer Disk"
+    },
+    {
+     "itemID": 17071,
+     "quality": "epic",
+     "name": "Gutgore Ripper"
+    },
+    {
+     "itemID": 17105,
+     "quality": "epic",
+     "name": "Aurastone Hammer"
+    },
+    {
+     "itemID": 18564,
+     "quality": "legendary",
+     "name": "Bindings of the Windseeker"
+    },
+    {
+     "itemID": 18820,
+     "quality": "epic",
+     "name": "Talisman of Ephemeral Power"
+    },
+    {
+     "itemID": 18821,
+     "quality": "epic",
+     "name": "Quick Strike Ring"
+    },
+    {
+     "itemID": 18822,
+     "quality": "epic",
+     "name": "Obsidian Edged Blade"
+    },
+    {
+     "itemID": 18823,
+     "quality": "epic",
+     "name": "Aged Core Leather Gloves"
+    },
+    {
+     "itemID": 18824,
+     "quality": "epic",
+     "name": "Magma Tempered Boots"
+    },
+    {
+     "itemID": 18829,
+     "quality": "epic",
+     "name": "Deep Earth Spaulders"
+    },
+    {
+     "itemID": 18832,
+     "quality": "epic",
+     "name": "Brutality Blade"
+    },
+    {
+     "itemID": 18861,
+     "quality": "epic",
+     "name": "Flamewaker Legplates"
+    },
+    {
+     "itemID": 19136,
+     "quality": "epic",
+     "name": "Mana Igniting Cord"
+    },
+    {
+     "itemID": 19142,
+     "quality": "epic",
+     "name": "Fire Runed Grimoire"
+    },
+    {
+     "itemID": 19143,
+     "quality": "epic",
+     "name": "Flameguard Gauntlets"
+    },
+    {
+     "itemID": 19144,
+     "quality": "epic",
+     "name": "Sabatons of the Flamewalker"
+    }
+   ]
+  },
+  {
+   "name": "Shazzrah",
+   "npcID": 12264,
+   "mechanics": [
+    {
+     "spellID": 19712,
+     "spell": "Arcane Explosion",
+     "type": "positioning",
+     "en": "Heavy arcane AoE around him; only melee and tank stay close",
+     "de": "Starke Arkan-AoE um ihn; nur Nahkampf und Tank stehen nah"
+    },
+    {
+     "spellID": 23138,
+     "spell": "Gate of Shazzrah",
+     "type": "tank",
+     "en": "Blinks to a random player and wipes threat; tanks re-pick him",
+     "de": "Teleportiert zu zufälligem Spieler, Bedrohung weg; Tanks holen ihn"
+    },
+    {
+     "spellID": 19713,
+     "spell": "Shazzrah's Curse",
+     "type": "dispel",
+     "en": "Curse doubles magic damage taken; decurse",
+     "de": "Fluch verdoppelt erlittenen Magieschaden; entfluchen"
+    },
+    {
+     "spellID": 19714,
+     "spell": "Deaden Magic",
+     "type": "dispel",
+     "en": "Self buff halves magic damage; purge or dispel it",
+     "de": "Selbstbuff halbiert Magieschaden; reinigen oder bannen"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 16801,
+     "quality": "epic",
+     "name": "Arcanist Gloves"
+    },
+    {
+     "itemID": 16803,
+     "quality": "epic",
+     "name": "Felheart Slippers"
+    },
+    {
+     "itemID": 16811,
+     "quality": "epic",
+     "name": "Boots of Prophecy"
+    },
+    {
+     "itemID": 16824,
+     "quality": "epic",
+     "name": "Nightslayer Boots"
+    },
+    {
+     "itemID": 16831,
+     "quality": "epic",
+     "name": "Cenarion Gloves"
+    },
+    {
+     "itemID": 16852,
+     "quality": "epic",
+     "name": "Giantstalker's Gloves"
+    },
+    {
+     "itemID": 17077,
+     "quality": "epic",
+     "name": "Crimson Shocker"
+    },
+    {
+     "itemID": 18861,
+     "quality": "epic",
+     "name": "Flamewaker Legplates"
+    },
+    {
+     "itemID": 18870,
+     "quality": "epic",
+     "name": "Helm of the Lifegiver"
+    },
+    {
+     "itemID": 18872,
+     "quality": "epic",
+     "name": "Manastorm Leggings"
+    },
+    {
+     "itemID": 18875,
+     "quality": "epic",
+     "name": "Salamander Scale Pants"
+    },
+    {
+     "itemID": 18878,
+     "quality": "epic",
+     "name": "Sorcerous Dagger"
+    },
+    {
+     "itemID": 18879,
+     "quality": "epic",
+     "name": "Heavy Dark Iron Ring"
+    },
+    {
+     "itemID": 19145,
+     "quality": "epic",
+     "name": "Robe of Volatile Power"
+    },
+    {
+     "itemID": 19146,
+     "quality": "epic",
+     "name": "Wristguards of Stability"
+    },
+    {
+     "itemID": 19147,
+     "quality": "epic",
+     "name": "Ring of Spell Power"
+    }
+   ]
+  },
+  {
+   "name": "Baron Geddon",
+   "npcID": 12056,
+   "mechanics": [
+    {
+     "spellID": 20475,
+     "spell": "Living Bomb",
+     "type": "positioning",
+     "en": "Target explodes after a few seconds; run away from the raid",
+     "de": "Ziel explodiert nach Sekunden; vom Raid weglaufen"
+    },
+    {
+     "spellID": 19659,
+     "spell": "Ignite Mana",
+     "type": "dispel",
+     "en": "Burns mana and deals damage; dispel magic on casters",
+     "de": "Verbrennt Mana mit Schaden; Magie bei Zauberern bannen"
+    },
+    {
+     "spellID": 19695,
+     "spell": "Inferno",
+     "type": "avoid",
+     "en": "Pulsing fire around him; melee back away while it lasts",
+     "de": "Pulsierendes Feuer um ihn; Nahkampf weicht aus"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 16797,
+     "quality": "epic",
+     "name": "Arcanist Mantle"
+    },
+    {
+     "itemID": 16807,
+     "quality": "epic",
+     "name": "Felheart Shoulder Pads"
+    },
+    {
+     "itemID": 16836,
+     "quality": "epic",
+     "name": "Cenarion Spaulders"
+    },
+    {
+     "itemID": 16844,
+     "quality": "epic",
+     "name": "Earthfury Epaulets"
+    },
+    {
+     "itemID": 16856,
+     "quality": "epic",
+     "name": "Lawbringer Spaulders"
+    },
+    {
+     "itemID": 17110,
+     "quality": "epic",
+     "name": "Seal of the Archmagus"
+    },
+    {
+     "itemID": 18563,
+     "quality": "legendary",
+     "name": "Bindings of the Windseeker"
+    },
+    {
+     "itemID": 18820,
+     "quality": "epic",
+     "name": "Talisman of Ephemeral Power"
+    },
+    {
+     "itemID": 18821,
+     "quality": "epic",
+     "name": "Quick Strike Ring"
+    },
+    {
+     "itemID": 18822,
+     "quality": "epic",
+     "name": "Obsidian Edged Blade"
+    },
+    {
+     "itemID": 18823,
+     "quality": "epic",
+     "name": "Aged Core Leather Gloves"
+    },
+    {
+     "itemID": 18824,
+     "quality": "epic",
+     "name": "Magma Tempered Boots"
+    },
+    {
+     "itemID": 18829,
+     "quality": "epic",
+     "name": "Deep Earth Spaulders"
+    },
+    {
+     "itemID": 18861,
+     "quality": "epic",
+     "name": "Flamewaker Legplates"
+    },
+    {
+     "itemID": 19136,
+     "quality": "epic",
+     "name": "Mana Igniting Cord"
+    },
+    {
+     "itemID": 19142,
+     "quality": "epic",
+     "name": "Fire Runed Grimoire"
+    },
+    {
+     "itemID": 19143,
+     "quality": "epic",
+     "name": "Flameguard Gauntlets"
+    },
+    {
+     "itemID": 19144,
+     "quality": "epic",
+     "name": "Sabatons of the Flamewalker"
+    }
+   ]
+  },
+  {
+   "name": "Sulfuron Harbinger",
+   "npcID": 12098,
+   "mechanics": [
+    {
+     "spellID": 19775,
+     "spell": "Dark Mending",
+     "type": "interrupt",
+     "en": "Flamewaker Priests heal allies; interrupt every cast",
+     "de": "Flammenschuppen-Priester heilen; jeden Zauber unterbrechen"
+    },
+    {
+     "spellID": 19780,
+     "spell": "Hand of Ragnaros",
+     "type": "survive",
+     "en": "Stuns and knocks back players near him",
+     "de": "Betäubt und stößt Spieler in seiner Nähe zurück"
+    },
+    {
+     "spellID": 19779,
+     "spell": "Inspire",
+     "type": "tank",
+     "en": "Boosts attack speed of nearby adds; tank adds away from him",
+     "de": "Beschleunigt Angriffe naher Adds; Adds von ihm wegziehen"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 16816,
+     "quality": "epic",
+     "name": "Mantle of Prophecy"
+    },
+    {
+     "itemID": 16823,
+     "quality": "epic",
+     "name": "Nightslayer Shoulder Pads"
+    },
+    {
+     "itemID": 16848,
+     "quality": "epic",
+     "name": "Giantstalker's Epaulets"
+    },
+    {
+     "itemID": 16868,
+     "quality": "epic",
+     "name": "Pauldrons of Might"
+    },
+    {
+     "itemID": 17074,
+     "quality": "epic",
+     "name": "Shadowstrike"
+    },
+    {
+     "itemID": 17077,
+     "quality": "epic",
+     "name": "Crimson Shocker"
+    },
+    {
+     "itemID": 17109,
+     "quality": "epic",
+     "name": "Choker of Enlightenment"
+    },
+    {
+     "itemID": 18861,
+     "quality": "epic",
+     "name": "Flamewaker Legplates"
+    },
+    {
+     "itemID": 18870,
+     "quality": "epic",
+     "name": "Helm of the Lifegiver"
+    },
+    {
+     "itemID": 18872,
+     "quality": "epic",
+     "name": "Manastorm Leggings"
+    },
+    {
+     "itemID": 18875,
+     "quality": "epic",
+     "name": "Salamander Scale Pants"
+    },
+    {
+     "itemID": 18878,
+     "quality": "epic",
+     "name": "Sorcerous Dagger"
+    },
+    {
+     "itemID": 18879,
+     "quality": "epic",
+     "name": "Heavy Dark Iron Ring"
+    },
+    {
+     "itemID": 19145,
+     "quality": "epic",
+     "name": "Robe of Volatile Power"
+    },
+    {
+     "itemID": 19146,
+     "quality": "epic",
+     "name": "Wristguards of Stability"
+    },
+    {
+     "itemID": 19147,
+     "quality": "epic",
+     "name": "Ring of Spell Power"
+    }
+   ]
+  },
+  {
+   "name": "Golemagg the Incinerator",
+   "npcID": 11988,
+   "mechanics": [
+    {
+     "spellID": 20553,
+     "spell": "Golemagg's Trust",
+     "type": "positioning",
+     "en": "Core Ragers near him get stronger; tank the dogs away",
+     "de": "Kernwüter in seiner Nähe werden stärker; Hunde weg tanken"
+    },
+    {
+     "spellID": 13880,
+     "spell": "Magma Splash",
+     "type": "tank",
+     "en": "Stacking armor and fire debuff on the tank",
+     "de": "Stapelnder Rüstungs- und Feuer-Debuff auf dem Tank"
+    },
+    {
+     "spellID": 19798,
+     "spell": "Earthquake",
+     "type": "survive",
+     "en": "Below 10% health quakes hurt all melee; burn him fast",
+     "de": "Unter 10 % Erdbeben gegen Nahkampf; schnell töten"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 16798,
+     "quality": "epic",
+     "name": "Arcanist Robes"
+    },
+    {
+     "itemID": 16809,
+     "quality": "epic",
+     "name": "Felheart Robes"
+    },
+    {
+     "itemID": 16815,
+     "quality": "epic",
+     "name": "Robes of Prophecy"
+    },
+    {
+     "itemID": 16820,
+     "quality": "epic",
+     "name": "Nightslayer Chestpiece"
+    },
+    {
+     "itemID": 16833,
+     "quality": "epic",
+     "name": "Cenarion Vestments"
+    },
+    {
+     "itemID": 16841,
+     "quality": "epic",
+     "name": "Earthfury Vestments"
+    },
+    {
+     "itemID": 16845,
+     "quality": "epic",
+     "name": "Giantstalker's Breastplate"
+    },
+    {
+     "itemID": 16853,
+     "quality": "epic",
+     "name": "Lawbringer Chestguard"
+    },
+    {
+     "itemID": 16865,
+     "quality": "epic",
+     "name": "Breastplate of Might"
+    },
+    {
+     "itemID": 17072,
+     "quality": "epic",
+     "name": "Blastershot Launcher"
+    },
+    {
+     "itemID": 17103,
+     "quality": "epic",
+     "name": "Azuresong Mageblade"
+    },
+    {
+     "itemID": 17203,
+     "quality": "epic",
+     "name": "Sulfuron Ingot"
+    },
+    {
+     "itemID": 18820,
+     "quality": "epic",
+     "name": "Talisman of Ephemeral Power"
+    },
+    {
+     "itemID": 18821,
+     "quality": "epic",
+     "name": "Quick Strike Ring"
+    },
+    {
+     "itemID": 18822,
+     "quality": "epic",
+     "name": "Obsidian Edged Blade"
+    },
+    {
+     "itemID": 18823,
+     "quality": "epic",
+     "name": "Aged Core Leather Gloves"
+    },
+    {
+     "itemID": 18824,
+     "quality": "epic",
+     "name": "Magma Tempered Boots"
+    },
+    {
+     "itemID": 18829,
+     "quality": "epic",
+     "name": "Deep Earth Spaulders"
+    },
+    {
+     "itemID": 18842,
+     "quality": "epic",
+     "name": "Staff of Dominance"
+    },
+    {
+     "itemID": 18861,
+     "quality": "epic",
+     "name": "Flamewaker Legplates"
+    },
+    {
+     "itemID": 19136,
+     "quality": "epic",
+     "name": "Mana Igniting Cord"
+    },
+    {
+     "itemID": 19142,
+     "quality": "epic",
+     "name": "Fire Runed Grimoire"
+    },
+    {
+     "itemID": 19143,
+     "quality": "epic",
+     "name": "Flameguard Gauntlets"
+    },
+    {
+     "itemID": 19144,
+     "quality": "epic",
+     "name": "Sabatons of the Flamewalker"
+    }
+   ]
+  },
+  {
+   "name": "Majordomo Executus",
+   "npcID": 12018,
+   "mechanics": [
+    {
+     "spellID": 20619,
+     "spell": "Magic Reflection",
+     "type": "avoid",
+     "en": "Adds reflect spells while active; casters stop casting",
+     "de": "Adds reflektieren Zauber; Zauberer pausieren"
+    },
+    {
+     "spellID": 21075,
+     "spell": "Damage Shield",
+     "type": "avoid",
+     "en": "Adds hurt melee attackers while active; melee stop",
+     "de": "Adds schaden Nahkämpfern; Nahkampf pausiert"
+    },
+    {
+     "spellID": 20534,
+     "spell": "Teleport",
+     "type": "tank",
+     "en": "Sends a random player into the lava pit; heal them out",
+     "de": "Schickt zufälligen Spieler in die Lavagrube; heilen"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 17203,
+     "quality": "epic",
+     "name": "Sulfuron Ingot"
+    },
+    {
+     "itemID": 18646,
+     "quality": "epic",
+     "name": "The Eye of Divinity"
+    },
+    {
+     "itemID": 18703,
+     "quality": "epic",
+     "name": "Ancient Petrified Leaf"
+    },
+    {
+     "itemID": 18803,
+     "quality": "epic",
+     "name": "Hyperthermically Insulated Lava Dredger"
+    },
+    {
+     "itemID": 18805,
+     "quality": "epic",
+     "name": "Core Hound Tooth"
+    },
+    {
+     "itemID": 18806,
+     "quality": "epic",
+     "name": "Core Forged Greaves"
+    },
+    {
+     "itemID": 18808,
+     "quality": "epic",
+     "name": "Gloves of the Hypnotic Flame"
+    },
+    {
+     "itemID": 18809,
+     "quality": "epic",
+     "name": "Sash of Whispered Secrets"
+    },
+    {
+     "itemID": 18810,
+     "quality": "epic",
+     "name": "Wild Growth Spaulders"
+    },
+    {
+     "itemID": 18811,
+     "quality": "epic",
+     "name": "Fireproof Cloak"
+    },
+    {
+     "itemID": 18812,
+     "quality": "epic",
+     "name": "Wristguards of True Flight"
+    },
+    {
+     "itemID": 19139,
+     "quality": "epic",
+     "name": "Fireguard Shoulders"
+    },
+    {
+     "itemID": 19140,
+     "quality": "epic",
+     "name": "Cauterizing Band"
+    }
+   ]
+  },
+  {
+   "name": "Ragnaros",
+   "npcID": 11502,
+   "mechanics": [
+    {
+     "spellID": 20566,
+     "spell": "Wrath of Ragnaros",
+     "type": "positioning",
+     "en": "Knocks melee back; tank can lose threat, second tank ready",
+     "de": "Stößt Nahkampf zurück; Bedrohung kann wechseln, Zweittank bereit"
+    },
+    {
+     "spellID": 20565,
+     "spell": "Magma Blast",
+     "type": "tank",
+     "en": "Hits ranged hard when nobody is in melee range; keep melee up",
+     "de": "Trifft Fernkämpfer, wenn keiner im Nahkampf ist; Nahkampf halten"
+    },
+    {
+     "spellID": 20564,
+     "spell": "Elemental Fire",
+     "type": "tank",
+     "en": "Fire damage over time on his melee target",
+     "de": "Feuerschaden über Zeit auf sein Nahkampfziel"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 16901,
+     "quality": "epic",
+     "name": "Stormrage Legguards"
+    },
+    {
+     "itemID": 16909,
+     "quality": "epic",
+     "name": "Bloodfang Pants"
+    },
+    {
+     "itemID": 16915,
+     "quality": "epic",
+     "name": "Netherwind Pants"
+    },
+    {
+     "itemID": 16922,
+     "quality": "epic",
+     "name": "Leggings of Transcendence"
+    },
+    {
+     "itemID": 16930,
+     "quality": "epic",
+     "name": "Nemesis Leggings"
+    },
+    {
+     "itemID": 16938,
+     "quality": "epic",
+     "name": "Dragonstalker's Legguards"
+    },
+    {
+     "itemID": 16946,
+     "quality": "epic",
+     "name": "Legplates of Ten Storms"
+    },
+    {
+     "itemID": 16954,
+     "quality": "epic",
+     "name": "Judgement Legplates"
+    },
+    {
+     "itemID": 16962,
+     "quality": "epic",
+     "name": "Legplates of Wrath"
+    },
+    {
+     "itemID": 17063,
+     "quality": "epic",
+     "name": "Band of Accuria"
+    },
+    {
+     "itemID": 17076,
+     "quality": "epic",
+     "name": "Bonereaver's Edge"
+    },
+    {
+     "itemID": 17082,
+     "quality": "epic",
+     "name": "Shard of the Flame"
+    },
+    {
+     "itemID": 17102,
+     "quality": "epic",
+     "name": "Cloak of the Shrouded Mists"
+    },
+    {
+     "itemID": 17104,
+     "quality": "epic",
+     "name": "Spinal Reaper"
+    },
+    {
+     "itemID": 17106,
+     "quality": "epic",
+     "name": "Malistar's Defender"
+    },
+    {
+     "itemID": 17107,
+     "quality": "epic",
+     "name": "Dragon's Blood Cape"
+    },
+    {
+     "itemID": 17204,
+     "quality": "legendary",
+     "name": "Eye of Sulfuras"
+    },
+    {
+     "itemID": 18814,
+     "quality": "epic",
+     "name": "Choker of the Fire Lord"
+    },
+    {
+     "itemID": 18815,
+     "quality": "epic",
+     "name": "Essence of the Pure Flame"
+    },
+    {
+     "itemID": 18816,
+     "quality": "epic",
+     "name": "Perdition's Blade"
+    },
+    {
+     "itemID": 18817,
+     "quality": "epic",
+     "name": "Crown of Destruction"
+    },
+    {
+     "itemID": 19017,
+     "quality": "legendary",
+     "name": "Essence of the Firelord"
+    },
+    {
+     "itemID": 19137,
+     "quality": "epic",
+     "name": "Onslaught Girdle"
+    },
+    {
+     "itemID": 19138,
+     "quality": "epic",
+     "name": "Band of Sulfuras"
+    }
+   ]
+  }
+ ],
+ "trash": [
+  {
+   "name": "Core Hound",
+   "npcID": 11671,
+   "mechanics": [
+    {
+     "spellID": 19771,
+     "spell": "Serrated Bite",
+     "type": "tank",
+     "en": "Packs of five; bleeding bite, kill all close together",
+     "de": "Fünferrudel; blutender Biss, alle möglichst gleichzeitig töten"
+    }
+   ]
+  },
+  {
+   "name": "Ancient Core Hound",
+   "npcID": 11673,
+   "mechanics": [
+    {
+     "spellID": 19272,
+     "spell": "Lava Breath",
+     "type": "avoid",
+     "en": "Fire breath in front; keep the raid behind or at its side",
+     "de": "Feueratem nach vorn; Raid hinter oder neben ihm"
+    },
+    {
+     "spellID": 19365,
+     "spell": "Ancient Dread",
+     "type": "survive",
+     "en": "Uses one random debuff aura per spawn; check which one",
+     "de": "Nutzt je Spawn eine zufällige Debuff-Aura; prüfen welche"
+    },
+    {
+     "spellID": 19364,
+     "spell": "Ground Stomp",
+     "type": "survive",
+     "en": "Stomp that stuns nearby players",
+     "de": "Stampfer, der nahe Spieler betäubt"
+    }
+   ]
+  },
+  {
+   "name": "Firelord",
+   "npcID": 11668,
+   "mechanics": [
+    {
+     "spellID": 19392,
+     "spell": "Summon Lava Spawn",
+     "type": "adds",
+     "en": "Spawns Lava Spawns that split if left alive; kill fast",
+     "de": "Ruft Lavabrut, die sich teilt; schnell töten"
+    },
+    {
+     "spellID": 19393,
+     "spell": "Soul Burn",
+     "type": "dispel",
+     "en": "Magic debuff that burns mana; dispel it",
+     "de": "Magie-Debuff, der Mana verbrennt; bannen"
+    }
+   ]
+  },
+  {
+   "name": "Molten Giant",
+   "npcID": 11658,
+   "mechanics": [
+    {
+     "spellID": 18944,
+     "spell": "Smash",
+     "type": "positioning",
+     "en": "Heavy AoE hit around it; non-tanks keep distance",
+     "de": "Schwerer Flächenschlag; Nicht-Tanks halten Abstand"
+    },
+    {
+     "spellID": 18945,
+     "spell": "Knock Away",
+     "type": "tank",
+     "en": "Knocks the tank back and lowers threat",
+     "de": "Stößt den Tank zurück und senkt Bedrohung"
+    }
+   ]
+  },
+  {
+   "name": "Molten Destroyer",
+   "npcID": 11659,
+   "mechanics": [
+    {
+     "spellID": 19129,
+     "spell": "Massive Tremor",
+     "type": "positioning",
+     "en": "Strong quake around it; melee step out",
+     "de": "Starkes Beben um ihn; Nahkampf tritt heraus"
+    },
+    {
+     "spellID": 20276,
+     "spell": "Knockdown",
+     "type": "tank",
+     "en": "Knocks the tank down for a short stun",
+     "de": "Wirft den Tank kurz zu Boden"
+    }
+   ]
+  },
+  {
+   "name": "Flameguard",
+   "npcID": 11667,
+   "mechanics": [
+    {
+     "spellID": 19630,
+     "spell": "Cone of Fire",
+     "type": "positioning",
+     "en": "Fire cone in front; only the tank faces it",
+     "de": "Feuerkegel nach vorn; nur der Tank steht davor"
+    },
+    {
+     "spellID": 19631,
+     "spell": "Melt Armor",
+     "type": "tank",
+     "en": "Reduces the tank's armor",
+     "de": "Senkt die Rüstung des Tanks"
+    }
+   ]
+  },
+  {
+   "name": "Firewalker",
+   "npcID": 11666,
+   "mechanics": [
+    {
+     "spellID": 19635,
+     "spell": "Incite Flames",
+     "type": "survive",
+     "en": "Fire AoE that hits the whole area",
+     "de": "Feuer-AoE über den ganzen Bereich"
+    },
+    {
+     "spellID": 19636,
+     "spell": "Fire Blossom",
+     "type": "avoid",
+     "en": "Fire bursts on players; spread out",
+     "de": "Feuerstöße auf Spieler; verteilen"
+    }
+   ]
+  },
+  {
+   "name": "Flamewaker Protector",
+   "npcID": 12119,
+   "mechanics": [
+    {
+     "spellID": 20604,
+     "spell": "Dominate Mind",
+     "type": "dispel",
+     "en": "Mind-controls a player; dispel or crowd-control",
+     "de": "Übernimmt einen Spieler; bannen oder kontrollieren"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  "https://www.wowhead.com/classic/npc=11502",
+  "https://www.wowhead.com/classic/npc=11658",
+  "https://www.wowhead.com/classic/npc=11659",
+  "https://www.wowhead.com/classic/npc=11666",
+  "https://www.wowhead.com/classic/npc=11667",
+  "https://www.wowhead.com/classic/npc=11668",
+  "https://www.wowhead.com/classic/npc=11671",
+  "https://www.wowhead.com/classic/npc=11673",
+  "https://www.wowhead.com/classic/npc=11982",
+  "https://www.wowhead.com/classic/npc=11988",
+  "https://www.wowhead.com/classic/npc=12018",
+  "https://www.wowhead.com/classic/npc=12056",
+  "https://www.wowhead.com/classic/npc=12057",
+  "https://www.wowhead.com/classic/npc=12098",
+  "https://www.wowhead.com/classic/npc=12118",
+  "https://www.wowhead.com/classic/npc=12119",
+  "https://www.wowhead.com/classic/npc=12259",
+  "https://www.wowhead.com/classic/npc=12264",
+  "https://www.wowhead.com/classic/object=179703"
+ ]
+}

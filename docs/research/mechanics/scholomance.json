@@ -1,0 +1,1794 @@
+{
+ "instance": "Scholomance",
+ "instanceMapID": 289,
+ "kind": "dungeon",
+ "levels": [
+  58,
+  60
+ ],
+ "bosses": [
+  {
+   "name": "Blood Steward of Kirtonos",
+   "npcID": 14861,
+   "level": 61,
+   "mechanics": [
+    {
+     "spellID": 22371,
+     "spell": "Curse of Impotence",
+     "type": "dispel",
+     "en": "Remove his curses; he drops the Blood of Innocents",
+     "de": "Flüche entfernen; er lässt das Blut der Unschuldigen fallen"
+    }
+   ],
+   "loot": []
+  },
+  {
+   "name": "Kirtonos the Herald",
+   "npcID": 10506,
+   "level": 60,
+   "mechanics": [
+    {
+     "spellID": 18144,
+     "spell": "Swoop",
+     "type": "positioning",
+     "en": "Gargoyle form: stay out of the frontal stun cone",
+     "de": "Gargoylegestalt: nicht vor ihm stehen, Kegel betäubt"
+    },
+    {
+     "spellID": 12882,
+     "spell": "Wing Flap",
+     "type": "positioning",
+     "en": "Tank against a wall so the knockback does not throw him",
+     "de": "Tank an die Wand, damit der Rückstoß nicht wegschleudert"
+    },
+    {
+     "spellID": 12889,
+     "spell": "Curse of Tongues",
+     "type": "dispel",
+     "en": "Human form casts curses; decurse casters fast",
+     "de": "Menschengestalt verflucht; Zauberer schnell entfluchen"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 16734,
+     "quality": "rare",
+     "name": "Boots of Valor"
+    },
+    {
+     "itemID": 13956,
+     "quality": "rare",
+     "name": "Clutch of Andros"
+    },
+    {
+     "itemID": 14024,
+     "quality": "rare",
+     "name": "Frightalon"
+    },
+    {
+     "itemID": 13957,
+     "quality": "rare",
+     "name": "Gargoyle Slashers"
+    },
+    {
+     "itemID": 13983,
+     "quality": "rare",
+     "name": "Gravestone War Axe"
+    },
+    {
+     "itemID": 13960,
+     "quality": "rare",
+     "name": "Heart of the Fiend"
+    },
+    {
+     "itemID": 13969,
+     "quality": "rare",
+     "name": "Loomguard Armbraces"
+    },
+    {
+     "itemID": 13955,
+     "quality": "rare",
+     "name": "Stoneform Shoulders"
+    },
+    {
+     "itemID": 13967,
+     "quality": "rare",
+     "name": "Windreaver Greaves"
+    }
+   ]
+  },
+  {
+   "name": "Jandice Barov",
+   "npcID": 10503,
+   "level": 61,
+   "mechanics": [
+    {
+     "spellID": 17773,
+     "spell": "Summon Illusions",
+     "type": "adds",
+     "en": "Spawns many illusions; mark and focus the real Jandice",
+     "de": "Beschwört viele Trugbilder; echte Jandice markieren und angreifen"
+    },
+    {
+     "spellID": 16098,
+     "spell": "Curse of Blood",
+     "type": "dispel",
+     "en": "Curse raises physical damage taken; remove it",
+     "de": "Fluch erhöht erlittenen körperlichen Schaden; entfernen"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 14541,
+     "quality": "epic",
+     "name": "Barovian Family Sword"
+    },
+    {
+     "itemID": 14543,
+     "quality": "rare",
+     "name": "Darkshade Gloves"
+    },
+    {
+     "itemID": 16701,
+     "quality": "rare",
+     "name": "Dreadmist Mantle"
+    },
+    {
+     "itemID": 14545,
+     "quality": "rare",
+     "name": "Ghostloom Leggings"
+    },
+    {
+     "itemID": 18689,
+     "quality": "rare",
+     "name": "Phantasmal Cloak"
+    },
+    {
+     "itemID": 14548,
+     "quality": "rare",
+     "name": "Royal Cap Spaulders"
+    },
+    {
+     "itemID": 22394,
+     "quality": "rare",
+     "name": "Staff of Metanoia"
+    },
+    {
+     "itemID": 18690,
+     "quality": "rare",
+     "name": "Wraithplate Leggings"
+    }
+   ]
+  },
+  {
+   "name": "Rattlegore",
+   "npcID": 11622,
+   "level": 61,
+   "mechanics": [
+    {
+     "spellID": 16727,
+     "spell": "War Stomp",
+     "type": "survive",
+     "en": "AoE stun around him; melee need heals ready",
+     "de": "Flächenbetäubung um ihn; Nahkämpfer brauchen Heilung"
+    },
+    {
+     "spellID": 10101,
+     "spell": "Knock Away",
+     "type": "tank",
+     "en": "Knocks the tank back; drops the Viewing Room Key",
+     "de": "Schlägt den Tank weg; lässt den Schlüssel zum Sichtraum fallen"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 18686,
+     "quality": "rare",
+     "name": "Bone Golem Shoulders"
+    },
+    {
+     "itemID": 14539,
+     "quality": "rare",
+     "name": "Bone Ring Helm"
+    },
+    {
+     "itemID": 14537,
+     "quality": "rare",
+     "name": "Corpselight Greaves"
+    },
+    {
+     "itemID": 14538,
+     "quality": "rare",
+     "name": "Deadwalker Mantle"
+    },
+    {
+     "itemID": 14531,
+     "quality": "rare",
+     "name": "Frightskull Shaft"
+    },
+    {
+     "itemID": 14528,
+     "quality": "rare",
+     "name": "Rattlecage Buckler"
+    },
+    {
+     "itemID": 16711,
+     "quality": "rare",
+     "name": "Shadowcraft Boots"
+    },
+    {
+     "itemID": 18782,
+     "quality": "rare",
+     "name": "Top Half of Advanced Armorsmithing: Volume II"
+    }
+   ]
+  },
+  {
+   "name": "Death Knight Darkreaver",
+   "npcID": 14516,
+   "level": 62,
+   "mechanics": [
+    {
+     "spellID": 0,
+     "spell": "Spirit waves",
+     "type": "adds",
+     "en": "Summoning event: kill the spirit waves before he appears",
+     "de": "Beschwörung: Geisterwellen töten, bevor er erscheint",
+     "unverified": true
+    },
+    {
+     "spellID": 7645,
+     "spell": "Dominate Mind",
+     "type": "interrupt",
+     "en": "Can mind-control a player; interrupt or crowd-control",
+     "de": "Kann Spieler übernehmen; unterbrechen oder kontrollieren"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 18759,
+     "quality": "rare",
+     "name": "Malicious Axe"
+    },
+    {
+     "itemID": 18760,
+     "quality": "rare",
+     "name": "Necromantic Band"
+    },
+    {
+     "itemID": 18761,
+     "quality": "rare",
+     "name": "Oblivion's Touch"
+    },
+    {
+     "itemID": 18758,
+     "quality": "rare",
+     "name": "Specter's Blade"
+    }
+   ],
+   "summoned": true
+  },
+  {
+   "name": "Marduk Blackpool",
+   "npcID": 10433,
+   "level": 58,
+   "mechanics": [
+    {
+     "spellID": 12040,
+     "spell": "Shadow Shield",
+     "type": "positioning",
+     "en": "Shadow shield hurts melee; let ranged do the work",
+     "de": "Schattenschild schadet Nahkämpfern; Fernkämpfer übernehmen"
+    },
+    {
+     "spellID": 17695,
+     "spell": "Defiling Aura",
+     "type": "positioning",
+     "en": "Aura damages nearby players; ranged keep distance",
+     "de": "Aura schadet in der Nähe; Fernkämpfer auf Abstand"
+    },
+    {
+     "spellID": 15754,
+     "spell": "Cleave",
+     "type": "positioning",
+     "en": "Cleaves in front; only the tank faces him",
+     "de": "Spaltet nach vorn; nur der Tank steht vor ihm"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 18692,
+     "quality": "rare",
+     "name": "Death Knight Sabatons"
+    },
+    {
+     "itemID": 14576,
+     "quality": "rare",
+     "name": "Ebon Hilt of Marduk"
+    }
+   ]
+  },
+  {
+   "name": "Vectus",
+   "npcID": 10432,
+   "level": 60,
+   "mechanics": [
+    {
+     "spellID": 18399,
+     "spell": "Flamestrike",
+     "type": "avoid",
+     "en": "Leave the Flamestrike area at once",
+     "de": "Flammenstoß-Fläche sofort verlassen"
+    },
+    {
+     "spellID": 16046,
+     "spell": "Blast Wave",
+     "type": "positioning",
+     "en": "Point-blank fire burst; spread out and stay at range",
+     "de": "Feuerwelle im Nahbereich; verteilen und Abstand halten"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 18691,
+     "quality": "rare",
+     "name": "Dark Advisor's Pendant"
+    },
+    {
+     "itemID": 14577,
+     "quality": "rare",
+     "name": "Skullsmoke Pants"
+    }
+   ]
+  },
+  {
+   "name": "Ras Frostwhisper",
+   "npcID": 10508,
+   "level": 62,
+   "mechanics": [
+    {
+     "spellID": 12096,
+     "spell": "Fear",
+     "type": "survive",
+     "en": "Fears players; clear his adds first so no extra pulls",
+     "de": "Furcht auf Spieler; vorher Adds töten, sonst Zusatzpulls"
+    },
+    {
+     "spellID": 18099,
+     "spell": "Chill Nova",
+     "type": "positioning",
+     "en": "Frost nova roots melee; ranged stay at max range",
+     "de": "Frostnova wurzelt Nahkämpfer; Fernkämpfer auf Maximaldistanz"
+    },
+    {
+     "spellID": 8398,
+     "spell": "Frostbolt Volley",
+     "type": "interrupt",
+     "en": "Interrupt the frostbolt volleys",
+     "de": "Frostblitzsalven unterbrechen"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 13314,
+     "quality": "epic",
+     "name": "Alanna's Embrace"
+    },
+    {
+     "itemID": 14487,
+     "quality": "rare",
+     "name": "Bonechill Hammer"
+    },
+    {
+     "itemID": 14525,
+     "quality": "rare",
+     "name": "Boneclenched Gauntlets"
+    },
+    {
+     "itemID": 14503,
+     "quality": "rare",
+     "name": "Death's Clutch"
+    },
+    {
+     "itemID": 14340,
+     "quality": "rare",
+     "name": "Freezing Lich Robes"
+    },
+    {
+     "itemID": 14502,
+     "quality": "rare",
+     "name": "Frostbite Girdle"
+    },
+    {
+     "itemID": 13952,
+     "quality": "epic",
+     "name": "Iceblade Hacker"
+    },
+    {
+     "itemID": 18696,
+     "quality": "rare",
+     "name": "Intricately Runed Shield"
+    },
+    {
+     "itemID": 14522,
+     "quality": "rare",
+     "name": "Maelstrom Leggings"
+    },
+    {
+     "itemID": 16689,
+     "quality": "rare",
+     "name": "Magister's Mantle"
+    },
+    {
+     "itemID": 18694,
+     "quality": "rare",
+     "name": "Shadowy Mail Greaves"
+    },
+    {
+     "itemID": 18693,
+     "quality": "rare",
+     "name": "Shivery Handwraps"
+    },
+    {
+     "itemID": 18695,
+     "quality": "rare",
+     "name": "Spellbound Tome"
+    }
+   ]
+  },
+  {
+   "name": "Kormok",
+   "npcID": 16118,
+   "level": 60,
+   "mechanics": [
+    {
+     "spellID": 27688,
+     "spell": "Bone Shield",
+     "type": "positioning",
+     "en": "Bone shield reflects damage to melee; melee pause",
+     "de": "Knochenschild wirft Schaden auf Nahkämpfer zurück; pausieren"
+    },
+    {
+     "spellID": 27687,
+     "spell": "Summon Bone Minions",
+     "type": "adds",
+     "en": "Summons skeleton minions and mages; kill them",
+     "de": "Beschwört Skelettdiener und -magier; töten"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 22326,
+     "quality": "rare",
+     "name": "Amalgam's Band"
+    },
+    {
+     "itemID": 22331,
+     "quality": "rare",
+     "name": "Band of the Steadfast Hero"
+    },
+    {
+     "itemID": 22332,
+     "quality": "rare",
+     "name": "Blade of Necromancy"
+    },
+    {
+     "itemID": 22333,
+     "quality": "rare",
+     "name": "Hammer of Divine Might"
+    },
+    {
+     "itemID": 22303,
+     "quality": "rare",
+     "name": "Ironweave Pants"
+    }
+   ],
+   "summoned": true
+  },
+  {
+   "name": "Instructor Malicia",
+   "npcID": 10505,
+   "level": 60,
+   "wing": "Barov vault",
+   "mechanics": [
+    {
+     "spellID": 17843,
+     "spell": "Flash Heal",
+     "type": "interrupt",
+     "en": "Heals herself; interrupt her heals",
+     "de": "Heilt sich selbst; Heilungen unterbrechen"
+    },
+    {
+     "spellID": 13747,
+     "spell": "Slow",
+     "type": "dispel",
+     "en": "Slow cuts attack and move speed; dispel it",
+     "de": "Verlangsamung senkt Angriffs- und Lauftempo; bannen"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 18680,
+     "quality": "rare",
+     "name": "Ancient Bone Bow"
+    },
+    {
+     "itemID": 18681,
+     "quality": "rare",
+     "name": "Burial Shawl"
+    },
+    {
+     "itemID": 18684,
+     "quality": "rare",
+     "name": "Dimly Opalescent Ring"
+    },
+    {
+     "itemID": 18682,
+     "quality": "rare",
+     "name": "Ghoul Skin Leggings"
+    },
+    {
+     "itemID": 18683,
+     "quality": "rare",
+     "name": "Hammer of the Vesper"
+    },
+    {
+     "itemID": 23201,
+     "quality": "rare",
+     "name": "Libram of Divinity"
+    },
+    {
+     "itemID": 23200,
+     "quality": "rare",
+     "name": "Totem of Sustaining"
+    },
+    {
+     "itemID": 14614,
+     "quality": "rare",
+     "name": "Bloodmail Belt"
+    },
+    {
+     "itemID": 14616,
+     "quality": "rare",
+     "name": "Bloodmail Boots"
+    },
+    {
+     "itemID": 14615,
+     "quality": "rare",
+     "name": "Bloodmail Gauntlets"
+    },
+    {
+     "itemID": 14611,
+     "quality": "rare",
+     "name": "Bloodmail Hauberk"
+    },
+    {
+     "itemID": 14612,
+     "quality": "rare",
+     "name": "Bloodmail Legguards"
+    },
+    {
+     "itemID": 14637,
+     "quality": "rare",
+     "name": "Cadaverous Armor"
+    },
+    {
+     "itemID": 14636,
+     "quality": "rare",
+     "name": "Cadaverous Belt"
+    },
+    {
+     "itemID": 14640,
+     "quality": "rare",
+     "name": "Cadaverous Gloves"
+    },
+    {
+     "itemID": 14638,
+     "quality": "rare",
+     "name": "Cadaverous Leggings"
+    },
+    {
+     "itemID": 14641,
+     "quality": "rare",
+     "name": "Cadaverous Walkers"
+    },
+    {
+     "itemID": 14624,
+     "quality": "rare",
+     "name": "Deathbone Chestplate"
+    },
+    {
+     "itemID": 14622,
+     "quality": "rare",
+     "name": "Deathbone Gauntlets"
+    },
+    {
+     "itemID": 14620,
+     "quality": "rare",
+     "name": "Deathbone Girdle"
+    },
+    {
+     "itemID": 14623,
+     "quality": "rare",
+     "name": "Deathbone Legguards"
+    },
+    {
+     "itemID": 14621,
+     "quality": "rare",
+     "name": "Deathbone Sabatons"
+    },
+    {
+     "itemID": 14631,
+     "quality": "rare",
+     "name": "Necropile Boots"
+    },
+    {
+     "itemID": 14629,
+     "quality": "rare",
+     "name": "Necropile Cuffs"
+    },
+    {
+     "itemID": 14632,
+     "quality": "rare",
+     "name": "Necropile Leggings"
+    },
+    {
+     "itemID": 14633,
+     "quality": "rare",
+     "name": "Necropile Mantle"
+    },
+    {
+     "itemID": 14626,
+     "quality": "rare",
+     "name": "Necropile Robe"
+    },
+    {
+     "itemID": 16710,
+     "quality": "rare",
+     "name": "Shadowcraft Bracers"
+    }
+   ]
+  },
+  {
+   "name": "Doctor Theolen Krastinov",
+   "npcID": 11261,
+   "level": 60,
+   "wing": "Barov vault",
+   "mechanics": [
+    {
+     "spellID": 8269,
+     "spell": "Enrage",
+     "type": "tank",
+     "en": "Enrages at 50 percent; burn fast, tank uses cooldowns",
+     "de": "Raserei bei 50 Prozent; schnell töten, Tank nutzt Cooldowns"
+    },
+    {
+     "spellID": 16509,
+     "spell": "Rend",
+     "type": "survive",
+     "en": "Bleed on the tank; low-armor players keep away",
+     "de": "Blutung auf dem Tank; Spieler mit wenig Rüstung Abstand halten"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 18680,
+     "quality": "rare",
+     "name": "Ancient Bone Bow"
+    },
+    {
+     "itemID": 18681,
+     "quality": "rare",
+     "name": "Burial Shawl"
+    },
+    {
+     "itemID": 18684,
+     "quality": "rare",
+     "name": "Dimly Opalescent Ring"
+    },
+    {
+     "itemID": 18682,
+     "quality": "rare",
+     "name": "Ghoul Skin Leggings"
+    },
+    {
+     "itemID": 18683,
+     "quality": "rare",
+     "name": "Hammer of the Vesper"
+    },
+    {
+     "itemID": 23201,
+     "quality": "rare",
+     "name": "Libram of Divinity"
+    },
+    {
+     "itemID": 23200,
+     "quality": "rare",
+     "name": "Totem of Sustaining"
+    },
+    {
+     "itemID": 14614,
+     "quality": "rare",
+     "name": "Bloodmail Belt"
+    },
+    {
+     "itemID": 14616,
+     "quality": "rare",
+     "name": "Bloodmail Boots"
+    },
+    {
+     "itemID": 14615,
+     "quality": "rare",
+     "name": "Bloodmail Gauntlets"
+    },
+    {
+     "itemID": 14611,
+     "quality": "rare",
+     "name": "Bloodmail Hauberk"
+    },
+    {
+     "itemID": 14612,
+     "quality": "rare",
+     "name": "Bloodmail Legguards"
+    },
+    {
+     "itemID": 14637,
+     "quality": "rare",
+     "name": "Cadaverous Armor"
+    },
+    {
+     "itemID": 14636,
+     "quality": "rare",
+     "name": "Cadaverous Belt"
+    },
+    {
+     "itemID": 14640,
+     "quality": "rare",
+     "name": "Cadaverous Gloves"
+    },
+    {
+     "itemID": 14638,
+     "quality": "rare",
+     "name": "Cadaverous Leggings"
+    },
+    {
+     "itemID": 14641,
+     "quality": "rare",
+     "name": "Cadaverous Walkers"
+    },
+    {
+     "itemID": 14624,
+     "quality": "rare",
+     "name": "Deathbone Chestplate"
+    },
+    {
+     "itemID": 14622,
+     "quality": "rare",
+     "name": "Deathbone Gauntlets"
+    },
+    {
+     "itemID": 14620,
+     "quality": "rare",
+     "name": "Deathbone Girdle"
+    },
+    {
+     "itemID": 14623,
+     "quality": "rare",
+     "name": "Deathbone Legguards"
+    },
+    {
+     "itemID": 14621,
+     "quality": "rare",
+     "name": "Deathbone Sabatons"
+    },
+    {
+     "itemID": 14631,
+     "quality": "rare",
+     "name": "Necropile Boots"
+    },
+    {
+     "itemID": 14629,
+     "quality": "rare",
+     "name": "Necropile Cuffs"
+    },
+    {
+     "itemID": 14632,
+     "quality": "rare",
+     "name": "Necropile Leggings"
+    },
+    {
+     "itemID": 14633,
+     "quality": "rare",
+     "name": "Necropile Mantle"
+    },
+    {
+     "itemID": 14626,
+     "quality": "rare",
+     "name": "Necropile Robe"
+    },
+    {
+     "itemID": 16684,
+     "quality": "rare",
+     "name": "Magister's Gloves"
+    }
+   ]
+  },
+  {
+   "name": "Lorekeeper Polkelt",
+   "npcID": 10901,
+   "level": 60,
+   "wing": "Barov vault",
+   "mechanics": [
+    {
+     "spellID": 18149,
+     "spell": "Volatile Infection",
+     "type": "positioning",
+     "en": "Infected player hurts nearby allies; move away",
+     "de": "Infizierter schadet Verbündeten in der Nähe; weggehen"
+    },
+    {
+     "spellID": 8245,
+     "spell": "Corrosive Acid",
+     "type": "tank",
+     "en": "Acid lowers armor; zombie adds explode on death",
+     "de": "Säure senkt Rüstung; Zombie-Adds explodieren beim Tod"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 18680,
+     "quality": "rare",
+     "name": "Ancient Bone Bow"
+    },
+    {
+     "itemID": 18681,
+     "quality": "rare",
+     "name": "Burial Shawl"
+    },
+    {
+     "itemID": 18684,
+     "quality": "rare",
+     "name": "Dimly Opalescent Ring"
+    },
+    {
+     "itemID": 18682,
+     "quality": "rare",
+     "name": "Ghoul Skin Leggings"
+    },
+    {
+     "itemID": 18683,
+     "quality": "rare",
+     "name": "Hammer of the Vesper"
+    },
+    {
+     "itemID": 23201,
+     "quality": "rare",
+     "name": "Libram of Divinity"
+    },
+    {
+     "itemID": 23200,
+     "quality": "rare",
+     "name": "Totem of Sustaining"
+    },
+    {
+     "itemID": 14614,
+     "quality": "rare",
+     "name": "Bloodmail Belt"
+    },
+    {
+     "itemID": 14616,
+     "quality": "rare",
+     "name": "Bloodmail Boots"
+    },
+    {
+     "itemID": 14615,
+     "quality": "rare",
+     "name": "Bloodmail Gauntlets"
+    },
+    {
+     "itemID": 14611,
+     "quality": "rare",
+     "name": "Bloodmail Hauberk"
+    },
+    {
+     "itemID": 14612,
+     "quality": "rare",
+     "name": "Bloodmail Legguards"
+    },
+    {
+     "itemID": 14637,
+     "quality": "rare",
+     "name": "Cadaverous Armor"
+    },
+    {
+     "itemID": 14636,
+     "quality": "rare",
+     "name": "Cadaverous Belt"
+    },
+    {
+     "itemID": 14640,
+     "quality": "rare",
+     "name": "Cadaverous Gloves"
+    },
+    {
+     "itemID": 14638,
+     "quality": "rare",
+     "name": "Cadaverous Leggings"
+    },
+    {
+     "itemID": 14641,
+     "quality": "rare",
+     "name": "Cadaverous Walkers"
+    },
+    {
+     "itemID": 14624,
+     "quality": "rare",
+     "name": "Deathbone Chestplate"
+    },
+    {
+     "itemID": 14622,
+     "quality": "rare",
+     "name": "Deathbone Gauntlets"
+    },
+    {
+     "itemID": 14620,
+     "quality": "rare",
+     "name": "Deathbone Girdle"
+    },
+    {
+     "itemID": 14623,
+     "quality": "rare",
+     "name": "Deathbone Legguards"
+    },
+    {
+     "itemID": 14621,
+     "quality": "rare",
+     "name": "Deathbone Sabatons"
+    },
+    {
+     "itemID": 14631,
+     "quality": "rare",
+     "name": "Necropile Boots"
+    },
+    {
+     "itemID": 14629,
+     "quality": "rare",
+     "name": "Necropile Cuffs"
+    },
+    {
+     "itemID": 14632,
+     "quality": "rare",
+     "name": "Necropile Leggings"
+    },
+    {
+     "itemID": 14633,
+     "quality": "rare",
+     "name": "Necropile Mantle"
+    },
+    {
+     "itemID": 14626,
+     "quality": "rare",
+     "name": "Necropile Robe"
+    },
+    {
+     "itemID": 16705,
+     "quality": "rare",
+     "name": "Dreadmist Wraps"
+    }
+   ]
+  },
+  {
+   "name": "The Ravenian",
+   "npcID": 10507,
+   "level": 60,
+   "wing": "Barov vault",
+   "mechanics": [
+    {
+     "spellID": 18670,
+     "spell": "Knock Away",
+     "type": "positioning",
+     "en": "Knockback can throw players into uncleared trash",
+     "de": "Rückstoß kann Spieler in nicht geräumte Gegner werfen"
+    },
+    {
+     "spellID": 17963,
+     "spell": "Sundering Cleave",
+     "type": "positioning",
+     "en": "Frontal cleave; stand behind him",
+     "de": "Spaltangriff nach vorn; hinter ihm stehen"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 18680,
+     "quality": "rare",
+     "name": "Ancient Bone Bow"
+    },
+    {
+     "itemID": 18681,
+     "quality": "rare",
+     "name": "Burial Shawl"
+    },
+    {
+     "itemID": 18684,
+     "quality": "rare",
+     "name": "Dimly Opalescent Ring"
+    },
+    {
+     "itemID": 18682,
+     "quality": "rare",
+     "name": "Ghoul Skin Leggings"
+    },
+    {
+     "itemID": 18683,
+     "quality": "rare",
+     "name": "Hammer of the Vesper"
+    },
+    {
+     "itemID": 23201,
+     "quality": "rare",
+     "name": "Libram of Divinity"
+    },
+    {
+     "itemID": 23200,
+     "quality": "rare",
+     "name": "Totem of Sustaining"
+    },
+    {
+     "itemID": 14614,
+     "quality": "rare",
+     "name": "Bloodmail Belt"
+    },
+    {
+     "itemID": 14616,
+     "quality": "rare",
+     "name": "Bloodmail Boots"
+    },
+    {
+     "itemID": 14615,
+     "quality": "rare",
+     "name": "Bloodmail Gauntlets"
+    },
+    {
+     "itemID": 14611,
+     "quality": "rare",
+     "name": "Bloodmail Hauberk"
+    },
+    {
+     "itemID": 14612,
+     "quality": "rare",
+     "name": "Bloodmail Legguards"
+    },
+    {
+     "itemID": 14637,
+     "quality": "rare",
+     "name": "Cadaverous Armor"
+    },
+    {
+     "itemID": 14636,
+     "quality": "rare",
+     "name": "Cadaverous Belt"
+    },
+    {
+     "itemID": 14640,
+     "quality": "rare",
+     "name": "Cadaverous Gloves"
+    },
+    {
+     "itemID": 14638,
+     "quality": "rare",
+     "name": "Cadaverous Leggings"
+    },
+    {
+     "itemID": 14641,
+     "quality": "rare",
+     "name": "Cadaverous Walkers"
+    },
+    {
+     "itemID": 14624,
+     "quality": "rare",
+     "name": "Deathbone Chestplate"
+    },
+    {
+     "itemID": 14622,
+     "quality": "rare",
+     "name": "Deathbone Gauntlets"
+    },
+    {
+     "itemID": 14620,
+     "quality": "rare",
+     "name": "Deathbone Girdle"
+    },
+    {
+     "itemID": 14623,
+     "quality": "rare",
+     "name": "Deathbone Legguards"
+    },
+    {
+     "itemID": 14621,
+     "quality": "rare",
+     "name": "Deathbone Sabatons"
+    },
+    {
+     "itemID": 14631,
+     "quality": "rare",
+     "name": "Necropile Boots"
+    },
+    {
+     "itemID": 14629,
+     "quality": "rare",
+     "name": "Necropile Cuffs"
+    },
+    {
+     "itemID": 14632,
+     "quality": "rare",
+     "name": "Necropile Leggings"
+    },
+    {
+     "itemID": 14633,
+     "quality": "rare",
+     "name": "Necropile Mantle"
+    },
+    {
+     "itemID": 14626,
+     "quality": "rare",
+     "name": "Necropile Robe"
+    }
+   ]
+  },
+  {
+   "name": "Lord Alexei Barov",
+   "npcID": 10504,
+   "level": 60,
+   "wing": "Barov vault",
+   "mechanics": [
+    {
+     "spellID": 17467,
+     "spell": "Unholy Aura",
+     "type": "survive",
+     "en": "Group-wide shadow aura; healers need mana for it",
+     "de": "Schattenaura trifft die Gruppe; Heiler brauchen Mana"
+    },
+    {
+     "spellID": 17820,
+     "spell": "Veil of Shadow",
+     "type": "dispel",
+     "en": "Curse cuts healing taken; decurse it first",
+     "de": "Fluch senkt erhaltene Heilung; zuerst entfluchen"
+    },
+    {
+     "spellID": 0,
+     "spell": "Linked adds",
+     "type": "adds",
+     "en": "Two adds join; shackle one and kill Alexei first",
+     "de": "Zwei Adds kommen mit; eins fesseln, Alexei zuerst",
+     "unverified": true
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 18680,
+     "quality": "rare",
+     "name": "Ancient Bone Bow"
+    },
+    {
+     "itemID": 18681,
+     "quality": "rare",
+     "name": "Burial Shawl"
+    },
+    {
+     "itemID": 18684,
+     "quality": "rare",
+     "name": "Dimly Opalescent Ring"
+    },
+    {
+     "itemID": 18682,
+     "quality": "rare",
+     "name": "Ghoul Skin Leggings"
+    },
+    {
+     "itemID": 18683,
+     "quality": "rare",
+     "name": "Hammer of the Vesper"
+    },
+    {
+     "itemID": 23201,
+     "quality": "rare",
+     "name": "Libram of Divinity"
+    },
+    {
+     "itemID": 23200,
+     "quality": "rare",
+     "name": "Totem of Sustaining"
+    },
+    {
+     "itemID": 14614,
+     "quality": "rare",
+     "name": "Bloodmail Belt"
+    },
+    {
+     "itemID": 14616,
+     "quality": "rare",
+     "name": "Bloodmail Boots"
+    },
+    {
+     "itemID": 14615,
+     "quality": "rare",
+     "name": "Bloodmail Gauntlets"
+    },
+    {
+     "itemID": 14611,
+     "quality": "rare",
+     "name": "Bloodmail Hauberk"
+    },
+    {
+     "itemID": 14612,
+     "quality": "rare",
+     "name": "Bloodmail Legguards"
+    },
+    {
+     "itemID": 14637,
+     "quality": "rare",
+     "name": "Cadaverous Armor"
+    },
+    {
+     "itemID": 14636,
+     "quality": "rare",
+     "name": "Cadaverous Belt"
+    },
+    {
+     "itemID": 14640,
+     "quality": "rare",
+     "name": "Cadaverous Gloves"
+    },
+    {
+     "itemID": 14638,
+     "quality": "rare",
+     "name": "Cadaverous Leggings"
+    },
+    {
+     "itemID": 14641,
+     "quality": "rare",
+     "name": "Cadaverous Walkers"
+    },
+    {
+     "itemID": 14624,
+     "quality": "rare",
+     "name": "Deathbone Chestplate"
+    },
+    {
+     "itemID": 14622,
+     "quality": "rare",
+     "name": "Deathbone Gauntlets"
+    },
+    {
+     "itemID": 14620,
+     "quality": "rare",
+     "name": "Deathbone Girdle"
+    },
+    {
+     "itemID": 14623,
+     "quality": "rare",
+     "name": "Deathbone Legguards"
+    },
+    {
+     "itemID": 14621,
+     "quality": "rare",
+     "name": "Deathbone Sabatons"
+    },
+    {
+     "itemID": 14631,
+     "quality": "rare",
+     "name": "Necropile Boots"
+    },
+    {
+     "itemID": 14629,
+     "quality": "rare",
+     "name": "Necropile Cuffs"
+    },
+    {
+     "itemID": 14632,
+     "quality": "rare",
+     "name": "Necropile Leggings"
+    },
+    {
+     "itemID": 14633,
+     "quality": "rare",
+     "name": "Necropile Mantle"
+    },
+    {
+     "itemID": 14626,
+     "quality": "rare",
+     "name": "Necropile Robe"
+    },
+    {
+     "itemID": 16722,
+     "quality": "rare",
+     "name": "Lightforge Bracers"
+    }
+   ]
+  },
+  {
+   "name": "Lady Illucia Barov",
+   "npcID": 10502,
+   "level": 60,
+   "wing": "Barov vault",
+   "mechanics": [
+    {
+     "spellID": 14515,
+     "spell": "Dominate Mind",
+     "type": "interrupt",
+     "en": "Mind control on a player; interrupt or crowd-control",
+     "de": "Gedankenkontrolle auf Spieler; unterbrechen oder kontrollieren"
+    },
+    {
+     "spellID": 12542,
+     "spell": "Fear",
+     "type": "survive",
+     "en": "Fears a player; shadow resistance helps",
+     "de": "Furcht auf einen Spieler; Schattenwiderstand hilft"
+    },
+    {
+     "spellID": 12528,
+     "spell": "Silence",
+     "type": "positioning",
+     "en": "AoE silence; casters spread out",
+     "de": "Flächenstille; Zauberer verteilen sich"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 18680,
+     "quality": "rare",
+     "name": "Ancient Bone Bow"
+    },
+    {
+     "itemID": 18681,
+     "quality": "rare",
+     "name": "Burial Shawl"
+    },
+    {
+     "itemID": 18684,
+     "quality": "rare",
+     "name": "Dimly Opalescent Ring"
+    },
+    {
+     "itemID": 18682,
+     "quality": "rare",
+     "name": "Ghoul Skin Leggings"
+    },
+    {
+     "itemID": 18683,
+     "quality": "rare",
+     "name": "Hammer of the Vesper"
+    },
+    {
+     "itemID": 23201,
+     "quality": "rare",
+     "name": "Libram of Divinity"
+    },
+    {
+     "itemID": 23200,
+     "quality": "rare",
+     "name": "Totem of Sustaining"
+    },
+    {
+     "itemID": 14614,
+     "quality": "rare",
+     "name": "Bloodmail Belt"
+    },
+    {
+     "itemID": 14616,
+     "quality": "rare",
+     "name": "Bloodmail Boots"
+    },
+    {
+     "itemID": 14615,
+     "quality": "rare",
+     "name": "Bloodmail Gauntlets"
+    },
+    {
+     "itemID": 14611,
+     "quality": "rare",
+     "name": "Bloodmail Hauberk"
+    },
+    {
+     "itemID": 14612,
+     "quality": "rare",
+     "name": "Bloodmail Legguards"
+    },
+    {
+     "itemID": 14637,
+     "quality": "rare",
+     "name": "Cadaverous Armor"
+    },
+    {
+     "itemID": 14636,
+     "quality": "rare",
+     "name": "Cadaverous Belt"
+    },
+    {
+     "itemID": 14640,
+     "quality": "rare",
+     "name": "Cadaverous Gloves"
+    },
+    {
+     "itemID": 14638,
+     "quality": "rare",
+     "name": "Cadaverous Leggings"
+    },
+    {
+     "itemID": 14641,
+     "quality": "rare",
+     "name": "Cadaverous Walkers"
+    },
+    {
+     "itemID": 14624,
+     "quality": "rare",
+     "name": "Deathbone Chestplate"
+    },
+    {
+     "itemID": 14622,
+     "quality": "rare",
+     "name": "Deathbone Gauntlets"
+    },
+    {
+     "itemID": 14620,
+     "quality": "rare",
+     "name": "Deathbone Girdle"
+    },
+    {
+     "itemID": 14623,
+     "quality": "rare",
+     "name": "Deathbone Legguards"
+    },
+    {
+     "itemID": 14621,
+     "quality": "rare",
+     "name": "Deathbone Sabatons"
+    },
+    {
+     "itemID": 14631,
+     "quality": "rare",
+     "name": "Necropile Boots"
+    },
+    {
+     "itemID": 14629,
+     "quality": "rare",
+     "name": "Necropile Cuffs"
+    },
+    {
+     "itemID": 14632,
+     "quality": "rare",
+     "name": "Necropile Leggings"
+    },
+    {
+     "itemID": 14633,
+     "quality": "rare",
+     "name": "Necropile Mantle"
+    },
+    {
+     "itemID": 14626,
+     "quality": "rare",
+     "name": "Necropile Robe"
+    }
+   ]
+  },
+  {
+   "name": "Darkmaster Gandling",
+   "npcID": 1853,
+   "level": 61,
+   "mechanics": [
+    {
+     "spellID": 17950,
+     "spell": "Shadow Portal",
+     "type": "adds",
+     "en": "Ports players into side rooms with adds; fight out",
+     "de": "Teleportiert Spieler in Nebenräume mit Adds; freikämpfen"
+    },
+    {
+     "spellID": 18702,
+     "spell": "Curse of the Darkmaster",
+     "type": "dispel",
+     "en": "Remove his curse",
+     "de": "Seinen Fluch entfernen"
+    },
+    {
+     "spellID": 12040,
+     "spell": "Shadow Shield",
+     "type": "tank",
+     "en": "Shields himself; melee keep threat, ranged on stairs",
+     "de": "Schirmt sich ab; Nahkämpfer halten Aggro, Fernkämpfer auf Treppe"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 19276,
+     "quality": "epic",
+     "name": "Ace of Portals"
+    },
+    {
+     "itemID": 16677,
+     "quality": "rare",
+     "name": "Beaststalker's Cap"
+    },
+    {
+     "itemID": 13938,
+     "quality": "rare",
+     "name": "Bonecreeper Stylus"
+    },
+    {
+     "itemID": 13398,
+     "quality": "rare",
+     "name": "Boots of the Shrieker"
+    },
+    {
+     "itemID": 16667,
+     "quality": "rare",
+     "name": "Coif of Elements"
+    },
+    {
+     "itemID": 13950,
+     "quality": "rare",
+     "name": "Detention Strap"
+    },
+    {
+     "itemID": 16693,
+     "quality": "rare",
+     "name": "Devout Crown"
+    },
+    {
+     "itemID": 22433,
+     "quality": "rare",
+     "name": "Don Mauricio's Band of Domination"
+    },
+    {
+     "itemID": 16698,
+     "quality": "rare",
+     "name": "Dreadmist Mask"
+    },
+    {
+     "itemID": 13937,
+     "quality": "epic",
+     "name": "Headmaster's Charge"
+    },
+    {
+     "itemID": 16731,
+     "quality": "rare",
+     "name": "Helm of Valor"
+    },
+    {
+     "itemID": 16727,
+     "quality": "rare",
+     "name": "Lightforge Helm"
+    },
+    {
+     "itemID": 16686,
+     "quality": "rare",
+     "name": "Magister's Crown"
+    },
+    {
+     "itemID": 16707,
+     "quality": "rare",
+     "name": "Shadowcraft Cap"
+    },
+    {
+     "itemID": 13953,
+     "quality": "rare",
+     "name": "Silent Fang"
+    },
+    {
+     "itemID": 13944,
+     "quality": "rare",
+     "name": "Tombstone Breastplate"
+    },
+    {
+     "itemID": 13951,
+     "quality": "rare",
+     "name": "Vigorsteel Vambraces"
+    },
+    {
+     "itemID": 16720,
+     "quality": "rare",
+     "name": "Wildheart Cowl"
+    },
+    {
+     "itemID": 13964,
+     "quality": "rare",
+     "name": "Witchblade"
+    },
+    {
+     "itemID": 14514,
+     "quality": "rare",
+     "name": "Pattern: Robe of the Void"
+    }
+   ]
+  }
+ ],
+ "trash": [
+  {
+   "name": "Scholomance Necromancer",
+   "npcID": 10477,
+   "elite": true,
+   "mechanics": [
+    {
+     "spellID": 17616,
+     "spell": "Corpse Explosion",
+     "type": "avoid",
+     "en": "Blows up corpses; move away from bodies",
+     "de": "Lässt Leichen explodieren; weg von Leichen"
+    },
+    {
+     "spellID": 14887,
+     "spell": "Shadow Bolt Volley",
+     "type": "interrupt",
+     "en": "Interrupt the shadow bolt volley",
+     "de": "Schattenblitzsalve unterbrechen"
+    }
+   ]
+  },
+  {
+   "name": "Scholomance Occultist",
+   "npcID": 10472,
+   "elite": true,
+   "mechanics": [
+    {
+     "spellID": 17228,
+     "spell": "Shadow Bolt Volley",
+     "type": "interrupt",
+     "en": "Interrupt volleys; turns into a shade immune to physical",
+     "de": "Salven unterbrechen; wird zum Schatten, immun gegen Physisch"
+    }
+   ]
+  },
+  {
+   "name": "Scholomance Dark Summoner",
+   "npcID": 11582,
+   "elite": true,
+   "mechanics": [
+    {
+     "spellID": 17618,
+     "spell": "Summon Risen Lackey",
+     "type": "interrupt",
+     "en": "Summons skeletons; interrupt and kill first",
+     "de": "Beschwört Skelette; unterbrechen und zuerst töten"
+    },
+    {
+     "spellID": 12279,
+     "spell": "Curse of Blood",
+     "type": "dispel",
+     "en": "Curse raises physical damage taken; decurse",
+     "de": "Fluch erhöht körperlichen Schaden; entfluchen"
+    }
+   ]
+  },
+  {
+   "name": "Scholomance Adept",
+   "npcID": 10469,
+   "elite": true,
+   "mechanics": [
+    {
+     "spellID": 15244,
+     "spell": "Cone of Cold",
+     "type": "positioning",
+     "en": "Frost cone slows; do not stand in front",
+     "de": "Kältekegel verlangsamt; nicht davor stehen"
+    }
+   ]
+  },
+  {
+   "name": "Spectral Tutor",
+   "npcID": 10498,
+   "elite": true,
+   "mechanics": [
+    {
+     "spellID": 17651,
+     "spell": "Image Projection",
+     "type": "adds",
+     "en": "Goes untouchable and spawns images that heal it; kill fast",
+     "de": "Wird unangreifbar, Abbilder heilen ihn; schnell töten"
+    },
+    {
+     "spellID": 17630,
+     "spell": "Mana Burn",
+     "type": "interrupt",
+     "en": "Burns mana; interrupt or keep casters away",
+     "de": "Verbrennt Mana; unterbrechen oder Zauberer fernhalten"
+    }
+   ]
+  },
+  {
+   "name": "Risen Aberration",
+   "npcID": 10485,
+   "elite": true,
+   "mechanics": [
+    {
+     "spellID": 12021,
+     "spell": "Fixate",
+     "type": "adds",
+     "en": "Fixates a player; only holy magic hurts them",
+     "de": "Fixiert einen Spieler; nur Heiligmagie schadet ihnen"
+    }
+   ]
+  },
+  {
+   "name": "Diseased Ghoul",
+   "npcID": 10495,
+   "elite": true,
+   "mechanics": [
+    {
+     "spellID": 3436,
+     "spell": "Wandering Plague",
+     "type": "dispel",
+     "en": "Spreading disease; cure it and stand apart",
+     "de": "Ansteckende Krankheit; heilen und Abstand halten"
+    },
+    {
+     "spellID": 17742,
+     "spell": "Cloud of Disease",
+     "type": "avoid",
+     "en": "Corpse leaves a disease cloud; step out",
+     "de": "Leiche hinterlässt Seuchenwolke; heraustreten"
+    }
+   ]
+  },
+  {
+   "name": "Necrofiend",
+   "npcID": 11551,
+   "elite": true,
+   "mechanics": [
+    {
+     "spellID": 15474,
+     "spell": "Web Explosion",
+     "type": "survive",
+     "en": "Roots everyone nearby; poison needs curing",
+     "de": "Wurzelt alle in der Nähe; Gift entgiften"
+    }
+   ]
+  },
+  {
+   "name": "Plagued Hatchling",
+   "npcID": 10678,
+   "elite": false,
+   "mechanics": [
+    {
+     "spellID": 17745,
+     "spell": "Diseased Spit",
+     "type": "adds",
+     "en": "Big swarm in the ossuary; use AoE",
+     "de": "Großer Schwarm im Beinhaus; Flächenschaden nutzen"
+    }
+   ]
+  }
+ ],
+ "rares": [],
+ "sources": [
+  "https://warcraft.wiki.gg/wiki/Scholomance_(original)",
+  "https://warcrafttavern.com/wow-classic/guides/scholomance",
+  "https://warcraft.wiki.gg/wiki/Ras_Frostwhisper",
+  "https://warcraft.wiki.gg/wiki/Kirtonos_the_Herald",
+  "https://warcraft.wiki.gg/wiki/Jandice_Barov_(Classic)",
+  "https://warcraft.wiki.gg/wiki/Rattlegore_(Classic)",
+  "https://warcraft.wiki.gg/wiki/Lord_Alexei_Barov",
+  "https://warcraft.wiki.gg/wiki/Doctor_Theolen_Krastinov_(Classic)",
+  "https://warcraft.wiki.gg/wiki/Instructor_Malicia_(Classic)",
+  "https://warcraft.wiki.gg/wiki/Lady_Illucia_Barov",
+  "https://warcraft.wiki.gg/wiki/Lorekeeper_Polkelt",
+  "https://warcraft.wiki.gg/wiki/The_Ravenian_(Classic)",
+  "https://warcraft.wiki.gg/wiki/Marduk_Blackpool",
+  "https://warcraft.wiki.gg/wiki/Vectus",
+  "https://warcraft.wiki.gg/wiki/Kormok",
+  "https://warcraft.wiki.gg/wiki/Death_Knight_Darkreaver",
+  "https://warcraft.wiki.gg/wiki/Blood_Steward_of_Kirtonos",
+  "https://warcraft.wiki.gg/wiki/Darkmaster_Gandling_(Classic)",
+  "https://warcraft.wiki.gg/wiki/Scholomance_Necromancer",
+  "https://warcraft.wiki.gg/wiki/Scholomance_Occultist",
+  "https://warcraft.wiki.gg/wiki/Scholomance_Dark_Summoner",
+  "https://warcraft.wiki.gg/wiki/Scholomance_Adept",
+  "https://warcraft.wiki.gg/wiki/Spectral_Tutor",
+  "https://warcraft.wiki.gg/wiki/Risen_Aberration",
+  "https://warcraft.wiki.gg/wiki/Diseased_Ghoul",
+  "https://warcraft.wiki.gg/wiki/Necrofiend_(Scholomance)",
+  "https://warcraft.wiki.gg/wiki/Plagued_Hatchling"
+ ]
+}

@@ -1,0 +1,319 @@
+{
+  "instance": "Dire Maul",
+  "instanceMapID": 429,
+  "kind": "dungeon",
+  "levels": [55, 60],
+  "bosses": [
+    {
+      "name": "Pusillin", "npcID": 14354, "level": 57, "wing": "East",
+      "mechanics": [
+        {"spellID": 17145, "spell": "Blast Wave", "type": "avoid", "en": "Fire nova around him slows; ranged stay out of melee range", "de": "Feuernova um ihn verlangsamt; Fernkämpfer nicht in Nahkampfreichweite"},
+        {"spellID": 22735, "spell": "Spirit of Runn Tum", "type": "survive", "en": "Grows and reflects spells at the end; melee and physical damage are safer", "de": "Wächst am Ende und reflektiert Zauber; Nahkampf und physischer Schaden sicherer"}
+      ],
+      "loot": []
+    },
+    {
+      "name": "Zevrim Thornhoof", "npcID": 11490, "level": 58, "wing": "East",
+      "mechanics": [
+        {"spellID": 22651, "spell": "Sacrifice", "type": "survive", "en": "Ports a player to the altar and drains health; heal them through it", "de": "Holt einen Spieler auf den Altar und saugt Leben ab; durchheilen"},
+        {"spellID": 22478, "spell": "Intense Pain", "type": "survive", "en": "Shadow damage over time on everyone within 20 yards", "de": "Schattenschaden über Zeit auf alle im Umkreis von 20 Metern"}
+      ],
+      "loot": [
+        {"itemID": 18313, "quality": "rare", "name": "Helm of Awareness"},
+        {"itemID": 18323, "quality": "rare", "name": "Satyr's Bow"},
+        {"itemID": 18319, "quality": "rare", "name": "Fervent Helm"}
+      ]
+    },
+    {
+      "name": "Hydrospawn", "npcID": 13280, "level": 57, "wing": "East",
+      "mechanics": [
+        {"spellID": 22419, "spell": "Riptide", "type": "positioning", "en": "Knockback with short disarm; keep your back to a wall, clear trash first", "de": "Rückstoß mit kurzer Entwaffnung; Rücken zur Wand, vorher Trash räumen"},
+        {"spellID": 22714, "spell": "Summon Hydroling", "type": "adds", "en": "Two Hydrolings at 50%; their hits knock back and wipe threat", "de": "Zwei Hydrolinge bei 50%; ihre Treffer stoßen zurück und löschen Bedrohung"}
+      ],
+      "loot": [
+        {"itemID": 18322, "quality": "rare", "name": "Waterspout Boots"},
+        {"itemID": 18317, "quality": "rare", "name": "Tempest Talisman"},
+        {"itemID": 18324, "quality": "rare", "name": "Waveslicer"}
+      ]
+    },
+    {
+      "name": "Lethtendris", "npcID": 14327, "level": 57, "wing": "East",
+      "mechanics": [
+        {"spellID": 22709, "spell": "Void Bolt", "type": "interrupt", "en": "Heavy shadow bolt on one target; interrupt it", "de": "Starker Schattenblitz auf ein Ziel; unterbrechen"},
+        {"spellID": 13338, "spell": "Curse of Tongues", "type": "dispel", "en": "Curse halves casting speed; decurse casters and healers", "de": "Fluch halbiert Zaubertempo; bei Zauberern und Heilern entfluchen"},
+        {"spellID": 22710, "spell": "Enlarge", "type": "adds", "en": "Buffs her imp Pimgib; kill the frail imp first", "de": "Stärkt ihren Wichtel Pimgib; den schwachen Wichtel zuerst töten"}
+      ],
+      "loot": [
+        {"itemID": 18325, "quality": "rare", "name": "Felhide Cap"},
+        {"itemID": 18311, "quality": "rare", "name": "Quel'dorai Channeling Rod"}
+      ]
+    },
+    {
+      "name": "Alzzin the Wildshaper", "npcID": 11492, "level": 58, "wing": "East",
+      "mechanics": [
+        {"spellID": 22662, "spell": "Wither", "type": "dispel", "en": "Nature damage over time that lowers strength", "de": "Naturschaden über Zeit, senkt Stärke"},
+        {"spellID": 22689, "spell": "Mangle", "type": "tank", "en": "Wolf form: bleed-like damage and 50% slow on the tank", "de": "Wolfsform: Schaden über Zeit und 50% Verlangsamung am Tank"},
+        {"spellID": 0, "spell": "Come Minions!", "type": "adds", "unverified": true, "en": "Midway the wall breaks and imps swarm in; AoE them down", "de": "Mitten im Kampf bricht die Wand, Wichtel strömen herein; flächig töten"}
+      ],
+      "loot": [
+        {"itemID": 18314, "quality": "rare", "name": "Ring of Demonic Guile"},
+        {"itemID": 18327, "quality": "rare", "name": "Whipvine Cord"},
+        {"itemID": 18310, "quality": "rare", "name": "Fiendish Machete"},
+        {"itemID": 18326, "quality": "rare", "name": "Razor Gauntlets"},
+        {"itemID": 18312, "quality": "rare", "name": "Energized Chestplate"},
+        {"itemID": 18321, "quality": "rare", "name": "Energetic Rod"},
+        {"itemID": 18318, "quality": "rare", "name": "Merciful Greaves"},
+        {"itemID": 18315, "quality": "rare", "name": "Ring of Demonic Potency"},
+        {"itemID": 18328, "quality": "rare", "name": "Shadewood Cloak"},
+        {"itemID": 18309, "quality": "rare", "name": "Gloves of Restoration"}
+      ]
+    },
+    {
+      "name": "Tendris Warpwood", "npcID": 11489, "level": 60, "wing": "West",
+      "mechanics": [
+        {"spellID": 0, "spell": "Intruder Alert", "type": "adds", "unverified": true, "en": "Calls living Ironbark Protectors; kill them before the pull", "de": "Ruft lebende Eisenborkenbeschützer; diese vor dem Pull töten"},
+        {"spellID": 0, "spell": "Grasping Vines", "type": "avoid", "unverified": true, "en": "Knocks down and roots nearby players for 10 sec", "de": "Wirft Spieler in der Nähe um und wurzelt sie 10 Sek. fest"},
+        {"spellID": 0, "spell": "Entangle", "type": "dispel", "unverified": true, "en": "Roots one target with nature damage over time", "de": "Wurzelt ein Ziel fest, Naturschaden über Zeit"}
+      ],
+      "loot": [
+        {"itemID": 18393, "quality": "rare", "name": "Warpwood Binding"},
+        {"itemID": 18390, "quality": "rare", "name": "Tanglemoss Leggings"}
+      ]
+    },
+    {
+      "name": "Illyanna Ravenoak", "npcID": 11488, "level": 60, "wing": "West",
+      "mechanics": [
+        {"spellID": 0, "spell": "Volley", "type": "avoid", "unverified": true, "en": "Arcane rain over an area for 6 sec; move out", "de": "Arkaner Regen auf eine Fläche für 6 Sek.; herausgehen"},
+        {"spellID": 0, "spell": "Immolation Trap", "type": "avoid", "unverified": true, "en": "Lays fire traps; do not walk over them", "de": "Legt Feuerfallen; nicht darüberlaufen"},
+        {"spellID": 0, "spell": "Charge", "type": "adds", "unverified": true, "en": "Her bear Ferra charges and stuns; tank it separately", "de": "Ihr Bär Ferra stürmt und betäubt; separat tanken"}
+      ],
+      "loot": [
+        {"itemID": 18383, "quality": "rare", "name": "Force Imbued Gauntlets"},
+        {"itemID": 18386, "quality": "rare", "name": "Padre's Trousers"}
+      ]
+    },
+    {
+      "name": "Magister Kalendris", "npcID": 11487, "level": 60, "wing": "West",
+      "mechanics": [
+        {"spellID": 0, "spell": "Dominate Mind", "type": "survive", "unverified": true, "en": "Mind-controls a player for 10 sec; crowd control them", "de": "Übernimmt 10 Sek. einen Spieler; diesen kontrollieren"},
+        {"spellID": 0, "spell": "Shadow Word: Pain", "type": "dispel", "unverified": true, "en": "Shadow damage over time on a player; dispel magic", "de": "Schattenschaden über Zeit auf einem Spieler; Magie bannen"},
+        {"spellID": 0, "spell": "Shadowform", "type": "survive", "unverified": true, "en": "At 50% his shadow damage rises 40%; burn him fast", "de": "Ab 50% steigt sein Schattenschaden um 40%; schnell töten"}
+      ],
+      "loot": [
+        {"itemID": 18374, "quality": "rare", "name": "Flamescarred Shoulders"},
+        {"itemID": 18397, "quality": "rare", "name": "Elder Magus Pendant"},
+        {"itemID": 18371, "quality": "rare", "name": "Mindtap Talisman"}
+      ]
+    },
+    {
+      "name": "Immol'thar", "npcID": 11496, "level": 61, "wing": "West",
+      "mechanics": [
+        {"spellID": 22950, "spell": "Portal of Immol'thar", "type": "tank", "en": "Teleports a random player and drops threat; keep him taunted", "de": "Teleportiert zufälligen Spieler; Bedrohung halten, ggf. spotten"},
+        {"spellID": 16128, "spell": "Infected Bite", "type": "tank", "en": "Nature damage over time and more physical damage taken", "de": "Naturschaden über Zeit, erhöht erlittenen physischen Schaden"},
+        {"spellID": 0, "spell": "Eye of Immol'thar", "type": "adds", "unverified": true, "en": "Eyes spawn and slow a player's actions; kill them quickly", "de": "Augen erscheinen und verlangsamen einen Spieler; schnell töten"}
+      ],
+      "loot": [
+        {"itemID": 18372, "quality": "rare", "name": "Blade of the New Moon"},
+        {"itemID": 18370, "quality": "rare", "name": "Vigilance Charm"},
+        {"itemID": 18394, "quality": "rare", "name": "Demon Howl Wristguards"},
+        {"itemID": 18389, "quality": "rare", "name": "Cloak of the Cosmos"},
+        {"itemID": 18385, "quality": "rare", "name": "Robe of Everlasting Night"},
+        {"itemID": 18384, "quality": "rare", "name": "Bile-etched Spaulders"},
+        {"itemID": 18381, "quality": "rare", "name": "Evil Eye Pendant"},
+        {"itemID": 18379, "quality": "rare", "name": "Odious Greaves"},
+        {"itemID": 18391, "quality": "rare", "name": "Eyestalk Cord"},
+        {"itemID": 18377, "quality": "rare", "name": "Quickdraw Gloves"}
+      ]
+    },
+    {
+      "name": "Prince Tortheldrin", "npcID": 11486, "level": 61, "wing": "West",
+      "mechanics": [
+        {"spellID": 0, "spell": "Whirlwind", "type": "avoid", "unverified": true, "en": "Spins hitting everyone within 8 yards; melee step back", "de": "Wirbelt, trifft alle im Umkreis von 8 Metern; Nahkämpfer zurück"},
+        {"spellID": 0, "spell": "Counterspell", "type": "survive", "unverified": true, "en": "Locks out a caster for 15 sec; spread healer duty", "de": "Sperrt einen Zauberer 15 Sek.; Heilung aufteilen"},
+        {"spellID": 0, "spell": "Arcane Blast", "type": "positioning", "unverified": true, "en": "Arcane hit with knockback; tank with back to a wall", "de": "Arkantreffer mit Rückstoß; Tank mit Rücken zur Wand"}
+      ],
+      "loot": [
+        {"itemID": 18378, "quality": "rare", "name": "Silvermoon Leggings"},
+        {"itemID": 18382, "quality": "rare", "name": "Fluctuating Cloak"},
+        {"itemID": 18380, "quality": "rare", "name": "Eldritch Reinforced Legplates"},
+        {"itemID": 18376, "quality": "rare", "name": "Timeworn Mace"},
+        {"itemID": 18395, "quality": "rare", "name": "Emerald Flame Ring"},
+        {"itemID": 18375, "quality": "rare", "name": "Bracers of the Eclipse"},
+        {"itemID": 18396, "quality": "rare", "name": "Mind Carver"},
+        {"itemID": 18392, "quality": "rare", "name": "Distracting Dagger"},
+        {"itemID": 18388, "quality": "rare", "name": "Stoneshatter"},
+        {"itemID": 18373, "quality": "rare", "name": "Chestplate of Tranquility"}
+      ]
+    },
+    {
+      "name": "Guard Mol'dar", "npcID": 14326, "level": 0, "wing": "North",
+      "mechanics": [
+        {"spellID": 11972, "spell": "Shield Bash", "type": "survive", "en": "Interrupts casters in melee range for 3 sec", "de": "Unterbricht Zauberer im Nahkampf für 3 Sek."},
+        {"spellID": 0, "spell": "Intruder Alert!", "type": "adds", "unverified": true, "en": "At 50% frenzies and calls nearby dogs; clear them first", "de": "Bei 50% Raserei, ruft Hunde in der Nähe; diese vorher räumen"}
+      ],
+      "loot": [
+        {"itemID": 18498, "quality": "rare", "name": "Hedgecutter"},
+        {"itemID": 18494, "quality": "rare", "name": "Denwatcher's Shoulders"},
+        {"itemID": 18496, "quality": "rare", "name": "Heliotrope Cloak"},
+        {"itemID": 18497, "quality": "rare", "name": "Sublime Wristguards"},
+        {"itemID": 18493, "quality": "rare", "name": "Bulky Iron Spaulders"}
+      ]
+    },
+    {
+      "name": "Stomper Kreeg", "npcID": 14322, "level": 59, "wing": "North",
+      "mechanics": [
+        {"spellID": 0, "spell": "Booze Spit", "type": "positioning", "unverified": true, "en": "Frontal cone cuts hit chance by 75%; only the tank in front", "de": "Kegel nach vorn senkt Trefferchance um 75%; nur Tank vorne"},
+        {"spellID": 0, "spell": "Whirlwind", "type": "avoid", "unverified": true, "en": "Spins hitting all within 8 yards", "de": "Wirbelt, trifft alle im Umkreis von 8 Metern"},
+        {"spellID": 0, "spell": "Drunken Rage", "type": "tank", "unverified": true, "en": "From 50% his threat resets on each hit; he roams", "de": "Ab 50% setzt jeder Treffer die Bedrohung zurück; er wandert"}
+      ],
+      "loot": []
+    },
+    {
+      "name": "Guard Fengus", "npcID": 14321, "level": 0, "wing": "North",
+      "mechanics": [
+        {"spellID": 0, "spell": "Shield Charge", "type": "positioning", "unverified": true, "en": "Random charge with knockback into other packs", "de": "Zufälliger Ansturm mit Rückstoß in andere Gruppen"},
+        {"spellID": 0, "spell": "Intruder Alert!", "type": "adds", "unverified": true, "en": "Frenzies and calls help at 50%", "de": "Raserei und Hilferuf bei 50%"}
+      ],
+      "loot": []
+    },
+    {
+      "name": "Guard Slip'kik", "npcID": 14323, "level": 0, "wing": "North",
+      "mechanics": [
+        {"spellID": 0, "spell": "Shield Charge", "type": "positioning", "unverified": true, "en": "Charge with knockback; skip him with frost oil in the trap", "de": "Ansturm mit Rückstoß; mit Frostöl in der Falle umgehbar"},
+        {"spellID": 8269, "spell": "Frenzy", "type": "tank", "en": "At 50% attacks 60% faster and calls help", "de": "Bei 50% 60% schnellere Angriffe und Hilferuf"}
+      ],
+      "loot": [
+        {"itemID": 18498, "quality": "rare", "name": "Hedgecutter"},
+        {"itemID": 18494, "quality": "rare", "name": "Denwatcher's Shoulders"},
+        {"itemID": 18496, "quality": "rare", "name": "Heliotrope Cloak"},
+        {"itemID": 18497, "quality": "rare", "name": "Sublime Wristguards"},
+        {"itemID": 18493, "quality": "rare", "name": "Bulky Iron Spaulders"}
+      ]
+    },
+    {
+      "name": "Captain Kromcrush", "npcID": 14325, "level": 61, "wing": "North",
+      "mechanics": [
+        {"spellID": 0, "spell": "Frightening Shout", "type": "survive", "unverified": true, "en": "Fears nearby players for 6 sec", "de": "Lässt Spieler in der Nähe 6 Sek. fliehen"},
+        {"spellID": 0, "spell": "Intruder Alert!", "type": "adds", "unverified": true, "en": "Summons two Gordok Reavers; crowd control or kill fast", "de": "Ruft zwei Gordok-Häscher; kontrollieren oder schnell töten"},
+        {"spellID": 0, "spell": "Retaliation", "type": "tank", "unverified": true, "en": "At 25% strikes back at melee for 8 sec; melee pause", "de": "Ab 25% 8 Sek. Vergeltung gegen Nahkampf; Nahkämpfer pausieren"}
+      ],
+      "loot": [
+        {"itemID": 18502, "quality": "rare", "name": "Monstrous Glaive"},
+        {"itemID": 18503, "quality": "rare", "name": "Kromcrush's Chestplate"},
+        {"itemID": 18507, "quality": "rare", "name": "Boots of the Full Moon"},
+        {"itemID": 18505, "quality": "rare", "name": "Mugger's Belt"}
+      ]
+    },
+    {
+      "name": "Cho'Rush the Observer", "npcID": 14324, "level": 0, "wing": "North",
+      "mechanics": [
+        {"spellID": 0, "spell": "Heal", "type": "interrupt", "unverified": true, "en": "Heals himself and King Gordok; interrupt and kill him first", "de": "Heilt sich und König Gordok; unterbrechen, zuerst töten"},
+        {"spellID": 0, "spell": "Psychic Scream", "type": "survive", "unverified": true, "en": "Fears players within 8 yards", "de": "Furcht auf Spieler im Umkreis von 8 Metern"}
+      ],
+      "loot": [
+        {"itemID": 18485, "quality": "rare", "name": "Observer's Shield"},
+        {"itemID": 18490, "quality": "rare", "name": "Insightful Hood"},
+        {"itemID": 18484, "quality": "rare", "name": "Cho'Rush's Blade"},
+        {"itemID": 18483, "quality": "rare", "name": "Mana Channeling Wand"}
+      ]
+    },
+    {
+      "name": "King Gordok", "npcID": 11501, "level": 62, "wing": "North",
+      "mechanics": [
+        {"spellID": 22886, "spell": "Berserk Charge", "type": "survive", "en": "Charges a random player and tosses them up", "de": "Stürmt auf zufälligen Spieler und schleudert ihn hoch"},
+        {"spellID": 16856, "spell": "Mortal Strike", "type": "tank", "en": "Big hit that halves healing on the tank", "de": "Starker Schlag, halbiert Heilung am Tank"},
+        {"spellID": 16727, "spell": "War Stomp", "type": "avoid", "en": "Stuns all within 5 yards for 4 sec", "de": "Betäubt alle im Umkreis von 5 Metern für 4 Sek."}
+      ],
+      "loot": [
+        {"itemID": 18526, "quality": "rare", "name": "Crown of the Ogre King"},
+        {"itemID": 18523, "quality": "rare", "name": "Brightly Glowing Stone"},
+        {"itemID": 18520, "quality": "rare", "name": "Barbarous Blade"},
+        {"itemID": 18524, "quality": "rare", "name": "Leggings of Destruction"},
+        {"itemID": 18527, "quality": "rare", "name": "Harmonious Gauntlets"},
+        {"itemID": 18521, "quality": "rare", "name": "Grimy Metal Boots"},
+        {"itemID": 18525, "quality": "rare", "name": "Bracers of Prosperity"},
+        {"itemID": 18522, "quality": "rare", "name": "Band of the Ogre King"},
+        {"itemID": 18780, "quality": "rare", "name": "Top Half of Advanced Armorsmithing: Volume I"},
+        {"itemID": 19258, "quality": "rare", "name": "Ace of Warlords"}
+      ]
+    }
+  ],
+  "trash": [
+    {"name": "Wildspawn Hellcaller", "npcID": 11457, "elite": true, "mechanics": [
+      {"spellID": 31598, "spell": "Rain of Fire", "type": "avoid", "en": "Fire rain on an area; leave it", "de": "Feuerregen auf einer Fläche; verlassen"}
+    ]},
+    {"name": "Wildspawn Shadowstalker", "npcID": 11456, "elite": true, "mechanics": [
+      {"spellID": 22766, "spell": "Sneak", "type": "positioning", "en": "Stealthed satyr ambushes; watch for hidden packs", "de": "Getarnter Satyr greift aus dem Hinterhalt an; auf Verstecktes achten"},
+      {"spellID": 7992, "spell": "Slowing Poison", "type": "dispel", "en": "Poison slows attacks and movement", "de": "Gift verlangsamt Angriffe und Bewegung"}
+    ]},
+    {"name": "Warpwood Tangler", "npcID": 11464, "elite": true, "mechanics": [
+      {"spellID": 22415, "spell": "Entangling Roots", "type": "dispel", "en": "Roots a target with nature damage", "de": "Wurzelt ein Ziel fest, Naturschaden"}
+    ]},
+    {"name": "Ironbark Protector", "npcID": 11459, "elite": true, "mechanics": [
+      {"spellID": 0, "spell": "Knock Away", "type": "tank", "unverified": true, "en": "Knockback that halves threat; joins Tendris if alive", "de": "Rückstoß halbiert Bedrohung; hilft Tendris, falls lebendig"}
+    ]},
+    {"name": "Arcane Aberration", "npcID": 11480, "elite": true, "mechanics": [
+      {"spellID": 51725, "spell": "Arcane Explosion", "type": "avoid", "en": "Arcane burst around it; casters keep distance", "de": "Arkanexplosion um sich; Zauberer Abstand halten"}
+    ]},
+    {"name": "Eldreth Sorcerer", "npcID": 11470, "elite": true, "mechanics": [
+      {"spellID": 0, "spell": "Polymorph", "type": "dispel", "unverified": true, "en": "Turns a player into a sheep; dispel it", "de": "Verwandelt einen Spieler in ein Schaf; bannen"},
+      {"spellID": 0, "spell": "Chain Lightning", "type": "interrupt", "unverified": true, "en": "Lightning jumps between up to 3 players", "de": "Blitz springt auf bis zu 3 Spieler"}
+    ]},
+    {"name": "Highborne Summoner", "npcID": 11466, "elite": true, "mechanics": [
+      {"spellID": 15063, "spell": "Frost Nova", "type": "positioning", "en": "Roots nearby players for up to 8 sec", "de": "Wurzelt Spieler in der Nähe bis zu 8 Sek. fest"}
+    ]},
+    {"name": "Gordok Mage-Lord", "npcID": 11444, "elite": true, "mechanics": [
+      {"spellID": 13323, "spell": "Polymorph", "type": "dispel", "en": "Sheeps a player; dispel it", "de": "Verwandelt einen Spieler in ein Schaf; bannen"},
+      {"spellID": 18399, "spell": "Flamestrike", "type": "avoid", "en": "Fire pillar burns an area over time", "de": "Flammensäule brennt eine Fläche über Zeit"},
+      {"spellID": 16170, "spell": "Bloodlust", "type": "dispel", "en": "Speeds an ally's attacks by 60%; purge it", "de": "Beschleunigt Angriffe eines Verbündeten um 60%; reinigen"}
+    ]},
+    {"name": "Gordok Warlock", "npcID": 11448, "elite": true, "mechanics": [
+      {"spellID": 22865, "spell": "Summon Doomguard", "type": "adds", "en": "Summons a Doomguard pet; kill or banish it", "de": "Beschwört eine Verdammniswache; töten oder verbannen"},
+      {"spellID": 13338, "spell": "Curse of Tongues", "type": "dispel", "en": "Curse halves casting speed", "de": "Fluch halbiert Zaubertempo"}
+    ]},
+    {"name": "Wandering Eye of Kilrogg", "npcID": 14386, "elite": false, "mechanics": [
+      {"spellID": 22876, "spell": "Summon Netherwalker", "type": "adds", "en": "Spots intruders and summons Netherwalkers; avoid or kill fast", "de": "Entdeckt Eindringlinge, ruft Netherwandler; meiden oder schnell töten"}
+    ]}
+  ],
+  "rares": [
+    {"name": "Tsu'zee", "npcID": 11467}
+  ],
+  "sources": [
+    "https://warcraft.wiki.gg/wiki/Dire_Maul_East",
+    "https://warcraft.wiki.gg/wiki/Dire_Maul_West",
+    "https://warcraft.wiki.gg/wiki/Dire_Maul_North",
+    "https://warcraft.wiki.gg/wiki/Alzzin_the_Wildshaper",
+    "https://warcraft.wiki.gg/wiki/Zevrim_Thornhoof",
+    "https://warcraft.wiki.gg/wiki/Hydrospawn",
+    "https://warcraft.wiki.gg/wiki/Lethtendris",
+    "https://warcraft.wiki.gg/wiki/Pusillin",
+    "https://warcraft.wiki.gg/wiki/Tendris_Warpwood",
+    "https://warcraft.wiki.gg/wiki/Illyanna_Ravenoak",
+    "https://warcraft.wiki.gg/wiki/Magister_Kalendris",
+    "https://warcraft.wiki.gg/wiki/Immol%27thar",
+    "https://warcraft.wiki.gg/wiki/Prince_Tortheldrin",
+    "https://warcraft.wiki.gg/wiki/Guard_Mol%27dar",
+    "https://warcraft.wiki.gg/wiki/Guard_Fengus",
+    "https://warcraft.wiki.gg/wiki/Guard_Slip%27kik",
+    "https://warcraft.wiki.gg/wiki/Captain_Kromcrush",
+    "https://warcraft.wiki.gg/wiki/Cho%27Rush_the_Observer",
+    "https://warcraft.wiki.gg/wiki/King_Gordok",
+    "https://warcraft.wiki.gg/wiki/Stomper_Kreeg",
+    "https://warcraft.wiki.gg/wiki/Tsu%27zee",
+    "https://warcraft.wiki.gg/wiki/Wildspawn_Hellcaller",
+    "https://warcraft.wiki.gg/wiki/Wildspawn_Shadowstalker",
+    "https://warcraft.wiki.gg/wiki/Warpwood_Tangler",
+    "https://warcraft.wiki.gg/wiki/Ironbark_Protector",
+    "https://warcraft.wiki.gg/wiki/Arcane_Aberration",
+    "https://warcraft.wiki.gg/wiki/Eldreth_Sorcerer",
+    "https://warcraft.wiki.gg/wiki/Highborne_Summoner",
+    "https://warcraft.wiki.gg/wiki/Gordok_Mage-Lord",
+    "https://warcraft.wiki.gg/wiki/Gordok_Warlock",
+    "https://warcraft.wiki.gg/wiki/Wandering_Eye_of_Kilrogg",
+    "https://almarsguides.com/wow/instances/classic/diremauleast/",
+    "https://almarsguides.com/wow/instances/classic/diremaulwest/",
+    "https://almarsguides.com/wow/instances/classic/diremaulnorth/",
+    "https://warcrafttavern.com/wow-classic/guides/dire-maul",
+    "https://nether.wowhead.com/classic/tooltip/item/ (quality check per item ID)"
+  ]
+}

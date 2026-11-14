@@ -1,0 +1,1216 @@
+{
+ "instance": "Blackwing Lair",
+ "instanceMapID": 469,
+ "kind": "raid",
+ "bosses": [
+  {
+   "name": "Razorgore the Untamed",
+   "npcID": 12435,
+   "mechanics": [
+    {
+     "spellID": 19873,
+     "spell": "Destroy Egg",
+     "type": "adds",
+     "en": "Phase 1: mind-controlled boss breaks eggs while raid holds adds",
+     "de": "Phase 1: gesteuerter Boss zerstört Eier, Raid hält die Adds"
+    },
+    {
+     "spellID": 22425,
+     "spell": "Fireball Volley",
+     "type": "avoid",
+     "en": "Phase 2 fireball volley; hide behind pillars",
+     "de": "Phase 2 Feuerballsalve; hinter Säulen verstecken"
+    },
+    {
+     "spellID": 23023,
+     "spell": "Conflagration",
+     "type": "tank",
+     "en": "Disorients the tank with fire; another tank takes over",
+     "de": "Desorientiert den Tank mit Feuer; anderer Tank übernimmt"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 16904,
+     "quality": "epic",
+     "name": "Stormrage Bracers"
+    },
+    {
+     "itemID": 16911,
+     "quality": "epic",
+     "name": "Bloodfang Bracers"
+    },
+    {
+     "itemID": 16918,
+     "quality": "epic",
+     "name": "Netherwind Bindings"
+    },
+    {
+     "itemID": 16926,
+     "quality": "epic",
+     "name": "Bindings of Transcendence"
+    },
+    {
+     "itemID": 16934,
+     "quality": "epic",
+     "name": "Nemesis Bracers"
+    },
+    {
+     "itemID": 16935,
+     "quality": "epic",
+     "name": "Dragonstalker's Bracers"
+    },
+    {
+     "itemID": 16943,
+     "quality": "epic",
+     "name": "Bracers of Ten Storms"
+    },
+    {
+     "itemID": 16951,
+     "quality": "epic",
+     "name": "Judgement Bindings"
+    },
+    {
+     "itemID": 16959,
+     "quality": "epic",
+     "name": "Bracelets of Wrath"
+    },
+    {
+     "itemID": 19334,
+     "quality": "epic",
+     "name": "The Untamed Blade"
+    },
+    {
+     "itemID": 19335,
+     "quality": "epic",
+     "name": "Spineshatter"
+    },
+    {
+     "itemID": 19336,
+     "quality": "epic",
+     "name": "Arcane Infused Gem"
+    },
+    {
+     "itemID": 19337,
+     "quality": "epic",
+     "name": "The Black Book"
+    },
+    {
+     "itemID": 19369,
+     "quality": "epic",
+     "name": "Gloves of Rapid Evolution"
+    },
+    {
+     "itemID": 19370,
+     "quality": "epic",
+     "name": "Mantle of the Blackwing Cabal"
+    },
+    {
+     "itemID": 20725,
+     "quality": "epic",
+     "name": "Nexus Crystal"
+    }
+   ]
+  },
+  {
+   "name": "Vaelastrasz the Corrupt",
+   "npcID": 13020,
+   "mechanics": [
+    {
+     "spellID": 18173,
+     "spell": "Burning Adrenaline",
+     "type": "positioning",
+     "en": "Target dies after a while; leave the raid before exploding",
+     "de": "Ziel stirbt nach kurzer Zeit; vor der Explosion raus"
+    },
+    {
+     "spellID": 23461,
+     "spell": "Flame Breath",
+     "type": "positioning",
+     "en": "Frontal breath; only the tank stands in front",
+     "de": "Atem nach vorn; nur der Tank steht davor"
+    },
+    {
+     "spellID": 15847,
+     "spell": "Tail Sweep",
+     "type": "positioning",
+     "en": "Tail hits players behind him; stand at the sides",
+     "de": "Schwanz trifft Spieler hinter ihm; seitlich stehen"
+    },
+    {
+     "spellID": 23513,
+     "spell": "Essence of the Red",
+     "type": "survive",
+     "en": "Raid gets free mana and energy; burn him fast",
+     "de": "Raid erhält Mana und Energie; schnell töten"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 16818,
+     "quality": "epic",
+     "name": "Netherwind Belt"
+    },
+    {
+     "itemID": 16903,
+     "quality": "epic",
+     "name": "Stormrage Belt"
+    },
+    {
+     "itemID": 16910,
+     "quality": "epic",
+     "name": "Bloodfang Belt"
+    },
+    {
+     "itemID": 16925,
+     "quality": "epic",
+     "name": "Belt of Transcendence"
+    },
+    {
+     "itemID": 16933,
+     "quality": "epic",
+     "name": "Nemesis Belt"
+    },
+    {
+     "itemID": 16936,
+     "quality": "epic",
+     "name": "Dragonstalker's Belt"
+    },
+    {
+     "itemID": 16944,
+     "quality": "epic",
+     "name": "Belt of Ten Storms"
+    },
+    {
+     "itemID": 16952,
+     "quality": "epic",
+     "name": "Judgement Belt"
+    },
+    {
+     "itemID": 16960,
+     "quality": "epic",
+     "name": "Waistband of Wrath"
+    },
+    {
+     "itemID": 19339,
+     "quality": "epic",
+     "name": "Mind Quickening Gem"
+    },
+    {
+     "itemID": 19340,
+     "quality": "epic",
+     "name": "Rune of Metamorphosis"
+    },
+    {
+     "itemID": 19346,
+     "quality": "epic",
+     "name": "Dragonfang Blade"
+    },
+    {
+     "itemID": 19348,
+     "quality": "epic",
+     "name": "Red Dragonscale Protector"
+    },
+    {
+     "itemID": 19371,
+     "quality": "epic",
+     "name": "Pendant of the Fallen Dragon"
+    },
+    {
+     "itemID": 19372,
+     "quality": "epic",
+     "name": "Helm of Endless Rage"
+    }
+   ]
+  },
+  {
+   "name": "Broodlord Lashlayer",
+   "npcID": 12017,
+   "mechanics": [
+    {
+     "spellID": 24573,
+     "spell": "Mortal Strike",
+     "type": "tank",
+     "en": "Big hit that cuts healing on the tank",
+     "de": "Harter Schlag senkt Heilung am Tank"
+    },
+    {
+     "spellID": 23331,
+     "spell": "Blast Wave",
+     "type": "positioning",
+     "en": "Fire AoE around him; casters keep range",
+     "de": "Feuer-AoE um ihn; Zauberer auf Abstand"
+    },
+    {
+     "spellID": 18670,
+     "spell": "Knock Away",
+     "type": "tank",
+     "en": "Knocks the tank back and cuts threat; keep a backup tank",
+     "de": "Stößt Tank zurück, senkt Bedrohung; Ersatztank bereit"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 16898,
+     "quality": "epic",
+     "name": "Stormrage Boots"
+    },
+    {
+     "itemID": 16906,
+     "quality": "epic",
+     "name": "Bloodfang Boots"
+    },
+    {
+     "itemID": 16912,
+     "quality": "epic",
+     "name": "Netherwind Boots"
+    },
+    {
+     "itemID": 16919,
+     "quality": "epic",
+     "name": "Boots of Transcendence"
+    },
+    {
+     "itemID": 16927,
+     "quality": "epic",
+     "name": "Nemesis Boots"
+    },
+    {
+     "itemID": 16941,
+     "quality": "epic",
+     "name": "Dragonstalker's Greaves"
+    },
+    {
+     "itemID": 16949,
+     "quality": "epic",
+     "name": "Greaves of Ten Storms"
+    },
+    {
+     "itemID": 16957,
+     "quality": "epic",
+     "name": "Judgement Sabatons"
+    },
+    {
+     "itemID": 16965,
+     "quality": "epic",
+     "name": "Sabatons of Wrath"
+    },
+    {
+     "itemID": 19341,
+     "quality": "epic",
+     "name": "Lifegiving Gem"
+    },
+    {
+     "itemID": 19342,
+     "quality": "epic",
+     "name": "Venomous Totem"
+    },
+    {
+     "itemID": 19350,
+     "quality": "epic",
+     "name": "Heartstriker"
+    },
+    {
+     "itemID": 19351,
+     "quality": "epic",
+     "name": "Maladath, Runed Blade of the Black Flight"
+    },
+    {
+     "itemID": 19373,
+     "quality": "epic",
+     "name": "Black Brood Pauldrons"
+    },
+    {
+     "itemID": 19374,
+     "quality": "epic",
+     "name": "Bracers of Arcane Accuracy"
+    },
+    {
+     "itemID": 20383,
+     "quality": "epic",
+     "name": "Head of the Broodlord Lashlayer"
+    }
+   ]
+  },
+  {
+   "name": "Firemaw",
+   "npcID": 11983,
+   "mechanics": [
+    {
+     "spellID": 23341,
+     "spell": "Flame Buffet",
+     "type": "positioning",
+     "en": "Stacking fire debuff on the raid; break line of sight",
+     "de": "Stapelnder Feuer-Debuff; Sichtlinie brechen"
+    },
+    {
+     "spellID": 23339,
+     "spell": "Wing Buffet",
+     "type": "tank",
+     "en": "Knocks back and drops threat; tanks swap",
+     "de": "Rückstoß senkt Bedrohung; Tanks wechseln"
+    },
+    {
+     "spellID": 22539,
+     "spell": "Shadow Flame",
+     "type": "tank",
+     "en": "Frontal shadowflame; tank needs Onyxia Scale Cloak",
+     "de": "Schattenflamme nach vorn; Tank braucht Onyxiaschuppenumhang"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 16899,
+     "quality": "epic",
+     "name": "Stormrage Handguards"
+    },
+    {
+     "itemID": 16907,
+     "quality": "epic",
+     "name": "Bloodfang Gloves"
+    },
+    {
+     "itemID": 16913,
+     "quality": "epic",
+     "name": "Netherwind Gloves"
+    },
+    {
+     "itemID": 16920,
+     "quality": "epic",
+     "name": "Handguards of Transcendence"
+    },
+    {
+     "itemID": 16928,
+     "quality": "epic",
+     "name": "Nemesis Gloves"
+    },
+    {
+     "itemID": 16940,
+     "quality": "epic",
+     "name": "Dragonstalker's Gauntlets"
+    },
+    {
+     "itemID": 16948,
+     "quality": "epic",
+     "name": "Gauntlets of Ten Storms"
+    },
+    {
+     "itemID": 16956,
+     "quality": "epic",
+     "name": "Judgement Gauntlets"
+    },
+    {
+     "itemID": 16964,
+     "quality": "epic",
+     "name": "Gauntlets of Wrath"
+    },
+    {
+     "itemID": 19343,
+     "quality": "epic",
+     "name": "Scrolls of Blinding Light"
+    },
+    {
+     "itemID": 19344,
+     "quality": "epic",
+     "name": "Natural Alignment Crystal"
+    },
+    {
+     "itemID": 19353,
+     "quality": "epic",
+     "name": "Drake Talon Cleaver"
+    },
+    {
+     "itemID": 19355,
+     "quality": "epic",
+     "name": "Shadow Wing Focus Staff"
+    },
+    {
+     "itemID": 19365,
+     "quality": "epic",
+     "name": "Claw of the Black Drake"
+    },
+    {
+     "itemID": 19394,
+     "quality": "epic",
+     "name": "Drake Talon Pauldrons"
+    },
+    {
+     "itemID": 19395,
+     "quality": "epic",
+     "name": "Rejuvenating Gem"
+    },
+    {
+     "itemID": 19396,
+     "quality": "epic",
+     "name": "Taut Dragonhide Belt"
+    },
+    {
+     "itemID": 19397,
+     "quality": "epic",
+     "name": "Ring of Blackrock"
+    },
+    {
+     "itemID": 19398,
+     "quality": "epic",
+     "name": "Cloak of Firemaw"
+    },
+    {
+     "itemID": 19399,
+     "quality": "epic",
+     "name": "Black Ash Robe"
+    },
+    {
+     "itemID": 19400,
+     "quality": "epic",
+     "name": "Firemaw's Clutch"
+    },
+    {
+     "itemID": 19401,
+     "quality": "epic",
+     "name": "Primalist's Linked Legguards"
+    },
+    {
+     "itemID": 19402,
+     "quality": "epic",
+     "name": "Legguards of the Fallen Crusader"
+    }
+   ]
+  },
+  {
+   "name": "Ebonroc",
+   "npcID": 14601,
+   "mechanics": [
+    {
+     "spellID": 23340,
+     "spell": "Shadow of Ebonroc",
+     "type": "tank",
+     "en": "Heals him when he hits the cursed tank; swap tanks",
+     "de": "Heilt ihn bei Treffern auf verfluchten Tank; Tanks wechseln"
+    },
+    {
+     "spellID": 22539,
+     "spell": "Shadow Flame",
+     "type": "tank",
+     "en": "Frontal shadowflame; tank needs Onyxia Scale Cloak",
+     "de": "Schattenflamme nach vorn; Tank braucht Onyxiaschuppenumhang"
+    },
+    {
+     "spellID": 23339,
+     "spell": "Wing Buffet",
+     "type": "tank",
+     "en": "Knocks back and drops threat",
+     "de": "Rückstoß senkt Bedrohung"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 16899,
+     "quality": "epic",
+     "name": "Stormrage Handguards"
+    },
+    {
+     "itemID": 16907,
+     "quality": "epic",
+     "name": "Bloodfang Gloves"
+    },
+    {
+     "itemID": 16913,
+     "quality": "epic",
+     "name": "Netherwind Gloves"
+    },
+    {
+     "itemID": 16920,
+     "quality": "epic",
+     "name": "Handguards of Transcendence"
+    },
+    {
+     "itemID": 16928,
+     "quality": "epic",
+     "name": "Nemesis Gloves"
+    },
+    {
+     "itemID": 16940,
+     "quality": "epic",
+     "name": "Dragonstalker's Gauntlets"
+    },
+    {
+     "itemID": 16948,
+     "quality": "epic",
+     "name": "Gauntlets of Ten Storms"
+    },
+    {
+     "itemID": 16956,
+     "quality": "epic",
+     "name": "Judgement Gauntlets"
+    },
+    {
+     "itemID": 16964,
+     "quality": "epic",
+     "name": "Gauntlets of Wrath"
+    },
+    {
+     "itemID": 19345,
+     "quality": "epic",
+     "name": "Aegis of Preservation"
+    },
+    {
+     "itemID": 19353,
+     "quality": "epic",
+     "name": "Drake Talon Cleaver"
+    },
+    {
+     "itemID": 19355,
+     "quality": "epic",
+     "name": "Shadow Wing Focus Staff"
+    },
+    {
+     "itemID": 19368,
+     "quality": "epic",
+     "name": "Dragonbreath Hand Cannon"
+    },
+    {
+     "itemID": 19394,
+     "quality": "epic",
+     "name": "Drake Talon Pauldrons"
+    },
+    {
+     "itemID": 19395,
+     "quality": "epic",
+     "name": "Rejuvenating Gem"
+    },
+    {
+     "itemID": 19396,
+     "quality": "epic",
+     "name": "Taut Dragonhide Belt"
+    },
+    {
+     "itemID": 19397,
+     "quality": "epic",
+     "name": "Ring of Blackrock"
+    },
+    {
+     "itemID": 19403,
+     "quality": "epic",
+     "name": "Band of Forced Concentration"
+    },
+    {
+     "itemID": 19405,
+     "quality": "epic",
+     "name": "Malfurion's Blessed Bulwark"
+    },
+    {
+     "itemID": 19406,
+     "quality": "epic",
+     "name": "Drake Fang Talisman"
+    },
+    {
+     "itemID": 19407,
+     "quality": "epic",
+     "name": "Ebony Flame Gloves"
+    }
+   ]
+  },
+  {
+   "name": "Flamegor",
+   "npcID": 11981,
+   "mechanics": [
+    {
+     "spellID": 23342,
+     "spell": "Frenzy",
+     "type": "tank",
+     "en": "Frenzy; hunters remove it with Tranquilizing Shot",
+     "de": "Raserei; Jäger entfernen sie per Einlullender Schuss"
+    },
+    {
+     "spellID": 22539,
+     "spell": "Shadow Flame",
+     "type": "tank",
+     "en": "Frontal shadowflame; tank needs Onyxia Scale Cloak",
+     "de": "Schattenflamme nach vorn; Tank braucht Onyxiaschuppenumhang"
+    },
+    {
+     "spellID": 23339,
+     "spell": "Wing Buffet",
+     "type": "tank",
+     "en": "Knocks back and drops threat",
+     "de": "Rückstoß senkt Bedrohung"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 16899,
+     "quality": "epic",
+     "name": "Stormrage Handguards"
+    },
+    {
+     "itemID": 16907,
+     "quality": "epic",
+     "name": "Bloodfang Gloves"
+    },
+    {
+     "itemID": 16913,
+     "quality": "epic",
+     "name": "Netherwind Gloves"
+    },
+    {
+     "itemID": 16920,
+     "quality": "epic",
+     "name": "Handguards of Transcendence"
+    },
+    {
+     "itemID": 16928,
+     "quality": "epic",
+     "name": "Nemesis Gloves"
+    },
+    {
+     "itemID": 16940,
+     "quality": "epic",
+     "name": "Dragonstalker's Gauntlets"
+    },
+    {
+     "itemID": 16948,
+     "quality": "epic",
+     "name": "Gauntlets of Ten Storms"
+    },
+    {
+     "itemID": 16956,
+     "quality": "epic",
+     "name": "Judgement Gauntlets"
+    },
+    {
+     "itemID": 16964,
+     "quality": "epic",
+     "name": "Gauntlets of Wrath"
+    },
+    {
+     "itemID": 19353,
+     "quality": "epic",
+     "name": "Drake Talon Cleaver"
+    },
+    {
+     "itemID": 19355,
+     "quality": "epic",
+     "name": "Shadow Wing Focus Staff"
+    },
+    {
+     "itemID": 19357,
+     "quality": "epic",
+     "name": "Herald of Woe"
+    },
+    {
+     "itemID": 19367,
+     "quality": "epic",
+     "name": "Dragon's Touch"
+    },
+    {
+     "itemID": 19394,
+     "quality": "epic",
+     "name": "Drake Talon Pauldrons"
+    },
+    {
+     "itemID": 19395,
+     "quality": "epic",
+     "name": "Rejuvenating Gem"
+    },
+    {
+     "itemID": 19396,
+     "quality": "epic",
+     "name": "Taut Dragonhide Belt"
+    },
+    {
+     "itemID": 19397,
+     "quality": "epic",
+     "name": "Ring of Blackrock"
+    },
+    {
+     "itemID": 19430,
+     "quality": "epic",
+     "name": "Shroud of Pure Thought"
+    },
+    {
+     "itemID": 19431,
+     "quality": "epic",
+     "name": "Styleen's Impeding Scarab"
+    },
+    {
+     "itemID": 19432,
+     "quality": "epic",
+     "name": "Circle of Applied Force"
+    },
+    {
+     "itemID": 19433,
+     "quality": "epic",
+     "name": "Emberweave Leggings"
+    }
+   ]
+  },
+  {
+   "name": "Chromaggus",
+   "npcID": 14020,
+   "mechanics": [
+    {
+     "spellID": 23310,
+     "spell": "Time Lapse",
+     "type": "avoid",
+     "en": "One of two random breaths; hide behind the gate walls",
+     "de": "Einer von zwei Zufallsatems; hinter Torwänden verstecken"
+    },
+    {
+     "spellID": 23170,
+     "spell": "Brood Affliction: Bronze",
+     "type": "dispel",
+     "en": "Stuns randomly; only Hourglass Sand removes it",
+     "de": "Betäubt zufällig; nur Stundenglassand entfernt es"
+    },
+    {
+     "spellID": 23174,
+     "spell": "Chromatic Mutation",
+     "type": "dispel",
+     "en": "Five afflictions turn a player hostile; cleanse early",
+     "de": "Fünf Gebrechen machen Spieler feindlich; früh reinigen"
+    },
+    {
+     "spellID": 23128,
+     "spell": "Frenzy",
+     "type": "tank",
+     "en": "Frenzy; remove with Tranquilizing Shot",
+     "de": "Raserei; per Einlullender Schuss entfernen"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 16832,
+     "quality": "epic",
+     "name": "Bloodfang Spaulders"
+    },
+    {
+     "itemID": 16902,
+     "quality": "epic",
+     "name": "Stormrage Pauldrons"
+    },
+    {
+     "itemID": 16917,
+     "quality": "epic",
+     "name": "Netherwind Mantle"
+    },
+    {
+     "itemID": 16924,
+     "quality": "epic",
+     "name": "Pauldrons of Transcendence"
+    },
+    {
+     "itemID": 16932,
+     "quality": "epic",
+     "name": "Nemesis Spaulders"
+    },
+    {
+     "itemID": 16937,
+     "quality": "epic",
+     "name": "Dragonstalker's Spaulders"
+    },
+    {
+     "itemID": 16945,
+     "quality": "epic",
+     "name": "Epaulets of Ten Storms"
+    },
+    {
+     "itemID": 16953,
+     "quality": "epic",
+     "name": "Judgement Spaulders"
+    },
+    {
+     "itemID": 16961,
+     "quality": "epic",
+     "name": "Pauldrons of Wrath"
+    },
+    {
+     "itemID": 19347,
+     "quality": "epic",
+     "name": "Claw of Chromaggus"
+    },
+    {
+     "itemID": 19349,
+     "quality": "epic",
+     "name": "Elementium Reinforced Bulwark"
+    },
+    {
+     "itemID": 19352,
+     "quality": "epic",
+     "name": "Chromatically Tempered Sword"
+    },
+    {
+     "itemID": 19361,
+     "quality": "epic",
+     "name": "Ashjre'thul, Crossbow of Smiting"
+    },
+    {
+     "itemID": 19385,
+     "quality": "epic",
+     "name": "Empowered Leggings"
+    },
+    {
+     "itemID": 19386,
+     "quality": "epic",
+     "name": "Elementium Threaded Cloak"
+    },
+    {
+     "itemID": 19387,
+     "quality": "epic",
+     "name": "Chromatic Boots"
+    },
+    {
+     "itemID": 19388,
+     "quality": "epic",
+     "name": "Angelista's Grasp"
+    },
+    {
+     "itemID": 19389,
+     "quality": "epic",
+     "name": "Taut Dragonhide Shoulderpads"
+    },
+    {
+     "itemID": 19390,
+     "quality": "epic",
+     "name": "Taut Dragonhide Gloves"
+    },
+    {
+     "itemID": 19391,
+     "quality": "epic",
+     "name": "Shimmering Geta"
+    },
+    {
+     "itemID": 19392,
+     "quality": "epic",
+     "name": "Girdle of the Fallen Crusader"
+    },
+    {
+     "itemID": 19393,
+     "quality": "epic",
+     "name": "Primalist's Linked Waistguard"
+    }
+   ]
+  },
+  {
+   "name": "Nefarian",
+   "npcID": 11583,
+   "mechanics": [
+    {
+     "spellID": 22539,
+     "spell": "Shadow Flame",
+     "type": "tank",
+     "en": "Frontal shadowflame; tank needs Onyxia Scale Cloak",
+     "de": "Schattenflamme nach vorn; Tank braucht Onyxiaschuppenumhang"
+    },
+    {
+     "spellID": 22686,
+     "spell": "Bellowing Roar",
+     "type": "survive",
+     "en": "Raid fear; Fear Ward or Tremor Totem",
+     "de": "Raidfurcht; Furchtzauberschutz oder Erdstoßtotem"
+    },
+    {
+     "spellID": 22687,
+     "spell": "Veil of Shadow",
+     "type": "dispel",
+     "en": "Curse cuts healing on the tank; decurse",
+     "de": "Fluch senkt Heilung am Tank; entfluchen"
+    },
+    {
+     "spellID": 23401,
+     "spell": "Corrupted Healing",
+     "type": "survive",
+     "en": "Priest class call: their heals hurt; priests stop healing",
+     "de": "Priester-Ruf: Heilungen schaden; Priester pausieren"
+    }
+   ],
+   "loot": [
+    {
+     "itemID": 16897,
+     "quality": "epic",
+     "name": "Stormrage Chestguard"
+    },
+    {
+     "itemID": 16905,
+     "quality": "epic",
+     "name": "Bloodfang Chestpiece"
+    },
+    {
+     "itemID": 16916,
+     "quality": "epic",
+     "name": "Netherwind Robes"
+    },
+    {
+     "itemID": 16923,
+     "quality": "epic",
+     "name": "Robes of Transcendence"
+    },
+    {
+     "itemID": 16931,
+     "quality": "epic",
+     "name": "Nemesis Robes"
+    },
+    {
+     "itemID": 16942,
+     "quality": "epic",
+     "name": "Dragonstalker's Breastplate"
+    },
+    {
+     "itemID": 16950,
+     "quality": "epic",
+     "name": "Breastplate of Ten Storms"
+    },
+    {
+     "itemID": 16958,
+     "quality": "epic",
+     "name": "Judgement Breastplate"
+    },
+    {
+     "itemID": 16966,
+     "quality": "epic",
+     "name": "Breastplate of Wrath"
+    },
+    {
+     "itemID": 19002,
+     "quality": "epic",
+     "name": "Head of Nefarian"
+    },
+    {
+     "itemID": 19003,
+     "quality": "epic",
+     "name": "Head of Nefarian"
+    },
+    {
+     "itemID": 19356,
+     "quality": "epic",
+     "name": "Staff of the Shadow Flame"
+    },
+    {
+     "itemID": 19360,
+     "quality": "epic",
+     "name": "Lok'amir il Romathis"
+    },
+    {
+     "itemID": 19363,
+     "quality": "epic",
+     "name": "Crul'shorukh, Edge of Chaos"
+    },
+    {
+     "itemID": 19364,
+     "quality": "epic",
+     "name": "Ashkandi, Greatsword of the Brotherhood"
+    },
+    {
+     "itemID": 19375,
+     "quality": "epic",
+     "name": "Mish'undare, Circlet of the Mind Flayer"
+    },
+    {
+     "itemID": 19376,
+     "quality": "epic",
+     "name": "Archimtiros' Ring of Reckoning"
+    },
+    {
+     "itemID": 19377,
+     "quality": "epic",
+     "name": "Prestor's Talisman of Connivery"
+    },
+    {
+     "itemID": 19378,
+     "quality": "epic",
+     "name": "Cloak of the Brood Lord"
+    },
+    {
+     "itemID": 19379,
+     "quality": "epic",
+     "name": "Neltharion's Tear"
+    },
+    {
+     "itemID": 19380,
+     "quality": "epic",
+     "name": "Therazane's Link"
+    },
+    {
+     "itemID": 19381,
+     "quality": "epic",
+     "name": "Boots of the Shadow Flame"
+    },
+    {
+     "itemID": 19382,
+     "quality": "epic",
+     "name": "Pure Elementium Band"
+    },
+    {
+     "itemID": 21138,
+     "quality": "epic",
+     "name": "Red Scepter Shard"
+    }
+   ]
+  }
+ ],
+ "trash": [
+  {
+   "name": "Death Talon Wyrmguard",
+   "npcID": 12460,
+   "mechanics": [
+    {
+     "spellID": 22277,
+     "spell": "Elemental Shield",
+     "type": "survive",
+     "en": "Immune to most schools; find the one it is weak to",
+     "de": "Gegen die meisten Schulen immun; Schwäche finden"
+    },
+    {
+     "spellID": 24375,
+     "spell": "War Stomp",
+     "type": "survive",
+     "en": "Stuns players close to it",
+     "de": "Betäubt Spieler in seiner Nähe"
+    }
+   ]
+  },
+  {
+   "name": "Death Talon Overseer",
+   "npcID": 12461,
+   "mechanics": [
+    {
+     "spellID": 22277,
+     "spell": "Elemental Shield",
+     "type": "survive",
+     "en": "Immune to most schools; find its weak school",
+     "de": "Gegen die meisten Schulen immun; Schwachstelle finden"
+    },
+    {
+     "spellID": 15754,
+     "spell": "Cleave",
+     "type": "positioning",
+     "en": "Cleaves in front; only the tank faces it",
+     "de": "Spaltet nach vorn; nur der Tank steht davor"
+    }
+   ]
+  },
+  {
+   "name": "Death Talon Captain",
+   "npcID": 12467,
+   "mechanics": [
+    {
+     "spellID": 22438,
+     "spell": "Mark of Detonation",
+     "type": "positioning",
+     "en": "Marked players explode when hit; spread out",
+     "de": "Markierte Spieler explodieren bei Treffern; verteilen"
+    },
+    {
+     "spellID": 22436,
+     "spell": "Aura of Flames",
+     "type": "survive",
+     "en": "Fire aura buffs the pack; kill the captain first",
+     "de": "Feueraura stärkt die Gruppe; Hauptmann zuerst"
+    },
+    {
+     "spellID": 22440,
+     "spell": "Commanding Shout",
+     "type": "survive",
+     "en": "Shout that boosts nearby allies",
+     "de": "Ruf stärkt nahe Verbündete"
+    }
+   ]
+  },
+  {
+   "name": "Blackwing Technician",
+   "npcID": 13996,
+   "mechanics": [
+    {
+     "spellID": 22334,
+     "spell": "Bomb",
+     "type": "avoid",
+     "en": "Throws bombs at the raid; step out of the blast",
+     "de": "Wirft Bomben auf den Raid; aus der Explosion gehen"
+    }
+   ]
+  },
+  {
+   "name": "Blackwing Spellbinder",
+   "npcID": 12457,
+   "mechanics": [
+    {
+     "spellID": 22274,
+     "spell": "Greater Polymorph",
+     "type": "dispel",
+     "en": "Polymorphs a player; dispel magic",
+     "de": "Verwandelt einen Spieler; Magie bannen"
+    },
+    {
+     "spellID": 22275,
+     "spell": "Flamestrike",
+     "type": "avoid",
+     "en": "Flamestrike on the ground; step out",
+     "de": "Flammenstoß am Boden; heraustreten"
+    }
+   ]
+  },
+  {
+   "name": "Blackwing Warlock",
+   "npcID": 12459,
+   "mechanics": [
+    {
+     "spellID": 22372,
+     "spell": "Demon Portal",
+     "type": "adds",
+     "en": "Opens a portal that summons felguards; kill or banish them",
+     "de": "Öffnet Portal mit Teufelswachen; töten oder verbannen"
+    }
+   ]
+  },
+  {
+   "name": "Blackwing Taskmaster",
+   "npcID": 12458,
+   "mechanics": [
+    {
+     "spellID": 22458,
+     "spell": "Healing Circle",
+     "type": "interrupt",
+     "en": "Heals nearby goblins; interrupt the cast",
+     "de": "Heilt nahe Goblins; Zauber unterbrechen"
+    }
+   ]
+  },
+  {
+   "name": "Death Talon Seether",
+   "npcID": 12464,
+   "mechanics": [
+    {
+     "spellID": 22428,
+     "spell": "Frenzy",
+     "type": "tank",
+     "en": "Frenzy; remove with Tranquilizing Shot",
+     "de": "Raserei; per Einlullender Schuss entfernen"
+    },
+    {
+     "spellID": 22433,
+     "spell": "Flame Buffet",
+     "type": "survive",
+     "en": "Stacking fire debuff on the raid",
+     "de": "Stapelnder Feuer-Debuff auf dem Raid"
+    }
+   ]
+  }
+ ],
+ "sources": [
+  "https://www.wowhead.com/classic/npc=11583",
+  "https://www.wowhead.com/classic/npc=11981",
+  "https://www.wowhead.com/classic/npc=11983",
+  "https://www.wowhead.com/classic/npc=12017",
+  "https://www.wowhead.com/classic/npc=12435",
+  "https://www.wowhead.com/classic/npc=12457",
+  "https://www.wowhead.com/classic/npc=12458",
+  "https://www.wowhead.com/classic/npc=12459",
+  "https://www.wowhead.com/classic/npc=12460",
+  "https://www.wowhead.com/classic/npc=12461",
+  "https://www.wowhead.com/classic/npc=12464",
+  "https://www.wowhead.com/classic/npc=12467",
+  "https://www.wowhead.com/classic/npc=13020",
+  "https://www.wowhead.com/classic/npc=13996",
+  "https://www.wowhead.com/classic/npc=14020",
+  "https://www.wowhead.com/classic/npc=14601"
+ ]
+}

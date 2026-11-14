@@ -1,0 +1,396 @@
+{
+  "instance": "Razorfen Kraul",
+  "instanceMapID": 47,
+  "kind": "dungeon",
+  "levels": [
+    29,
+    38
+  ],
+  "bosses": [
+    {
+      "name": "Roogug",
+      "npcID": 6168,
+      "level": 26,
+      "mechanics": [
+        {
+          "spellID": 8270,
+          "spell": "Summon Earth Rumbler",
+          "type": "adds",
+          "en": "Summons a Stone Rumbler; tank or kill it",
+          "de": "Ruft einen Steingrollen; tanken oder töten"
+        },
+        {
+          "spellID": 9532,
+          "spell": "Lightning Bolt",
+          "type": "interrupt",
+          "en": "Interrupt Lightning Bolt",
+          "de": "Blitzschlag unterbrechen"
+        }
+      ],
+      "loot": [
+        {
+          "itemID": 274155,
+          "quality": "rare",
+          "name": "Geomancer Headdress",
+          "flavor": "forever"
+        },
+        {
+          "itemID": 274152,
+          "quality": "rare",
+          "name": "Roogug's Severed Head",
+          "flavor": "forever"
+        },
+        {
+          "itemID": 274149,
+          "quality": "rare",
+          "name": "Thornweaver Drape",
+          "flavor": "forever"
+        }
+      ]
+    },
+    {
+      "name": "Aggem Thorncurse",
+      "npcID": 4424,
+      "level": 30,
+      "mechanics": [
+        {
+          "spellID": 14900,
+          "spell": "Chain Heal",
+          "type": "interrupt",
+          "en": "Interrupt Chain Heal",
+          "de": "Kettenheilung unterbrechen"
+        },
+        {
+          "spellID": 8286,
+          "spell": "Summon Boar Spirit",
+          "type": "adds",
+          "en": "Summons a Boar Spirit add",
+          "de": "Ruft einen Ebergeist als Add"
+        }
+      ],
+      "loot": [
+        {
+          "itemID": 6681,
+          "quality": "rare",
+          "name": "Thornspike",
+          "flavor": "forever"
+        },
+        {
+          "itemID": 274158,
+          "quality": "rare",
+          "name": "Death Prophet Spine",
+          "flavor": "forever"
+        },
+        {
+          "itemID": 0,
+          "quality": "rare",
+          "name": "Thorncursed Grips",
+          "flavor": "forever",
+          "unverified": true
+        }
+      ]
+    },
+    {
+      "name": "Death Speaker Jargba",
+      "npcID": 4428,
+      "level": 30,
+      "mechanics": [
+        {
+          "spellID": 14515,
+          "spell": "Dominate Mind",
+          "type": "dispel",
+          "en": "Mind controls a player; dispel or crowd-control them",
+          "de": "Übernimmt einen Spieler; bannen oder kontrollieren"
+        },
+        {
+          "spellID": 9613,
+          "spell": "Shadow Bolt",
+          "type": "interrupt",
+          "en": "Interrupt Shadow Bolt",
+          "de": "Schattenblitz unterbrechen"
+        }
+      ],
+      "loot": [
+        {
+          "itemID": 2816,
+          "quality": "rare",
+          "name": "Death Speaker Scepter"
+        },
+        {
+          "itemID": 6685,
+          "quality": "rare",
+          "name": "Death Speaker Mantle",
+          "flavor": "forever"
+        }
+      ]
+    },
+    {
+      "name": "Overlord Ramtusk",
+      "npcID": 4420,
+      "level": 32,
+      "mechanics": [
+        {
+          "spellID": 15548,
+          "spell": "Thunderclap",
+          "type": "survive",
+          "en": "Thunderclap damages and slows everyone close; melee heal up",
+          "de": "Donnerknall schadet und verlangsamt Nahe; Nahkämpfer heilen"
+        },
+        {
+          "spellID": 9128,
+          "spell": "Battle Shout",
+          "type": "tank",
+          "en": "Battle Shout raises his group's attack power",
+          "de": "Schlachtruf erhöht die Angriffskraft seiner Gruppe"
+        }
+      ],
+      "loot": [
+        {
+          "itemID": 6687,
+          "quality": "rare",
+          "name": "Corpsemaker"
+        },
+        {
+          "itemID": 6686,
+          "quality": "rare",
+          "name": "Tusken Helm",
+          "flavor": "forever"
+        },
+        {
+          "itemID": 274161,
+          "quality": "rare",
+          "name": "Quillord Mail Leggings",
+          "flavor": "forever"
+        }
+      ]
+    },
+    {
+      "name": "Earthcaller Halmgar",
+      "npcID": 4842,
+      "level": 32,
+      "mechanics": [
+        {
+          "spellID": 2484,
+          "spell": "Earthbind Totem",
+          "type": "positioning",
+          "en": "Earthbind Totem slows everyone; destroy the totem",
+          "de": "Totem der Erdbindung verlangsamt; Totem zerstören"
+        },
+        {
+          "spellID": 8270,
+          "spell": "Summon Earth Rumbler",
+          "type": "adds",
+          "en": "Summons a Stone Rumbler add",
+          "de": "Ruft einen Steingrollen als Add"
+        }
+      ],
+      "loot": [
+        {
+          "itemID": 6689,
+          "quality": "rare",
+          "name": "Wind Spirit Staff"
+        },
+        {
+          "itemID": 6688,
+          "quality": "rare",
+          "name": "Whisperwind Headdress",
+          "flavor": "forever"
+        }
+      ],
+      "rare": true
+    },
+    {
+      "name": "Agathelos the Raging",
+      "npcID": 4422,
+      "level": 0,
+      "mechanics": [
+        {
+          "spellID": 8269,
+          "spell": "Frenzy",
+          "type": "tank",
+          "en": "Frenzy boosts his attacks; tank saves cooldowns for it",
+          "de": "Raserei verstärkt seine Angriffe; Tank spart Cooldowns dafür"
+        }
+      ],
+      "loot": [
+        {
+          "itemID": 6691,
+          "quality": "rare",
+          "name": "Swinetusk Shank"
+        },
+        {
+          "itemID": 6690,
+          "quality": "rare",
+          "name": "Ferine Leggings",
+          "flavor": "forever"
+        },
+        {
+          "itemID": 274160,
+          "quality": "rare",
+          "name": "Quilrager Throwing Axe",
+          "flavor": "forever"
+        }
+      ]
+    },
+    {
+      "name": "Blind Hunter",
+      "npcID": 4425,
+      "level": 32,
+      "mechanics": [],
+      "loot": [
+        {
+          "itemID": 6695,
+          "quality": "rare",
+          "name": "Stygian Bone Amulet"
+        },
+        {
+          "itemID": 6696,
+          "quality": "rare",
+          "name": "Nightstalker Bow"
+        },
+        {
+          "itemID": 6697,
+          "quality": "rare",
+          "name": "Batwing Mantle"
+        }
+      ],
+      "rare": true
+    },
+    {
+      "name": "Charlga Razorflank",
+      "npcID": 4421,
+      "level": 33,
+      "mechanics": [
+        {
+          "spellID": 8292,
+          "spell": "Chain Bolt",
+          "type": "interrupt",
+          "en": "Interrupt Chain Bolt, it jumps between players",
+          "de": "Kettenblitz unterbrechen, springt zwischen Spielern"
+        },
+        {
+          "spellID": 6077,
+          "spell": "Renew",
+          "type": "dispel",
+          "en": "Purge Renew from her",
+          "de": "Erneuerung bei ihr reinigen"
+        }
+      ],
+      "loot": [
+        {
+          "itemID": 6693,
+          "quality": "rare",
+          "name": "Agamaggan's Clutch"
+        },
+        {
+          "itemID": 6694,
+          "quality": "rare",
+          "name": "Heart of Agamaggan"
+        },
+        {
+          "itemID": 6692,
+          "quality": "rare",
+          "name": "Pronged Reaver"
+        }
+      ]
+    }
+  ],
+  "trash": [
+    {
+      "name": "Death's Head Priest",
+      "npcID": 4517,
+      "elite": true,
+      "mechanics": [
+        {
+          "spellID": 12039,
+          "spell": "Heal",
+          "type": "interrupt",
+          "en": "Heals allies; interrupt Heal",
+          "de": "Heilt Verbündete; Heilen unterbrechen"
+        }
+      ]
+    },
+    {
+      "name": "Death's Head Seer",
+      "npcID": 4519,
+      "elite": true,
+      "mechanics": [
+        {
+          "spellID": 4971,
+          "spell": "Healing Ward",
+          "type": "adds",
+          "en": "Drops a Healing Ward; destroy it",
+          "de": "Stellt einen Heilungszauberschutz auf; zerstören"
+        },
+        {
+          "spellID": 8264,
+          "spell": "Lava Spout Totem",
+          "type": "avoid",
+          "en": "Lava Spout Totem burns players near it; move or kill it",
+          "de": "Lavafontänentotem verbrennt Nahe; ausweichen oder zerstören"
+        }
+      ]
+    },
+    {
+      "name": "Razorfen Totemic",
+      "npcID": 4440,
+      "elite": true,
+      "mechanics": [
+        {
+          "spellID": 4971,
+          "spell": "Healing Ward",
+          "type": "adds",
+          "en": "Drops a Healing Ward; destroy it",
+          "de": "Stellt einen Heilungszauberschutz auf; zerstören"
+        },
+        {
+          "spellID": 8376,
+          "spell": "Earthgrab Totem",
+          "type": "positioning",
+          "en": "Earthgrab Totem roots nearby players; kill the totem",
+          "de": "Totem des Erdgriffs wurzelt Nahe fest; Totem zerstören"
+        }
+      ]
+    },
+    {
+      "name": "Razorfen Geomancer",
+      "npcID": 4520,
+      "elite": true,
+      "mechanics": [
+        {
+          "spellID": 8270,
+          "spell": "Summon Earth Rumbler",
+          "type": "adds",
+          "en": "Summons a Stone Rumbler; kill the caster first",
+          "de": "Ruft einen Steingrollen; Beschwörer zuerst töten"
+        }
+      ]
+    }
+  ],
+  "rares": [
+    {
+      "name": "Earthcaller Halmgar",
+      "npcID": 4842
+    },
+    {
+      "name": "Blind Hunter",
+      "npcID": 4425
+    }
+  ],
+  "sources": [
+    "https://warcraft.wiki.gg/wiki/Razorfen_Kraul_(Classic)",
+    "https://warcraft.wiki.gg/wiki/Roogug_(Classic)",
+    "https://warcraft.wiki.gg/wiki/Aggem_Thorncurse_(Classic)",
+    "https://warcraft.wiki.gg/wiki/Death_Speaker_Jargba_(Classic)",
+    "https://warcraft.wiki.gg/wiki/Overlord_Ramtusk",
+    "https://warcraft.wiki.gg/wiki/Earthcaller_Halmgar",
+    "https://warcraft.wiki.gg/wiki/Agathelos_the_Raging",
+    "https://warcraft.wiki.gg/wiki/Blind_Hunter",
+    "https://warcraft.wiki.gg/wiki/Charlga_Razorflank_(Classic)",
+    "https://warcraft.wiki.gg/wiki/Death%27s_Head_Priest",
+    "https://warcraft.wiki.gg/wiki/Death%27s_Head_Seer",
+    "https://warcraft.wiki.gg/wiki/Razorfen_Totemic",
+    "https://warcraft.wiki.gg/wiki/Razorfen_Geomancer",
+    "https://warcraft.wiki.gg/api.php (item page Itemtip #Classic/#Forever blocks)"
+  ]
+}
