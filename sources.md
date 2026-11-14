@@ -74,6 +74,8 @@ QuestieDB authors. Since then the data is maintained by hand.
   (`preQuestGroup`, `preQuestSingle`, breadcrumbs, `nextQuestInChain`, `exclusiveTo` alternatives) with quest giver,
   zone (uiMapID, x/y), quest level, required level, faction and class mask
 - quest givers (NPC, object, item) to quest IDs
+- English names of object quest givers (QuestieDB has no translations), used to recognize objects in world tooltips
+  on English clients
 - NPCs per instance with level range and rank (normal, elite, rare, boss)
 - rare, epic and legendary drops of these NPCs, as far as QuestieDB lists them (not complete loot tables), with the
   drop chance where QuestieDB has one (quest items only). QuestieDB has no item quality; it comes from the DB2 table

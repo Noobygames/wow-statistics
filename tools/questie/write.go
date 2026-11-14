@@ -47,6 +47,7 @@ const luaHeader = `-- GENERIERT von tools/questie ("make questie"), nicht von Ha
 --                  (Stufe 1 = Anfang, Gesamt = Stufe der Instanz-Quest; Vorquests, Breadcrumbs, nextQuestInChain rückwärts,
 --                  exclusiveTo als Alternative auf derselben Stufe; führt eine Quest zu mehreren, gilt die nächste),
 --   givers     = { npc = { [npcID] = { questID, ... } }, object = { ... }, item = { ... } },
+--   objectNames = { [objectID] = Name }   Objekt-Geber, nur englisch (QuestieDB führt keine Übersetzungen),
 --   npcs       = { [Karten-ID] = { [npcID] = { MinLevel, MaxLevel, Rang } } }   Rang: 0 normal, 1 Elite, 2 Rar-Elite,
 --                  3 Boss, 4 Rar,
 --   loot       = { [npcID] = { { itemID, Qualität, Chance }, ... } }   nur rar (3), episch (4), legendär (5), soweit
@@ -103,6 +104,10 @@ func writeLua(path, version, itemBuild string, res *result) error {
 			fmt.Fprintf(&b, "      [%d]={%s},\n", id, ints(res.Givers[kind][id]))
 		}
 		b.WriteString("    },\n")
+	}
+	b.WriteString("  },\n  objectNames = {\n")
+	for _, id := range sortedKeys(res.ObjectNames) {
+		fmt.Fprintf(&b, "    [%d]=%s,\n", id, luaStr(res.ObjectNames[id]))
 	}
 	b.WriteString("  },\n  npcs = {\n")
 	for _, mapID := range sortedKeys(res.Instances) {

@@ -1400,3 +1400,22 @@ check("500.collapsedBuffs", function()
     aurasReadable = aurasReadable == true, matches = matches, shown = CollapsedBuffs.ShownCount(),
   }
 end)
+
+-- /lt debug check mit der Maus über einem Objekt der Spielwelt (Briefkasten, Questobjekt; LT-38): liefert der Client im
+-- Welt-Tooltip eine Objekt-ID oder GUID (C_TooltipInfo.GetWorldCursor)? Dann ginge die Erkennung ohne englische Namen.
+check("LT38.tooltip.object", function()
+  local info = { locale = call("GetLocale"), namesAvailable = ns.DungeonQuestStarters.NamesAvailable(),
+    worldCursorApi = api("C_TooltipInfo.GetWorldCursor") ~= nil }
+  local title = _G.GameTooltipTextLeft1
+  info.title = GameTooltip:IsShown() and title and readable(title:GetText()) or nil
+  if info.title then info.offers = #ns.DungeonQuestStarters.ObjectOffers(info.title) end
+  if info.worldCursorApi then
+    local ok, data = pcall(C_TooltipInfo.GetWorldCursor)
+    if ok and type(data) == "table" then
+      local first = type(data.lines) == "table" and data.lines[1]
+      info.data = { type = readable(data.type), id = readable(data.id), guid = readable(data.guid),
+        firstLine = type(first) == "table" and readable(first.leftText) or nil }
+    end
+  end
+  return info
+end)

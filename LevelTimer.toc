@@ -232,6 +232,7 @@ UI\InstanceRunTracker.lua
 Assist\DungeonQuests.lua
 Assist\DungeonQuestGivers.lua
 Assist\DungeonQuestMinimap.lua
+Assist\DungeonQuestStarters.lua
 Assist\QuestLevels.lua
 Assist\DungeonQuestTags.lua
 UI\DungeonQuestHint.lua

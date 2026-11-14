@@ -73,17 +73,19 @@ type instanceOut struct {
 }
 
 type result struct {
-	Instances map[int]*instanceOut
-	Quests    map[int]*questOut
-	Npcs      map[int]*npcOut
-	Loot      map[int][]dropOut
-	Givers    map[string]map[int][]int // npc | object | item -> ID -> Quest-IDs
-	NoQuality int                      // Drops ohne Eintrag in ItemSparse (fehlen in loot)
+	Instances   map[int]*instanceOut
+	Quests      map[int]*questOut
+	Npcs        map[int]*npcOut
+	Loot        map[int][]dropOut
+	Givers      map[string]map[int][]int // npc | object | item -> ID -> Quest-IDs
+	ObjectNames map[int]string           // Objekt-Geber -> Name (enUS, QuestieDB hat keine Übersetzungen)
+	NoQuality   int                      // Drops ohne Eintrag in ItemSparse (fehlen in loot)
 }
 
 func build(db *questieDB, z *zoneData, rates map[int]map[int]float64, qualities map[int]int) *result {
 	res := &result{Instances: map[int]*instanceOut{}, Quests: map[int]*questOut{}, Npcs: map[int]*npcOut{},
-		Loot: map[int][]dropOut{}, Givers: map[string]map[int][]int{"npc": {}, "object": {}, "item": {}}}
+		Loot: map[int][]dropOut{}, Givers: map[string]map[int][]int{"npc": {}, "object": {}, "item": {}},
+		ObjectNames: map[int]string{}}
 	prev := predecessors(db)
 	depth := map[int]int{}
 	npcItems := map[int][]int{}
@@ -157,6 +159,11 @@ func build(db *questieDB, z *zoneData, rates map[int]map[int]float64, qualities 
 	for _, m := range res.Givers {
 		for _, ids := range m {
 			sort.Ints(ids)
+		}
+	}
+	for id := range res.Givers["object"] {
+		if o := db.objects[id]; o != nil && o.Name != "" {
+			res.ObjectNames[id] = o.Name
 		}
 	}
 	return res
