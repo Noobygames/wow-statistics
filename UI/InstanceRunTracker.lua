@@ -2,7 +2,7 @@
 -- (Lib/Card.lua), nur solange die Uhr des Instanz-Laufs läuft. Titel = Instanz, große Zeile = Laufzeit und Abstand
 -- zur Bestzeit beim letzten Boss (Format.SplitDelta: Theme good = schneller, bad = langsamer), Text = Bossliste
 -- (Haken, Split und Abstand zum Split der Bestzeit; ">" = nächster Boss; Rar-Bosse und besiegte Rare mit "Rar", nie
--- im Balken) und Kills, Tode, XP/h; Balken = besiegte Bosse; im Symbolfeld das Porträt des nächsten Bosses
+-- im Balken), Beute-Symbole des nächsten Bosses (Assist/BossLoot.lua, mit Item-Tooltip) und Kills, Tode, XP/h; Balken = besiegte Bosse; im Symbolfeld das Porträt des nächsten Bosses
 -- (Lib/CreatureModel.lua, nur mit NPC-ID). Vergleich = schnellster abgeschlossener Lauf derselben Instanz und Route;
 -- Zeiten ab der ersten Bewegung (InstanceRuns.lua).
 -- Position und Größe über Lib/Frames.lua (Id "dungeonRun", im Edit-Modus mit Beispiel-Lauf). Aktualisiert einmal je
@@ -29,11 +29,13 @@ local DEFAULT_POS = { "TOPRIGHT", "TOPRIGHT", -220, -220 }
 local CHECK_MARK = "|TInterface\\RaidFrame\\ReadyCheck-Ready:12|t"
 local NEXT_MARK = ">"
 local SECONDS_PER_HOUR = 3600
+local LOOT_ICON_SIZE = 16
 -- Beispiel für den Edit-Modus: Todesminen (Classic-Bossliste; ohne Liste nur Zeit und Werte)
 local SAMPLE_MAP, SAMPLE_DIFFICULTY = 36, 1
 local SAMPLE_SECONDS = 1458
 
 local card = ns.Card.Create(ns.GlobalName("DungeonRun"))
+ns.Widgets.EnableItemLinks(card.frame)  -- Beute-Symbole des nächsten Bosses mit Item-Tooltip
 local previewing = false
 local cachedBest = {}  -- Bestzeit zum offenen Lauf: { key, record }
 local portrait  -- Porträt des nächsten Bosses, beim ersten Bedarf angelegt
@@ -132,6 +134,8 @@ function InstanceRunTracker.Refresh()
   end
   local lines, delta, nextID = bossLines(record, best)
   local npcID = nextID and InstanceBosses.NpcID(nextID)
+  local loot = npcID and ns.BossLoot.IconLinks(ns.BossLoot.Items(npcID), LOOT_ICON_SIZE)
+  if loot then lines[#lines + 1] = loot end
   lines[#lines + 1] = footer(record)
   local timeText = Format.Duration(InstanceRuns.Seconds(record))
   if delta then timeText = timeText .. "  " .. string.format(L.DUNGEON_RUN_VS_BEST, Format.SplitDelta(delta)) end

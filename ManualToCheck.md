@@ -3626,3 +3626,15 @@ Einstellungen „Dungeonquest-Geber markieren“ und Zonen-Hinweis an. Datenteil
 
 - Zone mit Dungeonquest-Gebern betreten, ohne mit ihnen gesprochen zu haben (z.B. Sturmwind, Westfall): Hinweisfenster nennt den NPC-Namen in Client-Sprache statt „Questgeber“ (beim allerersten Betreten nach Cache-Leerung evtl. noch „Questgeber“).
 - Englischer Client: Maus direkt von einem Quest-Objekt zum nächsten (z.B. zwei „WANTED“-Plakate oder Plakat und Briefkasten): Zeile erscheint bzw. verschwindet ohne Umweg über freie Fläche, keine doppelten Zeilen.
+
+### 518. Beute-Symbole mit Gegenstandsinfo in Bosszeilen und Live-Karte (LT-42, Classic Era und WoW Forever)
+
+- [ ] geprüft
+
+Einstellung „Boss-Beute im Tooltip“ (Komfort) an.
+
+- `/lt runs`, Lauf mit Bossen (z.B. Todesminen): rechts im Namensfeld der Bosszeile bis zu sechs Beute-Symbole; Drüberfahren am Symbol zeigt die Gegenstandsinfo (auch bei noch nicht geladenen Items), zurück auf die Zeile wieder der Boss-Tooltip; Shift-Klick verlinkt im Chat oder öffnet die Gegenstandsinfo. Lange Bossnamen werden gekürzt, die Symbole bleiben ganz.
+- Dungeon mit laufender Uhr: Live-Karte zeigt unter der Bossliste die Beute-Symbole des nächsten lebenden Bosses; Drüberfahren zeigt die Gegenstandsinfo; nach dem Kill wechselt die Zeile zum nächsten Boss. Rechtsklick-Menü und Verschieben der Karte gehen weiter.
+- Würfelkarte: Drüberfahren an Gegenständen zeigt weiter die Gegenstandsinfo (gemeinsamer Code).
+- Dungeon-Eingang auf der Karte mit zwei Instanzen und demselben noch ungeladenen Item: beide Zeilen tauschen den Platzhalter gegen den Link.
+- Einstellung aus: keine Symbole.

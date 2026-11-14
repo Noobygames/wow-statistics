@@ -281,21 +281,7 @@ end
 
 card = ns.Card.Create(ns.GlobalName("LootRolls"))
 card.frame:SetFrameStrata("DIALOG")
--- Item-Links im Text: Tooltip beim Drüberfahren, Shift-Klick wie überall (Frame:SetHyperlinksEnabled, SimpleFrameAPI
--- in allen Zweigen)
-if card.frame.SetHyperlinksEnabled then
-  card.frame:SetHyperlinksEnabled(true)
-  card.frame:SetScript("OnHyperlinkEnter", function(self, link)
-    GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-    GameTooltip:SetHyperlink(link)
-    GameTooltip:Show()
-  end)
-  card.frame:SetScript("OnHyperlinkLeave", function() GameTooltip:Hide() end)
-  card.frame:SetScript("OnHyperlinkClick", function(_, link, text, button)
-    if HandleModifiedItemClick and HandleModifiedItemClick(text) then return end
-    if SetItemRef then SetItemRef(link, text, button) end
-  end)
-end
+ns.Widgets.EnableItemLinks(card.frame)  -- Item-Links im Text: Tooltip beim Drüberfahren, Shift-Klick
 ns.Frames.Register({
   id = "lootRolls", frame = card.frame, label = "EDIT_FRAME_LOOT_ROLLS", default = DEFAULT_POS,
   settingsPage = "COMFORT_PAGE_LOOT", clickable = true, actionsTip = true,

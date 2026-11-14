@@ -2,9 +2,11 @@
 -- Tooltip-Zeilen mit den bekannten Drops ab Qualität rar eines Bosses (ns.DungeonDB.loot je NPC-ID) bzw. aller Bosse
 -- einer Instanz (Bossliste über ns.BossNpcs und Rang 3 = Boss in ns.DungeonDB.npcs). Episch/legendär zuerst, Chance
 -- falls bekannt, höchstens MAX_LINES Zeilen plus "+X weitere". Nutzer: Bosstabelle in UI/InstanceRunWindow.lua,
--- Tooltip der Dungeon-Eingänge (Assist/DungeonEntrances.lua).
+-- Tooltip der Dungeon-Eingänge (Assist/DungeonEntrances.lua). Zeilen in einem Tooltip lassen sich nicht überfahren,
+-- deshalb zusätzlich IconLinks: Symbol-Links mit eigenem Item-Tooltip (Bosszeilen im Run-Fenster, Live-Karte
+-- UI/InstanceRunTracker.lua für den nächsten Boss).
 -- Nicht geladene Items: Platzhalter in Qualitätsfarbe, Laden über den Item-Mixin (Item:CreateFromItemID +
--- ContinueOnItemLoad, Blizzard_ObjectAPI); danach ruft onLoaded den Aufrufer, der den Tooltip neu aufbaut. Items, die der
+-- ContinueOnItemLoad, Blizzard_ObjectAPI); danach ruft onLoaded jeden wartenden Aufrufer, der den Tooltip neu aufbaut. Items, die der
 -- Client nicht kennt (IsItemEmpty, z. B. Forever-Items in Classic Era), fallen weg. Ohne Mixin (nicht in jedem Client
 -- belegt) stößt C_Item.GetItemInfo das Laden an und das nächste Überfahren zeigt den Link.
 local _, ns = ...
@@ -29,7 +31,7 @@ local HINT_COLOR = { 0.7, 0.7, 0.7 }
 
 local sortedByNpc = {}   -- Cache: NPC-ID -> sortierte Drops (nicht verändern)
 local sortedByMap = {}   -- Cache: Karten-ID -> sortierte Drops aller Bosse
-local loading = {}       -- itemID -> true, solange ein Ladeauftrag läuft
+local loading = {}       -- itemID -> { [onLoaded] = true }, solange ein Ladeauftrag läuft
 
 function BossLoot.IsAvailable()
   return ns.DungeonDB ~= nil and ns.DungeonDB.loot ~= nil
@@ -107,15 +109,21 @@ local function exists(item)
   return not (item and item:IsItemEmpty())
 end
 
--- Ladeauftrag für ein nicht zwischengespeichertes Item (ohne Mixin hat Items.GetLink das Laden schon angestoßen)
+-- Ladeauftrag für ein nicht zwischengespeichertes Item (ohne Mixin hat Items.GetLink das Laden schon angestoßen). Ein
+-- Auftrag je Item; jeder Wartende (Tooltip, Bosszeile) wird nach dem Laden einmal gerufen.
 local function requestLoad(itemID, item, onLoaded)
-  if not item or loading[itemID] then return end
-  loading[itemID] = true
-  item:ContinueOnItemLoad(function()
-    loading[itemID] = nil
-    ns.Debug("bossloot", "item %s loaded", itemID)
-    if onLoaded then ns.SafeCall(onLoaded) end
-  end)
+  if not item then return end
+  local waiting = loading[itemID]
+  if not waiting then
+    waiting = {}
+    loading[itemID] = waiting
+    item:ContinueOnItemLoad(function()
+      loading[itemID] = nil
+      ns.Debug("bossloot", "item %s loaded", itemID)
+      for callback in pairs(waiting) do ns.SafeCall(callback) end
+    end)
+  end
+  if onLoaded then waiting[onLoaded] = true end
 end
 
 -- Platzhalter in der Qualitätsfarbe des Items, solange sein Link fehlt
@@ -157,4 +165,18 @@ function BossLoot.AddLines(tooltip, drops, onLoaded)
   for _, text in ipairs(lines) do tooltip:AddLine(text) end
   if more > 0 then tooltip:AddLine(string.format(L.BOSS_LOOT_MORE, more), unpack(HINT_COLOR)) end
   return true
+end
+
+-- Kompakte Symbolzeile der ersten MAX_LINES Drops, jedes Symbol ein Item-Link (Tooltip über
+-- Widgets.EnableItemLinks am Frame des Texts); kein Laden nötig. nil, wenn aus oder nichts bekannt.
+function BossLoot.IconLinks(drops, size)
+  if not isEnabled() then return nil end
+  local icons = {}
+  for _, drop in ipairs(drops) do
+    if #icons >= BossLoot.MAX_LINES then break end
+    local itemID = drop[ITEM_ID]
+    local link = exists(itemMixin(itemID)) and Items.IconLink(itemID, drop[QUALITY], size)
+    if link then icons[#icons + 1] = link end
+  end
+  return #icons > 0 and table.concat(icons, " ") or nil
 end

@@ -48,3 +48,20 @@ end
 function Items.GetMarketValue(link)
   return auctionPrice(link) or Items.GetSellPrice(link)
 end
+
+-- Symbol (Datei-ID) auch ohne geladenes Item (C_Item.GetItemIconByID, ältere Clients: globales GetItemIcon); nil ohne
+-- API oder für unbekannte Items
+function Items.GetIcon(itemID)
+  local getIcon = (C_Item and C_Item.GetItemIconByID) or GetItemIcon
+  return getIcon and getIcon(itemID) or nil
+end
+
+-- Item-Link nur aus dem Symbol in Qualitätsfarbe: "item:<ID>" reicht GameTooltip:SetHyperlink, auch solange das Item
+-- nicht geladen ist (der Tooltip lädt selbst nach). nil ohne Symbol.
+function Items.IconLink(itemID, quality, size)
+  local icon = Items.GetIcon(itemID)
+  if not icon then return nil end
+  local link = string.format("|Hitem:%d|h|T%s:%d|t|h", itemID, tostring(icon), size)
+  local color = ITEM_QUALITY_COLORS and ITEM_QUALITY_COLORS[quality]
+  return color and color.hex and (color.hex .. link .. "|r") or link
+end
