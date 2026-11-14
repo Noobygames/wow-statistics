@@ -92,11 +92,25 @@ end
 function GetInventoryItemLink(_, slot) return (state.equipped or {})[slot] end
 function GetQuestReward(choice) questAction("reward", choice) end
 
+-- Item-Mixin (Blizzard_ObjectAPI): state.unknownItems[itemID] = true = der Client kennt das Item nicht (IsItemEmpty);
+-- ContinueOnItemLoad merkt den Rückruf in state.itemLoads[itemID], der Test ruft ihn nach dem Setzen des Links
+Item = {
+  CreateFromItemID = function(_, itemID)
+    return {
+      IsItemEmpty = function() return (state.unknownItems or {})[itemID] == true end,
+      ContinueOnItemLoad = function(_, callback)
+        state.itemLoads = state.itemLoads or {}
+        state.itemLoads[itemID] = callback
+      end,
+    }
+  end,
+}
+
 C_Item = {
   GetItemCount = function(itemID) return (state.itemCounts or {})[itemID] or 0 end,
-  -- itemID oder Link; Verkaufspreis aus state.sellPrices
+  -- itemID oder Link; Link aus state.itemLinks (fehlt = noch nicht geladen), Verkaufspreis aus state.sellPrices
   GetItemInfo = function(itemID)
-    return "Item " .. itemID, nil, nil, nil, nil, nil, nil, nil, nil, nil, state.sellPrices[itemID]
+    return "Item " .. itemID, (state.itemLinks or {})[itemID], nil, nil, nil, nil, nil, nil, nil, nil, state.sellPrices[itemID]
   end,
   -- Wie im Client: nichts für unbekannte IDs, sonst itemID, Typ, Untertyp, Platz, Symbol, Klasse, Unterklasse
   GetItemInfoInstant = function(item)

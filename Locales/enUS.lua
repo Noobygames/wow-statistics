@@ -2092,4 +2092,10 @@ ns.locales.enUS = {
   NOTICE_CLASS_QUEST = "Class quest",
   REMIND_CLASS_QUEST_TOGGLE = "Class quests",
   REMIND_CLASS_QUEST_TOGGLE_TIP = "On level-up, names the new class quest with its ability or reward (e.g. Bear Form, Fire Totem). Without the level-up window also as a popup.",
+  BOSS_LOOT_CHANCE = "%s (%s%%)",
+  BOSS_LOOT_LOADING = "Loading item …",
+  BOSS_LOOT_MORE = "+%d more",
+  BOSS_LOOT_TITLE = "Known loot",
+  BOSS_LOOT_TOGGLE = "Boss loot in tooltips",
+  BOSS_LOOT_TOGGLE_TIP = "Shows a boss's known drops of rare quality or better (epics first, with chance if known): when hovering a boss row in the dungeon and raid runs window and in the dungeon entrance tooltip on the map.",
 }

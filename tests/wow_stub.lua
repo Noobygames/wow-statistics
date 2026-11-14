@@ -251,7 +251,8 @@ local frameMethods = {
   end,
   AddLine = function(self, text) self._lines = rawget(self, "_lines") or {}; table.insert(self._lines, text) end,
   ClearLines = function(self) self._lines = {} end,
-  SetOwner = function(self) self._lines = {} end,
+  SetOwner = function(self, owner) self._lines = {}; self._owner = owner end,
+  IsOwned = function(self, frame) return rawget(self, "_owner") == frame end,
   SetHyperlink = function(self, link) self._hyperlink = link end,
   RegisterEvent = function(self, event)
     if event == UNKNOWN_EVENT then error("Attempt to register unknown event") end

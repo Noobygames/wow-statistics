@@ -134,6 +134,8 @@ addSection("SECTION_LOOT")
 addToggles({
   toggle("FASTER_LOOT", "fasterLoot"),
   toggle("SKIP_LOOT_CONFIRM", "skipLootConfirm"),
+  -- Boss-Beute nur mit Beutedaten (Classic Era, Forever)
+  toggle("BOSS_LOOT_TOGGLE", "bossLoot", ns.BossLoot.IsAvailable),
 })
 addSection("SECTION_LOOT_ROLLS")
 addToggles({

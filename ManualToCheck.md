@@ -3492,3 +3492,15 @@ Nur mit `LevelTimer_DataExtractor`. In Retail, Classic Era und Forever je einen 
 - `<flavor>_quest_givers.json`: Questgeber mit `offers` (Quest-IDs); Classic Era/Forever: liefert `GetAvailableQuestInfo` im Begrüßungsfenster die questID (5. Wert)? Falls nicht, fehlen dort nur Angebote aus der Begrüßung
 - `<flavor>_quest_instances.json`: die Quest unter der Karten-ID des Dungeons
 - Keine Lua-Fehler beim Plündern, Begrüßungs-/Gossipfenster und Bosskampf
+
+### 506. Dungeon-Beute-Vorschau (LT-35, Classic Era und WoW Forever)
+
+- [ ] geprüft
+
+`/lt runs` öffnen, einen Lauf in einem Classic-Dungeon (z.B. Todesminen) wählen und mit der Maus über die Bosszeilen fahren; in WoW Forever zusätzlich auf der Zonenkarte (Einstellung Dungeon-Eingänge an) einen Eingang überfahren.
+
+- Tooltip der Bosszeile: Bossname, „Bekannte Beute“, Item-Links in Qualitätsfarbe (episch vor rar), höchstens 6 Zeilen plus „+X weitere“; Bosse ohne Daten zeigen keinen Tooltip
+- Erstes Überfahren nach dem Login: Platzhalter „Gegenstand wird geladen …“ wird kurz danach von selbst durch den Link ersetzt (Item-Mixin `Item:CreateFromItemID`/`ContinueOnItemLoad` vorhanden? In Forever ebenso? Falls nicht: erst beim nächsten Überfahren)
+- Classic Era: keine Platzhalter für Forever-eigene Items (IDs ab 250000), die der Era-Client nicht kennt
+- Dungeon-Eingang (Forever): Beute-Block unter den Quests, Tooltip bleibt am Bildschirm (nicht zu lang)
+- Einstellung Komfort > Beute „Boss-Beute im Tooltip“ aus: keine Beutezeilen mehr; keine Lua-Fehler

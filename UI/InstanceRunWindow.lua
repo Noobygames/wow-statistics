@@ -2,7 +2,9 @@
 -- Läufe eines Charakters (neueste zuerst, Filter Alle/Dungeons/Raids, Markierung Bestzeit/offen/Raid), rechts der
 -- gewählte Lauf: Kopf (Name, Datum, Level, Status), Vergleich mit Bestzeit oder letztem Lauf derselben Instanz,
 -- acht Kacheln (Zeit, Tode, Kills, XP, Bosse, Geld, Quests, Gruppe), Bosstabelle (Split, Vergleich, Abstand, XP) und
--- Beute samt Würfen; Boss-Porträts (Lib/CreatureModel.lua) je Zeile und groß für den Endboss im Kopf. Daten aus History.GetInstanceLog und InstanceRuns.lua; blau/orange = Theme good/bad.
+-- Beute samt Würfen; Überfahren einer Bosszeile zeigt ihre bekannte Beute ab rar (Assist/BossLoot.lua); Boss-Porträts
+-- (Lib/CreatureModel.lua) je Zeile und groß für den Endboss im Kopf. Daten aus History.GetInstanceLog und
+-- InstanceRuns.lua; blau/orange = Theme good/bad.
 -- Läuft der gewählte Lauf noch, rechnet das Fenster einmal je Sekunde neu.
 -- shortcut: die Liste zeigt die neuesten MAX_LIST_ROWS Läufe des Filters; bei Bedarf Lazy Load wie in TableView.
 local _, ns = ...
@@ -328,9 +330,30 @@ local function rareSplits(record)
   return splits
 end
 
+-- Tooltip einer Bosszeile: Name und bekannte Beute ab rar (Assist/BossLoot.lua); ohne Beute kein Tooltip
+local function showBossTooltip(row)
+  if not row.npcID then return end
+  GameTooltip:SetOwner(row, "ANCHOR_RIGHT")
+  GameTooltip:AddLine(row.cells[1]:GetText() or "")
+  local function reload()
+    if GameTooltip:IsOwned(row) then showBossTooltip(row) end
+  end
+  if ns.BossLoot.AddLines(GameTooltip, ns.BossLoot.Items(row.npcID), reload) then
+    GameTooltip:Show()
+  else
+    GameTooltip:Hide()
+  end
+end
+
 -- Zeile der Bosstabelle (wiederverwendet) an Position index
 local function bossRow(index)
-  local row = bossRows[index] or createTableRow("GameFontHighlightSmall", ROW_PORTRAIT_SIZE)
+  local row = bossRows[index]
+  if not row then
+    row = createTableRow("GameFontHighlightSmall", ROW_PORTRAIT_SIZE)
+    row:EnableMouse(true)
+    row:SetScript("OnEnter", showBossTooltip)
+    row:SetScript("OnLeave", function() GameTooltip:Hide() end)
+  end
   bossRows[index] = row
   row:SetPoint("TOPLEFT", tableHeader, "BOTTOMLEFT", 0, -(index - 1) * BOSS_ROW_HEIGHT)
   row:Show()
@@ -350,7 +373,8 @@ local function fillBosses(record, reference, compare, xpById)
   local order = bossOrder(record)
   for index, id in ipairs(order) do
     local row = bossRow(index)
-    CreatureModel.Set(row.portrait, InstanceBosses.NpcID(id))
+    row.npcID = InstanceBosses.NpcID(id)
+    CreatureModel.Set(row.portrait, row.npcID)
     local name = InstanceBosses.Name(id) or tostring(id)
     if InstanceBosses.IsRare(id) then name = name .. colored("accent", " " .. L.DUNGEON_RUNS_RARE_TAG) end
     local split, referenceSplit = splits[id], referenceSplits[id]
@@ -366,6 +390,7 @@ local function fillBosses(record, reference, compare, xpById)
   for _, rare in ipairs(InstanceBosses.Rares(record)) do
     rows = rows + 1
     local row, referenceSplit = bossRow(rows), referenceRares[rare.npcID]
+    row.npcID = rare.npcID
     CreatureModel.Set(row.portrait, rare.npcID)
     row.cells[1]:SetText((rare.name or tostring(rare.npcID)) .. colored("accent", " " .. L.DUNGEON_RUNS_RARE_TAG))
     row.cells[2]:SetText(Format.Duration(rare.seconds))

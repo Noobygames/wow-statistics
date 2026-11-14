@@ -61,7 +61,14 @@ wow.update(1)
 C_Map = C_Map or {}
 C_Map.GetMapInfo = function(mapID) return { name = "Karte " .. mapID } end
 GetRealZoneText = function(mapID) return mapID == 3065 and "Halle der Thanen" or GetZoneText() end
+-- Boss-Beute (LT-35): ein Testboss mit epischem Drop in der Halle der Thanen
+addon.DungeonDB.npcs[3065] = { [990002] = { 16, 16, 3 } }
+addon.DungeonDB.loot[990002] = { { 990100, 4 } }
+wow.state.itemLinks = { [990100] = "|cffa335ee[Testklinge]|r" }
 local pin = LevelTimerDungeonEntrances:GetChildren()
 pin:GetScript("OnEnter")(pin)
+local tooltipLines = GameTooltip._lines
+expect("Tooltip: Beute-Überschrift", tooltipLines[#tooltipLines - 1], L.BOSS_LOOT_TITLE)
+expect("Tooltip: epischer Drop", tooltipLines[#tooltipLines], "|cffa335ee[Testklinge]|r")
 expect("Tooltip: Instanzname", GameTooltip._lines[1], "Halle der Thanen")
 expect("Tooltip: offene Quests", GameTooltip._lines[3], string.format(L.DUNGEON_QUESTS_OPEN, 4))

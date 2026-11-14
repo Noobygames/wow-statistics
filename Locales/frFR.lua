@@ -2092,4 +2092,10 @@ ns.locales.frFR = {
   NOTICE_CLASS_QUEST = "Quête de classe",
   REMIND_CLASS_QUEST_TOGGLE = "Quêtes de classe",
   REMIND_CLASS_QUEST_TOGGLE_TIP = "Lors d'une montée de niveau, indique la nouvelle quête de classe avec sa technique ou sa récompense (p. ex. Forme d'ours, Totem de feu). Sans la fenêtre de niveau, aussi en notification.",
+  BOSS_LOOT_CHANCE = "%s (%s %%)",
+  BOSS_LOOT_LOADING = "Chargement de l'objet …",
+  BOSS_LOOT_MORE = "+%d de plus",
+  BOSS_LOOT_TITLE = "Butin connu",
+  BOSS_LOOT_TOGGLE = "Butin des boss dans les infobulles",
+  BOSS_LOOT_TOGGLE_TIP = "Affiche les objets connus de qualité rare ou mieux qu'un boss peut laisser (épiques d'abord, avec la chance si elle est connue) : au survol d'une ligne de boss dans la fenêtre des donjons et raids et dans l'infobulle des entrées de donjon sur la carte.",
 }

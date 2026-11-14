@@ -2092,4 +2092,10 @@ ns.locales.esES = {
   NOTICE_CLASS_QUEST = "Misión de clase",
   REMIND_CLASS_QUEST_TOGGLE = "Misiones de clase",
   REMIND_CLASS_QUEST_TOGGLE_TIP = "Al subir de nivel, indica la nueva misión de clase con su habilidad o recompensa (p. ej. Forma de oso, Tótem de fuego). Sin la ventana de subida de nivel, también como aviso.",
+  BOSS_LOOT_CHANCE = "%s (%s %%)",
+  BOSS_LOOT_LOADING = "Cargando objeto …",
+  BOSS_LOOT_MORE = "+%d más",
+  BOSS_LOOT_TITLE = "Botín conocido",
+  BOSS_LOOT_TOGGLE = "Botín de jefes en descripciones",
+  BOSS_LOOT_TOGGLE_TIP = "Muestra los objetos conocidos de calidad rara o superior que suelta un jefe (épicos primero, con probabilidad si se conoce): al pasar el ratón por una fila de jefe en la ventana de mazmorras y bandas y en la descripción de las entradas de mazmorra en el mapa.",
 }

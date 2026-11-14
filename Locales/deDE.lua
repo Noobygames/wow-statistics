@@ -2092,4 +2092,10 @@ ns.locales.deDE = {
   NOTICE_CLASS_QUEST = "Klassenquest",
   REMIND_CLASS_QUEST_TOGGLE = "Klassenquests",
   REMIND_CLASS_QUEST_TOGGLE_TIP = "Nennt beim Level-Up die neue Klassenquest mit Fähigkeit oder Belohnung (z. B. Bärengestalt, Feuertotem). Ohne Level-Up-Fenster zusätzlich als Einblendung.",
+  BOSS_LOOT_CHANCE = "%s (%s %%)",
+  BOSS_LOOT_LOADING = "Gegenstand wird geladen …",
+  BOSS_LOOT_MORE = "+%d weitere",
+  BOSS_LOOT_TITLE = "Bekannte Beute",
+  BOSS_LOOT_TOGGLE = "Boss-Beute im Tooltip",
+  BOSS_LOOT_TOGGLE_TIP = "Zeigt die bekannten Drops ab Qualität rar eines Bosses (epische zuerst, mit Chance, falls bekannt): beim Überfahren einer Bosszeile im Fenster der Dungeon- und Raid-Runs und im Tooltip der Dungeon-Eingänge auf der Karte.",
 }

@@ -1,7 +1,8 @@
 -- Dungeon-Eingänge auf der Weltkarte (Einstellung dungeonEntrances, aus; nur wo ns.InstanceGuide existiert, also
 -- WoW Forever): ein Dungeon-Symbol je Eingang auf der Zonenkarte, Instanzen mit demselben Eingang teilen sich eins.
 -- Tooltip je Instanz: Name, Spieler/Reset/Level (InstanceInfo.Describe) und die offenen Dungeonquests des Charakters
--- (passende Fraktion und Klasse, abgegebene fallen weg) mit Stand: im Log, ab Level X oder wo sie beginnt.
+-- (passende Fraktion und Klasse, abgegebene fallen weg) mit Stand: im Log, ab Level X oder wo sie beginnt; darunter
+-- die bekannte Boss-Beute ab rar (Assist/BossLoot.lua).
 -- Zeichnen übernimmt Lib/MapPins.lua, Daten aus Assist/InstanceData/forever_guide.lua.
 -- shortcut: nur auf der Zonenkarte, nicht auf Kontinentkarten; bei Bedarf über C_Map-Weltpositionen umrechnen.
 local _, ns = ...
@@ -124,7 +125,12 @@ local function addQuestLines(tooltip, mapID)
   end
 end
 
-local function showTooltip(pin, point)
+local showTooltip
+showTooltip = function(pin, point)
+  -- Nachgeladene Beute-Items: Tooltip neu aufbauen, solange er noch zu diesem Symbol gehört
+  local function reload()
+    if GameTooltip:IsOwned(pin) then showTooltip(pin, point) end
+  end
   GameTooltip:SetOwner(pin, "ANCHOR_RIGHT")
   for index, mapID in ipairs(point.mapIDs) do
     if index > 1 then GameTooltip:AddLine(" ") end
@@ -132,6 +138,7 @@ local function showTooltip(pin, point)
     local description = ns.InstanceInfo.Describe(mapID)
     if description then GameTooltip:AddLine(description, unpack(TEXT_COLOR)) end
     addQuestLines(GameTooltip, mapID)
+    ns.BossLoot.AddLines(GameTooltip, ns.BossLoot.ForInstance(mapID), reload)
   end
   GameTooltip:Show()
 end

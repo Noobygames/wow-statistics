@@ -97,7 +97,7 @@ button,input{font-family:inherit}
             <span>Boss</span><span style="text-align: right">Split</span><span style="text-align: right">{{compareLabel}}</span><span style="text-align: right">Diff</span><span style="text-align: right">XP</span>
           </div>
           <sc-for list="{{bosses}}" as="b" hint-placeholder-count="8">
-            <div style="display: grid; grid-template-columns: minmax(0, 1fr) 70px 70px 70px 70px; gap: 8px; align-items: center; font-size: 13px; padding: 5px 8px; border-radius: 3px; background: {{b.bg}}; font-variant-numeric: tabular-nums">
+            <div title="{{b.lootTip}}" style="display: grid; grid-template-columns: minmax(0, 1fr) 70px 70px 70px 70px; gap: 8px; align-items: center; font-size: 13px; padding: 5px 8px; border-radius: 3px; background: {{b.bg}}; font-variant-numeric: tabular-nums">
               <span style="display: flex; align-items: center; gap: 6px; min-width: 0"><span style="width: 22px; height: 22px; background: radial-gradient(circle at 50% 40%, #6b5a48, #1a1410 70%); border: 1px solid #444; border-radius: 3px; flex: none"></span><span style="color: {{b.nameColor}}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{b.name}}<span style="color: #ffd100; font-size: 11px">{{b.tag}}</span></span></span>
               <span style="text-align: right">{{b.split}}</span>
               <span style="text-align: right; color: #a8a8a8">{{b.ref}}</span>
@@ -143,6 +143,10 @@ class Component extends DCLogic {
       ['Sneed', '9:48', '10:31', '258'], ['Gilnid', '14:20', '15:02', '258'], ['Mr. Smite', '19:57', '22:14', '271'],
       ['Kapitän Grünhaut', '24:31', '27:09', '271'], ['Edwin VanCleef', '29:40', '33:18', '284'], ['Krümel', '', '', '', ' optional']
     ];
+    // Überfahren einer Bosszeile: bekannte Beute ab rar (episch zuerst, max. 6 Zeilen + "+X weitere")
+    const LOOT_TIPS = { 'Sneed': ['[Zuchtmeisteraxt]'], 'Mr. Smite': ['[Schmieds Hammer]', '[Thermaplugg-Hose]'],
+      'Kapitän Grünhaut': ['[Kapitänsmantel]', '[Kiellatte]'],
+      'Edwin VanCleef': ['[Grausamer Widerhaken]', '[Schmelzhose]', '[Kapitänsmantel]', '[Blauer Gürtel]', '[Wams des Schurken]', '[Kettenhemd]', '+3 weitere'] };
     const LAST = ['4:01', '', '11:20', '16:45', '23:30', '28:50', '35:02', ''];
     const toSec = (t) => t.split(':').reduce((a, v) => a * 60 + Number(v), 0);
     const fmt = (d) => (d < 0 ? '-' : '+') + Math.floor(Math.abs(d) / 60) + ':' + String(Math.abs(d) % 60).padStart(2, '0');
@@ -173,7 +177,8 @@ class Component extends DCLogic {
         const ref = s.compare === 'best' ? best : LAST[i];
         const killed = split !== '';
         const d = killed && ref ? toSec(split) - toSec(ref) : null;
-        return { name, tag: tag || '', split: killed ? split : 'nicht getötet', ref: ref || '–', xp: xp ? xp + ' XP' : '',
+        const tip = LOOT_TIPS[name];
+        return { lootTip: tip ? [name, 'Bekannte Beute', ...tip].join('\n') : '', name, tag: tag || '', split: killed ? split : 'nicht getötet', ref: ref || '–', xp: xp ? xp + ' XP' : '',
           diff: d === null ? '' : fmt(d), diffColor: d !== null && d <= 0 ? GOOD : BAD,
           nameColor: killed ? '#f2f2f2' : MUTED, bg: i % 2 ? 'transparent' : '#141414' };
       }),
