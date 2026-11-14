@@ -78,6 +78,10 @@ func TestBuildMoltenCore(t *testing.T) {
 	L := lua.NewState()
 	defer L.Close()
 	L.SetGlobal("ns", L.NewTable())
+	// Flavor-Weiche der Datei: als Forever-Client laden
+	if err := L.DoString(`ns.Client = { Flavor = function() return "forever" end }`); err != nil {
+		t.Fatal(err)
+	}
 	fn, err := L.LoadFile(path)
 	if err != nil {
 		t.Fatalf("Lua-Syntax: %v", err)

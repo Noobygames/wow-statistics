@@ -19,6 +19,9 @@
 --                  Chance in Prozent oder nil (QuestieDB kennt sie nur für Quest-Items),
 -- }
 local _, ns = ...
+-- Nur Classic Era und Forever (klassische Instanzen, Forever-Questdaten); sonst keinen Speicher belegen.
+local flavor = ns.Client.Flavor()
+if flavor ~= "forever" and flavor ~= "classic_era" then return end
 
 ns.DungeonDB = {
   quests = {

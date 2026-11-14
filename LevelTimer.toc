@@ -68,6 +68,7 @@ Assist\InstanceData\classic_era.lua
 Assist\MapCoordsData\classic_era.lua
 Assist\InstanceData\forever.lua
 Assist\InstanceData\forever_guide.lua
+Assist\InstanceData\dungeon_db.lua
 Assist\MapCoordsData\forever.lua
 Assist\InstanceData\retail.lua
 Assist\BossData\anniversary.lua
