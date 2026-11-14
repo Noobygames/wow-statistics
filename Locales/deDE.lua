@@ -2117,4 +2117,9 @@ ns.locales.deDE = {
   DUNGEON_QUEST_ZONE_HINT_TOGGLE = "Dungeonquests beim Betreten einer Zone zeigen",
   DUNGEON_QUEST_ZONE_HINT_TOGGLE_TIP = "Betrittst du eine Zone, in der jemand eine Dungeonquest oder einen Schritt ihrer Vorquest-Kette für dich hat, zeigt ein kleines Fenster Quest, Instanz, Geber und Koordinaten. Einmal je Zone und Sitzung; es schließt nach einer Weile von selbst.",
   EDIT_FRAME_DUNGEON_QUEST_HINT = "Dungeonquest-Hinweis",
+  DUNGEON_QUEST_ACCEPT_HINT_TITLE = "Weitere Quests für %s",
+  DUNGEON_QUEST_ACCEPT_HINT_TOGGLE = "Nach Annahme einer Dungeonquest die übrigen zeigen",
+  DUNGEON_QUEST_ACCEPT_HINT_TOGGLE_TIP = "Nimmst du eine Dungeonquest oder einen Schritt ihrer Vorquest-Kette an, zeigt ein kleines Fenster, wo es die übrigen Quests derselben Instanz und die nächsten Kettenschritte gibt: Quest, Geber, Zone und Koordinaten. Später verfügbare (Level oder Vorquest fehlt) sind grau. Ein Klick auf einen Eintrag setzt einen Kartenpunkt und öffnet die Karte.",
+  DUNGEON_QUEST_HINT_CLICK = "Klick: Kartenpunkt setzen und Karte öffnen",
+  DUNGEON_QUEST_HINT_STEP = "%s (Schritt %d/%d)",
 }

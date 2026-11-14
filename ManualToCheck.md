@@ -3559,3 +3559,15 @@ Einstellung Komfort → Quests → Hinweise → „Dungeonquests beim Betreten e
 - Erscheint nach Login/Reload in der Zone (PLAYER_ENTERING_WORLD) und listet dabei keine Quests, die schon im Log sind?
 - Pro Zone und Sitzung nur einmal; schließt nach ~20 s, unter der Maus bleibt es stehen; Schließen-Knopf; im Edit-Modus verschiebbar
 - Keine Lua-Fehler
+
+### 511. Übrige Dungeonquests nach der Annahme (LT-41, Classic Era und WoW Forever)
+
+- [ ] geprüft
+
+Einstellung Komfort → Quests → Hinweise → „Nach Annahme einer Dungeonquest die übrigen zeigen“ (Standard an). Eine Todesminen-Quest oder einen Schritt der Kette (Gryan Starkmantel, Westfall) annehmen.
+
+- Fenster „Weitere Quests für Die Todesminen“: annehmbare oben, später verfügbare grau („– Ab Level 18“); angenommene Quest fehlt; nächster Kettenschritt dabei?
+- Klick auf einen Eintrag: Weltkarte öffnet sich auf der Zone, eigener Kartenpunkt an den Koordinaten (Symbol sichtbar? Classic Era: Rückfall-Symbol Karte), Tooltip mit dem Questtitel
+- Forever: wird zusätzlich Blizzards Wegpunkt gesetzt (C_Map.SetUserWaypoint, falls vorhanden)? Klick im Kampf ohne Fehler?
+- Annahme einer normalen Quest: kein Fenster
+- Keine Lua-Fehler

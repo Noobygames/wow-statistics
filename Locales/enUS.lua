@@ -2117,4 +2117,9 @@ ns.locales.enUS = {
   DUNGEON_QUEST_ZONE_HINT_TOGGLE = "Show dungeon quests when entering a zone",
   DUNGEON_QUEST_ZONE_HINT_TOGGLE_TIP = "When you enter a zone where someone offers you a dungeon quest or a step of its prequest chain, a small window shows the quest, instance, quest giver and coordinates. Once per zone and session; it closes by itself after a while.",
   EDIT_FRAME_DUNGEON_QUEST_HINT = "Dungeon quest hint",
+  DUNGEON_QUEST_ACCEPT_HINT_TITLE = "More quests for %s",
+  DUNGEON_QUEST_ACCEPT_HINT_TOGGLE = "Show the other dungeon quests after accepting one",
+  DUNGEON_QUEST_ACCEPT_HINT_TOGGLE_TIP = "When you accept a dungeon quest or a step of its prequest chain, a small window shows where to get the other quests of the same instance and the next chain steps: quest, giver, zone and coordinates. Ones available later (level or prequest missing) are gray. Clicking an entry sets a map pin and opens the map.",
+  DUNGEON_QUEST_HINT_CLICK = "Click: set a map pin and open the map",
+  DUNGEON_QUEST_HINT_STEP = "%s (step %d/%d)",
 }

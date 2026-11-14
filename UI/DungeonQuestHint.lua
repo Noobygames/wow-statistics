@@ -2,6 +2,10 @@
 -- (Titel, darunter Geber und Ort), Schließen-Knopf; schließt nach DISPLAY_SECONDS von selbst, unter der Maus bleibt es
 -- stehen. Position über Lib/Frames.lua (Edit-Modus mit Beispielinhalt, ziehbar solange nicht gesperrt).
 -- DungeonQuestHint.Show(title, rows), rows = { { text, detail, muted, place = { uiMapID, x, y } }, ... }.
+-- Klick auf eine Zeile mit Ort: eigener Kartenpunkt (eine Ebene über Lib/MapPins.lua, ersetzt den vorigen), wo es sie
+-- gibt zusätzlich Blizzards Wegpunkt (C_Map.CanSetUserWaypointOnMap/SetUserWaypoint mit UiMapPoint; laut Blizzard-Doku
+-- nur Retail, in Classic Era fehlen sie) und die Weltkarte auf der Zone öffnen (OpenWorldMap(mapID), auch in Classic
+-- Era: Blizzard_WorldMap/Vanilla).
 local _, ns = ...
 local L = ns.L
 local Widgets = ns.Widgets
@@ -29,9 +33,52 @@ local title = panel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 title:SetPoint("TOPLEFT", PADDING, -PADDING)
 title:SetJustifyH("LEFT")
 
+local WAYPOINT_SIZE = 18
+local WAYPOINT_ATLAS = "Waypoint-MapPin-Untracked"
+local WAYPOINT_TEXTURE = "Interface\\Icons\\INV_Misc_Map_01"  -- Rückfall, wo der Atlas fehlt (Classic Era)
+
 local rows = {}
+local rowEntries = {}  -- [Zeile] = angezeigter Eintrag
 local shownAt
 local editing = false
+local waypoint      -- { uiMapID, x, y, text } des zuletzt angeklickten Eintrags
+local waypointRevision = 0
+
+local waypointLayer = ns.MapPins.Create({
+  name = ns.GlobalName("DungeonQuestWaypoint"),
+  label = "DungeonQuestWaypoint",
+  points = function(mapID)
+    if not waypoint or waypoint.uiMapID ~= mapID then return {} end
+    return { { x = waypoint.x, y = waypoint.y, size = WAYPOINT_SIZE, atlas = WAYPOINT_ATLAS, texture = WAYPOINT_TEXTURE } }
+  end,
+  revision = function() return waypointRevision end,
+  onEnter = function(pin)
+    GameTooltip:SetOwner(pin, "ANCHOR_RIGHT")
+    GameTooltip:SetText(waypoint and waypoint.text or "")
+    GameTooltip:Show()
+  end,
+})
+
+local function setBlizzardWaypoint(place)
+  if not (C_Map and C_Map.SetUserWaypoint and C_Map.CanSetUserWaypointOnMap and UiMapPoint) then return end
+  if not C_Map.CanSetUserWaypointOnMap(place.uiMapID) then return end
+  C_Map.SetUserWaypoint(UiMapPoint.CreateFromCoordinates(place.uiMapID, place.x, place.y))
+end
+
+-- Kartenpunkt zum Eintrag setzen und die Karte auf seiner Zone öffnen
+function DungeonQuestHint.SetWaypoint(entry)
+  local place = entry.place
+  waypoint = { uiMapID = place.uiMapID, x = place.x, y = place.y, text = entry.text }
+  waypointRevision = waypointRevision + 1
+  waypointLayer.SetEnabled(true)
+  setBlizzardWaypoint(place)
+  if OpenWorldMap then OpenWorldMap(place.uiMapID) end
+  ns.Debug("dungeonquests", "waypoint %s %s %s", place.uiMapID, place.x, place.y)
+end
+
+function DungeonQuestHint.Waypoint()
+  return waypoint
+end
 
 local function setColor(fontString, colorName)
   fontString:SetTextColor(ns.Theme.RGB(colorName))
@@ -50,6 +97,12 @@ local function getRow(index)
   row.detail:SetPoint("TOPLEFT", row.text, "BOTTOMLEFT", 0, -LINE_GAP)
   row.detail:SetJustifyH("LEFT")
   setColor(row.detail, "muted")
+  row:SetScript("OnClick", function(self)
+    local entry = rowEntries[self]
+    if entry and entry.place then DungeonQuestHint.SetWaypoint(entry) end
+  end)
+  Widgets.AttachTooltip(row, function() return ns.DISPLAY_NAME end,
+    function() return rowEntries[row] and rowEntries[row].place and L.DUNGEON_QUEST_HINT_CLICK or nil end)
   rows[index] = row
   return row
 end
@@ -66,7 +119,7 @@ local function layout(titleText, entries)
   local count = math.min(#entries, DungeonQuestHint.MAX_ROWS)
   for index = 1, count do
     local entry, row = entries[index], getRow(index)
-    row.entry = entry
+    rowEntries[row] = entry
     row.text:SetText(entry.text)
     setColor(row.text, entry.muted and "inactive" or "text")
     row.detail:SetText(entry.detail or "")
@@ -77,7 +130,7 @@ local function layout(titleText, entries)
   local more = #entries - count
   if more > 0 then  -- letzte Zeile: Hinweis auf die übrigen
     local row = getRow(count + 1)
-    row.entry = nil
+    rowEntries[row] = nil
     row.text:SetText(string.format(L.DUNGEON_QUESTS_MORE, more))
     setColor(row.text, "muted")
     row.detail:SetText("")
@@ -100,9 +153,9 @@ function DungeonQuestHint.IsShown()
   return panel:IsShown()
 end
 
--- Zeilen des Fensters (für Tests und Klicks)
+-- Zeilen des Fensters und ihre Einträge (für Tests)
 function DungeonQuestHint.Rows()
-  return rows
+  return rows, rowEntries
 end
 
 ns.SetUpdateScript(panel, "DungeonQuestHint", function(self)

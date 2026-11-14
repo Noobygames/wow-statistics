@@ -2117,4 +2117,9 @@ ns.locales.esES = {
   DUNGEON_QUEST_ZONE_HINT_TOGGLE = "Mostrar misiones de mazmorra al entrar en una zona",
   DUNGEON_QUEST_ZONE_HINT_TOGGLE_TIP = "Al entrar en una zona donde alguien te ofrece una misión de mazmorra o un paso de su cadena previa, una pequeña ventana muestra la misión, la instancia, quién la da y las coordenadas. Una vez por zona y sesión; se cierra sola al cabo de un rato.",
   EDIT_FRAME_DUNGEON_QUEST_HINT = "Aviso de misión de mazmorra",
+  DUNGEON_QUEST_ACCEPT_HINT_TITLE = "Más misiones para %s",
+  DUNGEON_QUEST_ACCEPT_HINT_TOGGLE = "Mostrar las demás misiones de mazmorra al aceptar una",
+  DUNGEON_QUEST_ACCEPT_HINT_TOGGLE_TIP = "Al aceptar una misión de mazmorra o un paso de su cadena previa, una pequeña ventana muestra dónde conseguir las demás misiones de la misma instancia y los siguientes pasos: misión, instructor, zona y coordenadas. Las disponibles más tarde (falta nivel o misión previa) aparecen en gris. Al hacer clic en una entrada se coloca un punto y se abre el mapa.",
+  DUNGEON_QUEST_HINT_CLICK = "Clic: colocar un punto y abrir el mapa",
+  DUNGEON_QUEST_HINT_STEP = "%s (paso %d/%d)",
 }

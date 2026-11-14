@@ -3,6 +3,9 @@
 -- PLAYER_ENTERING_WORLD) die jetzt annehmbaren Dungeonquests und Kettenschritte, deren Geber in dieser Zone steht
 -- (DungeonQuests.OffersOnMap), einmal je Zone und Sitzung. Zone = C_Map.GetBestMapForUnit("player"), Kleinstkarten
 -- über QuestLog.ZoneMapOf auf Zonenebene.
+-- Annahme (Einstellung dungeonQuestAcceptHint, an): nach Annahme einer Dungeonquest oder eines Kettenschritts
+-- (QuestWatch onAccepted) die übrigen offenen Quests derselben Instanz samt Kettenschritten (DungeonQuests.InstanceQuests):
+-- jetzt annehmbare zuerst, später verfügbare (Level oder Vorquest fehlt) leiser; Klick setzt einen Kartenpunkt.
 -- Gebername: in der DungeonDB gibt es keine Namen; NPC = gelernter Name aus QuestNpcs (Annahme-Dialog), sonst
 -- "Questgeber"; Gegenstand = C_Item.GetItemNameByID (Classic Era laut Blizzard-Doku, sonst geschützt); Objekt = "Objekt".
 -- Ort "Zone (x, y)" über DungeonEntrances.StartText (C_Map.GetMapInfo).
@@ -11,6 +14,7 @@ local _, ns = ...
 ns.RegisterDefaults({
   settings = {
     dungeonQuestZoneHint = true,
+    dungeonQuestAcceptHint = true,
   },
 })
 local L = ns.L
@@ -95,3 +99,38 @@ end
 
 ns.RegisterEvent("ZONE_CHANGED_NEW_AREA", onZoneEntered)
 ns.RegisterEvent("PLAYER_ENTERING_WORLD", onZoneEntered)
+
+-- Zeile einer Instanzquest: "Titel", "Titel (Schritt 2/7)", später verfügbare mit "– Ab Level 18"
+local function instanceQuestText(quest)
+  local text = DungeonQuests.Title(quest.questID)
+  if quest.step then text = string.format(L.DUNGEON_QUEST_HINT_STEP, text, quest.step, quest.total) end
+  if not quest.available and (UnitLevel("player") or 0) < quest.minLevel then
+    text = string.format(L.DUNGEON_QUEST_HINT_DETAIL, text, string.format(L.DUNGEON_QUEST_MIN_LEVEL, quest.minLevel))
+  end
+  return text
+end
+
+-- Einträge für die übrigen offenen Quests der Instanz von questID; nil, wenn die Quest zu keiner Instanz gehört
+function DungeonQuestHints.AcceptEntries(questID)
+  local mapID = DungeonQuests.Instance(questID) or DungeonQuests.Chain(questID)
+  if not mapID then return nil end
+  local entries = {}
+  for _, quest in ipairs(DungeonQuests.InstanceQuests(mapID)) do
+    if quest.questID ~= questID then
+      local place = DungeonQuests.GiverPlace(quest.questID)
+      table.insert(entries, { text = instanceQuestText(quest), detail = DungeonQuestHints.Detail(quest.questID, place),
+        place = place, muted = not quest.available, questID = quest.questID })
+    end
+  end
+  return entries, mapID
+end
+
+ns.QuestWatch.Subscribe({
+  enabled = function(db) return db.dungeonQuestAcceptHint and DungeonQuests.IsAvailable() end,
+  onAccepted = function(quest)
+    local entries, mapID = DungeonQuestHints.AcceptEntries(quest.questID)
+    ns.Debug("dungeonquests", "accepted %s: instance %s, %s more", quest.questID, mapID, entries and #entries)
+    if not entries or #entries == 0 then return end
+    ns.DungeonQuestHint.Show(string.format(L.DUNGEON_QUEST_ACCEPT_HINT_TITLE, ns.InstanceInfo.MapName(mapID)), entries)
+  end,
+})

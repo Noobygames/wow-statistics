@@ -63,3 +63,37 @@ expectTrue("schließt von selbst", not Hint.IsShown())
 wow.fire("ZONE_CHANGED_NEW_AREA")
 expectTrue("nicht zweimal", not Hint.IsShown())
 
+-- Annahme: übrige Quests der Todesminen, jetzt annehmbare zuerst, später verfügbare leiser
+expect("Annahme-Hinweis Standard an", addon.db.dungeonQuestAcceptHint, true)
+local opened = {}
+function OpenWorldMap(mapID) table.insert(opened, mapID) end
+wow.update(1)  -- erster Stand des Questlogs
+wow.state.questLog = { { questID = 167, title = "Die Bruderschaft", level = 20, objectives = {} } }
+wow.fire("QUEST_ACCEPTED", 1, 167)
+wow.fire("QUEST_LOG_UPDATE")
+wow.update(1)
+expectTrue("Annahme: Fenster", Hint.IsShown())
+local accepted = Hints.AcceptEntries(167)
+local byQuest, mutedCount = {}, 0
+for _, entry in ipairs(accepted) do
+  byQuest[entry.questID] = entry
+  if entry.muted then mutedCount = mutedCount + 1 end
+end
+expectTrue("angenommene fehlt", byQuest[167] == nil)
+expectTrue("168 jetzt annehmbar", byQuest[168] ~= nil and not byQuest[168].muted)
+expectTrue("annehmbare zuerst", not accepted[1].muted)
+expectTrue("später verfügbare dabei", mutedCount > 0)
+expectTrue("214 wartet auf Vorquest", byQuest[214] ~= nil and byQuest[214].muted)
+expect("keine Dungeonquest: nichts", Hints.AcceptEntries(999999), nil)
+
+-- Klick auf eine Zeile: Kartenpunkt und Karte auf der Zone
+local row
+local rows, rowEntries = Hint.Rows()
+for _, candidate in ipairs(rows) do
+  if rowEntries[candidate] and rowEntries[candidate].questID == 168 then row = candidate end
+end
+expectTrue("Zeile 168", row ~= nil)
+if row then row:GetScript("OnClick")(row) end
+expect("Kartenpunkt", Hint.Waypoint() and Hint.Waypoint().uiMapID, 1453)
+expect("Karte geöffnet", opened[1], 1453)
+

@@ -2117,4 +2117,9 @@ ns.locales.frFR = {
   DUNGEON_QUEST_ZONE_HINT_TOGGLE = "Afficher les quêtes de donjon en entrant dans une zone",
   DUNGEON_QUEST_ZONE_HINT_TOGGLE_TIP = "Quand tu entres dans une zone où quelqu'un te propose une quête de donjon ou une étape de sa chaîne de quêtes préalables, une petite fenêtre affiche la quête, l'instance, le donneur de quête et les coordonnées. Une fois par zone et par session ; elle se ferme d'elle-même après un moment.",
   EDIT_FRAME_DUNGEON_QUEST_HINT = "Indice de quête de donjon",
+  DUNGEON_QUEST_ACCEPT_HINT_TITLE = "Autres quêtes : %s",
+  DUNGEON_QUEST_ACCEPT_HINT_TOGGLE = "Afficher les autres quêtes de donjon après en avoir accepté une",
+  DUNGEON_QUEST_ACCEPT_HINT_TOGGLE_TIP = "Quand tu acceptes une quête de donjon ou une étape de sa chaîne de quêtes préalables, une petite fenêtre indique où obtenir les autres quêtes de la même instance et les étapes suivantes : quête, donneur, zone et coordonnées. Celles disponibles plus tard (niveau ou quête préalable manquant) sont grises. Un clic sur une entrée place un repère et ouvre la carte.",
+  DUNGEON_QUEST_HINT_CLICK = "Clic : placer un repère et ouvrir la carte",
+  DUNGEON_QUEST_HINT_STEP = "%s (étape %d/%d)",
 }
