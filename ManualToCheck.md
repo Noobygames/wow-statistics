@@ -3547,3 +3547,15 @@ Blizzards Würfelfenster ausgeblendet oder ersetzt, damit die eigene Würfelkart
 - Jede Zeile zeigt das Symbol des Gegenstands vor dem Namen (offene Würfe und Ergebnisse)
 - Drüberfahren am Symbol und am Namen zeigt den Item-Tooltip, Shift-Klick verlinkt wie bisher
 - Symbolgröße passt zur Schrift
+### 511. Dungeonquests beim Betreten einer Zone (LT-40, Classic Era und WoW Forever)
+
+- [ ] geprüft
+
+Einstellung Komfort → Quests → Hinweise → „Dungeonquests beim Betreten einer Zone zeigen“ (Standard an). Allianz Level 15+, nach Westfall oder Sturmwind reisen.
+
+- Kleines Fenster „Dungeonquests in Westfall“: je Quest Titel (Instanz bzw. Instanz, Schritt x/y), darunter Geber und Koordinaten; Koordinaten stimmen mit dem Geber überein?
+- Questtitel lesbar oder „#1234“? (Classic Era: C_QuestLog.GetQuestInfo für Quests außerhalb des Logs; Forever: GetTitleForQuestID)
+- Gebername: „Questgeber“, bis man mit dem NPC gesprochen hat (dann der gelernte Name)
+- Erscheint nach Login/Reload in der Zone (PLAYER_ENTERING_WORLD) und listet dabei keine Quests, die schon im Log sind?
+- Pro Zone und Sitzung nur einmal; schließt nach ~20 s, unter der Maus bleibt es stehen; Schließen-Knopf; im Edit-Modus verschiebbar
+- Keine Lua-Fehler

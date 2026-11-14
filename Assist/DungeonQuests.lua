@@ -38,8 +38,10 @@ function DungeonQuests.IsAvailable()
   return ns.DungeonDB ~= nil
 end
 
+local chainsOf  -- [Karten-ID] = { questID, ... } der Kettenschritte, die zu dieser Instanz führen
+
 local function buildInstances()
-  instanceOf = {}
+  instanceOf, chainsOf = {}, {}
   local mapIDs = {}
   for mapID in pairs(db().quests) do table.insert(mapIDs, mapID) end
   table.sort(mapIDs)
@@ -47,6 +49,11 @@ local function buildInstances()
     for _, questID in ipairs(db().quests[mapID]) do
       instanceOf[questID] = instanceOf[questID] or mapID
     end
+  end
+  for questID, chain in pairs(db().questChains) do
+    local mapID = chain[CHAIN_MAP]
+    chainsOf[mapID] = chainsOf[mapID] or {}
+    table.insert(chainsOf[mapID], questID)
   end
 end
 
@@ -110,14 +117,18 @@ local function classFits(mask)
   return math.floor(mask / 2 ^ (classID - 1)) % 2 == 1
 end
 
-local function computeCanTake(questID)
-  local info = db().questInfo[questID]
-  if not info then return false end
+-- Offen für diesen Charakter: Fraktion und Klasse passen, nicht abgegeben, nicht im Log, nicht ausgeschlossen
+local function isOpen(questID, info)
   local faction = FACTION_CODES[readable(UnitFactionGroup("player"))]
   if info[FACTION] and info[FACTION] ~= faction then return false end
-  if (UnitLevel("player") or 0) < info[MIN_LEVEL] or not classFits(info[CLASS_MASK]) then return false end
-  if isDone(questID) or ns.QuestLog.Find(questID) then return false end
-  return DungeonQuests.PrerequisitesMet(info.pre, info.preAny, info.excl)
+  if not classFits(info[CLASS_MASK]) then return false end
+  return not isDone(questID) and not ns.QuestLog.Find(questID) and not excluded(info.excl)
+end
+
+local function computeCanTake(questID)
+  local info = db().questInfo[questID]
+  if not info or not isOpen(questID, info) then return false end
+  return (UnitLevel("player") or 0) >= info[MIN_LEVEL] and allDone(info.pre) and anyDone(info.preAny)
 end
 
 -- Kann der Charakter die Quest jetzt annehmen?
@@ -133,14 +144,45 @@ end
 
 -- Angebot einer annehmbaren Quest: { questID, level, mapID, step, total } (step/total nur bei Schritten einer
 -- Vorquest-Kette, die selbst keine Dungeonquest sind); nil, wenn nicht annehmbar oder ohne Bezug zu einer Instanz
-function DungeonQuests.Offer(questID)
-  if not DungeonQuests.CanTake(questID) then return nil end
+local function offerOf(questID)
   local info = db().questInfo[questID]
   local mapID = DungeonQuests.Instance(questID)
-  if mapID then return { questID = questID, level = info[LEVEL], mapID = mapID } end
+  if mapID then return { questID = questID, level = info[LEVEL], minLevel = info[MIN_LEVEL], mapID = mapID } end
   local chainMap, _, step, total = DungeonQuests.Chain(questID)
-  if chainMap then return { questID = questID, level = info[LEVEL], mapID = chainMap, step = step, total = total } end
+  if chainMap then
+    return { questID = questID, level = info[LEVEL], minLevel = info[MIN_LEVEL], mapID = chainMap, step = step,
+      total = total }
+  end
   return nil
+end
+
+function DungeonQuests.Offer(questID)
+  if not DungeonQuests.CanTake(questID) then return nil end
+  return offerOf(questID)
+end
+
+-- Offene Quests einer Instanz (ihre Dungeonquests und die Schritte der Ketten dorthin) wie Offer, dazu
+-- available = jetzt annehmbar (sonst fehlen Level oder Vorquests); jetzt annehmbare zuerst, dann nach Questlevel
+function DungeonQuests.InstanceQuests(mapID)
+  local list, seen = {}, {}
+  if not db() then return list end
+  if not instanceOf then buildInstances() end
+  local function add(questID)
+    local info = db().questInfo[questID]
+    if seen[questID] or not info or not isOpen(questID, info) then return end
+    seen[questID] = true
+    local entry = offerOf(questID)
+    entry.available = DungeonQuests.CanTake(questID)
+    table.insert(list, entry)
+  end
+  for _, questID in ipairs(db().quests[mapID] or {}) do add(questID) end
+  for _, questID in ipairs(chainsOf[mapID] or {}) do add(questID) end
+  table.sort(list, function(a, b)
+    if a.available ~= b.available then return a.available end
+    if a.level ~= b.level then return a.level < b.level end
+    return a.questID < b.questID
+  end)
+  return list
 end
 
 -- Annehmbare Quests eines Gebers (kind = "npc", "object", "item"), nach Questlevel; leer ohne Angebot
@@ -210,10 +252,25 @@ function DungeonQuests.Giver(questID)
   return GIVER_KINDS[info[GIVER_KIND]], info[GIVER_ID]
 end
 
--- Questtitel aus dem Client, sonst "#questID" (DungeonDB führt keine Namen)
-function DungeonQuests.Title(questID)
-  local title = C_QuestLog and C_QuestLog.GetTitleForQuestID and readable(C_QuestLog.GetTitleForQuestID(questID))
+-- Ort des Gebers: { uiMapID, x, y } (x, y 0-1); nil, wenn unbekannt oder in einer Instanz
+function DungeonQuests.GiverPlace(questID)
+  local info = db() and db().questInfo[questID]
+  if not (info and info[GIVER_MAP] and info[GIVER_X]) then return nil end
+  return { uiMapID = info[GIVER_MAP], x = info[GIVER_X], y = info[GIVER_Y] }
+end
+
+local function clientTitle(questID, functionName)
+  local fn = C_QuestLog and C_QuestLog[functionName]
+  local title = fn and readable(fn(questID))
   if type(title) == "string" and title ~= "" then return title end
+  return nil
+end
+
+-- Questtitel aus dem Client (C_QuestLog.GetTitleForQuestID, in Classic Era C_QuestLog.GetQuestInfo; beide ohne
+-- Gewähr, wenn der Client die Quest noch nicht kennt), sonst aus dem Log, sonst "#questID" (DungeonDB führt keine Namen)
+function DungeonQuests.Title(questID)
+  local title = clientTitle(questID, "GetTitleForQuestID") or clientTitle(questID, "GetQuestInfo")
+  if title then return title end
   local entry = ns.QuestLog.Find(questID)
   return entry and entry.title or ("#" .. questID)
 end

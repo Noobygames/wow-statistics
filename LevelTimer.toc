@@ -232,6 +232,8 @@ Assist\DungeonQuests.lua
 Assist\DungeonQuestGivers.lua
 Assist\QuestLevels.lua
 Assist\DungeonQuestTags.lua
+UI\DungeonQuestHint.lua
+Assist\DungeonQuestHints.lua
 Assist\QuestLogRewards.lua
 Assist\QuestTextSize.lua
 Assist\QuestBagItems.lua
