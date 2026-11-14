@@ -3560,7 +3560,7 @@ Einstellung Komfort → Quests → Hinweise → „Dungeonquests beim Betreten e
 - Pro Zone und Sitzung nur einmal; schließt nach ~20 s, unter der Maus bleibt es stehen; Schließen-Knopf; im Edit-Modus verschiebbar
 - Keine Lua-Fehler
 
-### 511. Übrige Dungeonquests nach der Annahme (LT-41, Classic Era und WoW Forever)
+### 512. Übrige Dungeonquests nach der Annahme (LT-41, Classic Era und WoW Forever)
 
 - [ ] geprüft
 
