@@ -24,6 +24,9 @@ expectTrue("Typ", rhahk[1]:find(L.MECHANIC_TANK .. ":", 1, true) ~= nil)
 expectTrue("deutscher Text", rhahk[1]:find("Tank voll geheilt halten", 1, true) ~= nil)
 expectTrue("Zaubersymbol", rhahk[1]:find("Spell_6304", 1, true) ~= nil)
 
+-- Trash (LT-11): Defias-Beschwörer (Todesminen, 1729) hat zwei Mechaniken
+expect("Trash", #linesFor("Creature-0-1-0-36-1729-0001"), 2)
+
 -- Viele Mechaniken: höchstens MAX_LINES Zeilen
 local busy
 for npcID, list in pairs(addon.Mechanics) do

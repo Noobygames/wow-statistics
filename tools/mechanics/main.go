@@ -14,7 +14,7 @@ import (
 )
 
 // Gruppen einer Instanzdatei, deren Einheiten Tooltipzeilen bekommen
-var groups = []string{"bosses", "rares"}
+var groups = []string{"bosses", "rares", "trash"}
 
 // Erlaubte Typen (Farbe und Symbol im Addon: Assist/Mechanics.lua)
 var types = map[string]bool{"avoid": true, "interrupt": true, "dispel": true, "tank": true, "survive": true,

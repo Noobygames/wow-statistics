@@ -3614,4 +3614,5 @@ Einstellung „Boss- und Gegnerfähigkeiten zeigen“ (Komfort, Tooltip) an. Dat
 
 - Maus über einem Dungeon-Boss (z.B. Todesminen: Rhahk'Zor, Edwin VanCleef): bis zu drei Zeilen „Symbol Typ: Tipp“, Typ farbig, Zaubersymbol passt, lange Tipps brechen um statt den Tooltip extrem breit zu machen.
 - Deutscher Client deutsche Tipps, englischer/französischer/spanischer Client englische Tipps; Typwörter in Clientsprache.
+- Trash (z.B. Todesminen: Defias-Beschwörer, Naxxramas-Trash): ebenfalls Zeilen; Gegner ohne Daten bekommen keine.
 - Einstellung aus: keine Zeilen; Retail: Option fehlt.
