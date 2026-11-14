@@ -227,6 +227,8 @@ Assist\LootRollReport.lua
 Tracking\RollLog.lua
 UI\LootRollDisplay.lua
 UI\InstanceRunTracker.lua
+Assist\DungeonQuests.lua
+Assist\DungeonQuestGivers.lua
 Assist\QuestLevels.lua
 Assist\QuestLogRewards.lua
 Assist\QuestTextSize.lua

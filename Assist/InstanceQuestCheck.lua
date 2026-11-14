@@ -1,7 +1,7 @@
 -- Quest-Check beim Betreten einer Instanz (Einstellung instanceQuestCheck, an; nur mit ns.InstanceGuide, also
 -- WoW Forever): eine kompakte Chatzeile mit den Dungeonquests, die der Charakter jetzt annehmen könnte, aber nicht im
 -- Log hat. Verfügbar = Mindestlevel erreicht, Fraktion und Klasse passen, nicht abgegeben (DungeonEntrances.OpenQuests),
--- alle Vorquests "pre" und eine von "preAny" abgegeben, keine Quest aus "excl" abgegeben oder im Log.
+-- Vorquests erfüllt (DungeonQuests.PrerequisitesMet: alle "pre", eine aus "preAny", keine aus "excl").
 -- Quests über dem eigenen Level fallen weg. Dieselbe Liste meldet es je Instanz nur einmal (kein Wiederholen nach
 -- Geisterlauf oder Wiedereintritt), erst wenn sie sich ändert wieder.
 local _, ns = ...
@@ -22,30 +22,6 @@ local SEPARATOR = ", "
 -- Zuletzt gemeldeter Text je Instanz-Karten-ID
 local lastReport = {}
 
-local function isDone(questID) return ns.QuestItemTooltip.IsQuestDone(questID) end
-
-local function allDone(questIDs)
-  for _, questID in ipairs(questIDs or {}) do
-    if not isDone(questID) then return false end
-  end
-  return true
-end
-
-local function anyDone(questIDs)
-  if not questIDs then return true end
-  for _, questID in ipairs(questIDs) do
-    if isDone(questID) then return true end
-  end
-  return false
-end
-
-local function excluded(questIDs)
-  for _, questID in ipairs(questIDs or {}) do
-    if isDone(questID) or ns.QuestLog.Find(questID) then return true end
-  end
-  return false
-end
-
 function InstanceQuestCheck.IsAvailable()
   return ns.DungeonEntrances.IsAvailable()
 end
@@ -55,8 +31,8 @@ function InstanceQuestCheck.Missing(mapID)
   local level = UnitLevel("player") or 0
   local missing = {}
   for _, quest in ipairs(ns.DungeonEntrances.OpenQuests(mapID)) do
-    if not quest.inLog and level >= quest.minLevel and allDone(quest.pre) and anyDone(quest.preAny)
-      and not excluded(quest.excl) then
+    if not quest.inLog and level >= quest.minLevel
+      and ns.DungeonQuests.PrerequisitesMet(quest.pre, quest.preAny, quest.excl) then
       table.insert(missing, quest)
     end
   end

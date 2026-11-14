@@ -2098,4 +2098,7 @@ ns.locales.esES = {
   BOSS_LOOT_TITLE = "Botín conocido",
   BOSS_LOOT_TOGGLE = "Botín de jefes en descripciones",
   BOSS_LOOT_TOGGLE_TIP = "Muestra los objetos conocidos de calidad rara o superior que suelta un jefe (épicos primero, con probabilidad si se conoce): al pasar el ratón por una fila de jefe en la ventana de mazmorras y bandas y en la descripción de las entradas de mazmorra en el mapa.",
+  DUNGEON_QUEST_GIVERS_TOGGLE = "Marcar los dadores de misiones de mazmorra",
+  DUNGEON_QUEST_GIVERS_TOGGLE_TIP = "Los PNJ y objetos que te ofrecen ahora una misión de mazmorra (nivel, facción, clase y misiones previas encajan) reciben un icono de mazmorra sobre su placa de nombre y en el marco del objetivo, una línea en el tooltip y un punto en el mapa de la zona.",
+  DUNGEON_QUEST_OFFER = "Misión de mazmorra: %s (%s)",
 }

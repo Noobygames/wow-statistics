@@ -21,7 +21,11 @@ local function placeAt(map, x, y) here.map, here.x, here.y = map, x, y end
 local postCalls = {}
 Enum = Enum or {}
 Enum.TooltipDataType = { Unit = 2 }
-TooltipDataProcessor = { AddTooltipPostCall = function(kind, fn) postCalls[kind] = fn end }
+-- Wie im Client: mehrere Post-Calls je Art (auch Assist/Tooltip.lua hängt sich an)
+TooltipDataProcessor = { AddTooltipPostCall = function(kind, fn)
+  postCalls[kind] = postCalls[kind] or {}
+  table.insert(postCalls[kind], fn)
+end }
 local tooltipUnit, tooltipLines = nil, {}
 function GameTooltip:GetUnit() return tooltipUnit and "Name", tooltipUnit end
 function GameTooltip:AddLine(text) table.insert(tooltipLines, text) end
@@ -159,7 +163,7 @@ addon.Set("transportNameplate", true)
 wow.state.units.mouseover = { name = "Frezza", guid = "Creature-0-4379-1-1-3149-00001A2B3C" }
 local function hover(unit)
   tooltipUnit, tooltipLines = unit, {}
-  postCalls[Enum.TooltipDataType.Unit](GameTooltip)
+  for _, fn in ipairs(postCalls[Enum.TooltipDataType.Unit]) do fn(GameTooltip) end
   return tooltipLines
 end
 expectTrue("Tooltip-Zeile", #hover("mouseover") >= 1)

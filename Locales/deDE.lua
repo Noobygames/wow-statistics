@@ -2098,4 +2098,7 @@ ns.locales.deDE = {
   BOSS_LOOT_TITLE = "Bekannte Beute",
   BOSS_LOOT_TOGGLE = "Boss-Beute im Tooltip",
   BOSS_LOOT_TOGGLE_TIP = "Zeigt die bekannten Drops ab Qualität rar eines Bosses (epische zuerst, mit Chance, falls bekannt): beim Überfahren einer Bosszeile im Fenster der Dungeon- und Raid-Runs und im Tooltip der Dungeon-Eingänge auf der Karte.",
+  DUNGEON_QUEST_GIVERS_TOGGLE = "Dungeonquest-Geber markieren",
+  DUNGEON_QUEST_GIVERS_TOGGLE_TIP = "NPCs und Objekte, die dir jetzt eine Dungeonquest anbieten (Level, Fraktion, Klasse und Vorquests passen), bekommen ein Dungeon-Symbol über der Namensplakette und am Zielfenster, eine Tooltipzeile und einen Punkt auf der Zonenkarte.",
+  DUNGEON_QUEST_OFFER = "Dungeonquest: %s (%s)",
 }

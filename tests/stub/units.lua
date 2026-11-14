@@ -65,11 +65,14 @@ function UnitClassification(unit) return state.units[unit] and state.units[unit]
 function GetRealmName() return state.realm end
 -- Wie der Client: Realm ohne Leerzeichen und Bindestriche ("Azjol-Nerub" -> "AzjolNerub")
 function GetNormalizedRealmName() return state.realm and (state.realm:gsub("[%s%-]", "")) end
+-- classID (3. Rückgabe) wie im Client
+CLASS_IDS = { WARRIOR = 1, PALADIN = 2, HUNTER = 3, ROGUE = 4, PRIEST = 5, DEATHKNIGHT = 6, SHAMAN = 7, MAGE = 8,
+  WARLOCK = 9, MONK = 10, DRUID = 11 }
 -- Andere Einheiten: units[unit].class, sonst die Klasse des Spielers
 function UnitClass(unit)
   local other = unit and unit ~= "player" and state.units[unit]
   local class = other and other.class or state.class
-  return class, class
+  return class, class, CLASS_IDS[class]
 end
 function UnitIsUnit(a, b) return a == b or (state.units[a] ~= nil and state.units[a] == state.units[b]) end
 -- Reaktionsfarbe (UnitSelectionColor): units[unit].selection oder gelb

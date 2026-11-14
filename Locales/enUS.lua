@@ -2098,4 +2098,7 @@ ns.locales.enUS = {
   BOSS_LOOT_TITLE = "Known loot",
   BOSS_LOOT_TOGGLE = "Boss loot in tooltips",
   BOSS_LOOT_TOGGLE_TIP = "Shows a boss's known drops of rare quality or better (epics first, with chance if known): when hovering a boss row in the dungeon and raid runs window and in the dungeon entrance tooltip on the map.",
+  DUNGEON_QUEST_GIVERS_TOGGLE = "Mark dungeon quest givers",
+  DUNGEON_QUEST_GIVERS_TOGGLE_TIP = "NPCs and objects that offer you a dungeon quest right now (level, faction, class and prerequisites fit) get a dungeon icon above their nameplate and on the target frame, a tooltip line and a pin on the zone map.",
+  DUNGEON_QUEST_OFFER = "Dungeon quest: %s (%s)",
 }

@@ -18,9 +18,11 @@ local DEFAULT_SIZE = 8
 
 local layers = {}
 
-local function knownAtlas(atlas)
+-- Kennt der Client den Atlas? (auch für Symbole außerhalb der Karte)
+function MapPins.KnownAtlas(atlas)
   return atlas and C_Texture and C_Texture.GetAtlasInfo and C_Texture.GetAtlasInfo(atlas) ~= nil
 end
+local knownAtlas = MapPins.KnownAtlas
 
 local function newLayer(definition)
   local layer = { definition = definition, pins = {}, enabled = false }

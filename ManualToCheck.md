@@ -3504,3 +3504,14 @@ Nur mit `LevelTimer_DataExtractor`. In Retail, Classic Era und Forever je einen 
 - Classic Era: keine Platzhalter für Forever-eigene Items (IDs ab 250000), die der Era-Client nicht kennt
 - Dungeon-Eingang (Forever): Beute-Block unter den Quests, Tooltip bleibt am Bildschirm (nicht zu lang)
 - Einstellung Komfort > Beute „Boss-Beute im Tooltip“ aus: keine Beutezeilen mehr; keine Lua-Fehler
+### 507. Dungeonquest-Geber markieren (LT-32, Classic Era und WoW Forever)
+
+- [ ] geprüft
+
+Einstellung Komfort → Quest-Anzeige → „Dungeonquest-Geber markieren“ (Standard an). Charakter Level 15+, Allianz: nach Sturmwind/Westfall zu einem Geber einer Todesminen-Quest.
+
+- Dungeon-Symbol über der Namensplakette des Gebers (freundliche NPC-Plaketten einschalten) und links oben am Zielfenster; Lage passt (Classic Era und Forever-Zielfenster)?
+- Tooltip beim Überfahren: „Dungeonquest: Titel (Die Todesminen)“; Titel richtig oder „#questID“ (Quest nicht im Cache)?
+- Weltkarte (Zonenkarte): Dungeon-Symbol am Ort des Gebers, Tooltip mit denselben Zeilen; auch Objekt-Geber
+- Quest annehmen: Symbol verschwindet innerhalb ~1 s; Klassenquests nur für die passende Klasse
+- Keine Lua-Fehler, keine spürbaren Ruckler mit vielen Plaketten
