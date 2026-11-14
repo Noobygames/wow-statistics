@@ -1,6 +1,7 @@
 // Questie liest das lokale Addon QuestieDB (WoW-Forever-Build, WTFPL) und erzeugt daraus die Instanz-Daten
 // für Level Time: Quests je klassischer Instanz mit vollständiger Vorquest-Kette, NPCs je Instanz und deren Drops.
-// Ergänzt die Boss-Beute aus der eigenen Führer-Recherche (docs/research/mechanics, siehe guide.go).
+// Ergänzt die Boss-Beute aus der eigenen Führer-Recherche (docs/research/mechanics, siehe guide.go) und Bosse samt
+// Beute aus dem Addon ForeverDungeonJournal (siehe fdj.go).
 // Ausgabe: dist/questie/{quests,npcs,loot}.json und Assist/InstanceData/dungeon_db.lua. Aufruf über "make questie".
 package main
 
@@ -11,10 +12,14 @@ import (
 	"path/filepath"
 )
 
-const defaultQuestieDir = `D:\Games\World of Warcraft\_forever_\Interface\AddOns\QuestieDB`
+const (
+	defaultQuestieDir = `D:\Games\World of Warcraft\_forever_\Interface\AddOns\QuestieDB`
+	defaultFDJDir     = `D:\Games\World of Warcraft\_forever_\Interface\AddOns\ForeverDungeonJournal`
+)
 
 func main() {
 	dir := flag.String("questie", defaultQuestieDir, "Ordner des Addons QuestieDB")
+	fdjDir := flag.String("fdj", defaultFDJDir, "Ordner des Addons ForeverDungeonJournal")
 	out := flag.String("out", "dist/questie", "Ziel-Ordner der JSON-Dateien")
 	luaOut := flag.String("lua", "Assist/InstanceData/dungeon_db.lua", "Ziel-Datei (Lua)")
 	guideDir := flag.String("guide", "../../docs/research/mechanics", "Ordner der Führer-Recherche (JSON je Instanz)")
@@ -23,12 +28,13 @@ func main() {
 	itemSparse := flag.String("itemsparse", "", "lokale ItemSparse-CSVs (kommagetrennt, Vorrang in Reihenfolge) statt Download von wago.tools")
 	flag.Parse()
 
-	qualities, itemBuild, err := loadQualities(*itemSparse)
+	qualities, foreverItems, itemBuild, err := loadQualities(*itemSparse)
 	var res *result
 	var version string
 	var guide guideStats
+	var fdj fdjStats
 	if err == nil {
-		res, version, guide, err = run(*dir, *guideDir, *bossNpcsPath, *handPath, qualities)
+		res, version, guide, fdj, err = run(*dir, *fdjDir, *guideDir, *bossNpcsPath, *handPath, qualities, foreverItems)
 	}
 	if err == nil {
 		err = writeJSON(*out, res)
@@ -40,54 +46,61 @@ func main() {
 		fmt.Fprintln(os.Stderr, "Fehler:", err)
 		os.Exit(1)
 	}
-	printSummary(res, guide, *luaOut)
+	printSummary(res, guide, fdj, *luaOut)
 }
 
-func run(dir, guideDir, bossNpcsPath, handPath string, qualities map[int]int) (*result, string, guideStats, error) {
+func run(dir, fdjDir, guideDir, bossNpcsPath, handPath string, qualities map[int]int, foreverItems map[int]bool) (*result, string, guideStats, fdjStats, error) {
 	var st guideStats
+	var fst fdjStats
 	store, err := readTOC(filepath.Join(dir, "QuestieDB_Forever.toc"))
 	if err != nil {
-		return nil, "", st, err
+		return nil, "", st, fst, err
 	}
 	db, err := loadDB(store)
 	if err != nil {
-		return nil, "", st, err
+		return nil, "", st, fst, err
 	}
 	fixes, err := readFactionFixes(dir)
 	if err != nil {
-		return nil, "", st, err
+		return nil, "", st, fst, err
 	}
 	fixes.apply(db)
 	zones, err := readZones(dir)
 	if err != nil {
-		return nil, "", st, err
+		return nil, "", st, fst, err
 	}
 	rates, err := readDropRates(dir)
 	if err != nil {
-		return nil, "", st, err
+		return nil, "", st, fst, err
 	}
 	guides, err := readGuides(guideDir)
 	if err != nil {
-		return nil, "", st, err
+		return nil, "", st, fst, err
 	}
 	bossNpcs, err := readBossNpcs(bossNpcsPath)
 	if err != nil {
-		return nil, "", st, err
+		return nil, "", st, fst, err
 	}
 	hand, err := readHandQuests(handPath)
 	if err != nil {
-		return nil, "", st, err
+		return nil, "", st, fst, err
+	}
+	fdj, err := readFDJ(fdjDir)
+	if err != nil {
+		return nil, "", st, fst, err
 	}
 	res := build(db, zones, rates, qualities)
 	if err := mergeHandQuests(res, db, zones, hand); err != nil {
-		return nil, "", st, err
+		return nil, "", st, fst, err
 	}
 	res.addGivers(db)
 	st = mergeGuide(res, db, guides, qualities, bossNpcs)
-	return res, store.values["Version"], st, nil
+	fst, confirmed := mergeFDJ(res, db, fdj, qualities, foreverItems)
+	fst.Unverified = markUnverified(res, confirmed)
+	return res, store.values["Version"], st, fst, nil
 }
 
-func printSummary(res *result, guide guideStats, luaOut string) {
+func printSummary(res *result, guide guideStats, fdj fdjStats, luaOut string) {
 	chains, rated := 0, 0
 	perQuality, items := map[int]int{}, map[int]bool{}
 	for _, q := range res.Quests {
@@ -127,6 +140,12 @@ func printSummary(res *result, guide guideStats, luaOut string) {
 	}
 	for _, m := range guide.Missing {
 		fmt.Println("  Führer-Item ohne ItemSparse:", m)
+	}
+	fmt.Printf("FDJ: %d Items ergänzt (%d Forever-Items mit FDJ-Qualität), %d schon bekannt, %d nicht in ItemSparse, %d unter rar; %d NPCs neu, %d Bosse auf Rang 3\n",
+		fdj.Added, fdj.ForeverOnly, fdj.Duplicate, fdj.NotFound, fdj.BelowRare, fdj.NpcsNew, fdj.Ranked)
+	fmt.Printf("Drops für Forever unbestätigt (nur Classic-Daten): %d\n", fdj.Unverified)
+	for _, u := range fdj.Unmatched {
+		fmt.Println("  FDJ-Boss ohne NPC-ID:", u)
 	}
 	fmt.Printf("%s: %d KB\n", luaOut, size/1024)
 }

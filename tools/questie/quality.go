@@ -46,32 +46,44 @@ func wagoGet(client *http.Client, path string) (io.ReadCloser, error) {
 	return resp.Body, nil
 }
 
-// loadQualities liest Item -> Qualität aus lokalen CSV-Dateien (kommagetrennt, Vorrang in Reihenfolge)
-// oder lädt sie von wago.tools; liefert dazu die Herkunft (Builds bzw. Dateinamen) für den Dateikopf.
-func loadQualities(csvPaths string) (map[int]int, string, error) {
+// loadQualities liest Item -> Qualität aus lokalen CSV-Dateien (kommagetrennt, Vorrang in Reihenfolge, die erste
+// ist die Forever-Tabelle) oder lädt sie von wago.tools; liefert dazu die Items der Forever-Tabelle und die Herkunft
+// (Builds bzw. Dateinamen) für den Dateikopf.
+func loadQualities(csvPaths string) (map[int]int, map[int]bool, string, error) {
 	if csvPaths == "" {
 		return fetchQualities()
 	}
-	out := map[int]int{}
-	for _, path := range strings.Split(csvPaths, ",") {
+	out, forever := map[int]int{}, map[int]bool{}
+	for i, path := range strings.Split(csvPaths, ",") {
 		f, err := os.Open(path)
 		if err != nil {
-			return nil, "", err
+			return nil, nil, "", err
 		}
 		err = parseQualities(f, out)
 		f.Close()
 		if err != nil {
-			return nil, "", err
+			return nil, nil, "", err
+		}
+		if i == 0 {
+			forever = keySet(out)
 		}
 	}
-	return out, csvPaths, nil
+	return out, forever, csvPaths, nil
 }
 
-func fetchQualities() (map[int]int, string, error) {
+func keySet(m map[int]int) map[int]bool {
+	out := make(map[int]bool, len(m))
+	for k := range m {
+		out[k] = true
+	}
+	return out
+}
+
+func fetchQualities() (map[int]int, map[int]bool, string, error) {
 	client := &http.Client{Timeout: wagoTimeout}
 	body, err := wagoGet(client, "/api/builds")
 	if err != nil {
-		return nil, "", err
+		return nil, nil, "", err
 	}
 	var builds map[string][]struct {
 		Version   string `json:"version"`
@@ -80,9 +92,9 @@ func fetchQualities() (map[int]int, string, error) {
 	err = json.NewDecoder(body).Decode(&builds)
 	body.Close()
 	if err != nil {
-		return nil, "", fmt.Errorf("api/builds: %w", err)
+		return nil, nil, "", fmt.Errorf("api/builds: %w", err)
 	}
-	out := map[int]int{}
+	out, forever := map[int]int{}, map[int]bool{}
 	var origin []string
 	for _, product := range qualityProducts {
 		build, newest := "", ""
@@ -92,20 +104,23 @@ func fetchQualities() (map[int]int, string, error) {
 			}
 		}
 		if build == "" {
-			return nil, "", fmt.Errorf("wago.tools: kein Build für %s", product)
+			return nil, nil, "", fmt.Errorf("wago.tools: kein Build für %s", product)
 		}
 		body, err := wagoGet(client, "/db2/ItemSparse/csv?build="+url.QueryEscape(build))
 		if err != nil {
-			return nil, "", err
+			return nil, nil, "", err
 		}
 		err = parseQualities(body, out)
 		body.Close()
 		if err != nil {
-			return nil, "", err
+			return nil, nil, "", err
+		}
+		if product == qualityProducts[0] {
+			forever = keySet(out)
 		}
 		origin = append(origin, product+" "+build)
 	}
-	return out, strings.Join(origin, " + "), nil
+	return out, forever, strings.Join(origin, " + "), nil
 }
 
 // parseQualities liest ID und OverallQualityID aus einer ItemSparse-CSV; vorhandene Einträge bleiben.

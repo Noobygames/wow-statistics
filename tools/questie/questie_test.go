@@ -307,3 +307,46 @@ func cborEncode(v any) []byte {
 	enc(v)
 	return b.Bytes()
 }
+
+func TestMergeFDJ(t *testing.T) {
+	dungeons, err := readFDJ(filepath.Join("testdata", "fdj"))
+	if err != nil || len(dungeons) != 2 {
+		t.Fatalf("readFDJ: %v %v", dungeons, err)
+	}
+	db := &questieDB{npcs: map[int]*entity{
+		644: {ID: 644, Name: "Rhahk'Zor", MinLevel: 19, MaxLevel: 19, Rank: 1},
+		657: {ID: 657, Name: "Defias Pirate", MinLevel: 17, MaxLevel: 18},
+	}}
+	res := &result{Instances: map[int]*instanceOut{36: {MapID: 36, Npcs: []int{644, 657}}},
+		Npcs: map[int]*npcOut{644: {ID: 644, Rank: 1}, 657: {ID: 657}},
+		Loot: map[int][]dropOut{644: {{Item: 1318, Quality: 3, Chance: unknown}}}}
+	// 872 laut Forever-ItemSparse nur selten, 5187 fehlt dort (Era: selten) -> FDJ-Qualität rar
+	qualities := map[int]int{872: 2, 5187: 2, 1318: 3}
+	st, confirmed := mergeFDJ(res, db, dungeons, qualities, map[int]bool{872: true, 1318: true})
+	unverified := markUnverified(res, confirmed)
+
+	loot := func(id int) (out []int) {
+		for _, d := range res.Loot[id] {
+			out = append(out, d.Item)
+			if d.Unverified {
+				out = append(out, -1)
+			}
+		}
+		return out
+	}
+	for id, want := range map[int]string{644: "[1318 -1 5187 273289]", 3586: "[5443]", 657: "[280000]", 261306: "[270227]"} {
+		if got := fmt.Sprint(loot(id)); got != want {
+			t.Errorf("Beute %d = %s, erwartet %s", id, got, want)
+		}
+	}
+	if n := res.Npcs[3586]; n == nil || *n != (npcOut{ID: 3586, Name: "Miner Johnson", MinLevel: 19, MaxLevel: 20, Rank: rareRank}) {
+		t.Errorf("Rare neu: %+v", n)
+	}
+	if n := res.Npcs[261306]; n == nil || n.Rank != bossRank || n.MinLevel != 15 || res.Instances[3065].Name != "Hall of Thanes" {
+		t.Errorf("Forever-Boss: %+v %+v", n, res.Instances[3065])
+	}
+	if res.Npcs[644].Rank != bossRank || unverified != 1 || st.NpcsNew != 2 || st.BelowRare != 1 ||
+		len(st.Unmatched) != 1 || st.ForeverOnly != 5 {
+		t.Errorf("Zählung: %+v, unbestätigt %d", st, unverified)
+	}
+}

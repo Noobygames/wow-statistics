@@ -164,6 +164,8 @@ func fromLua(v lua.LValue) any {
 		return float64(x)
 	case lua.LString:
 		return string(x)
+	case lua.LBool:
+		return bool(x)
 	case *lua.LTable:
 		out := map[any]any{}
 		x.ForEach(func(k, val lua.LValue) {

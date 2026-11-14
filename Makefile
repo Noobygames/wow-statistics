@@ -63,9 +63,10 @@ flights:
 locale:
 	go -C $(LOCALE) run . -dir "$(CURDIR)/Locales" $(ARGS)
 
-# Instanz-Quests mit Vorquest-Ketten, Instanz-NPCs und deren Beute aus dem lokalen Addon QuestieDB (Forever) nach
+# Instanz-Quests mit Vorquest-Ketten, Instanz-NPCs und deren Beute aus dem lokalen Addon QuestieDB (Forever) und ForeverDungeonJournal nach
 # dist/questie/*.json und Assist/InstanceData/dungeon_db.lua; Item-Qualität von wago.tools (braucht Internet),
 # z.B. make questie ARGS="-questie 'D:/Games/World of Warcraft/_forever_/Interface/AddOns/QuestieDB'"
+# (-fdj: Ordner von ForeverDungeonJournal für Forever-Bosse und -Beute)
 questie:
 	go -C $(QUESTIE) run . -out "$(CURDIR)/dist/questie" -lua "$(CURDIR)/Assist/InstanceData/dungeon_db.lua" \
 		-guide "$(CURDIR)/docs/research/mechanics" -bossnpcs "$(CURDIR)/Assist/InstanceData/boss_npcs.lua" \

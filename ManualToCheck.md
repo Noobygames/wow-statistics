@@ -3668,3 +3668,11 @@ Einstellung „Boss- und Gegnerfähigkeiten zeigen“ (Komfort) an.
 - WoW Forever, Todesminen: Rhahk'Zor ohne Hinweis; Defias-Schwarzwache (nur aus Classic übernommen) mit grauer Zeile „Aus Classic übernommen, für Forever unbestätigt“ unter den Fähigkeiten; Text passt in allen vier Sprachen. Stimmen die gezeigten Fähigkeiten mit dem Kampf überein?
 - WoW Forever, Düsterbruch: Arkane Aberration ohne Fähigkeitenzeile (Zauber fehlt in Forever).
 - Classic Era: Todesminen-Gegner wie bisher, nie die graue Hinweiszeile; Forever-Dungeon-Bosse gibt es dort nicht.
+
+### 522. Forever-Bossbeute aus ForeverDungeonJournal, Hinweis „für Forever unbestätigt“ (LT-57)
+
+- [ ] geprüft
+
+- WoW Forever: In einem Forever-Dungeon (z. B. Krol'dok Stronghold, Shaper's Terrace, The Drowned City) zeigen Bosszeilen im Run-Fenster und die Live-Karte Beute-Symbole; Tooltip der Bosszeile listet die Beute.
+- Todesminen: Rhahk'Zor zeigt „Rhahk'Zor's Hammer“ (5187) und „Rockslicer“ (872) als rar (blau) – stimmt die Qualität im Spiel?
+- Boss mit Classic-Drops ohne FDJ-Bestätigung (z. B. Raidboss im Geschmolzenen Kern): graue Sternchen an diesen Zeilen/Symbolen, darunter grau „* Einige Drops aus Classic übernommen, für Forever unbestätigt“; in Classic Era kein Sternchen.

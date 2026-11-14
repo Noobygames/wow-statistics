@@ -123,7 +123,11 @@ func mergeGuide(res *result, db *questieDB, guides []guideInstance, qualities ma
 				setBoss(id)
 			}
 			for _, item := range boss.Loot {
-				st.addDrop(res, id, item, qualities)
+				fallback := 0
+				if item.Flavor == "forever" {
+					fallback = guideQualities[item.Quality]
+				}
+				st.addDrop(res, id, item.ItemID, item.Name, fallback, qualities)
 			}
 			sort.Slice(res.Loot[id], func(a, b int) bool { return res.Loot[id][a].Item < res.Loot[id][b].Item })
 		}
@@ -131,29 +135,34 @@ func mergeGuide(res *result, db *questieDB, guides []guideInstance, qualities ma
 	return st
 }
 
-func (st *guideStats) addDrop(res *result, npcID int, item guideItem, qualities map[int]int) {
-	quality, known := qualities[item.ItemID]
-	if q, ok := guideQualities[item.Quality]; !known && ok && item.Flavor == "forever" && item.ItemID > 0 {
-		quality, known = q, true
-		st.ForeverOnly++
+// addDrop hängt ein geprüftes Item an die Beute des NPCs; fallback (> 0) ist die Qualität laut Quelle für
+// Forever-Server-Items ohne ItemSparse-Eintrag.
+func (st *guideStats) addDrop(res *result, npcID, itemID int, name string, fallback int, qualities map[int]int) {
+	quality, known := qualities[itemID]
+	fromSource := !known && fallback > 0 && itemID > 0
+	if fromSource {
+		quality, known = fallback, true
 	}
 	switch {
 	case !known:
 		st.NotFound++
-		st.Missing = append(st.Missing, fmt.Sprintf("%d %s", item.ItemID, item.Name))
+		st.Missing = append(st.Missing, fmt.Sprintf("%d %s", itemID, name))
 		return
 	case quality < minLootQuality:
 		st.BelowRare++
 		return
 	}
 	for _, d := range res.Loot[npcID] {
-		if d.Item == item.ItemID {
+		if d.Item == itemID {
 			st.Duplicate++
 			return
 		}
 	}
-	res.Loot[npcID] = append(res.Loot[npcID], dropOut{Item: item.ItemID, Name: item.Name, Quality: quality, Chance: unknown})
+	res.Loot[npcID] = append(res.Loot[npcID], dropOut{Item: itemID, Name: name, Quality: quality, Chance: unknown})
 	st.Added++
+	if fromSource {
+		st.ForeverOnly++
+	}
 }
 
 // matchNpc: Führer-npcID, wenn sie unter den NPCs der Instanz ist; sonst kleinste ID mit gleichem englischem Namen.
@@ -163,7 +172,7 @@ func matchNpc(db *questieDB, instNpcs []int, boss guideNpc) int {
 		if id == boss.NpcID {
 			return id
 		}
-		if byName == 0 && db.npcs[id].Name == boss.Name {
+		if n := db.npcs[id]; byName == 0 && n != nil && n.Name == boss.Name {
 			byName = id // instNpcs ist sortiert
 		}
 	}

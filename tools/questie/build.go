@@ -63,6 +63,8 @@ type dropOut struct {
 	Class   int     `json:"itemClass"`
 	Quality int     `json:"quality"` // 3 rar, 4 episch, 5 legendär (ItemSparse)
 	Chance  float64 `json:"chance"`  // Prozent, -1 = unbekannt
+	// nur aus Classic-Daten, für Forever weder von FDJ noch durch eine Forever-Item-ID bestätigt
+	Unverified bool `json:"unverified,omitempty"`
 }
 
 type instanceOut struct {

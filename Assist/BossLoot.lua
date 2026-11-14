@@ -9,6 +9,8 @@
 -- ContinueOnItemLoad, Blizzard_ObjectAPI); danach ruft onLoaded jeden wartenden Aufrufer, der den Tooltip neu aufbaut. Items, die der
 -- Client nicht kennt (IsItemEmpty, z. B. Forever-Items in Classic Era), fallen weg. Ohne Mixin (nicht in jedem Client
 -- belegt) stößt C_Item.GetItemInfo das Laden an und das nächste Überfahren zeigt den Link.
+-- Nur in Forever: Drops mit Kennzeichen "für Forever unbestätigt" (viertes Feld, nur aus Classic-Daten, siehe
+-- tools/questie) bekommen ein graues Sternchen, der Tooltip darunter eine Hinweiszeile.
 local _, ns = ...
 local L = ns.L
 local Items = ns.Items
@@ -23,7 +25,8 @@ local BossLoot = {}
 ns.BossLoot = BossLoot
 
 BossLoot.MAX_LINES = 6
-local ITEM_ID, QUALITY, CHANCE = 1, 2, 3
+local ITEM_ID, QUALITY, CHANCE, UNVERIFIED = 1, 2, 3, 4
+local UNVERIFIED_MARK = "|cffb3b3b3*|r"
 local BOSS_RANK = 3
 local RANK_INDEX = 3  -- Spalte Rang in ns.DungeonDB.npcs
 local TITLE_COLOR = { 1, 0.82, 0 }
@@ -126,6 +129,11 @@ local function requestLoad(itemID, item, onLoaded)
   if onLoaded then waiting[onLoaded] = true end
 end
 
+-- Drop nur aus Classic-Daten, für Forever unbestätigt (der Hinweis gilt nur im Forever-Client)
+local function isUnverified(drop)
+  return drop[UNVERIFIED] ~= nil and ns.Client.IsForever()
+end
+
 -- Platzhalter in der Qualitätsfarbe des Items, solange sein Link fehlt
 local function placeholder(quality)
   local color = ITEM_QUALITY_COLORS and ITEM_QUALITY_COLORS[quality]
@@ -144,6 +152,7 @@ local function lineText(drop, onLoaded)
   end
   local text = link or placeholder(drop[QUALITY])
   if drop[CHANCE] then text = string.format(L.BOSS_LOOT_CHANCE, text, tostring(drop[CHANCE])) end
+  if isUnverified(drop) then text = text .. " " .. UNVERIFIED_MARK end
   return text
 end
 
@@ -152,10 +161,12 @@ end
 -- (Einstellung aus oder keine Daten: nichts).
 function BossLoot.AddLines(tooltip, drops, onLoaded)
   if not isEnabled() or #drops == 0 then return false end
-  local lines, more = {}, 0
+  local lines, more, unverified = {}, 0, false
   for _, drop in ipairs(drops) do
     if #lines < BossLoot.MAX_LINES then
-      lines[#lines + 1] = lineText(drop, onLoaded)
+      local text = lineText(drop, onLoaded)
+      lines[#lines + 1] = text
+      unverified = unverified or (text ~= nil and isUnverified(drop))
     elseif Items.GetLink(drop[ITEM_ID]) or exists(itemMixin(drop[ITEM_ID])) then
       more = more + 1
     end
@@ -164,6 +175,7 @@ function BossLoot.AddLines(tooltip, drops, onLoaded)
   tooltip:AddLine(L.BOSS_LOOT_TITLE, unpack(TITLE_COLOR))
   for _, text in ipairs(lines) do tooltip:AddLine(text) end
   if more > 0 then tooltip:AddLine(string.format(L.BOSS_LOOT_MORE, more), unpack(HINT_COLOR)) end
+  if unverified then tooltip:AddLine("* " .. L.LOOT_UNVERIFIED, HINT_COLOR[1], HINT_COLOR[2], HINT_COLOR[3], true) end
   return true
 end
 
@@ -176,6 +188,7 @@ function BossLoot.IconLinks(drops, size)
     if #icons >= BossLoot.MAX_LINES then break end
     local itemID = drop[ITEM_ID]
     local link = exists(itemMixin(itemID)) and Items.IconLink(itemID, drop[QUALITY], size)
+    if link and isUnverified(drop) then link = link .. UNVERIFIED_MARK end
     if link then icons[#icons + 1] = link end
   end
   return #icons > 0 and table.concat(icons, " ") or nil

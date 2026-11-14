@@ -27,7 +27,7 @@ wow.fire("PLAYER_ENTERING_WORLD")
 wow.fire("PLAYER_STARTED_MOVING")
 wow.advance(60)
 
--- LT-42: Live-Karte zeigt die Beute-Symbole des nächsten lebenden Bosses (Rhahk'Zor hat in den Daten nur
+-- LT-42: Live-Karte zeigt die Beute-Symbole des nächsten lebenden Bosses (Rhahk'Zor hat in den Daten vor allem
 -- Forever-Items, deshalb hier alle Items bekannt), nicht die von Edwin
 local unknownItems = wow.state.unknownItems
 wow.state.unknownItems = {}

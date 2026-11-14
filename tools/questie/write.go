@@ -62,6 +62,8 @@ const luaHeader = `-- GENERIERT von tools/questie ("make questie"), nicht von Ha
 --                  (wago.tools: %s;
 --                  Forever-Server-Items ohne ItemSparse-Eintrag mit der Führer-Qualität);
 --                  Chance in Prozent oder nil (QuestieDB kennt sie nur für Quest-Items, Führer-Drops immer nil),
+--                  viertes Feld 1 = für Forever unbestätigt (nur Classic-Daten, FDJ nennt das Item für diesen NPC nicht,
+--                  keine Forever-eigene Item-ID); Bosse, Rare und Beute zusätzlich aus ForeverDungeonJournal (WTFPL),
 -- }
 local _, ns = ...
 -- Nur Classic Era und Forever (klassische Instanzen, Forever-Questdaten); sonst keinen Speicher belegen.
@@ -132,11 +134,11 @@ func writeLua(path, version, itemBuild string, res *result) error {
 	for _, id := range sortedKeys(res.Loot) {
 		var drops []string
 		for _, d := range res.Loot[id] {
-			if d.Chance == unknown {
-				drops = append(drops, fmt.Sprintf("{%d,%d}", d.Item, d.Quality))
-			} else {
-				drops = append(drops, fmt.Sprintf("{%d,%d,%s}", d.Item, d.Quality, luaNum(d.Chance)))
+			fields := []string{strconv.Itoa(d.Item), strconv.Itoa(d.Quality), luaNum(d.Chance), "nil"}
+			if d.Unverified {
+				fields[3] = "1"
 			}
+			drops = append(drops, "{"+strings.Join(trimNil(fields), ",")+"}")
 		}
 		fmt.Fprintf(&b, "[%d]={%s},\n", id, strings.Join(drops, ","))
 	}
