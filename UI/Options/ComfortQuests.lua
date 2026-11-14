@@ -53,6 +53,10 @@ addToggles({
   toggle("QUEST_EFFICIENCY_TOGGLE", "questEfficiencyTooltip"),
   toggle("QUEST_ITEM_TOOLTIP_TOGGLE", "questItemTooltip"),
   toggle("DUNGEON_QUEST_GIVERS_TOGGLE", "dungeonQuestGivers", ns.DungeonQuestGivers.IsAvailable),
+  requires(toggle("DUNGEON_QUEST_MINIMAP_TOGGLE", "dungeonQuestMinimap", ns.DungeonQuestMinimap.IsAvailable),
+    "dungeonQuestGivers"),
+  advanced(requires(toggle("DUNGEON_QUEST_MINIMAP_EDGE_TOGGLE", "dungeonQuestMinimapEdge",
+    ns.DungeonQuestMinimap.IsAvailable), "dungeonQuestMinimap")),
   toggle("DUNGEON_QUEST_TAGS_TOGGLE", "dungeonQuestTags", ns.DungeonQuestTags.IsAvailable),
 })
 O.addFramePreview("QUEST_ITEM_PREVIEW", "questItem")

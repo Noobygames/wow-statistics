@@ -2122,4 +2122,8 @@ ns.locales.enUS = {
   DUNGEON_QUEST_ACCEPT_HINT_TOGGLE_TIP = "When you accept a dungeon quest or a step of its prequest chain, a small window shows where to get the other quests of the same instance and the next chain steps: quest, giver, zone and coordinates. Ones available later (level or prequest missing) are gray. Clicking an entry sets a map pin and opens the map.",
   DUNGEON_QUEST_HINT_CLICK = "Click: set a map pin and open the map",
   DUNGEON_QUEST_HINT_STEP = "%s (step %d/%d)",
+  DUNGEON_QUEST_MINIMAP_EDGE_TOGGLE = "Distant givers at the edge",
+  DUNGEON_QUEST_MINIMAP_EDGE_TOGGLE_TIP = "Givers just outside the minimap show small and faded at the edge in their direction.",
+  DUNGEON_QUEST_MINIMAP_TOGGLE = "Givers on the minimap",
+  DUNGEON_QUEST_MINIMAP_TOGGLE_TIP = "Shows nearby dungeon quest givers with the same icon on the minimap, even across the zone border.",
 }

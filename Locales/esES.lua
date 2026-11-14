@@ -2122,4 +2122,8 @@ ns.locales.esES = {
   DUNGEON_QUEST_ACCEPT_HINT_TOGGLE_TIP = "Al aceptar una misión de mazmorra o un paso de su cadena previa, una pequeña ventana muestra dónde conseguir las demás misiones de la misma instancia y los siguientes pasos: misión, instructor, zona y coordenadas. Las disponibles más tarde (falta nivel o misión previa) aparecen en gris. Al hacer clic en una entrada se coloca un punto y se abre el mapa.",
   DUNGEON_QUEST_HINT_CLICK = "Clic: colocar un punto y abrir el mapa",
   DUNGEON_QUEST_HINT_STEP = "%s (paso %d/%d)",
+  DUNGEON_QUEST_MINIMAP_EDGE_TOGGLE = "Dadores lejanos en el borde",
+  DUNGEON_QUEST_MINIMAP_EDGE_TOGGLE_TIP = "Los dadores justo fuera del minimapa aparecen pequeños y tenues en el borde, en su dirección.",
+  DUNGEON_QUEST_MINIMAP_TOGGLE = "Dadores en el minimapa",
+  DUNGEON_QUEST_MINIMAP_TOGGLE_TIP = "Muestra los dadores de misiones de mazmorra cercanos con el mismo icono en el minimapa, incluso al otro lado del límite de zona.",
 }

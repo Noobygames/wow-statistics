@@ -2122,4 +2122,8 @@ ns.locales.frFR = {
   DUNGEON_QUEST_ACCEPT_HINT_TOGGLE_TIP = "Quand tu acceptes une quête de donjon ou une étape de sa chaîne de quêtes préalables, une petite fenêtre indique où obtenir les autres quêtes de la même instance et les étapes suivantes : quête, donneur, zone et coordonnées. Celles disponibles plus tard (niveau ou quête préalable manquant) sont grises. Un clic sur une entrée place un repère et ouvre la carte.",
   DUNGEON_QUEST_HINT_CLICK = "Clic : placer un repère et ouvrir la carte",
   DUNGEON_QUEST_HINT_STEP = "%s (étape %d/%d)",
+  DUNGEON_QUEST_MINIMAP_EDGE_TOGGLE = "Donneurs lointains au bord",
+  DUNGEON_QUEST_MINIMAP_EDGE_TOGGLE_TIP = "Les donneurs juste hors de la minicarte apparaissent petits et pâles au bord, dans leur direction.",
+  DUNGEON_QUEST_MINIMAP_TOGGLE = "Donneurs sur la minicarte",
+  DUNGEON_QUEST_MINIMAP_TOGGLE_TIP = "Affiche les donneurs de quêtes de donjon proches avec la même icône sur la minicarte, même au-delà de la limite de zone.",
 }

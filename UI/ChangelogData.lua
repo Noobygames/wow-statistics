@@ -8,6 +8,11 @@ ns.CHANGELOG = {
   {
     date = "2026-11-14",
     entries = {
+      { kind = "new",
+        deDE = "Classic Era und WoW Forever: Dungeonquest-Geber in deiner Nähe erscheinen auf der Minimap, auch hinter der Zonengrenze; entfernte blass am Rand.",
+        enUS = "Classic Era and WoW Forever: nearby dungeon quest givers show on the minimap, even across the zone border; distant ones faded at the edge.",
+        frFR = "Classic Era et WoW Forever : les donneurs de quêtes de donjon proches apparaissent sur la minicarte, même au-delà de la limite de zone ; les plus lointains en pâle au bord.",
+        esES = "Classic Era y WoW Forever: los dadores de misiones de mazmorra cercanos aparecen en el minimapa, incluso al otro lado del límite de zona; los lejanos, tenues en el borde." },
       { kind = "change",
         deDE = "Würfelkarte: Jeder Gegenstand hat sein Symbol; Drüberfahren am Symbol oder Namen zeigt die Gegenstandsinfo.",
         enUS = "Loot roll card: every item shows its icon; hovering the icon or name shows the item tooltip.",

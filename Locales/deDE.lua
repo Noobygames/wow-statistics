@@ -2122,4 +2122,8 @@ ns.locales.deDE = {
   DUNGEON_QUEST_ACCEPT_HINT_TOGGLE_TIP = "Nimmst du eine Dungeonquest oder einen Schritt ihrer Vorquest-Kette an, zeigt ein kleines Fenster, wo es die übrigen Quests derselben Instanz und die nächsten Kettenschritte gibt: Quest, Geber, Zone und Koordinaten. Später verfügbare (Level oder Vorquest fehlt) sind grau. Ein Klick auf einen Eintrag setzt einen Kartenpunkt und öffnet die Karte.",
   DUNGEON_QUEST_HINT_CLICK = "Klick: Kartenpunkt setzen und Karte öffnen",
   DUNGEON_QUEST_HINT_STEP = "%s (Schritt %d/%d)",
+  DUNGEON_QUEST_MINIMAP_EDGE_TOGGLE = "Entfernte Geber am Rand",
+  DUNGEON_QUEST_MINIMAP_EDGE_TOGGLE_TIP = "Geber knapp außerhalb der Minimap erscheinen klein und blass am Rand in ihrer Richtung.",
+  DUNGEON_QUEST_MINIMAP_TOGGLE = "Geber auf der Minimap",
+  DUNGEON_QUEST_MINIMAP_TOGGLE_TIP = "Zeigt Dungeonquest-Geber in deiner Nähe mit demselben Symbol auf der Minimap, auch jenseits der Zonengrenze.",
 }

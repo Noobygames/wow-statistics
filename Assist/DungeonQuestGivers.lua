@@ -1,6 +1,6 @@
 -- Dungeonquest-Geber markieren (Einstellung dungeonQuestGivers im Reiter "Komfort", an; nur mit ns.DungeonDB, also
 -- Classic Era und Forever): NPCs, die dem Charakter jetzt eine Dungeonquest anbieten (DungeonQuests.UnitOffers), bekommen
--- ein Dungeon-Symbol über der Namensplakette und am Zielfenster sowie je Angebot eine Tooltipzeile
+-- ein Dungeon-Symbol über der Namensplakette, am Zielfenster und auf der Minimap (Assist/DungeonQuestMinimap.lua) sowie je Angebot eine Tooltipzeile
 -- ("Dungeonquest: Titel (Instanz)", angehängt von Assist/Tooltip.lua). Schritte einer Vorquest-Kette zählen mit
 -- ("Vorquest: Titel – führt zu Instanz (Schritt 2/7)"); bietet ein Geber nur solche an, ist das Symbol grau. Objekte haben weder Einheit noch Plakette; sie
 -- und NPCs stehen mit ihrem Ort aus der DungeonDB als Punkt auf der Zonenkarte (Lib/MapPins.lua).
@@ -48,7 +48,8 @@ local function setIcon(texture)
   if ns.MapPins.KnownAtlas(ICON_ATLAS) then texture:SetAtlas(ICON_ATLAS) else texture:SetTexture(ICON_TEXTURE) end
 end
 
-local function newMark(parent, size)
+-- Dungeon-Symbol als eigener Rahmen (auch für die Minimap, Assist/DungeonQuestMinimap.lua)
+function DungeonQuestGivers.NewMark(parent, size)
   local mark = CreateFrame("Frame", nil, parent)
   mark:SetSize(size, size)
   mark.icon = mark:CreateTexture(nil, "OVERLAY")
@@ -72,12 +73,12 @@ local function onlyChainSteps(offers)
   return true
 end
 
-local function showMark(mark, offers)
+function DungeonQuestGivers.ShowMark(mark, offers)
   mark.icon:SetDesaturated(onlyChainSteps(offers))
   mark:Show()
 end
 
-local function addOfferLines(tooltip, offers)
+function DungeonQuestGivers.AddOfferLines(tooltip, offers)
   local r, g, b = ns.Theme.RGB(OFFER_COLOR)
   for index, offer in ipairs(offers) do
     if index > MAX_TOOLTIP_LINES then
@@ -91,7 +92,7 @@ end
 -- Tooltipzeilen für eine Einheit (Aufruf aus Assist/Tooltip.lua)
 function DungeonQuestGivers.AddUnitLines(tooltip, unit)
   if not isEnabled() then return end
-  addOfferLines(tooltip, DungeonQuests.UnitOffers(unit))
+  DungeonQuestGivers.AddOfferLines(tooltip, DungeonQuests.UnitOffers(unit))
 end
 
 local function plateOf(unit)
@@ -106,10 +107,10 @@ local function updatePlate(unit)
   local offers = isEnabled() and DungeonQuests.UnitOffers(unit) or {}
   if #offers > 0 then
     if not marks[plate] then
-      marks[plate] = newMark(plate, PLATE_ICON_SIZE)
+      marks[plate] = DungeonQuestGivers.NewMark(plate, PLATE_ICON_SIZE)
       marks[plate]:SetPoint("BOTTOM", plate, "TOP", 0, PLATE_GAP)
     end
-    showMark(marks[plate], offers)
+    DungeonQuestGivers.ShowMark(marks[plate], offers)
   elseif marks[plate] then
     marks[plate]:Hide()
   end
@@ -119,11 +120,11 @@ local function updateTarget()
   if not TargetFrame then return end
   local offers = isEnabled() and DungeonQuests.UnitOffers("target") or {}
   if #offers > 0 and not targetMark then
-    targetMark = newMark(TargetFrame, TARGET_ICON_SIZE)
+    targetMark = DungeonQuestGivers.NewMark(TargetFrame, TARGET_ICON_SIZE)
     targetMark:SetPoint("BOTTOMLEFT", TargetFrame, "TOPLEFT", 0, 0)
   end
   if not targetMark then return end
-  if #offers > 0 then showMark(targetMark, offers) else targetMark:Hide() end
+  if #offers > 0 then DungeonQuestGivers.ShowMark(targetMark, offers) else targetMark:Hide() end
 end
 
 local function refreshAll()
@@ -164,7 +165,7 @@ end
 
 local function showMapTooltip(pin, point)
   GameTooltip:SetOwner(pin, "ANCHOR_RIGHT")
-  addOfferLines(GameTooltip, point.offers)
+  DungeonQuestGivers.AddOfferLines(GameTooltip, point.offers)
   GameTooltip:Show()
 end
 
