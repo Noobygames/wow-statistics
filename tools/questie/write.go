@@ -49,11 +49,14 @@ const luaHeader = `-- GENERIERT von tools/questie ("make questie"), nicht von Ha
 --   givers     = { npc = { [npcID] = { questID, ... } }, object = { ... }, item = { ... } },
 --   objectNames = { [objectID] = Name }   Objekt-Geber, nur englisch (QuestieDB führt keine Übersetzungen),
 --   npcs       = { [Karten-ID] = { [npcID] = { MinLevel, MaxLevel, Rang } } }   Rang: 0 normal, 1 Elite, 2 Rar-Elite,
---                  3 Boss, 4 Rar,
---   loot       = { [npcID] = { { itemID, Qualität, Chance }, ... } }   nur rar (3), episch (4), legendär (5), soweit
---                  QuestieDB den Drop kennt (keine vollständigen Beutetabellen); Qualität aus ItemSparse, da QuestieDB
---                  keine führt (wago.tools: %s);
---                  Chance in Prozent oder nil (QuestieDB kennt sie nur für Quest-Items),
+--                  3 Boss, 4 Rar; Bosse der Führer-Recherche und aus boss_npcs.lua immer 3 (QuestieDB führt manche
+--                  Endbosse wie Edwin van Cleef nur als Rar-Elite),
+--   loot       = { [npcID] = { { itemID, Qualität, Chance }, ... } }   nur rar (3), episch (4), legendär (5): Drops aus
+--                  QuestieDB plus Boss-Beute der eigenen Führer-Recherche (docs/research/mechanics, öffentliche Fakten;
+--                  enthält Forever-eigene Items, Era filtert unbekannte IDs zur Laufzeit); keine vollständigen
+--                  Beutetabellen; jedes Item gegen ItemSparse geprüft, Qualität aus ItemSparse
+--                  (wago.tools: %s);
+--                  Chance in Prozent oder nil (QuestieDB kennt sie nur für Quest-Items, Führer-Drops immer nil),
 -- }
 local _, ns = ...
 -- Nur Classic Era und Forever (klassische Instanzen, Forever-Questdaten); sonst keinen Speicher belegen.

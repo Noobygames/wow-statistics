@@ -8,6 +8,11 @@ ns.CHANGELOG = {
   {
     date = "2026-11-14",
     entries = {
+      { kind = "change",
+        deDE = "Classic Era und WoW Forever: Boss- und Dungeoneingangs-Tooltips zeigen deutlich mehr seltene und epische Drops, auch von Endbossen wie Edwin van Cleef.",
+        enUS = "Classic Era and WoW Forever: boss and dungeon entrance tooltips show many more rare and epic drops, including end bosses like Edwin VanCleef.",
+        frFR = "Classic Era et WoW Forever : les infobulles des boss et des entrées de donjon affichent bien plus d'objets rares et épiques, y compris des boss de fin comme Edwin VanCleef.",
+        esES = "Classic Era y WoW Forever: los tooltips de jefes y de entradas de mazmorra muestran muchos más objetos raros y épicos, también de jefes finales como Edwin VanCleef." },
       { kind = "new",
         deDE = "Classic Era und WoW Forever: Gegenstände (und auf englischen Clients Objekte), die eine Dungeonquest oder Vorquest starten, nennen sie im Tooltip.",
         enUS = "Classic Era and WoW Forever: items (and on English clients objects) that start a dungeon quest or prequest name it in their tooltip.",

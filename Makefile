@@ -66,7 +66,8 @@ locale:
 # dist/questie/*.json und Assist/InstanceData/dungeon_db.lua; Item-Qualität von wago.tools (braucht Internet),
 # z.B. make questie ARGS="-questie 'D:/Games/World of Warcraft/_forever_/Interface/AddOns/QuestieDB'"
 questie:
-	go -C $(QUESTIE) run . -out "$(CURDIR)/dist/questie" -lua "$(CURDIR)/Assist/InstanceData/dungeon_db.lua" $(ARGS)
+	go -C $(QUESTIE) run . -out "$(CURDIR)/dist/questie" -lua "$(CURDIR)/Assist/InstanceData/dungeon_db.lua" \
+		-guide "$(CURDIR)/docs/research/mechanics" -bossnpcs "$(CURDIR)/Assist/InstanceData/boss_npcs.lua" $(ARGS)
 
 test: test-addon test-installer test-artwork test-records test-flights test-locale test-extractor test-questie test-site
 

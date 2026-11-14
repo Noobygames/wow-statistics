@@ -7,6 +7,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"math"
+	"os"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -52,6 +53,15 @@ func TestParseQualities(t *testing.T) {
 	}
 }
 
+func TestReadBossNpcs(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "boss_npcs.lua")
+	os.WriteFile(path, []byte("ns.BossNpcs = {\n  [227] = 9018, -- Gerstahn\n  [228] = 9025,\n}\n"), 0o644)
+	got, err := readBossNpcs(path)
+	if err != nil || len(got) != 2 || !got[9018] || !got[9025] {
+		t.Fatalf("Boss-NPCs: %v %v", got, err)
+	}
+}
+
 func TestBuildMoltenCore(t *testing.T) {
 	store, err := parseTOC(strings.NewReader(fixtureTOC()))
 	if err != nil {
@@ -69,7 +79,18 @@ func TestBuildMoltenCore(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	res := build(db, zones, rates, map[int]int{17204: 5, 2589: 1})
+	qualities := map[int]int{17204: 5, 2589: 1, 18000: 4, 18001: 3}
+	res := build(db, zones, rates, qualities)
+	guides := []guideInstance{{Name: "Molten Core", MapID: 409, Bosses: []guideNpc{
+		// schon bekannt, unter rar, nicht in ItemSparse, neu (Qualität 4 aus ItemSparse statt Führer)
+		{Name: "Ragnaros", NpcID: 11502, Loot: []guideItem{{17204, "Eye"}, {2589, "Cloth"}, {99999, "Fake"}, {18000, "New"}}},
+		{Name: "Garr", NpcID: 1, Loot: []guideItem{{18001, "Garr Drop"}}}, // falsche npcID: Zuordnung über den Namen
+		{Name: "Niemand", NpcID: 2},
+	}}}
+	st := mergeGuide(res, db, guides, qualities, map[int]bool{12056: true})
+	if st.Added != 2 || st.Duplicate != 1 || st.BelowRare != 1 || st.NotFound != 1 || st.Ranked != 2 || len(st.Unmatched) != 1 {
+		t.Fatalf("Führer-Zählung: %+v", st)
+	}
 	path := filepath.Join(t.TempDir(), "dungeon_db.lua")
 	if err := writeLua(path, "1.0", "test", res); err != nil {
 		t.Fatal(err)
@@ -109,7 +130,11 @@ func TestBuildMoltenCore(t *testing.T) {
 		`tostring(ns.DungeonDB.npcs[409][12057] ~= nil)`:                          "true",
 		`tostring(ns.DungeonDB.npcs[409][997] == nil)`:                            "true",
 		`table.concat(ns.DungeonDB.loot[11502][1], ",")`:                          "17204,5,12.5",
-		`tostring(#ns.DungeonDB.loot[11502])`:                                     "1",
+		`tostring(#ns.DungeonDB.loot[11502])`:                                     "2",
+		`table.concat(ns.DungeonDB.loot[11502][2], ",")`:                          "18000,4",
+		`table.concat(ns.DungeonDB.loot[12057][1], ",")`:                          "18001,3",
+		`ns.DungeonDB.npcs[409][12057][3]`:                                        "3",
+		`ns.DungeonDB.npcs[409][12056][3]`:                                        "3",
 	} {
 		if err := L.DoString("result = tostring(" + expr + ")"); err != nil {
 			t.Fatalf("%s: %v", expr, err)

@@ -82,3 +82,10 @@ QuestieDB authors. Since then the data is maintained by hand.
   `ItemSparse` on wago.tools (WoW Forever build, Classic Era for items missing there), see section 2.
 
 The generated file names the QuestieDB version and the wago.tools builds it was made from.
+
+The tool also merges the boss loot of our own dungeon guide research (`docs/research/mechanics/*.json`, one file per
+instance; own research of public facts, mainly warcraft.wiki.gg, each file lists its sources) into the same `loot`
+table: guide bosses are matched to QuestieDB NPCs of the instance by NPC ID, else by English name; every item is
+checked against `ItemSparse` (must exist, quality from `ItemSparse`, rare or better only), duplicates are skipped and
+guide drops have no chance. Guide bosses and the NPCs of `Assist/InstanceData/boss_npcs.lua` get rank boss (QuestieDB
+lists some end bosses as rare elite). Forever-only items stay in; Classic Era skips unknown item IDs at runtime.
