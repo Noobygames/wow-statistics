@@ -3584,7 +3584,7 @@ Einstellungen Dungeonquest-Geber, Dungeon-Eingänge (Forever) und Todeskarte an.
 - Leatrix Maps: Fenster verschoben/skaliert, mehr Zoomstufen: Symbole sitzen richtig; mit „Show points of interest“ + „Show dungeons and raids“ keine doppelten Dungeon-Symbole.
 - Keine Lua-Fehler, kein Taint (z.B. Weltkarte im Kampf öffnen, Quest aus der Karte heraus anklicken).
 
-### 511. Dungeonquest-Geber auf der Minimap (LT-37, Classic Era und WoW Forever)
+### 514. Dungeonquest-Geber auf der Minimap (LT-37, Classic Era und WoW Forever)
 
 - [ ] geprüft
 
@@ -3595,7 +3595,7 @@ Einstellungen „Dungeonquest-Geber markieren“ und „Geber auf der Minimap“
 - Geber knapp außerhalb: klein und blass am Rand in ihrer Richtung; Option „Entfernte Geber am Rand“ aus: weg. Eckige Minimap (Komfort) bzw. SexyMap o.ä.: Randsymbole an der Kante.
 - Mit OpenMap bzw. Leatrix Maps: unverändert.
 
-### 512. Tooltipzeilen an Objekten und Gegenständen, die Dungeonquests starten (LT-38, Classic Era und WoW Forever)
+### 515. Tooltipzeilen an Objekten und Gegenständen, die Dungeonquests starten (LT-38, Classic Era und WoW Forever)
 
 - [ ] geprüft
 
