@@ -2099,9 +2099,11 @@ ns.locales.enUS = {
   BOSS_LOOT_TOGGLE = "Boss loot in tooltips",
   BOSS_LOOT_TOGGLE_TIP = "Shows a boss's known drops of rare quality or better (epics first, with chance if known): when hovering a boss row in the dungeon and raid runs window and in the dungeon entrance tooltip on the map.",
   DUNGEON_QUEST_GIVERS_TOGGLE = "Mark dungeon quest givers",
-  DUNGEON_QUEST_GIVERS_TOGGLE_TIP = "NPCs and objects that offer you a dungeon quest right now (level, faction, class and prerequisites fit) get a dungeon icon above their nameplate and on the target frame, a tooltip line and a pin on the zone map.",
+  DUNGEON_QUEST_GIVERS_TOGGLE_TIP = "NPCs and objects that offer you a dungeon quest or a step of its prequest chain right now (level, faction, class and prerequisites fit) get a dungeon icon above their nameplate and on the target frame (gray for prequests), a tooltip line and a pin on the zone map.",
   DUNGEON_QUEST_OFFER = "Dungeon quest: %s (%s)",
   DUNGEON_QUEST_LINE = "Dungeon: %s",
   DUNGEON_QUEST_TAGS_TOGGLE = "Highlight dungeon quests",
-  DUNGEON_QUEST_TAGS_TOGGLE_TIP = "Adds the instance's colored short name to dungeon quests in the quest log, the quest giver's gossip and greeting window and the quest tracker. Quest tooltips get a \"Dungeon: name\" line.",
+  DUNGEON_QUEST_TAGS_TOGGLE_TIP = "Adds the instance's colored short name to dungeon quests in the quest log, the quest giver's gossip and greeting window and the quest tracker, with the step for prequests (e.g. \"[DT 2/7]\"). Quest tooltips get a \"Dungeon: name\" or \"Leads to name (step 2/7)\" line.",
+  DUNGEON_QUEST_CHAIN_LINE = "Leads to %s (step %d/%d)",
+  DUNGEON_QUEST_CHAIN_OFFER = "Prequest: %s – leads to %s (step %d/%d)",
 }

@@ -1,4 +1,4 @@
--- Dungeonquests aus ns.DungeonDB (generiert, nur Classic Era und Forever; Aufbau im Kopf von
+-- Dungeonquests und ihre Vorquest-Ketten aus ns.DungeonDB (generiert, nur Classic Era und Forever; Aufbau im Kopf von
 -- Assist/InstanceData/dungeon_db.lua): welche Quest gehört zu welcher Instanz, welche Geber bieten dem Charakter
 -- jetzt eine an. Nur Daten und Regeln, keine Anzeige (DungeonQuestGivers.lua, DungeonQuestTags.lua).
 -- Annehmbar = Mindestlevel erreicht, Fraktion und Klassenmaske passen, nicht abgegeben und nicht im Log, alle "pre" und
@@ -131,13 +131,15 @@ function DungeonQuests.CanTake(questID)
   return cached
 end
 
--- Angebot einer annehmbaren Quest: { questID, level, mapID }; nil, wenn die Quest nicht annehmbar ist oder zu keiner
--- Instanz gehört
+-- Angebot einer annehmbaren Quest: { questID, level, mapID, step, total } (step/total nur bei Schritten einer
+-- Vorquest-Kette, die selbst keine Dungeonquest sind); nil, wenn nicht annehmbar oder ohne Bezug zu einer Instanz
 function DungeonQuests.Offer(questID)
   if not DungeonQuests.CanTake(questID) then return nil end
   local info = db().questInfo[questID]
   local mapID = DungeonQuests.Instance(questID)
   if mapID then return { questID = questID, level = info[LEVEL], mapID = mapID } end
+  local chainMap, _, step, total = DungeonQuests.Chain(questID)
+  if chainMap then return { questID = questID, level = info[LEVEL], mapID = chainMap, step = step, total = total } end
   return nil
 end
 

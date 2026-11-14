@@ -2099,9 +2099,11 @@ ns.locales.esES = {
   BOSS_LOOT_TOGGLE = "Botín de jefes en descripciones",
   BOSS_LOOT_TOGGLE_TIP = "Muestra los objetos conocidos de calidad rara o superior que suelta un jefe (épicos primero, con probabilidad si se conoce): al pasar el ratón por una fila de jefe en la ventana de mazmorras y bandas y en la descripción de las entradas de mazmorra en el mapa.",
   DUNGEON_QUEST_GIVERS_TOGGLE = "Marcar los dadores de misiones de mazmorra",
-  DUNGEON_QUEST_GIVERS_TOGGLE_TIP = "Los PNJ y objetos que te ofrecen ahora una misión de mazmorra (nivel, facción, clase y misiones previas encajan) reciben un icono de mazmorra sobre su placa de nombre y en el marco del objetivo, una línea en el tooltip y un punto en el mapa de la zona.",
+  DUNGEON_QUEST_GIVERS_TOGGLE_TIP = "Los PNJ y objetos que te ofrecen ahora una misión de mazmorra o un paso de su cadena de misiones previas (nivel, facción, clase y misiones previas encajan) reciben un icono de mazmorra sobre su placa de nombre y en el marco del objetivo (gris para misiones previas), una línea en el tooltip y un punto en el mapa de la zona.",
   DUNGEON_QUEST_OFFER = "Misión de mazmorra: %s (%s)",
   DUNGEON_QUEST_LINE = "Mazmorra: %s",
   DUNGEON_QUEST_TAGS_TOGGLE = "Resaltar misiones de mazmorra",
-  DUNGEON_QUEST_TAGS_TOGGLE_TIP = "Añade el nombre corto coloreado de la instancia a las misiones de mazmorra en el registro de misiones, la ventana de diálogo y saludo del dador de misiones y el seguimiento de misiones. Los tooltips de misión reciben la línea «Mazmorra: nombre».",
+  DUNGEON_QUEST_TAGS_TOGGLE_TIP = "Añade el nombre corto coloreado de la instancia a las misiones de mazmorra en el registro de misiones, la ventana de diálogo y saludo del dador de misiones y el seguimiento de misiones, con el paso para las misiones previas (p. ej. «[DT 2/7]»). Los tooltips de misión reciben la línea «Mazmorra: nombre» o «Lleva a nombre (paso 2/7)».",
+  DUNGEON_QUEST_CHAIN_LINE = "Lleva a %s (paso %d/%d)",
+  DUNGEON_QUEST_CHAIN_OFFER = "Misión previa: %s – lleva a %s (paso %d/%d)",
 }

@@ -26,7 +26,7 @@ expectTrue("Forever: verfügbar", Tags.IsAvailable())
 expect("Standard an", addon.db.dungeonQuestTags, true)
 local tag = Tags.Tag(167)
 expectTrue("Kurzname im Tag", tag:find("[DT]", 1, true) ~= nil)
-expect("keine Dungeonquest", Tags.Tag(65), nil)
+expect("keine Dungeonquest", Tags.Tag(61), nil)
 
 -- Gespräch: Kurzname angehängt, nicht doppelt
 local gossip = CreateFrame("Button")
@@ -53,7 +53,7 @@ expect("Gruß", greetAvailable:GetText(), "Gesammelte Erinnerungen " .. tag)
 -- Tooltip: Chat-Link
 GameTooltip:SetHyperlink("quest:167:20")
 expect("Link-Tooltip", GameTooltip._lines[1], string.format(L.DUNGEON_QUEST_LINE, "Die Todesminen"))
-GameTooltip:SetHyperlink("quest:65:20")
+GameTooltip:SetHyperlink("quest:61:20")
 expect("Link ohne Dungeonquest", #GameTooltip._lines, 0)
 
 -- Tooltip: Forever-Questlog

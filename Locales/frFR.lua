@@ -2099,9 +2099,11 @@ ns.locales.frFR = {
   BOSS_LOOT_TOGGLE = "Butin des boss dans les infobulles",
   BOSS_LOOT_TOGGLE_TIP = "Affiche les objets connus de qualité rare ou mieux qu'un boss peut laisser (épiques d'abord, avec la chance si elle est connue) : au survol d'une ligne de boss dans la fenêtre des donjons et raids et dans l'infobulle des entrées de donjon sur la carte.",
   DUNGEON_QUEST_GIVERS_TOGGLE = "Marquer les donneurs de quêtes de donjon",
-  DUNGEON_QUEST_GIVERS_TOGGLE_TIP = "Les PNJ et objets qui te proposent une quête de donjon maintenant (niveau, faction, classe et quêtes préalables correspondent) reçoivent une icône de donjon au-dessus de leur barre de nom et sur le cadre de la cible, une ligne d'infobulle et un repère sur la carte de la zone.",
+  DUNGEON_QUEST_GIVERS_TOGGLE_TIP = "Les PNJ et objets qui te proposent maintenant une quête de donjon ou une étape de sa chaîne de quêtes préalables (niveau, faction, classe et quêtes préalables correspondent) reçoivent une icône de donjon au-dessus de leur barre de nom et sur le cadre de la cible (grise pour les quêtes préalables), une ligne d'infobulle et un repère sur la carte de la zone.",
   DUNGEON_QUEST_OFFER = "Quête de donjon : %s (%s)",
   DUNGEON_QUEST_LINE = "Donjon : %s",
   DUNGEON_QUEST_TAGS_TOGGLE = "Mettre en évidence les quêtes de donjon",
-  DUNGEON_QUEST_TAGS_TOGGLE_TIP = "Ajoute le nom court coloré de l'instance aux quêtes de donjon dans le journal de quêtes, la fenêtre de dialogue et d'accueil du donneur de quêtes et le suivi des quêtes. Les infobulles de quête reçoivent la ligne « Donjon : nom ».",
+  DUNGEON_QUEST_TAGS_TOGGLE_TIP = "Ajoute le nom court coloré de l'instance aux quêtes de donjon dans le journal de quêtes, la fenêtre de dialogue et d'accueil du donneur de quêtes et le suivi des quêtes, avec l'étape pour les quêtes préalables (p. ex. « [DT 2/7] »). Les infobulles de quête reçoivent la ligne « Donjon : nom » ou « Mène à nom (étape 2/7) ».",
+  DUNGEON_QUEST_CHAIN_LINE = "Mène à %s (étape %d/%d)",
+  DUNGEON_QUEST_CHAIN_OFFER = "Quête préalable : %s – mène à %s (étape %d/%d)",
 }

@@ -2099,9 +2099,11 @@ ns.locales.deDE = {
   BOSS_LOOT_TOGGLE = "Boss-Beute im Tooltip",
   BOSS_LOOT_TOGGLE_TIP = "Zeigt die bekannten Drops ab Qualität rar eines Bosses (epische zuerst, mit Chance, falls bekannt): beim Überfahren einer Bosszeile im Fenster der Dungeon- und Raid-Runs und im Tooltip der Dungeon-Eingänge auf der Karte.",
   DUNGEON_QUEST_GIVERS_TOGGLE = "Dungeonquest-Geber markieren",
-  DUNGEON_QUEST_GIVERS_TOGGLE_TIP = "NPCs und Objekte, die dir jetzt eine Dungeonquest anbieten (Level, Fraktion, Klasse und Vorquests passen), bekommen ein Dungeon-Symbol über der Namensplakette und am Zielfenster, eine Tooltipzeile und einen Punkt auf der Zonenkarte.",
+  DUNGEON_QUEST_GIVERS_TOGGLE_TIP = "NPCs und Objekte, die dir jetzt eine Dungeonquest oder einen Schritt ihrer Vorquest-Kette anbieten (Level, Fraktion, Klasse und Vorquests passen), bekommen ein Dungeon-Symbol über der Namensplakette und am Zielfenster (grau bei Vorquests), eine Tooltipzeile und einen Punkt auf der Zonenkarte.",
   DUNGEON_QUEST_OFFER = "Dungeonquest: %s (%s)",
   DUNGEON_QUEST_LINE = "Dungeon: %s",
   DUNGEON_QUEST_TAGS_TOGGLE = "Dungeonquests hervorheben",
-  DUNGEON_QUEST_TAGS_TOGGLE_TIP = "Hängt im Questlog, im Gesprächs- und Begrüßungsfenster des Questgebers und im Quest-Tracker den farbigen Kurznamen der Instanz an Dungeonquests an. Quest-Tooltips bekommen die Zeile „Dungeon: Name“.",
+  DUNGEON_QUEST_TAGS_TOGGLE_TIP = "Hängt im Questlog, im Gesprächs- und Begrüßungsfenster des Questgebers und im Quest-Tracker den farbigen Kurznamen der Instanz an Dungeonquests an, an Vorquests mit Schritt (z.B. „[DT 2/7]“). Quest-Tooltips bekommen die Zeile „Dungeon: Name“ bzw. „Führt zu Name (Schritt 2/7)“.",
+  DUNGEON_QUEST_CHAIN_LINE = "Führt zu %s (Schritt %d/%d)",
+  DUNGEON_QUEST_CHAIN_OFFER = "Vorquest: %s – führt zu %s (Schritt %d/%d)",
 }

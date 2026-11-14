@@ -3527,3 +3527,13 @@ Einstellung Komfort → Quest-Anzeige → „Dungeonquests hervorheben“ (Stand
 - Classic Era: Quest-Tracker-Titel mit Kurzname, Breite passt
 - Quest-Link im Chat anklicken/überfahren: Zeile „Dungeon: Die Todesminen“; Forever: Tooltip im Questlog ebenso
 - Keine Lua-Fehler, Questlevel-Präfix weiterhin korrekt
+
+### 509. Vorquest-Ketten zu Dungeonquests (LT-34, Classic Era und WoW Forever)
+
+- [ ] geprüft
+
+Beide Einstellungen aus 506/507 an. Allianz Level 14+, Kette zur Todesminen-Quest (Westfall, Gryan Starkmantel) bzw. eine andere Vorquest-Kette.
+
+- Geber eines Kettenanfangs/-schritts: graues Dungeon-Symbol an Plakette und Zielfenster (farbig, sobald er auch die Dungeonquest selbst anbietet); Tooltip „Vorquest: Titel – führt zu Die Todesminen (Schritt 1/7)“
+- Questlog, Gespräch/Gruß und Tracker: „… [DT 1/7]“ leiser gefärbt; Quest-Link-Tooltip „Führt zu Die Todesminen (Schritt 1/7)“
+- Schrittzahlen plausibel (Breadcrumbs/Alternativen auf derselben Stufe)?

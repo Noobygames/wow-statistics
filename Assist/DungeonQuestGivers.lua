@@ -1,7 +1,8 @@
 -- Dungeonquest-Geber markieren (Einstellung dungeonQuestGivers im Reiter "Komfort", an; nur mit ns.DungeonDB, also
 -- Classic Era und Forever): NPCs, die dem Charakter jetzt eine Dungeonquest anbieten (DungeonQuests.UnitOffers), bekommen
 -- ein Dungeon-Symbol über der Namensplakette und am Zielfenster sowie je Angebot eine Tooltipzeile
--- ("Dungeonquest: Titel (Instanz)", angehängt von Assist/Tooltip.lua). Objekte haben weder Einheit noch Plakette; sie
+-- ("Dungeonquest: Titel (Instanz)", angehängt von Assist/Tooltip.lua). Schritte einer Vorquest-Kette zählen mit
+-- ("Vorquest: Titel – führt zu Instanz (Schritt 2/7)"); bietet ein Geber nur solche an, ist das Symbol grau. Objekte haben weder Einheit noch Plakette; sie
 -- und NPCs stehen mit ihrem Ort aus der DungeonDB als Punkt auf der Zonenkarte (Lib/MapPins.lua).
 -- NPC-ID aus UnitGUID (in Forever-Instanzen geheim: dann keine Markierung, Geber stehen fast alle draußen).
 -- Neu bewertet wird bei neuen Plaketten, Zielwechsel und wenn sich DungeonQuests.Revision ändert (Questlog, Abgabe,
@@ -56,9 +57,24 @@ local function newMark(parent, size)
   return mark
 end
 
--- Text einer Angebotszeile: "Dungeonquest: Titel (Instanz)"
+-- Text einer Angebotszeile: "Dungeonquest: Titel (Instanz)" bzw. "Vorquest: Titel – führt zu Instanz (Schritt 2/7)"
 function DungeonQuestGivers.OfferLine(offer)
-  return string.format(L.DUNGEON_QUEST_OFFER, DungeonQuests.Title(offer.questID), ns.InstanceInfo.MapName(offer.mapID))
+  local title, instance = DungeonQuests.Title(offer.questID), ns.InstanceInfo.MapName(offer.mapID)
+  if offer.step then return string.format(L.DUNGEON_QUEST_CHAIN_OFFER, title, instance, offer.step, offer.total) end
+  return string.format(L.DUNGEON_QUEST_OFFER, title, instance)
+end
+
+-- Nur Vorquests im Angebot: Symbol grau statt farbig
+local function onlyChainSteps(offers)
+  for _, offer in ipairs(offers) do
+    if not offer.step then return false end
+  end
+  return true
+end
+
+local function showMark(mark, offers)
+  mark.icon:SetDesaturated(onlyChainSteps(offers))
+  mark:Show()
 end
 
 local function addOfferLines(tooltip, offers)
@@ -87,13 +103,13 @@ end
 local function updatePlate(unit)
   local plate = units[unit]
   if not plate then return end
-  local show = isEnabled() and #DungeonQuests.UnitOffers(unit) > 0
-  if show then
+  local offers = isEnabled() and DungeonQuests.UnitOffers(unit) or {}
+  if #offers > 0 then
     if not marks[plate] then
       marks[plate] = newMark(plate, PLATE_ICON_SIZE)
       marks[plate]:SetPoint("BOTTOM", plate, "TOP", 0, PLATE_GAP)
     end
-    marks[plate]:Show()
+    showMark(marks[plate], offers)
   elseif marks[plate] then
     marks[plate]:Hide()
   end
@@ -101,13 +117,13 @@ end
 
 local function updateTarget()
   if not TargetFrame then return end
-  local show = isEnabled() and #DungeonQuests.UnitOffers("target") > 0
-  if show and not targetMark then
+  local offers = isEnabled() and DungeonQuests.UnitOffers("target") or {}
+  if #offers > 0 and not targetMark then
     targetMark = newMark(TargetFrame, TARGET_ICON_SIZE)
     targetMark:SetPoint("BOTTOMLEFT", TargetFrame, "TOPLEFT", 0, 0)
   end
   if not targetMark then return end
-  if show then targetMark:Show() else targetMark:Hide() end
+  if #offers > 0 then showMark(targetMark, offers) else targetMark:Hide() end
 end
 
 local function refreshAll()

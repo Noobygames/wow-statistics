@@ -1,7 +1,8 @@
 -- Dungeonquests hervorheben (Einstellung dungeonQuestTags im Reiter "Komfort", an; nur mit ns.DungeonDB, also
 -- Classic Era und Forever): Questnamen in Questlog, Gespräch, Gruß und (Classic) Tracker bekommen den farbigen
 -- Kurznamen der Instanz angehängt ("Arugal muss sterben [BS]", Lib/QuestListHooks.lua), Quest-Tooltips eine Zeile
--- "Dungeon: Burg Schattenfang".
+-- "Dungeon: Burg Schattenfang". Schritte einer Vorquest-Kette (DungeonQuests.Chain) bekommen den Kurznamen mit Schritt
+-- ("[BS 2/7]", leiser gefärbt) und die Zeile "Führt zu Burg Schattenfang (Schritt 2/7)".
 -- Gruß-Knöpfe tragen keine questID: Zuordnung über den Titel, zuerst im Questlog, dann unter den Quests, die der
 -- Gesprächspartner laut DungeonDB vergibt (UnitGUID("npc")).
 -- Quest-Tooltips: Post-Hook auf SetHyperlink von GameTooltip und ItemRefTooltip (Chat-Links "quest:<id>:...", alle
@@ -21,6 +22,7 @@ local DungeonQuestTags = {}
 ns.DungeonQuestTags = DungeonQuestTags
 
 local TAG_COLOR = "info"  -- Theme-Farbe des Kurznamens und der Tooltipzeile
+local CHAIN_COLOR = "muted"  -- Vorquests: leiser als die Dungeonquest selbst
 local NPC_UNIT = "npc"
 local QUEST_LINK_PATTERN = "quest:(%d+)"
 local TOOLTIPS = { "GameTooltip", "ItemRefTooltip" }
@@ -39,11 +41,13 @@ local function endsWith(text, suffix)
   return suffix ~= "" and text:sub(-#suffix) == suffix
 end
 
--- Farbiger Kurzname der Instanz einer Dungeonquest ("|cff..[BS]|r"); nil ohne Instanz
+-- Farbiger Kurzname der Instanz einer Dungeonquest ("[BS]"), bei Vorquests mit Schritt ("[BS 2/7]"); nil ohne Bezug
 function DungeonQuestTags.Tag(questID)
   local mapID = DungeonQuests.Instance(questID)
-  if not mapID then return nil end
-  return string.format("%s[%s]|r", ns.Theme.Hex(TAG_COLOR), DungeonQuests.ShortName(mapID))
+  if mapID then return string.format("%s[%s]|r", ns.Theme.Hex(TAG_COLOR), DungeonQuests.ShortName(mapID)) end
+  local chainMap, _, step, total = DungeonQuests.Chain(questID)
+  if not chainMap then return nil end
+  return string.format("%s[%s %d/%d]|r", ns.Theme.Hex(CHAIN_COLOR), DungeonQuests.ShortName(chainMap), step, total)
 end
 
 -- Quest-ID zu einem Gruß-Knopf über den Titel (Text kann schon "[12] " vorn tragen)
@@ -65,11 +69,13 @@ function DungeonQuestTags.Decorate(text, quest)
   return text .. " " .. tag
 end
 
--- Tooltipzeile "Dungeon: Burg Schattenfang"; nil ohne Dungeonquest
+-- Tooltipzeile "Dungeon: Burg Schattenfang" bzw. "Führt zu Burg Schattenfang (Schritt 2/7)"; nil ohne Bezug
 function DungeonQuestTags.TooltipLine(questID)
   local mapID = DungeonQuests.Instance(questID)
-  if not mapID then return nil end
-  return string.format(L.DUNGEON_QUEST_LINE, ns.InstanceInfo.MapName(mapID))
+  if mapID then return string.format(L.DUNGEON_QUEST_LINE, ns.InstanceInfo.MapName(mapID)) end
+  local chainMap, _, step, total = DungeonQuests.Chain(questID)
+  if not chainMap then return nil end
+  return string.format(L.DUNGEON_QUEST_CHAIN_LINE, ns.InstanceInfo.MapName(chainMap), step, total)
 end
 
 local function addTooltipLine(tooltip, questID)
