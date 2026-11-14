@@ -3537,3 +3537,13 @@ Beide Einstellungen aus 506/507 an. Allianz Level 14+, Kette zur Todesminen-Ques
 - Geber eines Kettenanfangs/-schritts: graues Dungeon-Symbol an Plakette und Zielfenster (farbig, sobald er auch die Dungeonquest selbst anbietet); Tooltip „Vorquest: Titel – führt zu Die Todesminen (Schritt 1/7)“
 - Questlog, Gespräch/Gruß und Tracker: „… [DT 1/7]“ leiser gefärbt; Quest-Link-Tooltip „Führt zu Die Todesminen (Schritt 1/7)“
 - Schrittzahlen plausibel (Breadcrumbs/Alternativen auf derselben Stufe)?
+
+### 510. Würfelkarte: Symbol je Gegenstand (LT-49, alle Clients)
+
+- [ ] geprüft
+
+Blizzards Würfelfenster ausgeblendet oder ersetzt, damit die eigene Würfelkarte erscheint; Gruppe, zwei Gegenstände gleichzeitig auswürfeln.
+
+- Jede Zeile zeigt das Symbol des Gegenstands vor dem Namen (offene Würfe und Ergebnisse)
+- Drüberfahren am Symbol und am Namen zeigt den Item-Tooltip, Shift-Klick verlinkt wie bisher
+- Symbolgröße passt zur Schrift

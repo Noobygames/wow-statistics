@@ -8,6 +8,11 @@ ns.CHANGELOG = {
   {
     date = "2026-11-14",
     entries = {
+      { kind = "change",
+        deDE = "Würfelkarte: Jeder Gegenstand hat sein Symbol; Drüberfahren am Symbol oder Namen zeigt die Gegenstandsinfo.",
+        enUS = "Loot roll card: every item shows its icon; hovering the icon or name shows the item tooltip.",
+        frFR = "Carte de jet de butin : chaque objet affiche son icône ; survoler l'icône ou le nom affiche l'infobulle de l'objet.",
+        esES = "Tarjeta de tiradas de botín: cada objeto muestra su icono; pasar el ratón por el icono o el nombre muestra la información del objeto." },
       { kind = "new",
         deDE = "Dungeon-Beute-Vorschau: Bosszeilen im Run-Fenster und die Dungeon-Eingänge auf der Karte zeigen die bekannten Drops ab rar (Classic Era und WoW Forever).",
         enUS = "Dungeon loot preview: boss rows in the runs window and dungeon entrances on the map show the known drops of rare quality or better (Classic Era and WoW Forever).",

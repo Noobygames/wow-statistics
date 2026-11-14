@@ -165,13 +165,25 @@ end
 ---------------------------------------------------------------------------
 -- Ersatzkarte für Würfe ohne sichtbares Blizzard-Fenster
 ---------------------------------------------------------------------------
+-- Gegenstand mit Symbol; das Symbol steht im Link-Text, damit auch Drüberfahren am Symbol den Item-Tooltip zeigt
+function LootRollDisplay.ItemText(roll)
+  local icon = roll.texture and ("|T" .. roll.texture .. ":0|t") or ""
+  if roll.link then
+    local withIcon, found = roll.link:gsub("(|H[^|]+|h)", "%1" .. icon, 1)
+    if found > 0 then return withIcon end
+    return icon .. roll.link
+  end
+  return icon .. (roll.name or "?")
+end
+
 local function cardLines(list)
   local lines = {}
   for _, roll in ipairs(list) do
+    local item = LootRollDisplay.ItemText(roll)
     if roll.completed then
-      lines[#lines + 1] = ns.LootRollReport.SummaryText(roll)
+      lines[#lines + 1] = ns.LootRollReport.SummaryText(roll, item)
     else
-      lines[#lines + 1] = (roll.link or roll.name or "?") .. "\n" .. LootRollDisplay.CountsLine(roll)
+      lines[#lines + 1] = item .. "\n" .. LootRollDisplay.CountsLine(roll)
     end
   end
   return table.concat(lines, "\n")
