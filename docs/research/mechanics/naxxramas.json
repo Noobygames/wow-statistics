@@ -936,7 +936,8 @@
      "spell": "Magnetic Pull",
      "type": "tank",
      "en": "Stalagg and Feugen swap tanks; kill both close together",
-     "de": "Stalagg und Feugen tauschen Tanks; beide nah zusammen töten"
+     "de": "Stalagg und Feugen tauschen Tanks; beide nah zusammen töten",
+     "version": "classic"
     },
     {
      "spellID": 27680,

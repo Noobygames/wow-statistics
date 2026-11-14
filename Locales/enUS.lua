@@ -2135,4 +2135,5 @@ ns.locales.enUS = {
   MECHANIC_TANK = "Tank",
   TOOLTIP_MECHANICS_TOGGLE = "Show boss and enemy abilities",
   TOOLTIP_MECHANICS_TOGGLE_TIP = "Classic Era and WoW Forever: shows up to three important abilities with a tip (avoid, interrupt, dispel, ...) in the tooltip of dungeon and raid enemies. Tips are available in English and German.",
+  MECHANIC_UNVERIFIED = "From Classic, not yet confirmed for Forever",
 }

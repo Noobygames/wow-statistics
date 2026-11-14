@@ -26,6 +26,10 @@ type mechanic struct {
 	Type    string `json:"type"`
 	En      string `json:"en"`
 	De      string `json:"de"`
+	// Version: leer = beide Flavors, "classic" = nur Classic Era, "forever" = nur WoW Forever
+	Version string `json:"version"`
+	// Verified: eine Forever-Quelle bestätigt die Fähigkeit (Forever zeigt sonst den Hinweis "aus Classic übernommen")
+	Verified bool `json:"verified"`
 }
 
 type unit struct {
@@ -42,8 +46,12 @@ type entry struct {
 func main() {
 	dir := flag.String("dir", "docs/research/mechanics", "Ordner der Recherche-Dateien (*.json)")
 	luaOut := flag.String("lua", "Assist/InstanceData/mechanics.lua", "Ziel-Datei (Lua)")
+	spellCheck := flag.Bool("spellcheck", false, "Zauber-IDs gegen den neuesten Forever-Build (wago.tools) prüfen")
 	flag.Parse()
 	entries, files, err := load(*dir)
+	if err == nil && *spellCheck {
+		err = checkSpells(entries)
+	}
 	if err == nil {
 		err = os.WriteFile(*luaOut, []byte(render(entries)), 0o644)
 	}
@@ -56,6 +64,22 @@ func main() {
 		lines += len(e.Mechanics)
 	}
 	fmt.Printf("%s: %d Instanzdateien, %d NPCs, %d Mechaniken\n", *luaOut, files, len(entries), lines)
+}
+
+func checkSpells(entries []entry) error {
+	ids, build, err := foreverSpellIDs()
+	if err != nil {
+		return err
+	}
+	missing := missingSpells(entries, ids)
+	for _, line := range missing {
+		fmt.Println("  fehlt in Forever:", line)
+	}
+	if len(missing) > 0 {
+		return fmt.Errorf("%d Zauber-IDs fehlen im Forever-Build %s: als \"version\": \"classic\" markieren", len(missing), build)
+	}
+	fmt.Printf("Zauber-IDs: alle Forever-Zeilen im Build %s vorhanden\n", build)
+	return nil
 }
 
 // load liest alle Instanzdateien; Ergebnis nach NPC-ID sortiert, nur Einheiten mit mindestens einer Mechanik mit Text
@@ -95,6 +119,9 @@ func load(dir string) ([]entry, int, error) {
 				}
 				if !types[m.Type] {
 					return nil, 0, fmt.Errorf("%s: %s hat unbekannten Typ %q", path, u.Name, m.Type)
+				}
+				if _, ok := versionTags[m.Version]; !ok {
+					return nil, 0, fmt.Errorf("%s: %s hat unbekannte Version %q", path, u.Name, m.Version)
 				}
 				if fix {
 					m.De = umlautFixer.Replace(m.De)
@@ -139,6 +166,16 @@ var umlautFixer = strings.NewReplacer(
 	"toet", "töt", "Uebern", "Übern", "uebern", "übern", "wuetend", "wütend", "zurueck", "zurück", "Feuerstoss", "Feuerstoß",
 )
 
+// Kennung je Version im Lua (5. Feld); beide Flavors ohne Forever-Bestätigung bleiben ohne Kennung (kompakt)
+var versionTags = map[string]string{"": "", "classic": "c", "forever": "f"}
+
+func tag(m mechanic) string {
+	if m.Version == "" && m.Verified {
+		return "v"
+	}
+	return versionTags[m.Version]
+}
+
 func luaString(s string) string {
 	return `"` + strings.NewReplacer(`\`, `\\`, `"`, `\"`, "\n", `\n`).Replace(s) + `"`
 }
@@ -147,7 +184,9 @@ func render(entries []entry) string {
 	var b strings.Builder
 	b.WriteString(`-- GENERIERT von tools/mechanics ("make mechanics"), nicht von Hand bearbeiten.
 -- Quelle: Guide-Recherche docs/research/mechanics/*.json (je Instanz eine Datei), siehe sources.md.
--- ns.Mechanics = { [npcID] = { { spellID, Typ, Text deDE, Text enUS }, ... } }
+-- ns.Mechanics = { [npcID] = { { spellID, Typ, Text deDE, Text enUS, Kennung }, ... } }
+--   Kennung: "c" nur Classic Era, "f" nur Forever, "v" beide und für Forever bestätigt, ohne = beide, für Forever
+--   nur aus Classic übernommen. Der Schluss der Datei entfernt die Zeilen des anderen Flavors.
 --   spellID 0 = keine passende Zauber-ID (Zeile ohne Zaubersymbol), Typ: avoid, interrupt, dispel, tank, survive, adds,
 --   positioning. Deutsche Clients lesen den deutschen Text, alle anderen (auch frFR/esES) den englischen; die Texte
 --   laufen bewusst nicht über Locales (Spieldaten, kein UI-Text). Leser: Assist/Mechanics.lua.
@@ -161,10 +200,24 @@ ns.Mechanics = {
 	for _, e := range entries {
 		fmt.Fprintf(&b, "  [%d] = { -- %s (%s)\n", e.NpcID, e.Name, e.instance)
 		for _, m := range e.Mechanics {
-			fmt.Fprintf(&b, "    { %d, %q, %s, %s },\n", m.SpellID, m.Type, luaString(m.De), luaString(m.En))
+			fmt.Fprintf(&b, "    { %d, %q, %s, %s", m.SpellID, m.Type, luaString(m.De), luaString(m.En))
+			if t := tag(m); t != "" {
+				fmt.Fprintf(&b, ", %q", t)
+			}
+			b.WriteString(" },\n")
 		}
 		b.WriteString("  },\n")
 	}
-	b.WriteString("}\n")
+	b.WriteString(`}
+
+-- Zeilen des anderen Flavors entfernen, NPCs ohne Zeile ganz
+local otherTag = flavor == "forever" and "c" or "f"
+for npcID, list in pairs(ns.Mechanics) do
+  for index = #list, 1, -1 do
+    if list[index][5] == otherTag then table.remove(list, index) end
+  end
+  if #list == 0 then ns.Mechanics[npcID] = nil end
+end
+`)
 	return b.String()
 }

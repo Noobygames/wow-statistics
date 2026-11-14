@@ -1,6 +1,8 @@
 -- GENERIERT von tools/mechanics ("make mechanics"), nicht von Hand bearbeiten.
 -- Quelle: Guide-Recherche docs/research/mechanics/*.json (je Instanz eine Datei), siehe sources.md.
--- ns.Mechanics = { [npcID] = { { spellID, Typ, Text deDE, Text enUS }, ... } }
+-- ns.Mechanics = { [npcID] = { { spellID, Typ, Text deDE, Text enUS, Kennung }, ... } }
+--   Kennung: "c" nur Classic Era, "f" nur Forever, "v" beide und für Forever bestätigt, ohne = beide, für Forever
+--   nur aus Classic übernommen. Der Schluss der Datei entfernt die Zeilen des anderen Flavors.
 --   spellID 0 = keine passende Zauber-ID (Zeile ohne Zaubersymbol), Typ: avoid, interrupt, dispel, tank, survive, adds,
 --   positioning. Deutsche Clients lesen den deutschen Text, alle anderen (auch frFR/esES) den englischen; die Texte
 --   laufen bewusst nicht über Locales (Spieldaten, kein UI-Text). Leser: Assist/Mechanics.lua.
@@ -17,60 +19,60 @@ ns.Mechanics = {
     { 6408, "adds", "Getarnte Elite: auf versteckte Gegner bei Bossen achten", "Stealthed elites: watch for hidden pulls near bosses" },
   },
   [639] = { -- Edwin VanCleef (The Deadmines)
-    { 5200, "adds", "Ruft bei wenig Leben zwei Schwarzwachen: kontrollieren oder töten", "Calls two Blackguards at low health: control or kill them" },
+    { 5200, "adds", "Ruft bei wenig Leben zwei Schwarzwachen: kontrollieren oder töten", "Calls two Blackguards at low health: control or kill them", "v" },
     { 3391, "tank", "Erhält Extraangriffe: Schadensspitzen auf dem Tank", "Gains extra attacks: burst damage on the tank" },
   },
   [642] = { -- Sneed's Shredder (The Deadmines)
-    { 7399, "survive", "Furcht 4 Sek.: nicht in weitere Gegner laufen", "Fears a player for 4 sec: avoid running into extra mobs" },
-    { 3603, "survive", "Verlangsamt Zauber um 35 %: mit längeren Zaubern rechnen", "Slows a caster's casting by 35%: plan longer casts" },
+    { 7399, "survive", "Furcht 4 Sek.: nicht in weitere Gegner laufen", "Fears a player for 4 sec: avoid running into extra mobs", "v" },
+    { 3603, "survive", "Verlangsamt Zauber um 35 %: mit längeren Zaubern rechnen", "Slows a caster's casting by 35%: plan longer casts", "v" },
     { 5141, "adds", "Sneed springt beim Tod des Schredders heraus: als Nächstes töten", "Sneed jumps out when the shredder dies: kill him next" },
   },
   [643] = { -- Sneed (The Deadmines)
-    { 6713, "tank", "Entwaffnet den Tank: kurz weniger Bedrohung einplanen", "Disarms the tank: expect lower threat for a few seconds" },
+    { 6713, "tank", "Entwaffnet den Tank: kurz weniger Bedrohung einplanen", "Disarms the tank: expect lower threat for a few seconds", "v" },
   },
   [644] = { -- Rhahk'Zor (The Deadmines)
-    { 6304, "tank", "Hieb betäubt den Tank 3 Sek.: Tank voll geheilt halten", "Slam stuns the tank for 3 sec: keep the tank topped up" },
+    { 6304, "tank", "Hieb betäubt den Tank 3 Sek.: Tank voll geheilt halten", "Slam stuns the tank for 3 sec: keep the tank topped up", "v" },
   },
   [645] = { -- Cookie (The Deadmines)
-    { 6306, "avoid", "Naturschaden um ihn 30 Sek. lang: Fernkämpfer halten Abstand", "Nature damage around him for 30 sec: ranged keep away" },
-    { 5174, "interrupt", "Heilt sich selbst: Kochen unterbrechen", "Heals himself: interrupt the cooking" },
+    { 6306, "avoid", "Naturschaden um ihn 30 Sek. lang: Fernkämpfer halten Abstand", "Nature damage around him for 30 sec: ranged keep away", "v" },
+    { 5174, "interrupt", "Heilt sich selbst: Kochen unterbrechen", "Heals himself: interrupt the cooking", "v" },
   },
   [646] = { -- Mr. Smite (The Deadmines)
-    { 6432, "survive", "Betäubt bei 75 % und 50 % die Gruppe: vorher hochheilen", "Stuns the whole group at 75% and 50%: heal up before" },
+    { 6432, "survive", "Betäubt bei 75 % und 50 % die Gruppe: vorher hochheilen", "Stuns the whole group at 75% and 50%: heal up before", "v" },
     { 0, "adds", "Getarnte Wachen an der Rampe vor dem Pull beseitigen", "Clear the stealthed guards at the ramp before the pull" },
   },
   [647] = { -- Captain Greenskin (The Deadmines)
-    { 5208, "dispel", "Vergiftet einen Spieler per Harpune: Gift heilen", "Poisons a player with his harpoon: cure poison" },
-    { 40505, "positioning", "Spaltet nach vorne: nur der Tank steht vor ihm", "Cleaves in front: only the tank faces him" },
+    { 5208, "dispel", "Vergiftet einen Spieler per Harpune: Gift heilen", "Poisons a player with his harpoon: cure poison", "v" },
+    { 5532, "positioning", "Spaltet nach vorne: nur der Tank steht vor ihm", "Cleaves in front: only the tank faces him", "v" },
   },
   [1663] = { -- Dextren Ward (The Stockade)
     { 19134, "survive", "Furchterregender Ruf: 6 Sek Furcht für Nahe; Zusatzpulls vermeiden", "Frightening Shout fears nearby players for 6 sec; avoid extra pulls" },
   },
   [1666] = { -- Kam Deepfury (The Stockade)
-    { 8242, "tank", "Schildschlag betäubt den Tank 2 Sek", "Shield Slam stuns the tank for 2 sec" },
+    { 8242, "tank", "Schildschlag betäubt den Tank 2 Sek", "Shield Slam stuns the tank for 2 sec", "v" },
     { 871, "survive", "Schildwall senkt erlittenen Schaden 12 Sek um 60 %; Burst aufheben", "Shield Wall cuts his damage taken by 60% for 12 sec; hold burst" },
   },
   [1696] = { -- Targorr the Dread (The Stockade)
     { 3391, "tank", "Dreschen gibt Extraangriffe; Tankschaden kommt in Spitzen", "Thrash grants extra attacks; spiky tank damage" },
-    { 8599, "tank", "Wutanfall erhöht Schaden und Tempo; Tank stärker heilen", "Enrage raises his damage and attack speed; heal the tank harder" },
+    { 8599, "tank", "Wutanfall erhöht Schaden und Tempo; Tank stärker heilen", "Enrage raises his damage and attack speed; heal the tank harder", "v" },
   },
   [1715] = { -- Defias Insurgent (The Stockade)
     { 13730, "tank", "Rufe stärken Verbündete und schwächen euch; Aufständische früh töten", "Shouts buff allies and weaken you; kill insurgents early" },
   },
   [1716] = { -- Bazil Thredd (The Stockade)
-    { 7964, "avoid", "Rauchbombe betäubt alle in seiner Nähe 4 Sek", "Smoke Bomb stuns everyone near him for 4 sec" },
-    { 9128, "tank", "Schlachtruf erhöht die Angriffskraft naher Verbündeter", "Battle Shout boosts nearby allies' attack power" },
+    { 7964, "avoid", "Rauchbombe betäubt alle in seiner Nähe 4 Sek", "Smoke Bomb stuns everyone near him for 4 sec", "v" },
+    { 9128, "tank", "Schlachtruf erhöht die Angriffskraft naher Verbündeter", "Battle Shout boosts nearby allies' attack power", "v" },
   },
   [1717] = { -- Hamhock (The Stockade)
-    { 421, "interrupt", "Kettenblitz unterbrechen, springt auf drei Spieler", "Interrupt Chain Lightning, it jumps to three players" },
-    { 6742, "dispel", "Kampfrausch von ihm oder Verbündeten reinigen", "Purge Bloodlust from him or his allies" },
+    { 421, "interrupt", "Kettenblitz unterbrechen, springt auf drei Spieler", "Interrupt Chain Lightning, it jumps to three players", "v" },
+    { 6742, "dispel", "Kampfrausch von ihm oder Verbündeten reinigen", "Purge Bloodlust from him or his allies", "v" },
   },
   [1729] = { -- Defias Evoker (The Deadmines)
     { 11829, "avoid", "Flammensäule am Boden: herausgehen, Beschwörer zuerst töten", "Fire pillar on the ground: step out, kill evokers first" },
     { 12544, "tank", "Frostrüstung verlangsamt Nahkämpfer", "Frost armor slows melee attackers" },
   },
   [1763] = { -- Gilnid (The Deadmines)
-    { 5213, "dispel", "Verbrennt und verlangsamt einen Spieler: gegenheilen", "Burns and slows a player: heal through it" },
+    { 5213, "dispel", "Verbrennt und verlangsamt einen Spieler: gegenheilen", "Burns and slows a player: heal through it", "v" },
     { 5159, "avoid", "Geschmolzenes Erz auf Nahen stapelt: Fernkämpfer bleiben hinten", "Molten ore on nearby players stacks: ranged stay back" },
   },
   [1853] = { -- Darkmaster Gandling (Scholomance)
@@ -87,31 +89,31 @@ ns.Mechanics = {
     { 0, "survive", "Erdbeben betäubt alle Spieler in der Nähe", "Ground Tremor stuns all nearby players" },
   },
   [3654] = { -- Mutanus the Devourer (Wailing Caverns)
-    { 7967, "survive", "Schläfert einen Spieler bis 15 Sek. ein: Treffer weckt auf", "Sleeps one player up to 15 sec: hit them to wake them" },
-    { 7399, "survive", "Furcht 4 Sek. auf ein Ziel: auf zusätzliche Gegner achten", "Fears a target for 4 sec: watch for extra pulls" },
-    { 8150, "avoid", "Naturstoß betäubt Nahe: Fernkämpfer bleiben auf Distanz", "Nature blast stuns nearby players: ranged stay at range" },
+    { 7967, "survive", "Schläfert einen Spieler bis 15 Sek. ein: Treffer weckt auf", "Sleeps one player up to 15 sec: hit them to wake them", "v" },
+    { 7399, "survive", "Furcht 4 Sek. auf ein Ziel: auf zusätzliche Gegner achten", "Fears a target for 4 sec: watch for extra pulls", "v" },
+    { 8150, "avoid", "Naturstoß betäubt Nahe: Fernkämpfer bleiben auf Distanz", "Nature blast stuns nearby players: ranged stay at range", "v" },
   },
   [3669] = { -- Lord Cobrahn (Wailing Caverns)
-    { 7965, "tank", "Wird zur Schlange und schlägt im Nahkampf härter zu", "Turns into a serpent and hits harder in melee" },
+    { 7965, "tank", "Wird zur Schlange und schlägt im Nahkampf härter zu", "Turns into a serpent and hits harder in melee", "v" },
     { 744, "dispel", "Vergiftet in Schlangengestalt: Gift heilen", "Poisons in serpent form: cure poison" },
     { 8040, "interrupt", "Schläfert Spieler ein: Zauber unterbrechen", "Sleeps a player: interrupt the cast" },
   },
   [3670] = { -- Lord Pythas (Wailing Caverns)
-    { 8147, "avoid", "Naturstoß in 10 m verlangsamt: Fernkämpfer halten Abstand", "Nature blast within 10 yd slows: ranged keep their distance" },
+    { 8147, "avoid", "Naturstoß in 10 m verlangsamt: Fernkämpfer halten Abstand", "Nature blast within 10 yd slows: ranged keep their distance", "v" },
     { 8040, "interrupt", "Schläfert Spieler ein: Zauber unterbrechen", "Sleeps a player: interrupt the cast" },
     { 11431, "interrupt", "Heilt sich selbst: Heilung unterbrechen", "Heals himself: interrupt the heal" },
   },
   [3671] = { -- Lady Anacondra (Wailing Caverns)
     { 8040, "interrupt", "Schläfert Spieler 6 Sek. ein: Zauber unterbrechen", "Sleeps a player for 6 sec: interrupt the cast" },
     { 23381, "interrupt", "Heilt sich selbst: Unterbrechung für die Heilung aufheben", "Heals herself: save an interrupt for the heal" },
-    { 8148, "survive", "Dornen verletzen Nahkämpfer: Heiler achten auf Nahkämpfer", "Thorns hurt melee attackers: healers watch melee health" },
+    { 8148, "survive", "Dornen verletzen Nahkämpfer: Heiler achten auf Nahkämpfer", "Thorns hurt melee attackers: healers watch melee health", "v" },
   },
   [3673] = { -- Lord Serpentis (Wailing Caverns)
-    { 700, "interrupt", "Schlaf bis 20 Sek.: unterbrechen, Schaden weckt auf", "Sleeps a player up to 20 sec: interrupt, damage wakes" },
+    { 700, "interrupt", "Schlaf bis 20 Sek.: unterbrechen, Schaden weckt auf", "Sleeps a player up to 20 sec: interrupt, damage wakes", "v" },
     { 23381, "interrupt", "Große Selbstheilung: immer unterbrechen", "Large self heal: always interrupt" },
   },
   [3674] = { -- Skum (Wailing Caverns)
-    { 6254, "interrupt", "Blitz springt auf bis zu 3 Spieler: unterbrechen", "Bolt jumps to up to 3 players: interrupt it" },
+    { 6254, "interrupt", "Blitz springt auf bis zu 3 Spieler: unterbrechen", "Bolt jumps to up to 3 players: interrupt it", "v" },
   },
   [3853] = { -- Shadowfang Moonwalker (Shadowfang Keep)
     { 7121, "tank", "Zeitweise immun gegen Magie: physischen Schaden nutzen", "Immune to magic for a while: use physical damage" },
@@ -133,26 +135,26 @@ ns.Mechanics = {
     { 0, "survive", "Flächenstille für einige Sek.: Zauberer halten Abstand", "Area silence for a few seconds: casters stay out of range" },
   },
   [3887] = { -- Baron Silverlaine (Shadowfang Keep)
-    { 7068, "dispel", "Senkt erhaltene Heilung 15 Sek. um 75 %: Fluch entfernen", "Cuts healing taken by 75% for 15 sec: remove the curse" },
+    { 7068, "dispel", "Senkt erhaltene Heilung 15 Sek. um 75 %: Fluch entfernen", "Cuts healing taken by 75% for 15 sec: remove the curse", "v" },
   },
   [3914] = { -- Rethilgore (Shadowfang Keep)
-    { 7295, "survive", "Fesselt einen Spieler 10 Sek. und saugt Leben: gegenheilen", "Roots a player for 10 sec and drains health: heal them" },
+    { 7295, "survive", "Fesselt einen Spieler 10 Sek. und saugt Leben: gegenheilen", "Roots a player for 10 sec and drains health: heal them", "v" },
   },
   [3927] = { -- Wolf Master Nandos (Shadowfang Keep)
     { 7487, "adds", "Ruft Worgs und einen Wolfsschrecken: Adds tanken und töten", "Calls worgs and a Lupine Horror: tank and kill the adds" },
   },
   [3974] = { -- Houndmaster Loksey (Scarlet Monastery: Library)
-    { 6742, "adds", "Kommt mit Hunden und beschleunigt sie; Hunde AoE oder CC", "Comes with hounds and speeds them up; AoE or CC the dogs" },
-    { 77808, "tank", "Ruf erhöht seinen Nahkampfschaden; Tank mit Cooldowns", "Shout raises his melee damage; tank with cooldowns" },
+    { 6742, "adds", "Kommt mit Hunden und beschleunigt sie; Hunde AoE oder CC", "Comes with hounds and speeds them up; AoE or CC the dogs", "v" },
+    { 6192, "tank", "Ruf erhöht seinen Nahkampfschaden; Tank mit Cooldowns", "Shout raises his melee damage; tank with cooldowns", "v" },
   },
   [3975] = { -- Herod (Scarlet Monastery: Armory)
-    { 8989, "avoid", "Wirbelt magieimmun; alle außer Tank weglaufen", "Spins with magic immunity; everyone but tank runs away" },
-    { 8269, "tank", "Bei wenig Leben schnellere Angriffe; Tank-Cooldowns sparen", "Attack speed jumps at low health; save tank cooldowns" },
+    { 8989, "avoid", "Wirbelt magieimmun; alle außer Tank weglaufen", "Spins with magic immunity; everyone but tank runs away", "v" },
+    { 8269, "tank", "Bei wenig Leben schnellere Angriffe; Tank-Cooldowns sparen", "Attack speed jumps at low health; save tank cooldowns", "v" },
     { 0, "adds", "Nach dem Tod 20 schwache Rekruten; AoE nutzen", "Twenty weak trainees spawn on death; use AoE" },
   },
   [3976] = { -- Scarlet Commander Mograine (Scarlet Monastery: Cathedral)
-    { 5589, "survive", "Betäubt Spieler; Heiler nicht lange ausfallen lassen", "Stuns a player; healer must not be locked out long" },
-    { 1020, "tank", "Gottesschild bei wenig Leben; weitertanken", "Bubbles at low health; keep tanking, swap to Whitemane" },
+    { 5589, "survive", "Betäubt Spieler; Heiler nicht lange ausfallen lassen", "Stuns a player; healer must not be locked out long", "v" },
+    { 1020, "tank", "Gottesschild bei wenig Leben; weitertanken", "Bubbles at low health; keep tanking, swap to Whitemane", "v" },
     { 9257, "survive", "Nach Wiederbelebung heilt er Weißkrähe voll", "After Whitemane revives him he fully heals her" },
   },
   [3977] = { -- High Inquisitor Whitemane (Scarlet Monastery: Cathedral)
@@ -165,22 +167,22 @@ ns.Mechanics = {
     { 14032, "dispel", "Schatten-DoT; Magiebannung entfernt ihn", "Shadow DoT; magic dispel removes it" },
   },
   [4274] = { -- Fenrus the Devourer (Shadowfang Keep)
-    { 7125, "dispel", "Gift entzieht Mana und macht Naturschaden: Gift heilen", "Poison drains mana and deals nature damage: cure poison" },
+    { 7125, "dispel", "Gift entzieht Mana und macht Naturschaden: Gift heilen", "Poison drains mana and deals nature damage: cure poison", "v" },
   },
   [4275] = { -- Archmage Arugal (Shadowfang Keep)
-    { 7621, "survive", "Verwandelt einen Spieler 10 Sek. in einen Worgen: nicht angreifen", "Turns a player into a worgen for 10 sec: avoid hitting them" },
-    { 7803, "avoid", "Naturstoß betäubt Nahe: Abstand halten", "Nature burst stuns nearby players: keep distance" },
-    { 7588, "interrupt", "Starker Schattenblitz: unterbrechen oder Ziel heilen", "Heavy shadow bolt: interrupt or heal the target" },
+    { 7621, "survive", "Verwandelt einen Spieler 10 Sek. in einen Worgen: nicht angreifen", "Turns a player into a worgen for 10 sec: avoid hitting them", "v" },
+    { 7803, "avoid", "Naturstoß betäubt Nahe: Abstand halten", "Nature burst stuns nearby players: keep distance", "v" },
+    { 7588, "interrupt", "Starker Schattenblitz: unterbrechen oder Ziel heilen", "Heavy shadow bolt: interrupt or heal the target", "v" },
   },
   [4278] = { -- Commander Springvale (Shadowfang Keep)
-    { 1026, "interrupt", "Heilt sich mit Heiligem Licht: unterbrechen", "Heals himself with Holy Light: interrupt it" },
-    { 5588, "survive", "Betäubt einen Spieler 4 Sek.", "Stuns a player for 4 sec" },
+    { 1026, "interrupt", "Heilt sich mit Heiligem Licht: unterbrechen", "Heals himself with Holy Light: interrupt it", "v" },
+    { 5588, "survive", "Betäubt einen Spieler 4 Sek.", "Stuns a player for 4 sec", "v" },
   },
   [4279] = { -- Odo the Blindwatcher (Shadowfang Keep)
-    { 7481, "tank", "Schaden steigt mit jedem Heulen: schnell töten", "Damage rises with each howl: burn him down fast" },
+    { 7481, "tank", "Schaden steigt mit jedem Heulen: schnell töten", "Damage rises with each howl: burn him down fast", "v" },
   },
   [4287] = { -- Scarlet Gallant (Scarlet Monastery: Library)
-    { 77787, "survive", "Betäubt einen Spieler; Heiler im Blick behalten", "Stuns a player; watch healer health" },
+    { 77787, "survive", "Betäubt einen Spieler; Heiler im Blick behalten", "Stuns a player; watch healer health", "c" },
   },
   [4288] = { -- Scarlet Beastmaster (Scarlet Monastery: Library)
     { 7896, "positioning", "Feuerschuss trifft Ziel und Umstehende; verteilen", "Fire shot hits the target and nearby players; spread" },
@@ -189,11 +191,11 @@ ns.Mechanics = {
     { 11981, "interrupt", "Verbrennt Heilermana; unterbrechen oder betäuben", "Burns healer mana; interrupt or stun it" },
   },
   [4292] = { -- Scarlet Protector (Scarlet Monastery: Armory)
-    { 31713, "interrupt", "Heilt Verbündete; Heiliges Licht unterbrechen", "Heals allies; interrupt Holy Light" },
+    { 31713, "interrupt", "Heilt Verbündete; Heiliges Licht unterbrechen", "Heals allies; interrupt Holy Light", "c" },
   },
   [4293] = { -- Scarlet Scryer (Scarlet Monastery: Graveyard)
     { 9613, "interrupt", "Zauberer; Schattenblitz unterbrechen", "Caster; interrupt Shadow Bolt" },
-    { 77773, "dispel", "Schläfert einen Spieler ein; Opfer bannen", "Puts a player to sleep; dispel the victim" },
+    { 77773, "dispel", "Schläfert einen Spieler ein; Opfer bannen", "Puts a player to sleep; dispel the victim", "c" },
   },
   [4294] = { -- Scarlet Sorcerer (Scarlet Monastery: Cathedral)
     { 8364, "avoid", "Frost-Flächenschaden am Boden; heraustreten", "Frost AoE on the ground; step out" },
@@ -212,7 +214,7 @@ ns.Mechanics = {
     { 25058, "dispel", "HoT auf Verbündeten; reinigen oder wegschlagen", "HoT on allies; purge it or burst through" },
   },
   [4300] = { -- Scarlet Wizard (Scarlet Monastery: Cathedral)
-    { 34517, "positioning", "Spammt AoE bei Gruppen; verteilt bekämpfen", "Spams AoE when players stack; fight it spread" },
+    { 34517, "positioning", "Spammt AoE bei Gruppen; verteilt bekämpfen", "Spams AoE when players stack; fight it spread", "c" },
   },
   [4302] = { -- Scarlet Champion (Scarlet Monastery: Cathedral)
     { 17143, "tank", "Harte Heiligschläge auf Tank; schlimmer mit Abt", "Hard holy hits on the tank; worse with an Abbot" },
@@ -228,23 +230,23 @@ ns.Mechanics = {
     { 4979, "dispel", "Macht Verbündete feuerimmun: Zauber wechseln oder reinigen", "Makes an ally immune to fire: switch spells or purge" },
   },
   [4420] = { -- Overlord Ramtusk (Razorfen Kraul)
-    { 15548, "survive", "Donnerknall schadet und verlangsamt Nahe; Nahkämpfer heilen", "Thunderclap damages and slows everyone close; melee heal up" },
+    { 15548, "survive", "Donnerknall schadet und verlangsamt Nahe; Nahkämpfer heilen", "Thunderclap damages and slows everyone close; melee heal up", "v" },
     { 9128, "tank", "Schlachtruf erhöht die Angriffskraft seiner Gruppe", "Battle Shout raises his group's attack power" },
   },
   [4421] = { -- Charlga Razorflank (Razorfen Kraul)
-    { 8292, "interrupt", "Kettenblitz unterbrechen, springt zwischen Spielern", "Interrupt Chain Bolt, it jumps between players" },
-    { 6077, "dispel", "Erneuerung bei ihr reinigen", "Purge Renew from her" },
+    { 8292, "interrupt", "Kettenblitz unterbrechen, springt zwischen Spielern", "Interrupt Chain Bolt, it jumps between players", "v" },
+    { 6077, "dispel", "Erneuerung bei ihr reinigen", "Purge Renew from her", "v" },
   },
   [4422] = { -- Agathelos the Raging (Razorfen Kraul)
-    { 8269, "tank", "Raserei verstärkt seine Angriffe; Tank spart Cooldowns dafür", "Frenzy boosts his attacks; tank saves cooldowns for it" },
+    { 8269, "tank", "Raserei verstärkt seine Angriffe; Tank spart Cooldowns dafür", "Frenzy boosts his attacks; tank saves cooldowns for it", "v" },
   },
   [4424] = { -- Aggem Thorncurse (Razorfen Kraul)
-    { 14900, "interrupt", "Kettenheilung unterbrechen", "Interrupt Chain Heal" },
-    { 8286, "adds", "Ruft einen Ebergeist als Add", "Summons a Boar Spirit add" },
+    { 14900, "interrupt", "Kettenheilung unterbrechen", "Interrupt Chain Heal", "v" },
+    { 8286, "adds", "Ruft einen Ebergeist als Add", "Summons a Boar Spirit add", "v" },
   },
   [4428] = { -- Death Speaker Jargba (Razorfen Kraul)
-    { 14515, "dispel", "Übernimmt einen Spieler; bannen oder kontrollieren", "Mind controls a player; dispel or crowd-control them" },
-    { 9613, "interrupt", "Schattenblitz unterbrechen", "Interrupt Shadow Bolt" },
+    { 14515, "dispel", "Übernimmt einen Spieler; bannen oder kontrollieren", "Mind controls a player; dispel or crowd-control them", "v" },
+    { 9613, "interrupt", "Schattenblitz unterbrechen", "Interrupt Shadow Bolt", "v" },
   },
   [4440] = { -- Razorfen Totemic (Razorfen Kraul)
     { 4971, "adds", "Stellt einen Heilungszauberschutz auf; zerstören", "Drops a Healing Ward; destroy it" },
@@ -265,11 +267,11 @@ ns.Mechanics = {
   },
   [4542] = { -- High Inquisitor Fairbanks (Scarlet Monastery: Cathedral)
     { 22678, "survive", "Furcht auf Spieler; nicht in weitere Gruppen laufen", "Fears a player; avoid running into extra pulls" },
-    { 12039, "interrupt", "Heilt sich selbst; Heilung unterbrechen", "Heals himself; interrupt his Heal" },
-    { 8282, "dispel", "Fluch erhöht erlittenen Schaden; entfluchen", "Curse adds physical damage taken; decurse" },
+    { 12039, "interrupt", "Heilt sich selbst; Heilung unterbrechen", "Heals himself; interrupt his Heal", "v" },
+    { 8282, "dispel", "Fluch erhöht erlittenen Schaden; entfluchen", "Curse adds physical damage taken; decurse", "v" },
   },
   [4543] = { -- Bloodmage Thalnos (Scarlet Monastery: Graveyard)
-    { 12470, "positioning", "Feuerstoß um ihn; Fernkampf und Heiler halten Abstand", "Fire burst around him; ranged and healer keep distance" },
+    { 12470, "positioning", "Feuerstoß um ihn; Fernkampf und Heiler halten Abstand", "Fire burst around him; ranged and healer keep distance", "v" },
     { 23038, "survive", "Sofortiger Feuertreffer mit Brand auf sein Ziel", "Instant fire hit plus burn on his target" },
     { 20825, "interrupt", "Wirkt Schattenblitz; unterbrechen spart Schaden", "Casts Shadow Bolt; kick it to cut damage" },
   },
@@ -287,18 +289,18 @@ ns.Mechanics = {
     { 12746, "adds", "Ruft Leerwandler; Zauberer zuerst um die Ecke ziehen", "Summons a voidwalker; pull casters out of sight first" },
   },
   [4829] = { -- Aku'mai (Blackfathom Deeps)
-    { 3815, "avoid", "Giftwolke macht Naturschaden um sie herum; Gift entfernen", "Poison Cloud ticks nature damage around her; cure poison" },
-    { 3490, "tank", "Rasende Wut erhöht ihr Angriffstempo stark; Tank nutzt Cooldowns", "Frenzied Rage speeds her attacks a lot; tank uses cooldowns" },
+    { 3815, "avoid", "Giftwolke macht Naturschaden um sie herum; Gift entfernen", "Poison Cloud ticks nature damage around her; cure poison", "v" },
+    { 3490, "tank", "Rasende Wut erhöht ihr Angriffstempo stark; Tank nutzt Cooldowns", "Frenzied Rage speeds her attacks a lot; tank uses cooldowns", "v" },
   },
   [4830] = { -- Old Serra'kis (Blackfathom Deeps)
     { 8433, "survive", "Unterwasserkampf: Blutegelpuls entzieht allen Nahen Leben; Atem beachten", "Underwater fight: Leech Pulse drains everyone near him; watch breath" },
   },
   [4831] = { -- Lady Sarevess (Blackfathom Deeps)
-    { 865, "avoid", "Frostnova friert Nahe ein; Fernkämpfer und Heiler halten Abstand", "Frost Nova roots everyone close; ranged and healers keep range" },
+    { 865, "avoid", "Frostnova friert Nahe ein; Fernkämpfer und Heiler halten Abstand", "Frost Nova roots everyone close; ranged and healers keep range", "v" },
   },
   [4832] = { -- Twilight Lord Kelris (Blackfathom Deeps)
-    { 8399, "positioning", "Schlaf trifft Spieler im 5-m-Radius; Heiler und Fernkämpfer weiter weg", "Sleep hits players within 5 yd; healer and ranged stand farther" },
-    { 15587, "interrupt", "Gedankenschlag unterbrechen", "Interrupt Mind Blast" },
+    { 8399, "positioning", "Schlaf trifft Spieler im 5-m-Radius; Heiler und Fernkämpfer weiter weg", "Sleep hits players within 5 yd; healer and ranged stand farther", "v" },
+    { 15587, "interrupt", "Gedankenschlag unterbrechen", "Interrupt Mind Blast", "v" },
   },
   [4842] = { -- Earthcaller Halmgar (Razorfen Kraul)
     { 2484, "positioning", "Totem der Erdbindung verlangsamt; Totem zerstören", "Earthbind Totem slows everyone; destroy the totem" },
@@ -325,7 +327,7 @@ ns.Mechanics = {
     { 9906, "avoid", "Nicht zaubern, solange Reflexion aktiv ist", "Stop casting while Reflection is up" },
   },
   [4887] = { -- Ghamoo-ra (Blackfathom Deeps)
-    { 5568, "positioning", "Trampeln trifft auch Spieler neben dem Tank; Nahkämpfer verteilen", "Trample also hits players next to the tank; melee spread a bit" },
+    { 5568, "positioning", "Trampeln trifft auch Spieler neben dem Tank; Nahkämpfer verteilen", "Trample also hits players next to the tank; melee spread a bit", "v" },
   },
   [5259] = { -- Atal'ai Witch Doctor (Sunken Temple)
     { 11641, "dispel", "Verhexung schaltet einen Spieler aus; bannen", "Hex disables a player; dispel" },
@@ -421,11 +423,11 @@ ns.Mechanics = {
     { 7948, "dispel", "Heilt sich 20 Sek. lang: reinigen oder schnell töten", "Heals itself over 20 sec: purge it or burst it down" },
   },
   [5775] = { -- Verdan the Everliving (Wailing Caverns)
-    { 8142, "positioning", "Ranken werfen um und fesseln Nahe: Fernkämpfer bleiben hinten", "Vines root and knock down nearby players: ranged stay back" },
+    { 8142, "positioning", "Ranken werfen um und fesseln Nahe: Fernkämpfer bleiben hinten", "Vines root and knock down nearby players: ranged stay back", "v" },
   },
   [6168] = { -- Roogug (Razorfen Kraul)
-    { 8270, "adds", "Ruft einen Steingrollen; tanken oder töten", "Summons a Stone Rumbler; tank or kill it" },
-    { 9532, "interrupt", "Blitzschlag unterbrechen", "Interrupt Lightning Bolt" },
+    { 8270, "adds", "Ruft einen Steingrollen; tanken oder töten", "Summons a Stone Rumbler; tank or kill it", "v" },
+    { 9532, "interrupt", "Blitzschlag unterbrechen", "Interrupt Lightning Bolt", "v" },
   },
   [6212] = { -- Dark Iron Agent (Gnomeregan)
     { 11802, "avoid", "Legt Landminen (~450 Schaden); sofort töten, Minen meiden", "Drops land mines for ~450 damage; kill it at once, avoid mines" },
@@ -438,18 +440,18 @@ ns.Mechanics = {
     { 10870, "adds", "Ruft brennende Diener; abfangen oder töten", "Summons fire servants; pick them up or kill them" },
   },
   [6229] = { -- Crowd Pummeler 9-60 (Gnomeregan)
-    { 8374, "positioning", "Bogenschmettern trifft vorne; nur der Tank steht davor", "Arcing Smash cleaves in front; only the tank faces him" },
-    { 10887, "avoid", "Massenprügel trifft alle in der Nähe; Fernkämpfer bleiben weg", "Crowd Pummel hits all nearby players; ranged stay out" },
+    { 8374, "positioning", "Bogenschmettern trifft vorne; nur der Tank steht davor", "Arcing Smash cleaves in front; only the tank faces him", "v" },
+    { 10887, "avoid", "Massenprügel trifft alle in der Nähe; Fernkämpfer bleiben weg", "Crowd Pummel hits all nearby players; ranged stay out", "v" },
   },
   [6232] = { -- Arcane Nullifier X-21 (Gnomeregan)
     { 10831, "avoid", "Reflexionsfeld wirft Zauber zurück; nicht zaubern bis es weg ist", "Reflection Field bounces spells back; stop casting until it fades" },
   },
   [6235] = { -- Electrocutioner 6000 (Gnomeregan)
-    { 11085, "positioning", "Kettenblitz springt zwischen Spielern; verteilt stehen", "Chain Bolt jumps between players; spread out" },
-    { 11082, "survive", "Megavolt macht hohen Naturschaden; Leben hoch halten", "Megavolt deals heavy nature damage; keep health high" },
+    { 11085, "positioning", "Kettenblitz springt zwischen Spielern; verteilt stehen", "Chain Bolt jumps between players; spread out", "v" },
+    { 11082, "survive", "Megavolt macht hohen Naturschaden; Leben hoch halten", "Megavolt deals heavy nature damage; keep health high", "v" },
   },
   [6243] = { -- Gelihast (Blackfathom Deeps)
-    { 6533, "tank", "Netz hält 2 Sek fest; fliehende Murlocs laufen zu ihm, verlangsamen", "Nets a player for 2 sec; fleeing murlocs run to him, snare them" },
+    { 6533, "tank", "Netz hält 2 Sek fest; fliehende Murlocs laufen zu ihm, verlangsamen", "Nets a player for 2 sec; fleeing murlocs run to him, snare them", "v" },
   },
   [6329] = { -- Irradiated Pillager (Gnomeregan)
     { 9798, "survive", "Strahlung schadet Spielern in der Nähe; gegenheilen oder wegziehen", "Radiation damages players near it; heal through or kite" },
@@ -461,9 +463,9 @@ ns.Mechanics = {
     { 8986, "adds", "Beschwört Phantasmen; den Beschwörer schnell töten", "Spawns phantasm copies; kill the caster fast" },
   },
   [6487] = { -- Arcanist Doan (Scarlet Monastery: Library)
-    { 9435, "avoid", "Bei halbem Leben Blase, dann Detonation; Sichtlinie brechen", "At half health he bubbles, then detonates; break line of sight" },
-    { 13323, "dispel", "Verwandelt Spieler in Schaf; Magie bannen", "Sheeps a player; dispel magic to free them" },
-    { 8988, "survive", "Flächenstille sperrt Zauberer; vorher heilen", "Area silence locks casters; heal before it lands" },
+    { 9435, "avoid", "Bei halbem Leben Blase, dann Detonation; Sichtlinie brechen", "At half health he bubbles, then detonates; break line of sight", "v" },
+    { 13323, "dispel", "Verwandelt Spieler in Schaf; Magie bannen", "Sheeps a player; dispel magic to free them", "v" },
+    { 8988, "survive", "Flächenstille sperrt Zauberer; vorher heilen", "Area silence locks casters; heal before it lands", "v" },
   },
   [6906] = { -- The Lost Dwarves (Uldaman)
     { 6268, "tank", "Eric stürmt auf einen Spieler, sein nächster Schlag trifft härter", "Eric charges a player and his next hit lands harder" },
@@ -605,7 +607,7 @@ ns.Mechanics = {
   },
   [8567] = { -- Glutton (Razorfen Downs)
     { 12795, "tank", "Raserei bei wenig Leben; Tank-Cooldowns bereit", "Frenzies at low health; tank cooldowns ready" },
-    { 77978, "survive", "Krankheitswolke um ihn; Krankheit heilen", "Disease cloud around him; cure disease" },
+    { 77978, "survive", "Krankheitswolke um ihn; Krankheit heilen", "Disease cloud around him; cure disease", "c" },
   },
   [8580] = { -- Atal'alarion (Sunken Temple)
     { 12887, "positioning", "Fegender Schlag stößt vorn zurück; Nahkampf hinter ihn", "Sweeping Slam knocks back players in front; melee behind" },
@@ -834,7 +836,7 @@ ns.Mechanics = {
     { 18435, "positioning", "Feueratem nach vorn; nur der Tank steht am Kopf", "Frontal fire breath; only the tank stands at her head" },
     { 15847, "positioning", "Schwanz schleudert Spieler hinter ihr; von der Seite angreifen", "Tail knocks back players behind her; attack from the sides" },
     { 17086, "avoid", "Phase 2: Tiefer Atem quer durch den Raum; Bahn verlassen", "Phase 2 Deep Breath across the room; leave its path" },
-    { 18431, "survive", "Phase 3: Raidfurcht; Furchtzauberschutz oder Erdstoßtotem", "Phase 3 raid fear; Fear Ward or Tremor Totem help" },
+    { 18431, "survive", "Phase 3: Raidfurcht; Furchtzauberschutz oder Erdstoßtotem", "Phase 3 raid fear; Fear Ward or Tremor Totem help", "c" },
   },
   [10220] = { -- Halycon (Lower Blackrock Spire)
     { 13738, "tank", "Blutung am Tank; durchheilen", "Bleed on the tank; heal through it" },
@@ -1138,7 +1140,7 @@ ns.Mechanics = {
     { 7992, "dispel", "Gift verlangsamt Angriffe und Bewegung", "Poison slows attacks and movement" },
   },
   [11457] = { -- Wildspawn Hellcaller (Dire Maul)
-    { 31598, "avoid", "Feuerregen auf einer Fläche; verlassen", "Fire rain on an area; leave it" },
+    { 31598, "avoid", "Feuerregen auf einer Fläche; verlassen", "Fire rain on an area; leave it", "c" },
   },
   [11459] = { -- Ironbark Protector (Dire Maul)
     { 0, "tank", "Rückstoß halbiert Bedrohung; hilft Tendris, falls lebendig", "Knockback that halves threat; joins Tendris if alive" },
@@ -1154,7 +1156,7 @@ ns.Mechanics = {
     { 0, "interrupt", "Blitz springt auf bis zu 3 Spieler", "Lightning jumps between up to 3 players" },
   },
   [11480] = { -- Arcane Aberration (Dire Maul)
-    { 51725, "avoid", "Arkanexplosion um sich; Zauberer Abstand halten", "Arcane burst around it; casters keep distance" },
+    { 51725, "avoid", "Arkanexplosion um sich; Zauberer Abstand halten", "Arcane burst around it; casters keep distance", "c" },
   },
   [11486] = { -- Prince Tortheldrin (Dire Maul)
     { 0, "avoid", "Wirbelt, trifft alle im Umkreis von 8 Metern; Nahkämpfer zurück", "Spins hitting everyone within 8 yards; melee step back" },
@@ -1201,19 +1203,19 @@ ns.Mechanics = {
     { 20564, "tank", "Feuerschaden über Zeit auf sein Nahkampfziel", "Fire damage over time on his melee target" },
   },
   [11517] = { -- Oggleflint (Ragefire Chasm)
-    { 40505, "positioning", "Spaltet Tank und Nachbarn: nur der Tank steht vorne", "Cleaves the tank and a neighbour: only the tank stands in front" },
+    { 5532, "positioning", "Spaltet Tank und Nachbarn: nur der Tank steht vorne", "Cleaves the tank and a neighbour: only the tank stands in front", "v" },
   },
   [11518] = { -- Jergosh the Invoker (Ragefire Chasm)
-    { 20800, "dispel", "Feuerschaden über Zeit auf Spieler: gegenheilen oder bannen", "Fire damage over time on a player: heal through or dispel" },
-    { 18267, "dispel", "Fluch senkt Nahkampfschaden: Fluch vom Tank entfernen", "Curse lowers melee damage: remove the curse from the tank" },
+    { 20800, "dispel", "Feuerschaden über Zeit auf Spieler: gegenheilen oder bannen", "Fire damage over time on a player: heal through or dispel", "v" },
+    { 18267, "dispel", "Fluch senkt Nahkampfschaden: Fluch vom Tank entfernen", "Curse lowers melee damage: remove the curse from the tank", "v" },
   },
   [11519] = { -- Bazzalan (Ragefire Chasm)
-    { 744, "dispel", "Naturgift tickt 15 Sek.: Gift beim Tank heilen", "Nature poison ticks for 15 sec: cure poison on the tank" },
-    { 14873, "tank", "Schnelle harte Schläge auf den Tank: gleichmäßig heilen", "Quick hard strikes on the tank: keep healing steady" },
+    { 744, "dispel", "Naturgift tickt 15 Sek.: Gift beim Tank heilen", "Nature poison ticks for 15 sec: cure poison on the tank", "v" },
+    { 14873, "tank", "Schnelle harte Schläge auf den Tank: gleichmäßig heilen", "Quick hard strikes on the tank: keep healing steady", "v" },
   },
   [11520] = { -- Taragaman the Hungerer (Ragefire Chasm)
-    { 18072, "positioning", "Aufwärtshaken schleudert weg: Tank mit Rücken zur Wand, weg von der Lava", "Uppercut knocks targets back: tank with your back to a wall, away from lava" },
-    { 11970, "avoid", "Feuerstoß um ihn herum: Begleiter und Fernkämpfer auf Abstand halten", "Fire burst around him: keep pets and ranged out of melee range" },
+    { 18072, "positioning", "Aufwärtshaken schleudert weg: Tank mit Rücken zur Wand, weg von der Lava", "Uppercut knocks targets back: tank with your back to a wall, away from lava", "v" },
+    { 11970, "avoid", "Feuerstoß um ihn herum: Begleiter und Fernkämpfer auf Abstand halten", "Fire burst around him: keep pets and ranged out of melee range", "v" },
   },
   [11551] = { -- Necrofiend (Scholomance)
     { 15474, "survive", "Wurzelt alle in der Nähe; Gift entgiften", "Roots everyone nearby; poison needs curing" },
@@ -1412,12 +1414,12 @@ ns.Mechanics = {
     { 22440, "survive", "Ruf stärkt nahe Verbündete", "Shout that boosts nearby allies" },
   },
   [12876] = { -- Baron Aquanis (Blackfathom Deeps)
-    { 15043, "interrupt", "Frostblitz unterbrechen, trifft hart und verlangsamt", "Interrupt Frostbolt, it hits hard and slows" },
-    { 15541, "avoid", "Frostnova friert Nahe ein; Fernkämpfer bleiben zurück", "Frost Nova roots players nearby; ranged stay back" },
+    { 15043, "interrupt", "Frostblitz unterbrechen, trifft hart und verlangsamt", "Interrupt Frostbolt, it hits hard and slows", "v" },
+    { 15531, "avoid", "Frostnova friert Nahe ein; Fernkämpfer bleiben zurück", "Frost Nova roots players nearby; ranged stay back", "v" },
   },
   [12902] = { -- Lorgus Jett (Blackfathom Deeps)
-    { 12550, "dispel", "Blitzschlagschild reinigen, sonst werden Nahkämpfer beim Treffen geschockt", "Purge his Lightning Shield or melee get zapped on every hit" },
-    { 12167, "interrupt", "Blitzschlag unterbrechen", "Interrupt Lightning Bolt" },
+    { 12550, "dispel", "Blitzschlagschild reinigen, sonst werden Nahkämpfer beim Treffen geschockt", "Purge his Lightning Shield or melee get zapped on every hit", "v" },
+    { 12167, "interrupt", "Blitzschlag unterbrechen", "Interrupt Lightning Bolt", "v" },
   },
   [13020] = { -- Vaelastrasz the Corrupt (Blackwing Lair)
     { 18173, "positioning", "Ziel stirbt nach kurzer Zeit; vor der Explosion raus", "Target dies after a while; leave the raid before exploding" },
@@ -1711,7 +1713,7 @@ ns.Mechanics = {
   [15928] = { -- Thaddius (Naxxramas)
     { 28089, "positioning", "Spieler erhalten Plus- oder Minusladung; zur gleichen Ladung stellen", "Players get plus or minus charge; stand with the same charge" },
     { 28167, "survive", "Kettenblitz springt durch den Raid; verteilen und heilen", "Chain Lightning jumps through the raid; spread and heal" },
-    { 22839, "tank", "Stalagg und Feugen tauschen Tanks; beide nah zusammen töten", "Stalagg and Feugen swap tanks; kill both close together" },
+    { 22839, "tank", "Stalagg und Feugen tauschen Tanks; beide nah zusammen töten", "Stalagg and Feugen swap tanks; kill both close together", "c" },
     { 27680, "survive", "Berserker nach einigen Minuten; schnell töten", "Berserk after a few minutes; kill him quickly" },
   },
   [15931] = { -- Grobbulus (Naxxramas)
@@ -1838,4 +1840,90 @@ ns.Mechanics = {
   [16446] = { -- Plagued Gargoyle (Naxxramas)
     { 29325, "survive", "Säuresalve trifft mehrere Spieler mit Schaden über Zeit", "Acid volley hits several players with damage over time" },
   },
+  [245999] = { -- Arcane Anomaly (City of Dalaran)
+    { 1241501, "avoid", "Fokussierter Schlag: 3 Sek. Wirken, dann Strahl nach vorne; aus der Bahn gehen", "Focal Blast: 3 sec cast, then a beam in front; leave its path", "f" },
+  },
+  [246003] = { -- Fel Ancient (City of Dalaran)
+    { 1240692, "avoid", "Teufelsholz hinterlässt Giftschwaden: rausgehen", "Fel Timbers leaves poison fumes: move out", "f" },
+    { 1240688, "dispel", "Umschlingen wurzelt bis zu zwei Spieler fest: bannen", "Entangle roots up to two players: dispel", "f" },
+    { 1240687, "positioning", "Trampeln trifft Spieler neben ihm: nur der Tank steht nah", "Trample hits players next to him: only the tank stays close", "f" },
+  },
+  [246008] = { -- Mana Devourer (City of Dalaran)
+    { 1240738, "dispel", "Vitalität entziehen auf dem Tank: Magie bannen", "Drain Vitality on the tank: dispel the magic", "f" },
+    { 1240750, "survive", "Entkräften entzieht Mana im 45-Meter-Umkreis: Zauberer aufs Mana achten", "Debilitate drains mana within 45 yd: casters watch their mana", "f" },
+    { 0, "adds", "Übrige Gegner im Raum helfen mit: vorher räumen", "Creatures left in his room join in: clear it first", "f" },
+  },
+  [246016] = { -- Arcanic Enigma (City of Dalaran)
+    { 1240869, "dispel", "Manamorpher verwandelt 8 Sek. in ein Tier: bannen", "Manamorph turns a player into an animal for 8 sec: dispel", "f" },
+    { 1224125, "positioning", "Stille für 10 Sek.: Heiler halten Abstand", "Silences for 10 sec: healers keep their distance", "f" },
+    { 0, "adds", "Ruft Arkane Manalinge: Flächenschaden nutzen", "Calls Arcane Manalings: use area damage", "f" },
+  },
+  [246017] = { -- Unstable Sentinel (City of Dalaran)
+    { 1241329, "avoid", "Fehlfunktion: nach 2 Sek. Wirken Arkanpulse im 25-Meter-Umkreis; rausgehen", "Malfunction: after a 2 sec cast, arcane pulses within 25 yd; get out", "f" },
+    { 0, "adds", "Wütende Folianten auf dem Weg: vor dem Pull töten", "Angry Tomes on the way: kill them before the pull", "f" },
+  },
+  [246020] = { -- Shade of the Archmage (City of Dalaran)
+    { 0, "survive", "Verlässt jemand den Raum, hat er wieder volles Leben", "Leaving the room resets him to full health", "f" },
+    { 1241523, "positioning", "Begrenzendes Mana fliegt zu einem Spieler und zurück: nicht dazwischen stehen", "Bounding Mana flies to a player and back: don't stand in between", "f" },
+    { 1303598, "survive", "Ohne Mana: verwandelt die Gruppe 8 Sek., dann füllt er auf", "Out of mana: polymorphs the group for 8 sec, then refills", "f" },
+  },
+  [247032] = { -- Lyn the Ignored (City of Dalaran)
+    { 1304473, "dispel", "Dornenfluch: Fluch entfernen", "Curse of Thorns: remove the curse", "f" },
+    { 17228, "survive", "Schattenblitzsalve trifft alle im 30-Meter-Umkreis", "Shadow Bolt Volley hits everyone within 30 yd", "f" },
+    { 0, "adds", "Skelette kämpfen mit: töten", "Skeletons fight beside her: kill them", "f" },
+  },
+  [247126] = { -- Atrexis the Grave Knight (City of Dalaran)
+    { 1303264, "dispel", "Unheilige Raserei: +75 % Angriffstempo für 20 Sek., reinigen", "Unholy Frenzy: +75% attack speed for 20 sec, purge it", "f" },
+    { 1303266, "adds", "Skelette erheben sich laufend: sofort töten", "Skeletons keep rising: kill them as they come", "f" },
+    { 3391, "tank", "Extraschläge: schwere Treffer auf dem Tank", "Extra swings: heavy hits on the tank", "f" },
+  },
+  [250483] = { -- Witherfang (Ruins of Lordaeron)
+    { 0, "adds", "Spinnen im Hof helfen mit: zuerst räumen", "Courtyard spiders join the fight: clear them first", "f" },
+  },
+  [250631] = { -- The Abandoned (Ruins of Lordaeron)
+    { 0, "survive", "Frostnova trifft die ganze Gruppe: Heiler Mana einteilen", "Frost Nova hits the whole group: healers pace their mana", "f" },
+  },
+  [250657] = { -- Rath'mael (Ruins of Lordaeron)
+    { 0, "interrupt", "Flammenstoß ist sein Hauptzauber: jeden Wirkvorgang unterbrechen oder betäuben", "Flamestrike is his main spell: interrupt or stun every cast", "f" },
+  },
+  [250660] = { -- The Baron (Ruins of Lordaeron)
+    { 0, "tank", "Wirft den Tank hoch, 5 Sek. betäubt: Schadensverursacher auf Bedrohung achten", "Tosses the tank up, 5 sec stun: damage dealers watch threat", "f" },
+    { 0, "positioning", "Eine Patrouille kommt vorbei: Raum vor dem Pull räumen", "A patrol passes his room: clear it before the pull", "f" },
+  },
+  [256035] = { -- Viktor the Vile (Ruins of Lordaeron)
+    { 0, "dispel", "Vergiftet sein Ziel: Gift entfernen, Leben im Blick behalten", "Poisons his target: cure poison, watch health bars", "f" },
+    { 0, "tank", "Schlägt hart zu: Tank gesund halten", "Hits hard: keep the tank healthy", "f" },
+  },
+  [256097] = { -- Bjork (Ruins of Lordaeron)
+    { 0, "positioning", "Stößt Spieler zurück: Gruppen um ihn vorher räumen", "Knocks players back: clear the packs around him first", "f" },
+    { 0, "tank", "Schlägt hart zu: Tank voll geheilt halten", "Hits hard: keep the tank topped up", "f" },
+  },
+  [260322] = { -- Saltspine (Excavation Site: Wetlands)
+    { 0, "positioning", "Läuft zwischen Elite-Krokilisken: diese räumen oder ihn weglocken", "Roams among elite crocolisks: clear them or pull him away", "f" },
+  },
+  [260325] = { -- Shadetooth (Excavation Site: Wetlands)
+    { 0, "adds", "Raptorwelle vor seiner Ankunft töten", "Kill the raptor wave before he arrives", "f" },
+    { 0, "survive", "Fürchtet den Tank mehrfach: Totem des Erdstoßes hilft", "Fears the tank repeatedly: a Tremor Totem helps", "f" },
+  },
+  [260326] = { -- Relic Guardian (Excavation Site: Wetlands)
+    { 0, "tank", "Setzt Bedrohung zurück und wechselt Ziel: Schaden drosseln, Tank holt ihn zurück", "Drops threat and swaps targets: damage slows down, tank takes him back", "f" },
+  },
+  [261306] = { -- Faldrim Anvilmar (Hall of Thanes)
+    { 0, "dispel", "Wirkt Flüche und Krankheiten: Fluch- oder Krankheitsentfernung mitbringen", "Uses curses and diseases: bring a decurse or disease cure", "f" },
+  },
+  [261311] = { -- Plunder (Hall of Thanes)
+    { 0, "positioning", "Schleudert Spieler durch den Raum: nahe Gruppen räumen, am Tunnel tanken", "Knocks players across the room: clear nearby packs, tank him by the tunnel", "f" },
+  },
+  [261319] = { -- Durgen Dirgehammer (Hall of Thanes)
+    { 0, "survive", "Furcht auf die ganze Gruppe bei wenig Leben: Raum vorher räumen", "Fears the whole group at low health: clear the room first", "f" },
+  },
 }
+
+-- Zeilen des anderen Flavors entfernen, NPCs ohne Zeile ganz
+local otherTag = flavor == "forever" and "c" or "f"
+for npcID, list in pairs(ns.Mechanics) do
+  for index = #list, 1, -1 do
+    if list[index][5] == otherTag then table.remove(list, index) end
+  end
+  if #list == 0 then ns.Mechanics[npcID] = nil end
+end

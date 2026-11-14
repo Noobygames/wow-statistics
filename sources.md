@@ -109,3 +109,12 @@ and short tips per ability (spell ID, type, English and German text); the source
 `sources` field, entries marked `unverified` are less certain. Files whose German texts use
 ae/oe/ue/ss instead of umlauts are corrected by an explicit word list in the tool. German clients show the German tip,
 all other clients the English one (no French or Spanish tips).
+
+Version per line (LT-56): a line without `version` applies to both flavors (Classic research as the basis for WoW
+Forever); `"version": "classic"` keeps it off Forever (spell ID missing in the Forever build or ability changed there),
+`"version": "forever"` shows it only on Forever. `"verified": true` marks a both-flavor line that a Forever source
+confirms (same boss, same spell ID on foreverchanges.pro, checked 2026-11-14); on Forever, unconfirmed lines get a grey
+"taken from Classic" hint in the tooltip. `make mechanics ARGS=-spellcheck` checks every Forever line's spell ID
+against the newest Forever build's `SpellName` table on wago.tools (section 2). Forever-only dungeons (City of Dalaran,
+Excavation Site: Wetlands, Hall of Thanes, Ruins of Lordaeron) are written in our own words from the boss notes on
+foreverchanges.pro, NPC IDs from ForeverDungeonJournal (section 4); these files have no loot and no `instanceMapID`.

@@ -17,7 +17,8 @@
           "spell": "Trample",
           "type": "positioning",
           "en": "Trample also hits players next to the tank; melee spread a bit",
-          "de": "Trampeln trifft auch Spieler neben dem Tank; Nahkämpfer verteilen"
+          "de": "Trampeln trifft auch Spieler neben dem Tank; Nahkämpfer verteilen",
+          "verified": true
         }
       ],
       "loot": [
@@ -44,7 +45,8 @@
           "spell": "Frost Nova",
           "type": "avoid",
           "en": "Frost Nova roots everyone close; ranged and healers keep range",
-          "de": "Frostnova friert Nahe ein; Fernkämpfer und Heiler halten Abstand"
+          "de": "Frostnova friert Nahe ein; Fernkämpfer und Heiler halten Abstand",
+          "verified": true
         }
       ],
       "loot": [
@@ -77,7 +79,8 @@
           "spell": "Net",
           "type": "tank",
           "en": "Nets a player for 2 sec; fleeing murlocs run to him, snare them",
-          "de": "Netz hält 2 Sek fest; fliehende Murlocs laufen zu ihm, verlangsamen"
+          "de": "Netz hält 2 Sek fest; fliehende Murlocs laufen zu ihm, verlangsamen",
+          "verified": true
         }
       ],
       "loot": [
@@ -104,14 +107,16 @@
           "spell": "Lightning Shield",
           "type": "dispel",
           "en": "Purge his Lightning Shield or melee get zapped on every hit",
-          "de": "Blitzschlagschild reinigen, sonst werden Nahkämpfer beim Treffen geschockt"
+          "de": "Blitzschlagschild reinigen, sonst werden Nahkämpfer beim Treffen geschockt",
+          "verified": true
         },
         {
           "spellID": 12167,
           "spell": "Lightning Bolt",
           "type": "interrupt",
           "en": "Interrupt Lightning Bolt",
-          "de": "Blitzschlag unterbrechen"
+          "de": "Blitzschlag unterbrechen",
+          "verified": true
         }
       ],
       "loot": [
@@ -140,14 +145,16 @@
           "spell": "Frostbolt",
           "type": "interrupt",
           "en": "Interrupt Frostbolt, it hits hard and slows",
-          "de": "Frostblitz unterbrechen, trifft hart und verlangsamt"
+          "de": "Frostblitz unterbrechen, trifft hart und verlangsamt",
+          "verified": true
         },
         {
-          "spellID": 15541,
+          "spellID": 15531,
           "spell": "Frost Nova",
           "type": "avoid",
           "en": "Frost Nova roots players nearby; ranged stay back",
-          "de": "Frostnova friert Nahe ein; Fernkämpfer bleiben zurück"
+          "de": "Frostnova friert Nahe ein; Fernkämpfer bleiben zurück",
+          "verified": true
         }
       ],
       "loot": []
@@ -194,14 +201,16 @@
           "spell": "Sleep",
           "type": "positioning",
           "en": "Sleep hits players within 5 yd; healer and ranged stand farther",
-          "de": "Schlaf trifft Spieler im 5-m-Radius; Heiler und Fernkämpfer weiter weg"
+          "de": "Schlaf trifft Spieler im 5-m-Radius; Heiler und Fernkämpfer weiter weg",
+          "verified": true
         },
         {
           "spellID": 15587,
           "spell": "Mind Blast",
           "type": "interrupt",
           "en": "Interrupt Mind Blast",
-          "de": "Gedankenschlag unterbrechen"
+          "de": "Gedankenschlag unterbrechen",
+          "verified": true
         }
       ],
       "loot": [
@@ -228,14 +237,16 @@
           "spell": "Poison Cloud",
           "type": "avoid",
           "en": "Poison Cloud ticks nature damage around her; cure poison",
-          "de": "Giftwolke macht Naturschaden um sie herum; Gift entfernen"
+          "de": "Giftwolke macht Naturschaden um sie herum; Gift entfernen",
+          "verified": true
         },
         {
           "spellID": 3490,
           "spell": "Frenzied Rage",
           "type": "tank",
           "en": "Frenzied Rage speeds her attacks a lot; tank uses cooldowns",
-          "de": "Rasende Wut erhöht ihr Angriffstempo stark; Tank nutzt Cooldowns"
+          "de": "Rasende Wut erhöht ihr Angriffstempo stark; Tank nutzt Cooldowns",
+          "verified": true
         }
       ],
       "loot": [

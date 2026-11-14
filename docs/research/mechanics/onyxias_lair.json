@@ -33,7 +33,8 @@
      "spell": "Bellowing Roar",
      "type": "survive",
      "en": "Phase 3 raid fear; Fear Ward or Tremor Totem help",
-     "de": "Phase 3: Raidfurcht; Furchtzauberschutz oder Erdstoßtotem"
+     "de": "Phase 3: Raidfurcht; Furchtzauberschutz oder Erdstoßtotem",
+     "version": "classic"
     }
    ],
    "loot": [

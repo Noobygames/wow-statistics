@@ -9,7 +9,7 @@
       "npcID": 3914,
       "level": 20,
       "mechanics": [
-        {"spellID": 7295, "spell": "Soul Drain", "type": "survive", "en": "Roots a player for 10 sec and drains health: heal them", "de": "Fesselt einen Spieler 10 Sek. und saugt Leben: gegenheilen"}
+        {"spellID": 7295, "spell": "Soul Drain", "type": "survive", "en": "Roots a player for 10 sec and drains health: heal them", "de": "Fesselt einen Spieler 10 Sek. und saugt Leben: gegenheilen", "verified": true}
       ],
       "loot": []
     },
@@ -27,7 +27,7 @@
       "npcID": 3887,
       "level": 24,
       "mechanics": [
-        {"spellID": 7068, "spell": "Veil of Shadow", "type": "dispel", "en": "Cuts healing taken by 75% for 15 sec: remove the curse", "de": "Senkt erhaltene Heilung 15 Sek. um 75 %: Fluch entfernen"}
+        {"spellID": 7068, "spell": "Veil of Shadow", "type": "dispel", "en": "Cuts healing taken by 75% for 15 sec: remove the curse", "de": "Senkt erhaltene Heilung 15 Sek. um 75 %: Fluch entfernen", "verified": true}
       ],
       "loot": [
         {"itemID": 6321, "quality": "rare", "name": "Silverlaine's Family Seal"}
@@ -38,8 +38,8 @@
       "npcID": 4278,
       "level": 24,
       "mechanics": [
-        {"spellID": 1026, "spell": "Holy Light", "type": "interrupt", "en": "Heals himself with Holy Light: interrupt it", "de": "Heilt sich mit Heiligem Licht: unterbrechen"},
-        {"spellID": 5588, "spell": "Hammer of Justice", "type": "survive", "en": "Stuns a player for 4 sec", "de": "Betäubt einen Spieler 4 Sek."}
+        {"spellID": 1026, "spell": "Holy Light", "type": "interrupt", "en": "Heals himself with Holy Light: interrupt it", "de": "Heilt sich mit Heiligem Licht: unterbrechen", "verified": true},
+        {"spellID": 5588, "spell": "Hammer of Justice", "type": "survive", "en": "Stuns a player for 4 sec", "de": "Betäubt einen Spieler 4 Sek.", "verified": true}
       ],
       "loot": [
         {"itemID": 6320, "quality": "rare", "name": "Commander's Crest"}
@@ -50,7 +50,7 @@
       "npcID": 4279,
       "level": 24,
       "mechanics": [
-        {"spellID": 7481, "spell": "Howling Rage", "type": "tank", "en": "Damage rises with each howl: burn him down fast", "de": "Schaden steigt mit jedem Heulen: schnell töten"}
+        {"spellID": 7481, "spell": "Howling Rage", "type": "tank", "en": "Damage rises with each howl: burn him down fast", "de": "Schaden steigt mit jedem Heulen: schnell töten", "verified": true}
       ],
       "loot": [
         {"itemID": 6318, "quality": "rare", "name": "Odo's Ley Staff"}
@@ -61,7 +61,7 @@
       "npcID": 4274,
       "level": 21,
       "mechanics": [
-        {"spellID": 7125, "spell": "Toxic Saliva", "type": "dispel", "en": "Poison drains mana and deals nature damage: cure poison", "de": "Gift entzieht Mana und macht Naturschaden: Gift heilen"}
+        {"spellID": 7125, "spell": "Toxic Saliva", "type": "dispel", "en": "Poison drains mana and deals nature damage: cure poison", "de": "Gift entzieht Mana und macht Naturschaden: Gift heilen", "verified": true}
       ],
       "loot": []
     },
@@ -81,9 +81,9 @@
       "npcID": 4275,
       "level": 26,
       "mechanics": [
-        {"spellID": 7621, "spell": "Arugal's Curse", "type": "survive", "en": "Turns a player into a worgen for 10 sec: avoid hitting them", "de": "Verwandelt einen Spieler 10 Sek. in einen Worgen: nicht angreifen"},
-        {"spellID": 7803, "spell": "Thundershock", "type": "avoid", "en": "Nature burst stuns nearby players: keep distance", "de": "Naturstoß betäubt Nahe: Abstand halten"},
-        {"spellID": 7588, "spell": "Void Bolt", "type": "interrupt", "en": "Heavy shadow bolt: interrupt or heal the target", "de": "Starker Schattenblitz: unterbrechen oder Ziel heilen"}
+        {"spellID": 7621, "spell": "Arugal's Curse", "type": "survive", "en": "Turns a player into a worgen for 10 sec: avoid hitting them", "de": "Verwandelt einen Spieler 10 Sek. in einen Worgen: nicht angreifen", "verified": true},
+        {"spellID": 7803, "spell": "Thundershock", "type": "avoid", "en": "Nature burst stuns nearby players: keep distance", "de": "Naturstoß betäubt Nahe: Abstand halten", "verified": true},
+        {"spellID": 7588, "spell": "Void Bolt", "type": "interrupt", "en": "Heavy shadow bolt: interrupt or heal the target", "de": "Starker Schattenblitz: unterbrechen oder Ziel heilen", "verified": true}
       ],
       "loot": [
         {"itemID": 6220, "quality": "rare", "name": "Meteor Shard"},

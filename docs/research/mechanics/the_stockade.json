@@ -24,7 +24,8 @@
           "spell": "Enrage",
           "type": "tank",
           "en": "Enrage raises his damage and attack speed; heal the tank harder",
-          "de": "Wutanfall erhöht Schaden und Tempo; Tank stärker heilen"
+          "de": "Wutanfall erhöht Schaden und Tempo; Tank stärker heilen",
+          "verified": true
         }
       ],
       "loot": [
@@ -58,7 +59,8 @@
           "spell": "Shield Slam",
           "type": "tank",
           "en": "Shield Slam stuns the tank for 2 sec",
-          "de": "Schildschlag betäubt den Tank 2 Sek"
+          "de": "Schildschlag betäubt den Tank 2 Sek",
+          "verified": true
         },
         {
           "spellID": 871,
@@ -87,14 +89,16 @@
           "spell": "Chain Lightning",
           "type": "interrupt",
           "en": "Interrupt Chain Lightning, it jumps to three players",
-          "de": "Kettenblitz unterbrechen, springt auf drei Spieler"
+          "de": "Kettenblitz unterbrechen, springt auf drei Spieler",
+          "verified": true
         },
         {
           "spellID": 6742,
           "spell": "Bloodlust",
           "type": "dispel",
           "en": "Purge Bloodlust from him or his allies",
-          "de": "Kampfrausch von ihm oder Verbündeten reinigen"
+          "de": "Kampfrausch von ihm oder Verbündeten reinigen",
+          "verified": true
         }
       ],
       "loot": [
@@ -128,14 +132,16 @@
           "spell": "Smoke Bomb",
           "type": "avoid",
           "en": "Smoke Bomb stuns everyone near him for 4 sec",
-          "de": "Rauchbombe betäubt alle in seiner Nähe 4 Sek"
+          "de": "Rauchbombe betäubt alle in seiner Nähe 4 Sek",
+          "verified": true
         },
         {
           "spellID": 9128,
           "spell": "Battle Shout",
           "type": "tank",
           "en": "Battle Shout boosts nearby allies' attack power",
-          "de": "Schlachtruf erhöht die Angriffskraft naher Verbündeter"
+          "de": "Schlachtruf erhöht die Angriffskraft naher Verbündeter",
+          "verified": true
         }
       ],
       "loot": [

@@ -2135,4 +2135,5 @@ ns.locales.deDE = {
   MECHANIC_TANK = "Tank",
   TOOLTIP_MECHANICS_TOGGLE = "Boss- und Gegnerfähigkeiten zeigen",
   TOOLTIP_MECHANICS_TOGGLE_TIP = "Classic Era und WoW Forever: Zeigt im Tooltip von Dungeon- und Schlachtzugsgegnern bis zu drei wichtige Fähigkeiten mit Tipp (Ausweichen, Unterbrechen, Bannen, ...). Die Tipps gibt es auf Deutsch und Englisch.",
+  MECHANIC_UNVERIFIED = "Aus Classic übernommen, für Forever unbestätigt",
 }

@@ -136,7 +136,8 @@
      "type": "survive",
      "en": "Disease cloud around him; cure disease",
      "de": "Krankheitswolke um ihn; Krankheit heilen",
-     "unverified": true
+     "unverified": true,
+     "version": "classic"
     }
    ],
    "loot": [

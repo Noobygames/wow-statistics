@@ -17,15 +17,17 @@
      "spell": "Bloodlust",
      "type": "adds",
      "en": "Comes with hounds and speeds them up; AoE or CC the dogs",
-     "de": "Kommt mit Hunden und beschleunigt sie; Hunde AoE oder CC"
+     "de": "Kommt mit Hunden und beschleunigt sie; Hunde AoE oder CC",
+     "verified": true
     },
     {
-     "spellID": 77808,
+     "spellID": 6192,
      "spell": "Battle Shout",
      "type": "tank",
      "en": "Shout raises his melee damage; tank with cooldowns",
      "de": "Ruf erhoeht seinen Nahkampfschaden; Tank mit Cooldowns",
-     "unverified": true
+     "unverified": true,
+     "verified": true
     }
    ],
    "loot": [
@@ -46,21 +48,24 @@
      "spell": "Detonation",
      "type": "avoid",
      "en": "At half health he bubbles, then detonates; break line of sight",
-     "de": "Bei halbem Leben Blase, dann Detonation; Sichtlinie brechen"
+     "de": "Bei halbem Leben Blase, dann Detonation; Sichtlinie brechen",
+     "verified": true
     },
     {
      "spellID": 13323,
      "spell": "Polymorph",
      "type": "dispel",
      "en": "Sheeps a player; dispel magic to free them",
-     "de": "Verwandelt Spieler in Schaf; Magie bannen"
+     "de": "Verwandelt Spieler in Schaf; Magie bannen",
+     "verified": true
     },
     {
      "spellID": 8988,
      "spell": "Silence",
      "type": "survive",
      "en": "Area silence locks casters; heal before it lands",
-     "de": "Flaechenstille sperrt Zauberer; vorher heilen"
+     "de": "Flaechenstille sperrt Zauberer; vorher heilen",
+     "verified": true
     }
    ],
    "loot": [
@@ -152,7 +157,8 @@
      "type": "survive",
      "en": "Stuns a player; watch healer health",
      "de": "Betaeubt einen Spieler; Heiler im Blick behalten",
-     "unverified": true
+     "unverified": true,
+     "version": "classic"
     }
    ]
   },

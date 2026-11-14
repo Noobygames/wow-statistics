@@ -24,14 +24,16 @@
      "spell": "Heal",
      "type": "interrupt",
      "en": "Heals himself; interrupt his Heal",
-     "de": "Heilt sich selbst; Heilung unterbrechen"
+     "de": "Heilt sich selbst; Heilung unterbrechen",
+     "verified": true
     },
     {
      "spellID": 8282,
      "spell": "Curse of Blood",
      "type": "dispel",
      "en": "Curse adds physical damage taken; decurse",
-     "de": "Fluch erhoeht erlittenen Schaden; entfluchen"
+     "de": "Fluch erhoeht erlittenen Schaden; entfluchen",
+     "verified": true
     }
    ],
    "loot": []
@@ -46,14 +48,16 @@
      "spell": "Hammer of Justice",
      "type": "survive",
      "en": "Stuns a player; healer must not be locked out long",
-     "de": "Betaeubt Spieler; Heiler nicht lange ausfallen lassen"
+     "de": "Betaeubt Spieler; Heiler nicht lange ausfallen lassen",
+     "verified": true
     },
     {
      "spellID": 1020,
      "spell": "Divine Shield",
      "type": "tank",
      "en": "Bubbles at low health; keep tanking, swap to Whitemane",
-     "de": "Gottesschild bei wenig Leben; weitertanken"
+     "de": "Gottesschild bei wenig Leben; weitertanken",
+     "verified": true
     },
     {
      "spellID": 9257,
@@ -175,7 +179,8 @@
      "type": "positioning",
      "en": "Spams AoE when players stack; fight it spread",
      "de": "Spammt AoE bei Gruppen; verteilt bekaempfen",
-     "unverified": true
+     "unverified": true,
+     "version": "classic"
     }
    ]
   },

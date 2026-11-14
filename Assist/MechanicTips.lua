@@ -6,6 +6,8 @@
 -- NPC-ID aus UnitGUID; ist die GUID geheim (Forever in Instanzen möglich), fehlen die Zeilen (Debug-Check
 -- LT10.mechanics.mouseover).
 -- Text: deDE-Clients den deutschen, alle anderen den englischen (frFR/esES haben keine eigenen Guide-Texte).
+-- Forever (LT-56): die Daten enthalten nur Zeilen dieses Flavors; ist eine gezeigte Zeile nur aus Classic übernommen
+-- (ohne Kennung, keine Forever-Quelle bestätigt sie), folgt eine graue Hinweiszeile.
 local _, ns = ...
 local L = ns.L
 
@@ -19,9 +21,10 @@ local MechanicTips = {}
 ns.MechanicTips = MechanicTips
 
 MechanicTips.MAX_LINES = 3
-local SPELL_ID, KIND, TEXT_DE, TEXT_EN = 1, 2, 3, 4
+local SPELL_ID, KIND, TEXT_DE, TEXT_EN, TAG = 1, 2, 3, 4, 5
 local FALLBACK_ICON = "Interface\\Icons\\INV_Misc_QuestionMark"
 local TEXT_COLOR = { 0.9, 0.9, 0.9 }
+local HINT_COLOR = { 0.5, 0.5, 0.5 }
 
 -- Farbe je Typ (Typen wie in tools/mechanics)
 MechanicTips.COLORS = {
@@ -61,7 +64,12 @@ function MechanicTips.AddUnitLines(tooltip, unit)
   local mechanics = MechanicTips.ForNpc(npcID)
   ns.Debug("mechanics", "unit tooltip npc %s: %s lines", npcID, mechanics and #mechanics or 0)
   if not mechanics then return end
+  local unverified = false
   for index = 1, math.min(#mechanics, MechanicTips.MAX_LINES) do
     tooltip:AddLine(MechanicTips.LineText(mechanics[index]), TEXT_COLOR[1], TEXT_COLOR[2], TEXT_COLOR[3], true)
+    unverified = unverified or mechanics[index][TAG] == nil
+  end
+  if unverified and ns.Client.IsForever() then
+    tooltip:AddLine(L.MECHANIC_UNVERIFIED, HINT_COLOR[1], HINT_COLOR[2], HINT_COLOR[3], true)
   end
 end

@@ -17,14 +17,16 @@
      "spell": "Whirlwind",
      "type": "avoid",
      "en": "Spins with magic immunity; everyone but tank runs away",
-     "de": "Wirbelt magieimmun; alle ausser Tank weglaufen"
+     "de": "Wirbelt magieimmun; alle ausser Tank weglaufen",
+     "verified": true
     },
     {
      "spellID": 8269,
      "spell": "Frenzy",
      "type": "tank",
      "en": "Attack speed jumps at low health; save tank cooldowns",
-     "de": "Bei wenig Leben schnellere Angriffe; Tank-Cooldowns sparen"
+     "de": "Bei wenig Leben schnellere Angriffe; Tank-Cooldowns sparen",
+     "verified": true
     },
     {
      "spellID": 0,
@@ -85,7 +87,8 @@
      "type": "interrupt",
      "en": "Heals allies; interrupt Holy Light",
      "de": "Heilt Verbuendete; Heiliges Licht unterbrechen",
-     "unverified": true
+     "unverified": true,
+     "version": "classic"
     }
    ]
   },

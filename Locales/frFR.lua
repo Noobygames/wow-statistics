@@ -2135,4 +2135,5 @@ ns.locales.frFR = {
   MECHANIC_TANK = "Tank",
   TOOLTIP_MECHANICS_TOGGLE = "Afficher les techniques des boss et ennemis",
   TOOLTIP_MECHANICS_TOGGLE_TIP = "Classic Era et WoW Forever : affiche dans l'infobulle des ennemis de donjon et de raid jusqu'à trois techniques importantes avec un conseil (éviter, interrompre, dissiper, ...). Les conseils sont en anglais.",
+  MECHANIC_UNVERIFIED = "Repris de Classic, non confirmé pour Forever",
 }

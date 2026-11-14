@@ -73,7 +73,7 @@ questie:
 
 # Boss- und Trash-Mechaniken aus der Guide-Recherche (docs/research/mechanics/*.json) nach Assist/InstanceData/mechanics.lua
 mechanics:
-	go -C $(MECHANICS) run . -dir "$(CURDIR)/docs/research/mechanics" -lua "$(CURDIR)/Assist/InstanceData/mechanics.lua"
+	go -C $(MECHANICS) run . -dir "$(CURDIR)/docs/research/mechanics" -lua "$(CURDIR)/Assist/InstanceData/mechanics.lua" $(ARGS)
 
 test: test-addon test-installer test-artwork test-records test-flights test-locale test-extractor test-questie test-mechanics test-site
 

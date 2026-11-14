@@ -1,0 +1,52 @@
+{
+  "instance": "Ruins of Lordaeron",
+  "kind": "dungeon",
+  "bosses": [
+    {
+      "name": "The Baron",
+      "npcID": 250660,
+      "mechanics": [
+        {"spellID": 0, "spell": "Hurled into the air", "type": "tank", "en": "Tosses the tank up, 5 sec stun: damage dealers watch threat", "de": "Wirft den Tank hoch, 5 Sek. betäubt: Schadensverursacher auf Bedrohung achten", "version": "forever"},
+        {"spellID": 0, "spell": "Patrol", "type": "positioning", "en": "A patrol passes his room: clear it before the pull", "de": "Eine Patrouille kommt vorbei: Raum vor dem Pull räumen", "version": "forever"}
+      ]
+    },
+    {
+      "name": "Witherfang",
+      "npcID": 250483,
+      "mechanics": [
+        {"spellID": 0, "spell": "Courtyard spiders", "type": "adds", "en": "Courtyard spiders join the fight: clear them first", "de": "Spinnen im Hof helfen mit: zuerst räumen", "version": "forever"}
+      ]
+    },
+    {
+      "name": "The Abandoned",
+      "npcID": 250631,
+      "mechanics": [
+        {"spellID": 0, "spell": "Frost Nova", "type": "survive", "en": "Frost Nova hits the whole group: healers pace their mana", "de": "Frostnova trifft die ganze Gruppe: Heiler Mana einteilen", "version": "forever"}
+      ]
+    },
+    {
+      "name": "Bjork",
+      "npcID": 256097,
+      "mechanics": [
+        {"spellID": 0, "spell": "Knockback", "type": "positioning", "en": "Knocks players back: clear the packs around him first", "de": "Stößt Spieler zurück: Gruppen um ihn vorher räumen", "version": "forever"},
+        {"spellID": 0, "spell": "Heavy blows", "type": "tank", "en": "Hits hard: keep the tank topped up", "de": "Schlägt hart zu: Tank voll geheilt halten", "version": "forever"}
+      ]
+    },
+    {
+      "name": "Rath'mael",
+      "npcID": 250657,
+      "mechanics": [
+        {"spellID": 0, "spell": "Flamestrike", "type": "interrupt", "en": "Flamestrike is his main spell: interrupt or stun every cast", "de": "Flammenstoß ist sein Hauptzauber: jeden Wirkvorgang unterbrechen oder betäuben", "version": "forever"}
+      ]
+    },
+    {
+      "name": "Viktor the Vile",
+      "npcID": 256035,
+      "mechanics": [
+        {"spellID": 0, "spell": "Poison", "type": "dispel", "en": "Poisons his target: cure poison, watch health bars", "de": "Vergiftet sein Ziel: Gift entfernen, Leben im Blick behalten", "version": "forever"},
+        {"spellID": 0, "spell": "Heavy blows", "type": "tank", "en": "Hits hard: keep the tank healthy", "de": "Schlägt hart zu: Tank gesund halten", "version": "forever"}
+      ]
+    }
+  ],
+  "sources": ["https://foreverchanges.pro/dungeons/ruins-of-lordaeron", "ForeverDungeonJournal Data/Dungeons.lua (NPC IDs)"]
+}

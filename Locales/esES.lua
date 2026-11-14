@@ -2135,4 +2135,5 @@ ns.locales.esES = {
   MECHANIC_TANK = "Tanque",
   TOOLTIP_MECHANICS_TOGGLE = "Mostrar habilidades de jefes y enemigos",
   TOOLTIP_MECHANICS_TOGGLE_TIP = "Classic Era y WoW Forever: muestra en el tooltip de los enemigos de mazmorras y bandas hasta tres habilidades importantes con un consejo (esquivar, interrumpir, disipar, ...). Los consejos están en inglés.",
+  MECHANIC_UNVERIFIED = "Tomado de Classic, sin confirmar en Forever",
 }

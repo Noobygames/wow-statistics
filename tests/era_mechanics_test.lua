@@ -35,6 +35,11 @@ end
 expectTrue("NPC mit vielen Mechaniken", busy ~= nil)
 expect("gekappt", #linesFor("Creature-0-1-0-1-" .. busy .. "-0001"), Tips.MAX_LINES)
 
+-- LT-56: Forever-eigene Zeilen fehlen auf Classic Era, Classic-only bleibt, kein Forever-Hinweis
+expect("Forever-Boss fehlt", #linesFor("Creature-0-1-0-1-247126-0001"), 0)
+expect("Classic-only bleibt", #linesFor("Creature-0-1-0-429-11480-0001"), 1)
+expect("kein Hinweis", #linesFor("Creature-0-1-0-36-636-0001"), 1)
+
 expect("unbekannter NPC", #linesFor("Creature-0-1-0-36-99999-0001"), 0)
 expect("Spieler", #linesFor("Player-1-00000001"), 0)
 expect("geheime GUID", #linesFor(wow.SECRET), 0)

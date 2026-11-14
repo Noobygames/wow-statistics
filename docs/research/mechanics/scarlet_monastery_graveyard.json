@@ -45,7 +45,8 @@
      "spell": "Fire Nova",
      "type": "positioning",
      "en": "Fire burst around him; ranged and healer keep distance",
-     "de": "Feuerstoss um ihn; Fernkampf und Heiler halten Abstand"
+     "de": "Feuerstoss um ihn; Fernkampf und Heiler halten Abstand",
+     "verified": true
     },
     {
      "spellID": 23038,
@@ -132,7 +133,8 @@
      "type": "dispel",
      "en": "Puts a player to sleep; dispel the victim",
      "de": "Schlaefert einen Spieler ein; Opfer bannen",
-     "unverified": true
+     "unverified": true,
+     "version": "classic"
     }
    ]
   }

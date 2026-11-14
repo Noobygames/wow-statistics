@@ -3657,3 +3657,14 @@ Einstellung „Quest-Check beim Betreten einer Instanz“ (Komfort, Quests) an.
 - WoW Forever: Verlies, Gnomeregan, Kral: Forever-eigene Drops (z.B. „Blackrock Harness“, „Thermaplugg Medal of Honor“) erscheinen mit richtiger Qualität.
 - Horde: Kartenpunkt von „Tabetha's Task“ (2861) in Unterstadt statt Eisenschmiede; Allianz weiter in Eisenschmiede.
 - Questlog: Paladinquest „The Test of Righteousness“ (1806) trägt alle drei Kurznamen („[BS/TM/TG]“ o. ä.), Tooltip nennt alle drei Dungeons.
+
+### 521. Boss- und Gegnerfähigkeiten passend zur Spielversion (LT-56, Classic Era und WoW Forever)
+
+- [ ] geprüft
+
+Einstellung „Boss- und Gegnerfähigkeiten zeigen“ (Komfort) an.
+
+- WoW Forever, Stadt Dalaran (z.B. Atrexis der Grabritter), Ausgrabungsstätte: Sumpfland, Hallen der Thane, Ruinen von Lordaeron: Bosse zeigen Fähigkeiten, Zaubersymbole passen (Dalaran), keine graue Hinweiszeile.
+- WoW Forever, Todesminen: Rhahk'Zor ohne Hinweis; Defias-Schwarzwache (nur aus Classic übernommen) mit grauer Zeile „Aus Classic übernommen, für Forever unbestätigt“ unter den Fähigkeiten; Text passt in allen vier Sprachen. Stimmen die gezeigten Fähigkeiten mit dem Kampf überein?
+- WoW Forever, Düsterbruch: Arkane Aberration ohne Fähigkeitenzeile (Zauber fehlt in Forever).
+- Classic Era: Todesminen-Gegner wie bisher, nie die graue Hinweiszeile; Forever-Dungeon-Bosse gibt es dort nicht.

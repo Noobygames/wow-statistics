@@ -8,6 +8,11 @@ ns.CHANGELOG = {
   {
     date = "2026-11-14",
     entries = {
+      { kind = "change",
+        deDE = "WoW Forever: Fähigkeiten-Tipps im Tooltip passen zu Forever, neu für Stadt Dalaran, Ausgrabungsstätte: Sumpfland, Hallen der Thane und Ruinen von Lordaeron; nur aus Classic übernommene Tipps sind grau markiert.",
+        enUS = "WoW Forever: ability tips in tooltips match Forever, new for City of Dalaran, Excavation Site: Wetlands, Hall of Thanes and Ruins of Lordaeron; tips only taken from Classic are marked in grey.",
+        frFR = "WoW Forever : les conseils de techniques dans les infobulles correspondent à Forever, nouveaux pour Cité de Dalaran, Site de fouilles : les Paluns, Salle des Thanes et Ruines de Lordaeron ; les conseils repris uniquement de Classic sont signalés en gris.",
+        esES = "WoW Forever: los consejos de habilidades en los tooltips coinciden con Forever, nuevos para Ciudad de Dalaran, Excavación: Los Humedales, Sala de los Thanes y Ruinas de Lordaeron; los consejos tomados solo de Classic se marcan en gris." },
       { kind = "fix",
         deDE = "Classic Era und WoW Forever: Dungeonquest-Hinweise nennen den Namen des Questgebers, auch bevor du mit ihm gesprochen hast; Objekt-Tooltips aktualisieren sich beim direkten Wechsel zwischen zwei Objekten.",
         enUS = "Classic Era and WoW Forever: dungeon quest hints name the quest giver even before you have talked to them; object tooltips update when moving directly from one object to another.",

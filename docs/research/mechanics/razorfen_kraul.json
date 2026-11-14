@@ -17,14 +17,16 @@
           "spell": "Summon Earth Rumbler",
           "type": "adds",
           "en": "Summons a Stone Rumbler; tank or kill it",
-          "de": "Ruft einen Steingrollen; tanken oder töten"
+          "de": "Ruft einen Steingrollen; tanken oder töten",
+          "verified": true
         },
         {
           "spellID": 9532,
           "spell": "Lightning Bolt",
           "type": "interrupt",
           "en": "Interrupt Lightning Bolt",
-          "de": "Blitzschlag unterbrechen"
+          "de": "Blitzschlag unterbrechen",
+          "verified": true
         }
       ],
       "loot": [
@@ -58,14 +60,16 @@
           "spell": "Chain Heal",
           "type": "interrupt",
           "en": "Interrupt Chain Heal",
-          "de": "Kettenheilung unterbrechen"
+          "de": "Kettenheilung unterbrechen",
+          "verified": true
         },
         {
           "spellID": 8286,
           "spell": "Summon Boar Spirit",
           "type": "adds",
           "en": "Summons a Boar Spirit add",
-          "de": "Ruft einen Ebergeist als Add"
+          "de": "Ruft einen Ebergeist als Add",
+          "verified": true
         }
       ],
       "loot": [
@@ -100,14 +104,16 @@
           "spell": "Dominate Mind",
           "type": "dispel",
           "en": "Mind controls a player; dispel or crowd-control them",
-          "de": "Übernimmt einen Spieler; bannen oder kontrollieren"
+          "de": "Übernimmt einen Spieler; bannen oder kontrollieren",
+          "verified": true
         },
         {
           "spellID": 9613,
           "spell": "Shadow Bolt",
           "type": "interrupt",
           "en": "Interrupt Shadow Bolt",
-          "de": "Schattenblitz unterbrechen"
+          "de": "Schattenblitz unterbrechen",
+          "verified": true
         }
       ],
       "loot": [
@@ -134,7 +140,8 @@
           "spell": "Thunderclap",
           "type": "survive",
           "en": "Thunderclap damages and slows everyone close; melee heal up",
-          "de": "Donnerknall schadet und verlangsamt Nahe; Nahkämpfer heilen"
+          "de": "Donnerknall schadet und verlangsamt Nahe; Nahkämpfer heilen",
+          "verified": true
         },
         {
           "spellID": 9128,
@@ -209,7 +216,8 @@
           "spell": "Frenzy",
           "type": "tank",
           "en": "Frenzy boosts his attacks; tank saves cooldowns for it",
-          "de": "Raserei verstärkt seine Angriffe; Tank spart Cooldowns dafür"
+          "de": "Raserei verstärkt seine Angriffe; Tank spart Cooldowns dafür",
+          "verified": true
         }
       ],
       "loot": [
@@ -266,14 +274,16 @@
           "spell": "Chain Bolt",
           "type": "interrupt",
           "en": "Interrupt Chain Bolt, it jumps between players",
-          "de": "Kettenblitz unterbrechen, springt zwischen Spielern"
+          "de": "Kettenblitz unterbrechen, springt zwischen Spielern",
+          "verified": true
         },
         {
           "spellID": 6077,
           "spell": "Renew",
           "type": "dispel",
           "en": "Purge Renew from her",
-          "de": "Erneuerung bei ihr reinigen"
+          "de": "Erneuerung bei ihr reinigen",
+          "verified": true
         }
       ],
       "loot": [

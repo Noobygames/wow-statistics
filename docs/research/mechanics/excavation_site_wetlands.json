@@ -1,0 +1,29 @@
+{
+  "instance": "Excavation Site: Wetlands",
+  "kind": "dungeon",
+  "bosses": [
+    {
+      "name": "Saltspine",
+      "npcID": 260322,
+      "mechanics": [
+        {"spellID": 0, "spell": "Elite crocolisks", "type": "positioning", "en": "Roams among elite crocolisks: clear them or pull him away", "de": "Läuft zwischen Elite-Krokilisken: diese räumen oder ihn weglocken", "version": "forever"}
+      ]
+    },
+    {
+      "name": "Shadetooth",
+      "npcID": 260325,
+      "mechanics": [
+        {"spellID": 0, "spell": "Raptor wave", "type": "adds", "en": "Kill the raptor wave before he arrives", "de": "Raptorwelle vor seiner Ankunft töten", "version": "forever"},
+        {"spellID": 0, "spell": "Fear", "type": "survive", "en": "Fears the tank repeatedly: a Tremor Totem helps", "de": "Fürchtet den Tank mehrfach: Totem des Erdstoßes hilft", "version": "forever"}
+      ]
+    },
+    {
+      "name": "Relic Guardian",
+      "npcID": 260326,
+      "mechanics": [
+        {"spellID": 0, "spell": "Threat reset", "type": "tank", "en": "Drops threat and swaps targets: damage slows down, tank takes him back", "de": "Setzt Bedrohung zurück und wechselt Ziel: Schaden drosseln, Tank holt ihn zurück", "version": "forever"}
+      ]
+    }
+  ],
+  "sources": ["https://foreverchanges.pro/dungeons/excavation-site", "ForeverDungeonJournal Data/Dungeons.lua (NPC IDs)"]
+}

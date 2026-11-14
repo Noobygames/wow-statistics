@@ -1,0 +1,28 @@
+{
+  "instance": "Hall of Thanes",
+  "kind": "dungeon",
+  "bosses": [
+    {
+      "name": "Faldrim Anvilmar",
+      "npcID": 261306,
+      "mechanics": [
+        {"spellID": 0, "spell": "Curses and diseases", "type": "dispel", "en": "Uses curses and diseases: bring a decurse or disease cure", "de": "Wirkt Flüche und Krankheiten: Fluch- oder Krankheitsentfernung mitbringen", "version": "forever"}
+      ]
+    },
+    {
+      "name": "Plunder",
+      "npcID": 261311,
+      "mechanics": [
+        {"spellID": 0, "spell": "Knockback", "type": "positioning", "en": "Knocks players across the room: clear nearby packs, tank him by the tunnel", "de": "Schleudert Spieler durch den Raum: nahe Gruppen räumen, am Tunnel tanken", "version": "forever"}
+      ]
+    },
+    {
+      "name": "Durgen Dirgehammer",
+      "npcID": 261319,
+      "mechanics": [
+        {"spellID": 0, "spell": "Fear", "type": "survive", "en": "Fears the whole group at low health: clear the room first", "de": "Furcht auf die ganze Gruppe bei wenig Leben: Raum vorher räumen", "version": "forever"}
+      ]
+    }
+  ],
+  "sources": ["https://foreverchanges.pro/dungeons/hall-of-thanes", "ForeverDungeonJournal Data/Dungeons.lua (NPC IDs)"]
+}

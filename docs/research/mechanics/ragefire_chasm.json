@@ -9,7 +9,7 @@
       "npcID": 11517,
       "level": 15,
       "mechanics": [
-        {"spellID": 40505, "spell": "Cleave", "type": "positioning", "en": "Cleaves the tank and a neighbour: only the tank stands in front", "de": "Spaltet Tank und Nachbarn: nur der Tank steht vorne"}
+        {"spellID": 5532, "spell": "Cleave", "type": "positioning", "en": "Cleaves the tank and a neighbour: only the tank stands in front", "de": "Spaltet Tank und Nachbarn: nur der Tank steht vorne", "verified": true}
       ],
       "loot": []
     },
@@ -18,8 +18,8 @@
       "npcID": 11520,
       "level": 16,
       "mechanics": [
-        {"spellID": 18072, "spell": "Uppercut", "type": "positioning", "en": "Uppercut knocks targets back: tank with your back to a wall, away from lava", "de": "Aufwärtshaken schleudert weg: Tank mit Rücken zur Wand, weg von der Lava"},
-        {"spellID": 11970, "spell": "Fire Nova", "type": "avoid", "en": "Fire burst around him: keep pets and ranged out of melee range", "de": "Feuerstoß um ihn herum: Begleiter und Fernkämpfer auf Abstand halten"}
+        {"spellID": 18072, "spell": "Uppercut", "type": "positioning", "en": "Uppercut knocks targets back: tank with your back to a wall, away from lava", "de": "Aufwärtshaken schleudert weg: Tank mit Rücken zur Wand, weg von der Lava", "verified": true},
+        {"spellID": 11970, "spell": "Fire Nova", "type": "avoid", "en": "Fire burst around him: keep pets and ranged out of melee range", "de": "Feuerstoß um ihn herum: Begleiter und Fernkämpfer auf Abstand halten", "verified": true}
       ],
       "loot": []
     },
@@ -28,8 +28,8 @@
       "npcID": 11518,
       "level": 16,
       "mechanics": [
-        {"spellID": 20800, "spell": "Immolate", "type": "dispel", "en": "Fire damage over time on a player: heal through or dispel", "de": "Feuerschaden über Zeit auf Spieler: gegenheilen oder bannen"},
-        {"spellID": 18267, "spell": "Curse of Weakness", "type": "dispel", "en": "Curse lowers melee damage: remove the curse from the tank", "de": "Fluch senkt Nahkampfschaden: Fluch vom Tank entfernen"}
+        {"spellID": 20800, "spell": "Immolate", "type": "dispel", "en": "Fire damage over time on a player: heal through or dispel", "de": "Feuerschaden über Zeit auf Spieler: gegenheilen oder bannen", "verified": true},
+        {"spellID": 18267, "spell": "Curse of Weakness", "type": "dispel", "en": "Curse lowers melee damage: remove the curse from the tank", "de": "Fluch senkt Nahkampfschaden: Fluch vom Tank entfernen", "verified": true}
       ],
       "loot": []
     },
@@ -38,8 +38,8 @@
       "npcID": 11519,
       "level": 16,
       "mechanics": [
-        {"spellID": 744, "spell": "Poison", "type": "dispel", "en": "Nature poison ticks for 15 sec: cure poison on the tank", "de": "Naturgift tickt 15 Sek.: Gift beim Tank heilen"},
-        {"spellID": 14873, "spell": "Sinister Strike", "type": "tank", "en": "Quick hard strikes on the tank: keep healing steady", "de": "Schnelle harte Schläge auf den Tank: gleichmäßig heilen"}
+        {"spellID": 744, "spell": "Poison", "type": "dispel", "en": "Nature poison ticks for 15 sec: cure poison on the tank", "de": "Naturgift tickt 15 Sek.: Gift beim Tank heilen", "verified": true},
+        {"spellID": 14873, "spell": "Sinister Strike", "type": "tank", "en": "Quick hard strikes on the tank: keep healing steady", "de": "Schnelle harte Schläge auf den Tank: gleichmäßig heilen", "verified": true}
       ],
       "loot": []
     }

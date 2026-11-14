@@ -240,7 +240,7 @@
   ],
   "trash": [
     {"name": "Wildspawn Hellcaller", "npcID": 11457, "elite": true, "mechanics": [
-      {"spellID": 31598, "spell": "Rain of Fire", "type": "avoid", "en": "Fire rain on an area; leave it", "de": "Feuerregen auf einer Fläche; verlassen"}
+      {"spellID": 31598, "spell": "Rain of Fire", "type": "avoid", "en": "Fire rain on an area; leave it", "de": "Feuerregen auf einer Fläche; verlassen", "version": "classic"}
     ]},
     {"name": "Wildspawn Shadowstalker", "npcID": 11456, "elite": true, "mechanics": [
       {"spellID": 22766, "spell": "Sneak", "type": "positioning", "en": "Stealthed satyr ambushes; watch for hidden packs", "de": "Getarnter Satyr greift aus dem Hinterhalt an; auf Verstecktes achten"},
@@ -253,7 +253,7 @@
       {"spellID": 0, "spell": "Knock Away", "type": "tank", "unverified": true, "en": "Knockback that halves threat; joins Tendris if alive", "de": "Rückstoß halbiert Bedrohung; hilft Tendris, falls lebendig"}
     ]},
     {"name": "Arcane Aberration", "npcID": 11480, "elite": true, "mechanics": [
-      {"spellID": 51725, "spell": "Arcane Explosion", "type": "avoid", "en": "Arcane burst around it; casters keep distance", "de": "Arkanexplosion um sich; Zauberer Abstand halten"}
+      {"spellID": 51725, "spell": "Arcane Explosion", "type": "avoid", "en": "Arcane burst around it; casters keep distance", "de": "Arkanexplosion um sich; Zauberer Abstand halten", "version": "classic"}
     ]},
     {"name": "Eldreth Sorcerer", "npcID": 11470, "elite": true, "mechanics": [
       {"spellID": 0, "spell": "Polymorph", "type": "dispel", "unverified": true, "en": "Turns a player into a sheep; dispel it", "de": "Verwandelt einen Spieler in ein Schaf; bannen"},
