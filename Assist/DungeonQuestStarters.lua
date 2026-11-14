@@ -4,11 +4,13 @@
 -- Gegenstände: Item-ID aus tooltip:GetItem() (Taschen, Beute, Links); Anschluss wie QuestItemTooltip.lua:
 -- TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item) mit dem Tooltip-Datensystem, sonst
 -- HookScript("OnTooltipSetItem") an GameTooltip und ItemRefTooltip.
--- Objekte der Spielwelt haben im Tooltip weder Einheit noch ID: erkannt am Titel (GameTooltipTextLeft1) beim Zeigen
--- eines Welt-Tooltips (Besitzer UIParent, keine Einheit, kein Gegenstand), verglichen mit den Namen aus
--- ns.DungeonDB.objectNames.
--- shortcut: QuestieDB führt Objektnamen nur englisch, daher nur auf enUS/enGB-Clients; mit einer Quelle übersetzter
--- Objektnamen (oder einer Objekt-ID im Tooltip, Prüfung LT38.tooltip.object) auf alle Sprachen erweitern.
+-- Objekte der Spielwelt: Welt-Tooltip (Besitzer UIParent, keine Einheit, kein Gegenstand). Objekt-ID aus der GUID von
+-- C_TooltipInfo.GetWorldCursor(), falls der Client sie liefert (nur Forever/Retail; ungeprüft, LT38.tooltip.object),
+-- sonst Titel (GameTooltipTextLeft1) verglichen mit ns.DungeonDB.objectNames.
+-- Wechselt die Maus direkt von einem Objekt zum nächsten, bleibt der Tooltip offen (kein OnShow): Titel alle
+-- REFRESH_SECONDS prüfen, neu ergänzen, sobald er sich geändert hat oder der Tooltip geleert wurde (OnTooltipCleared).
+-- shortcut: QuestieDB führt Objektnamen nur englisch, ohne Objekt-ID im Tooltip daher nur auf enUS/enGB-Clients; mit
+-- einer frei lizenzierten Quelle übersetzter Objektnamen auf alle Sprachen erweitern.
 local _, ns = ...
 
 local DungeonQuests = ns.DungeonQuests
@@ -62,19 +64,41 @@ local function onItemTooltip(tooltip)
   Givers.AddOfferLines(tooltip, DungeonQuests.GiverOffers("item", itemID))
 end
 
--- Welt-Tooltip ohne Einheit und Gegenstand: Titel als Objektname
-local function onTooltipShow(tooltip)
-  if not isEnabled() or tooltip:GetOwner() ~= UIParent then return end
+-- Objekt-ID unter dem Mauszeiger aus der GUID "GameObject-0-Server-Instanz-Zone-ID-Spawn"; nil ohne lesbare GUID
+function DungeonQuestStarters.CursorObjectID()
+  if not (C_TooltipInfo and C_TooltipInfo.GetWorldCursor) then return nil end
+  local ok, data = pcall(C_TooltipInfo.GetWorldCursor)
+  local guid = ok and type(data) == "table" and readable(data.guid)
+  return type(guid) == "string" and tonumber((guid:match("^GameObject%-%d+%-%d+%-%d+%-%d+%-(%d+)"))) or nil
+end
+
+local annotatedTitle  -- Titel, zu dem der offene Tooltip schon ergänzt ist
+
+-- Welt-Tooltip ohne Einheit und Gegenstand: Angebote des Objekts (per ID, sonst per Titel) anhängen
+local function refreshWorldTooltip(tooltip)
+  if not isEnabled() or not tooltip:IsShown() or tooltip:GetOwner() ~= UIParent then return end
   if readable(tooltip:GetUnit()) or readable(tooltip:GetItem()) then return end
   local frameName = tooltip:GetName()
   local title = type(frameName) == "string" and _G[frameName .. "TextLeft1"]
   local name = title and readable(title:GetText())
-  if type(name) ~= "string" then return end
-  local offers = DungeonQuestStarters.ObjectOffers(name)
+  if type(name) ~= "string" or name == annotatedTitle then return end
+  annotatedTitle = name
+  local objectID = DungeonQuestStarters.CursorObjectID()
+  local offers = objectID and DungeonQuests.GiverOffers("object", objectID) or DungeonQuestStarters.ObjectOffers(name)
   if #offers == 0 then return end
   Givers.AddOfferLines(tooltip, offers)
   tooltip:Show()  -- Größe nach den neuen Zeilen anpassen
 end
+
+local function resetWorldTooltip()
+  annotatedTitle = nil
+end
+
+DungeonQuestStarters.REFRESH_SECONDS = 0.2
+
+ns.Every(DungeonQuestStarters.REFRESH_SECONDS, function()
+  if GameTooltip then refreshWorldTooltip(GameTooltip) end
+end, function(db) return db.dungeonQuestGivers and Givers.IsAvailable() end)
 
 local hooked = false
 local function hook()
@@ -91,7 +115,11 @@ local function hook()
       end)
     end
   end
-  if DungeonQuestStarters.NamesAvailable() then GameTooltip:HookScript("OnShow", onTooltipShow) end
+  GameTooltip:HookScript("OnShow", function(self)
+    resetWorldTooltip()
+    refreshWorldTooltip(self)
+  end)
+  GameTooltip:HookScript("OnTooltipCleared", resetWorldTooltip)
 end
 
 ns.RegisterApply(function(db)

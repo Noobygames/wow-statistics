@@ -44,6 +44,33 @@ GameTooltip._lines = {}
 GameTooltip._scripts.OnShow(GameTooltip)
 expect("kein Welt-Tooltip: keine Zeile", #GameTooltip._lines, 0)
 
+-- Direkter Wechsel zwischen Objekten (Tooltip bleibt offen, kein OnShow): Prüfung im Takt ergänzt neu, nie doppelt
+GameTooltip.GetOwner = function() return UIParent end
+GameTooltip.IsShown = function() return true end
+GameTooltipTextLeft1.GetText = function() return "Mailbox" end
+GameTooltip._lines = {}
+GameTooltip._scripts.OnShow(GameTooltip)
+GameTooltipTextLeft1.GetText = function() return "Crumpled Map" end
+wow.update(Starters.REFRESH_SECONDS + 0.1)
+expect("Wechsel: Zeile ergänzt", #GameTooltip._lines, 1)
+wow.update(Starters.REFRESH_SECONDS + 0.1)
+expect("Wechsel: nicht doppelt", #GameTooltip._lines, 1)
+GameTooltip._lines = {}
+GameTooltip._scripts.OnTooltipCleared(GameTooltip)
+wow.update(Starters.REFRESH_SECONDS + 0.1)
+expect("geleert, gleicher Titel: wieder ergänzt", #GameTooltip._lines, 1)
+
+-- Objekt-ID aus dem Welt-Tooltip (C_TooltipInfo.GetWorldCursor): erkannt auch mit übersetztem Namen
+locale = "deDE"
+C_TooltipInfo = { GetWorldCursor = function() return { guid = "GameObject-0-1-0-0-2868-0000ABCDEF" } end }
+expect("Objekt-ID aus GUID", Starters.CursorObjectID(), 2868)
+GameTooltipTextLeft1.GetText = function() return "Zerknitterte Karte" end
+GameTooltip._lines = {}
+GameTooltip._scripts.OnShow(GameTooltip)
+expect("deDE per Objekt-ID: eine Zeile", #GameTooltip._lines, 1)
+C_TooltipInfo = nil
+locale = "enUS"
+
 -- Angenommen bzw. andere Sprache: nichts
 completed[720] = true
 wow.fire("QUEST_LOG_UPDATE")

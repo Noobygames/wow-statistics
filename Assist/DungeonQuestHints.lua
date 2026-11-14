@@ -6,8 +6,9 @@
 -- Annahme (Einstellung dungeonQuestAcceptHint, an): nach Annahme einer Dungeonquest oder eines Kettenschritts
 -- (QuestWatch onAccepted) die übrigen offenen Quests derselben Instanz samt Kettenschritten (DungeonQuests.InstanceQuests):
 -- jetzt annehmbare zuerst, später verfügbare (Level oder Vorquest fehlt) leiser; Klick setzt einen Kartenpunkt.
--- Gebername: in der DungeonDB gibt es keine Namen; NPC = gelernter Name aus QuestNpcs (Annahme-Dialog), sonst
--- "Questgeber"; Gegenstand = C_Item.GetItemNameByID (Classic Era laut Blizzard-Doku, sonst geschützt); Objekt = "Objekt".
+-- Gebername: die DungeonDB führt keine NPC-Namen; NPC = gelernter Name aus QuestNpcs (Annahme-Dialog), sonst
+-- NpcNames.Get (Kreaturen-Cache des Clients), sonst "Questgeber"; Gegenstand = C_Item.GetItemNameByID (Classic Era laut
+-- Blizzard-Doku, sonst geschützt); Objekt = englischer Name aus der DungeonDB auf englischen Clients, sonst "Objekt".
 -- Ort "Zone (x, y)" über DungeonEntrances.StartText (C_Map.GetMapInfo).
 local _, ns = ...
 
@@ -40,7 +41,9 @@ function DungeonQuestHints.GiverName(questID)
   local name
   if kind == "npc" then
     local learned = ns.QuestNpcs.Get(questID)
-    name = learned and learned.giver and learned.giver.name
+    name = learned and learned.giver and learned.giver.name or ns.NpcNames.Get(giverID)
+  elseif kind == "object" and ns.DungeonQuestStarters.NamesAvailable() then
+    name = ns.DungeonDB.objectNames and ns.DungeonDB.objectNames[giverID]
   elseif kind == "item" and C_Item and C_Item.GetItemNameByID then
     name = readable(C_Item.GetItemNameByID(giverID))
   end

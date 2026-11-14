@@ -1409,6 +1409,7 @@ check("LT38.tooltip.object", function()
   local title = _G.GameTooltipTextLeft1
   info.title = GameTooltip:IsShown() and title and readable(title:GetText()) or nil
   if info.title then info.offers = #ns.DungeonQuestStarters.ObjectOffers(info.title) end
+  info.cursorObjectID = ns.DungeonQuestStarters.CursorObjectID()
   if info.worldCursorApi then
     local ok, data = pcall(C_TooltipInfo.GetWorldCursor)
     if ok and type(data) == "table" then
@@ -1418,6 +1419,15 @@ check("LT38.tooltip.object", function()
     end
   end
   return info
+end)
+
+-- LT-51 (/lt debug check, zweimal im Abstand einiger Sekunden): liefert der versteckte Tooltip mit dem Link
+-- "unit:Creature-0-0-0-0-<npcID>-..." in Classic Era/Forever den NPC-Namen in der Client-Sprache (NpcNames.Get)?
+-- Thrall (4949) kennt der Client meist schon, seltene NPCs (3) evtl. erst beim zweiten Aufruf.
+check("LT51.npcName", function()
+  local result = { locale = call("GetLocale") }
+  for _, npcID in ipairs({ 4949, 3 }) do result["npc" .. npcID] = ns.NpcNames.Get(npcID) or "<nil>" end
+  return result
 end)
 
 -- LT-10/LT-11 (/lt debug check, Maus über einem Dungeon-Gegner, in und außerhalb von Instanzen): ist die GUID lesbar

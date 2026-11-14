@@ -8,6 +8,11 @@ ns.CHANGELOG = {
   {
     date = "2026-11-14",
     entries = {
+      { kind = "fix",
+        deDE = "Classic Era und WoW Forever: Dungeonquest-Hinweise nennen den Namen des Questgebers, auch bevor du mit ihm gesprochen hast; Objekt-Tooltips aktualisieren sich beim direkten Wechsel zwischen zwei Objekten.",
+        enUS = "Classic Era and WoW Forever: dungeon quest hints name the quest giver even before you have talked to them; object tooltips update when moving directly from one object to another.",
+        frFR = "Classic Era et WoW Forever : les indications de quêtes de donjon nomment le donneur de quête même avant de lui avoir parlé ; les infobulles d'objets se mettent à jour en passant directement d'un objet à l'autre.",
+        esES = "Classic Era y WoW Forever: las indicaciones de misiones de mazmorra nombran al instructor de la misión incluso antes de hablar con él; los tooltips de objetos se actualizan al pasar directamente de un objeto a otro." },
       { kind = "change",
         deDE = "Classic Era und WoW Forever: Boss- und Dungeoneingangs-Tooltips zeigen deutlich mehr seltene und epische Drops, auch von Endbossen wie Edwin van Cleef.",
         enUS = "Classic Era and WoW Forever: boss and dungeon entrance tooltips show many more rare and epic drops, including end bosses like Edwin VanCleef.",

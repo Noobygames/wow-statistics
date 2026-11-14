@@ -50,6 +50,14 @@ expectTrue("Zeile mit Instanz", first ~= nil)
 expect("Geber und Ort", first and first.detail,
   string.format(L.DUNGEON_QUEST_HINT_DETAIL, L.DUNGEON_QUEST_GIVER_NPC, "Sturmwind (70, 41)"))
 
+-- Name aus dem Kreaturen-Cache des Clients (versteckter Tooltip mit unit-Link) ersetzt "Questgeber"
+local scanTitle = CreateFrame("Frame")
+scanTitle.GetText = function() return "Wilder Klippenschmied" end
+_G[addon.GlobalName("NpcNameScanTooltip") .. "TextLeft1"] = scanTitle
+expect("Name aus dem Client", Hints.GiverName(168), "Wilder Klippenschmied")
+expect("NpcNames: keine ID", addon.NpcNames.Get(nil), nil)
+_G[addon.GlobalName("NpcNameScanTooltip") .. "TextLeft1"] = nil
+
 -- Gelernter Gebername ersetzt "Questgeber"
 LevelTimerStatsDB.questNpcs = { [167] = { giver = { name = "Wilder Klippenschmied" }, spots = {} } }
 expect("gelernter Name", Hints.GiverName(167), "Wilder Klippenschmied")

@@ -43,6 +43,7 @@ Lib\Bags.lua
 Lib\Items.lua
 Lib\QuestLog.lua
 Lib\QuestTooltip.lua
+Lib\NpcNames.lua
 Lib\QuestRewards.lua
 Lib\MapCompat.lua
 Lib\MapPins.lua

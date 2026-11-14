@@ -167,6 +167,7 @@ Aufrufstapel. „Aktion blockiert“ (Taint) steht als event `ADDON_ACTION_BLOCK
 - **249. Dungeon-Flügel beim Betreten erkennen (Roadmap 493, WoW Forever/Classic Era)**: check `493.instances.wing` direkt nach dem Betreten jedes Flügels des Scharlachroten Klosters (und Düsterbruch): `uiMapID`, `zone`, `subZone`, `minimapZone` je Flügel; mit Gegnern in Sicht und einem Ziel: `plates`/`target` = Namen oder `secret` (Rückfall Trash-Namen je Flügel). Unterscheidet ein Wert die Flügel verlässlich, kann ein anderer Flügel als neue Kopie zählen
 - **512. Objekt-Tooltips für Dungeonquests, Datenteil (LT-38)**: check `LT38.tooltip.object` mit der Maus über einem Objekt der Spielwelt, je Client und Sprache (`worldCursorApi`, `data.type/id/guid` = liefert der Welt-Tooltip eine Objekt-ID? Dann Erkennung ohne englische Namen möglich; `title`, `offers`, `namesAvailable`)
 - **516. Boss- und Gegnerfähigkeiten im Tooltip, Datenteil (LT-10/LT-11)**: check `LT10.mechanics.mouseover` mit der Maus über einem Dungeon-Boss, in WoW Forever und Classic Era, je einmal in und außerhalb einer Instanz (`guidSecret` muss `false` sein, sonst fehlen die Zeilen in Instanzen; `npcID`, `mechanics` > 0)
+- **517. NPC-Namen für Dungeonquest-Hinweise, Datenteil (LT-51)**: check `LT51.npcName` zweimal im Abstand einiger Sekunden, in Classic Era und WoW Forever, deutscher und englischer Client (`npc4949` = Thrall in Client-Sprache; `<nil>` auch beim zweiten Aufruf = der `unit:`-Link wird nicht angenommen); dazu `LT38.tooltip.object` über einem Objekt: `cursorObjectID` = Objekt-ID aus dem Welt-Tooltip (dann Objektzeilen in allen Sprachen)
 
 ---
 
@@ -3616,3 +3617,12 @@ Einstellung „Boss- und Gegnerfähigkeiten zeigen“ (Komfort, Tooltip) an. Dat
 - Deutscher Client deutsche Tipps, englischer/französischer/spanischer Client englische Tipps; Typwörter in Clientsprache.
 - Trash (z.B. Todesminen: Defias-Beschwörer, Naxxramas-Trash): ebenfalls Zeilen; Gegner ohne Daten bekommen keine.
 - Einstellung aus: keine Zeilen; Retail: Option fehlt.
+
+### 517. Gebernamen in Dungeonquest-Hinweisen und Objekt-Tooltips beim direkten Wechsel (LT-51, Classic Era und WoW Forever)
+
+- [ ] geprüft
+
+Einstellungen „Dungeonquest-Geber markieren“ und Zonen-Hinweis an. Datenteil siehe „Per Debug-Log abgedeckt“.
+
+- Zone mit Dungeonquest-Gebern betreten, ohne mit ihnen gesprochen zu haben (z.B. Sturmwind, Westfall): Hinweisfenster nennt den NPC-Namen in Client-Sprache statt „Questgeber“ (beim allerersten Betreten nach Cache-Leerung evtl. noch „Questgeber“).
+- Englischer Client: Maus direkt von einem Quest-Objekt zum nächsten (z.B. zwei „WANTED“-Plakate oder Plakat und Briefkasten): Zeile erscheint bzw. verschwindet ohne Umweg über freie Fläche, keine doppelten Zeilen.
