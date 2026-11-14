@@ -3515,3 +3515,15 @@ Einstellung Komfort → Quest-Anzeige → „Dungeonquest-Geber markieren“ (St
 - Weltkarte (Zonenkarte): Dungeon-Symbol am Ort des Gebers, Tooltip mit denselben Zeilen; auch Objekt-Geber
 - Quest annehmen: Symbol verschwindet innerhalb ~1 s; Klassenquests nur für die passende Klasse
 - Keine Lua-Fehler, keine spürbaren Ruckler mit vielen Plaketten
+
+### 508. Dungeonquests hervorheben (LT-33, Classic Era und WoW Forever)
+
+- [ ] geprüft
+
+Einstellung Komfort → Quest-Anzeige → „Dungeonquests hervorheben“ (Standard an), am besten zusammen mit „Questlevel“.
+
+- Questlog: Dungeonquests enden auf den farbigen Kurznamen („… [DT]“, „… [Gno]“); Kurznamen verständlich? Zeile nicht abgeschnitten?
+- Gesprächs- und Begrüßungsfenster eines Gebers (z.B. Todesminen-Quest in Westfall): Kurzname hinter dem Titel; im Begrüßungsfenster auch bei angebotenen (nicht im Log) Quests?
+- Classic Era: Quest-Tracker-Titel mit Kurzname, Breite passt
+- Quest-Link im Chat anklicken/überfahren: Zeile „Dungeon: Die Todesminen“; Forever: Tooltip im Questlog ebenso
+- Keine Lua-Fehler, Questlevel-Präfix weiterhin korrekt

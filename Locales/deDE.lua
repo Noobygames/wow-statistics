@@ -2101,4 +2101,7 @@ ns.locales.deDE = {
   DUNGEON_QUEST_GIVERS_TOGGLE = "Dungeonquest-Geber markieren",
   DUNGEON_QUEST_GIVERS_TOGGLE_TIP = "NPCs und Objekte, die dir jetzt eine Dungeonquest anbieten (Level, Fraktion, Klasse und Vorquests passen), bekommen ein Dungeon-Symbol über der Namensplakette und am Zielfenster, eine Tooltipzeile und einen Punkt auf der Zonenkarte.",
   DUNGEON_QUEST_OFFER = "Dungeonquest: %s (%s)",
+  DUNGEON_QUEST_LINE = "Dungeon: %s",
+  DUNGEON_QUEST_TAGS_TOGGLE = "Dungeonquests hervorheben",
+  DUNGEON_QUEST_TAGS_TOGGLE_TIP = "Hängt im Questlog, im Gesprächs- und Begrüßungsfenster des Questgebers und im Quest-Tracker den farbigen Kurznamen der Instanz an Dungeonquests an. Quest-Tooltips bekommen die Zeile „Dungeon: Name“.",
 }

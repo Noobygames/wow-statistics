@@ -2101,4 +2101,7 @@ ns.locales.enUS = {
   DUNGEON_QUEST_GIVERS_TOGGLE = "Mark dungeon quest givers",
   DUNGEON_QUEST_GIVERS_TOGGLE_TIP = "NPCs and objects that offer you a dungeon quest right now (level, faction, class and prerequisites fit) get a dungeon icon above their nameplate and on the target frame, a tooltip line and a pin on the zone map.",
   DUNGEON_QUEST_OFFER = "Dungeon quest: %s (%s)",
+  DUNGEON_QUEST_LINE = "Dungeon: %s",
+  DUNGEON_QUEST_TAGS_TOGGLE = "Highlight dungeon quests",
+  DUNGEON_QUEST_TAGS_TOGGLE_TIP = "Adds the instance's colored short name to dungeon quests in the quest log, the quest giver's gossip and greeting window and the quest tracker. Quest tooltips get a \"Dungeon: name\" line.",
 }

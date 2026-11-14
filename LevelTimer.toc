@@ -45,6 +45,7 @@ Lib\QuestLog.lua
 Lib\QuestTooltip.lua
 Lib\QuestRewards.lua
 Lib\MapPins.lua
+Lib\QuestListHooks.lua
 Lib\Overrides.lua
 Lib\CVars.lua
 Lib\MapCoords.lua
@@ -230,6 +231,7 @@ UI\InstanceRunTracker.lua
 Assist\DungeonQuests.lua
 Assist\DungeonQuestGivers.lua
 Assist\QuestLevels.lua
+Assist\DungeonQuestTags.lua
 Assist\QuestLogRewards.lua
 Assist\QuestTextSize.lua
 Assist\QuestBagItems.lua

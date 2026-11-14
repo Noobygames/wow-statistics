@@ -2101,4 +2101,7 @@ ns.locales.esES = {
   DUNGEON_QUEST_GIVERS_TOGGLE = "Marcar los dadores de misiones de mazmorra",
   DUNGEON_QUEST_GIVERS_TOGGLE_TIP = "Los PNJ y objetos que te ofrecen ahora una misión de mazmorra (nivel, facción, clase y misiones previas encajan) reciben un icono de mazmorra sobre su placa de nombre y en el marco del objetivo, una línea en el tooltip y un punto en el mapa de la zona.",
   DUNGEON_QUEST_OFFER = "Misión de mazmorra: %s (%s)",
+  DUNGEON_QUEST_LINE = "Mazmorra: %s",
+  DUNGEON_QUEST_TAGS_TOGGLE = "Resaltar misiones de mazmorra",
+  DUNGEON_QUEST_TAGS_TOGGLE_TIP = "Añade el nombre corto coloreado de la instancia a las misiones de mazmorra en el registro de misiones, la ventana de diálogo y saludo del dador de misiones y el seguimiento de misiones. Los tooltips de misión reciben la línea «Mazmorra: nombre».",
 }

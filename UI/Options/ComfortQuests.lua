@@ -51,6 +51,7 @@ addToggles({
   toggle("QUEST_EFFICIENCY_TOGGLE", "questEfficiencyTooltip"),
   toggle("QUEST_ITEM_TOOLTIP_TOGGLE", "questItemTooltip"),
   toggle("DUNGEON_QUEST_GIVERS_TOGGLE", "dungeonQuestGivers", ns.DungeonQuestGivers.IsAvailable),
+  toggle("DUNGEON_QUEST_TAGS_TOGGLE", "dungeonQuestTags", ns.DungeonQuestTags.IsAvailable),
 })
 O.addFramePreview("QUEST_ITEM_PREVIEW", "questItem")
 if ns.QuestTextSize.IsAvailable() then
