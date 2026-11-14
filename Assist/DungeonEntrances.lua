@@ -4,7 +4,7 @@
 -- (passende Fraktion und Klasse, abgegebene fallen weg) mit Stand: im Log, ab Level X oder wo sie beginnt; darunter
 -- die bekannte Boss-Beute ab rar (Assist/BossLoot.lua).
 -- Zeichnen übernimmt Lib/MapPins.lua, Daten aus Assist/InstanceData/forever_guide.lua.
--- shortcut: nur auf der Zonenkarte, nicht auf Kontinentkarten; bei Bedarf über C_Map-Weltpositionen umrechnen.
+-- Zeichnet ein Kartenaddon (OpenMap, Leatrix Maps) selbst Dungeon-Eingänge, bleiben unsere aus (Lib/MapCompat.lua).
 local _, ns = ...
 
 ns.RegisterDefaults({
@@ -143,13 +143,39 @@ showTooltip = function(pin, point)
   GameTooltip:Show()
 end
 
--- Eingänge ändern sich nicht; der Quest-Stand im Tooltip wird beim Überfahren gelesen
+-- Zonenkarten mit Eingängen (einmal aufgebaut)
+local entranceMapIDs
+local function mapIDs()
+  if entranceMapIDs then return entranceMapIDs end
+  local seen = {}
+  entranceMapIDs = {}
+  for _, entrances in pairs(ns.InstanceGuide and ns.InstanceGuide.entrances or {}) do
+    for _, entrance in ipairs(entrances) do
+      local uiMapID = entrance[ENTRANCE_MAP]
+      if not seen[uiMapID] then
+        seen[uiMapID] = true
+        table.insert(entranceMapIDs, uiMapID)
+      end
+    end
+  end
+  return entranceMapIDs
+end
+
+local NO_POINTS = {}
+local function mapPoints(uiMapID)
+  if ns.MapCompat.ShowsDungeonEntrances() then return NO_POINTS end
+  return DungeonEntrances.PointsOn(uiMapID)
+end
+
+-- Eingänge ändern sich nicht; der Quest-Stand im Tooltip wird beim Überfahren gelesen. Datenstand = ob ein Kartenaddon
+-- die Eingänge gerade selbst zeigt (OpenMap wechselt zwischen eigener und Blizzards Karte)
 local layer = ns.MapPins.Create({
   name = ns.GlobalName("DungeonEntrances"),
   label = "DungeonEntrances",
-  points = DungeonEntrances.PointsOn,
-  revision = function() return 0 end,
+  points = mapPoints,
+  revision = function() return ns.MapCompat.ShowsDungeonEntrances() end,
   onEnter = showTooltip,
+  mapIDs = mapIDs,
 })
 
 local function apply(db) layer.SetEnabled(db.dungeonEntrances and DungeonEntrances.IsAvailable()) end

@@ -43,6 +43,13 @@ function DeathMap.DeathsOn(mapID)
   return deathsByMap()[mapID] or NO_DEATHS
 end
 
+-- Karten mit Toden (Nachbarzonen und Kontinentkarte zeigen sie mit, Lib/MapPins.lua)
+local function mapIDs()
+  local list = {}
+  for mapID in pairs(deathsByMap()) do table.insert(list, mapID) end
+  return list
+end
+
 local function points(mapID)
   local list = {}
   for index, entry in ipairs(DeathMap.DeathsOn(mapID)) do
@@ -69,6 +76,7 @@ local layer = ns.MapPins.Create({
   points = points,
   revision = ns.Journal.RevisionOf("deathLog"),
   onEnter = showTooltip,
+  mapIDs = mapIDs,
 })
 
 function DeathMap.Refresh(force)

@@ -174,6 +174,7 @@ local layer = ns.MapPins.Create({
   points = mapPoints,
   revision = DungeonQuests.Revision,
   onEnter = showMapTooltip,
+  mapIDs = DungeonQuests.GiverMapIDs,
 })
 
 local function apply()

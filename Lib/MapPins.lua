@@ -5,7 +5,13 @@
 -- des eigenen Rahmens (nur bei offener Karte) bemerkt neue Daten. Gezeichnet wird nur bei geänderter Karte oder
 -- geändertem Datenstand, bei geänderter Größe nur neu verankert.
 -- MapPins.Create({ name, label, points(mapID) -> { { x, y, size, color = { r, g, b, a } oder texture, atlas } },
--- revision() -> Datenstand (ein oder zwei Werte), onEnter(pin, point) }) -> { SetEnabled(enabled), Refresh(force) }.
+-- revision() -> Datenstand (ein oder zwei Werte), onEnter(pin, point), mapIDs() -> { uiMapID, ... } (optional) })
+-- -> { SetEnabled(enabled), Refresh(force) }.
+-- Mit mapIDs (alle Zonen mit Daten) erscheinen auch Punkte anderer Zonen, die auf der gezeigten Karte liegen (Nachbarzonen
+-- am Rand einer Zonenkarte, alle Zonen auf der Kontinentkarte, OpenMaps zusammengesetzte Karte); umgerechnet über
+-- Lib/MapCompat.lua. Punkte behalten beim Hineinzoomen die Bildschirmgröße der ganz herausgezoomten Karte
+-- (Skalierung minZoom/aktuell wie Blizzards Pins, MapCanvasScrollControllerMixin:GetScaleForMinZoom/GetCanvasScale in
+-- classic_era und forever; Versatz durch die Skalierung geteilt wie MapCanvasPinMixin).
 -- atlas hat Vorrang vor texture, wenn der Client ihn kennt (C_Texture.GetAtlasInfo); texture bleibt der Rückfall.
 -- Die Weltkarte kann später geladen werden (Blizzard_WorldMap): dann hängt sich jede eingeschaltete Karte an.
 local _, ns = ...
@@ -44,13 +50,53 @@ local function newLayer(definition)
   local shown = {}
   local points = {}
 
+  -- Punktgröße unabhängig vom Zoom: 1 bei ganz herausgezoomter Karte
+  local function pinScale()
+    local map = WorldMapFrame
+    local scroll = map.ScrollContainer
+    if not (map.GetCanvasScale and type(scroll) == "table" and scroll.GetScaleForMinZoom) then return 1 end
+    local current, minimum = map:GetCanvasScale(), scroll:GetScaleForMinZoom()
+    if type(current) ~= "number" or type(minimum) ~= "number" or current <= 0 then return 1 end
+    return math.min(1, minimum / current)
+  end
+
   local function place(width, height)
     local overlay = layer.overlay
+    local scale = pinScale()
     for index, point in ipairs(points) do
       local pin = layer.pins[index]
+      pin:SetScale(scale)
       pin:ClearAllPoints()
-      pin:SetPoint("CENTER", overlay, "TOPLEFT", point.x * width, -point.y * height)
+      pin:SetPoint("CENTER", overlay, "TOPLEFT", point.x * width / scale, -point.y * height / scale)
     end
+  end
+
+  -- Punkte der gezeigten Karte und, mit mapIDs, umgerechnete Punkte anderer Zonen im sichtbaren Bereich
+  local function collect(mapID)
+    if type(mapID) ~= "number" then return {} end
+    local list = {}
+    for _, point in ipairs(definition.points(mapID)) do table.insert(list, point) end
+    if not definition.mapIDs then return list end
+    local low = -ns.MapCompat.VisibleMargin()
+    local high = 1 - low
+    for _, sourceID in ipairs(definition.mapIDs()) do
+      if sourceID ~= mapID then
+        for _, point in ipairs(definition.points(sourceID)) do
+          local x, y = ns.MapCompat.Translate(sourceID, point.x, point.y, mapID)
+          if x and y and x >= low and x <= high and y >= low and y <= high then
+            table.insert(list, setmetatable({ x = x, y = y }, { __index = point }))
+          end
+        end
+      end
+    end
+    return list
+  end
+
+  -- Über OpenMaps Kartenkunst heben; Rahmenebenen auf der Karte nicht im Kampf ändern (wie OpenMap selbst)
+  local function updateLevel()
+    local overlay = layer.overlay
+    local level = ns.MapCompat.OverlayLevel(WorldMapFrame:GetCanvas())
+    if overlay:GetFrameLevel() ~= level and not InCombatLockdown() then overlay:SetFrameLevel(level) end
   end
 
   function layer.Refresh(force)
@@ -59,13 +105,15 @@ local function newLayer(definition)
     local mapID = map:GetMapID()
     local width, height = overlay:GetWidth(), overlay:GetHeight()
     local revision, subRevision = definition.revision()
+    local stitched = ns.MapCompat.Stitched()
     local sameData = not force and shown.valid and shown.mapID == mapID and shown.revision == revision
-      and shown.subRevision == subRevision
+      and shown.subRevision == subRevision and shown.stitched == stitched
     if sameData and shown.width == width and shown.height == height then return end
     shown.valid, shown.mapID, shown.revision, shown.subRevision = true, mapID, revision, subRevision
-    shown.width, shown.height = width, height
+    shown.width, shown.height, shown.stitched = width, height, stitched
+    updateLevel()
     if sameData then return place(width, height) end
-    points = type(mapID) == "number" and definition.points(mapID) or {}
+    points = collect(mapID)
     for index, point in ipairs(points) do
       local pin = getPin(index)
       pin.point = point
@@ -98,7 +146,7 @@ local function newLayer(definition)
     if not canvas then return end
     local overlay = CreateFrame("Frame", definition.name, canvas)
     overlay:SetAllPoints(canvas)
-    overlay:SetFrameLevel((canvas:GetFrameLevel() or 1) + 10)
+    overlay:SetFrameLevel(ns.MapCompat.OverlayLevel(canvas))
     layer.overlay = overlay
     local sinceCheck = CHECK_SECONDS
     ns.SetUpdateScript(overlay, definition.label, function(_, elapsed)
@@ -117,6 +165,12 @@ local function newLayer(definition)
     overlay:SetScript("OnSizeChanged", function()
       if layer.enabled then ns.SafeCall(layer.Refresh) end
     end)
+    -- Zoom: nur Größe und Lage der Punkte (MapCanvasMixin:OnCanvasScaleChanged, classic_era und forever)
+    if map.OnCanvasScaleChanged then
+      hooksecurefunc(map, "OnCanvasScaleChanged", function()
+        if layer.enabled and overlay:IsShown() then ns.SafeCall(place, overlay:GetWidth(), overlay:GetHeight()) end
+      end)
+    end
     ns.Debug("map", "%s attached", definition.label)
   end
 

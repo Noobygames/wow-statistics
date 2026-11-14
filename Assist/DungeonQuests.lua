@@ -223,6 +223,18 @@ local function buildQuestsByMap()
   end
 end
 
+-- Zonenkarten mit Gebern (unabhängig davon, ob sie gerade etwas anbieten; nicht verändern)
+local giverMapIDs
+function DungeonQuests.GiverMapIDs()
+  if giverMapIDs then return giverMapIDs end
+  giverMapIDs = {}
+  if not db() then return giverMapIDs end
+  if not questsByMap then buildQuestsByMap() end
+  for uiMapID in pairs(questsByMap) do table.insert(giverMapIDs, uiMapID) end
+  table.sort(giverMapIDs)
+  return giverMapIDs
+end
+
 -- Annehmbare Quests, deren Geber auf der Zonenkarte steht: { { x, y, offers = { Angebot, ... } }, ... }
 -- (Geber am selben Ort zusammengefasst; Geber ohne Ort fallen weg)
 function DungeonQuests.OffersOnMap(uiMapID)

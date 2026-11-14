@@ -3571,3 +3571,14 @@ Einstellung Komfort → Quests → Hinweise → „Nach Annahme einer Dungeonque
 - Forever: wird zusätzlich Blizzards Wegpunkt gesetzt (C_Map.SetUserWaypoint, falls vorhanden)? Klick im Kampf ohne Fehler?
 - Annahme einer normalen Quest: kein Fenster
 - Keine Lua-Fehler
+### 513. Kartensymbole über Zonengrenzen, mit OpenMap und Leatrix Maps (LT-39)
+
+- [ ] geprüft
+
+Einstellungen Dungeonquest-Geber, Dungeon-Eingänge (Forever) und Todeskarte an.
+
+- Ohne Kartenaddon: Geber aus Sturmwind erscheinen auf der Karte von Elwynn an der richtigen Stelle, Geber aller Zonen auf der Kontinentkarte; beim Hineinzoomen bleiben die Symbole so groß wie ganz herausgezoomt.
+- OpenMap (Forever), zusammengesetzte Karte: Symbole liegen über der Kartenkunst (nicht verdeckt), auch Geber der Nachbarzonen im Bild an der richtigen Stelle; nach Kampf/Zoom noch sichtbar? Unsere Dungeon-Eingänge ausgeblendet, solange OpenMap seine zeigt (OpenMap-Option „icons“ aus: unsere wieder da).
+- OpenMap auf Blizzards Karte umgeschaltet: Symbole wie ohne OpenMap.
+- Leatrix Maps: Fenster verschoben/skaliert, mehr Zoomstufen: Symbole sitzen richtig; mit „Show points of interest“ + „Show dungeons and raids“ keine doppelten Dungeon-Symbole.
+- Keine Lua-Fehler, kein Taint (z.B. Weltkarte im Kampf öffnen, Quest aus der Karte heraus anklicken).
